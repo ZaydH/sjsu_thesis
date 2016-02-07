@@ -157,22 +157,22 @@ class Puzzle:
 
         # Iterate through the pixels
         for x_piece in range(0, self._x_piece_count):
-            x_offset = x_piece * self._piece_width
+            start_x = x_piece * self._piece_width
             # Add the cell border if applicable
             if Puzzle.export_with_border:
-                x_offset += x_piece * Puzzle.border_width
+                start_x += x_piece * Puzzle.border_width
 
             for y_piece in range(0, self._y_piece_count):
-                y_offset = y_piece * self._piece_width
+                start_y = y_piece * self._piece_width
                 # Add the cell border if applicable
                 if Puzzle.export_with_border:
-                    y_offset += y_piece * Puzzle.border_width
+                    start_y += y_piece * Puzzle.border_width
 
-                # Do pixel by pixel copy
-                for x in range(0, self._piece_width):
-                    for y in range(0, self._piece_width):
-                        # Get the pixels from the selected piece
-                        pixels.putpixel((x + x_offset, y + y_offset), self._pieces[x_piece][y_piece].getpixel(x, y))
+                # Paste the image from the piece.
+                box = (start_x, start_y, start_x + self._piece_width, start_y + self._piece_width)
+                piece_image = self._pieces[x_piece][y_piece].get_image()
+                assert(piece_image.size == (self._piece_width, self._piece_width))  # Verify the size
+                pixels.paste(piece_image, box)
 
         # Add a white border
         if Puzzle.export_with_border:
@@ -229,7 +229,7 @@ if __name__ == '__main__':
     # test_puzzle.transpose_image()
     # test_puzzle.convert_to_pieces(10, 10)
     # test_puzzle.shuffle_pieces()
-    #
+
     filename = 'test_puzzle.pk'
     # Puzzle.pickle_export(test_puzzle, filename)
     f = open(filename, 'r')

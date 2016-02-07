@@ -135,6 +135,13 @@ class PuzzlePiece:
         # Return the rotated x and y coordinates
         return rotated_x, rotated_y
 
+    def get_image(self):
+        """
+        Gets the image for a particular piece.  It does appropriately
+        rotate the image.
+        :return: Piece's image with appropriate rotation
+        """
+        return self._pixels.rotate(self._rotation.value)
 
     def putpixel(self, x, y, pixel):
         """
