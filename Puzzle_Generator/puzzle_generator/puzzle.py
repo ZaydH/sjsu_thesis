@@ -9,10 +9,10 @@ import random
 
 class Puzzle:
 
-    DEFAULT_PATH = "./images/"
+    DEFAULT_IMAGE_PATH = "./images/"
     print_debug_messages = True
 
-    export_with_border = True
+    export_with_border = False
     border_width = 3
     border_outer_stripe_width = 1
 
@@ -50,11 +50,19 @@ class Puzzle:
         self._x_piece_count = 0
         self._y_piece_count = 0
 
-    def select_puzzle_image(self):
+    def set_puzzle_image(self, filename = None):
         """
-        Provides a file dialog for selecting the image to turn
-        into a puzzle.
+        Sets the puzzle image file.  It can allow the user to specified an image or to
+        have a file dialog appear.
+        :param filename: String If no filename is specified, then a file dialog is shown.
         """
+
+        # Check if a filename was specified.  If it was, store it and return.
+        if filename is not None:
+            self._filename = filename
+            return
+
+        # If no filename is specified, then open a file dialog.
         root = Tkinter.Tk()
         root.wm_title("Image Browser")
         w = Tkinter.Label(root, text="Please choose a .pages file to convert.")
@@ -63,11 +71,8 @@ class Puzzle:
         file_options['defaultextension'] = '.bmp'
         file_options['filetypes'] = [ ('Bitmap Files', '.bmp') ]
         file_options['title'] = 'Image File Browser'
-        if __name__== '__main__':
-            self._filename = Puzzle.DEFAULT_PATH + "duck.bmp"
-        else:
-            # Store the selected file name
-            self._filename = tkFileDialog.askopenfilename(**file_options) # **file_option mean keyword based arguments
+        # Store the selected file name
+        self._filename = tkFileDialog.askopenfilename(**file_options) # **file_option mean keyword based arguments
 
     def open_image(self):
         """
@@ -100,8 +105,8 @@ class Puzzle:
 
         # Calculate ignored pixel count for debugging purposes.
         ignored_pixels = numb_pixels - (self._piece_width * self._piece_width * numb_pieces)
-        if Puzzle.DEFAULT_PATH and ignored_pixels > 0:
-            print "NOTE: %d pixels were not included in the puzzle." % {ignored_pixels}
+        if Puzzle.DEFAULT_IMAGE_PATH and ignored_pixels > 0:
+            print "NOTE: %d pixels were not included in the puzzle." % (ignored_pixels)
 
         # Only take the center of the images and exclude the ignored pixels
         x_offset = (self._image_width - self._x_piece_count * self._piece_width) // 2
@@ -125,14 +130,14 @@ class Puzzle:
             random_index = random.randint(0, i)
             # If the indexes are different, swap the pieces.
             if i != random_index:
-                last_piece = self._pieces[i % self._x_piece_count][i // self._y_piece_count]
-                random_piece = self._pieces[random_index % self._x_piece_count][random_index // self._y_piece_count]
+                last_piece = self._pieces[i % self._x_piece_count][i // self._x_piece_count]
+                random_piece = self._pieces[random_index % self._x_piece_count][random_index // self._x_piece_count]
                 # Rotate the selected piece
                 if PuzzlePiece.rotation_enabled:
                     random_piece.randomize_rotation()
 
-                self._pieces[i % self._x_piece_count][i // self._y_piece_count] = random_piece
-                self._pieces[random_index % self._x_piece_count][random_index // self._y_piece_count] = last_piece
+                self._pieces[i % self._x_piece_count][i // self._x_piece_count] = random_piece
+                self._pieces[random_index % self._x_piece_count][random_index // self._x_piece_count] = last_piece
 
         # Since the [0, 0] piece is not shuffled, then randomize its rotation
         if PuzzlePiece.rotation_enabled:
@@ -220,22 +225,29 @@ class Puzzle:
                 transpose_img.putpixel((h, w), pixel)
 
         # Save the image to a file.
-        transpose_img.save(Puzzle.DEFAULT_PATH + "transpose.bmp")
+        transpose_img.save(Puzzle.DEFAULT_IMAGE_PATH + "transpose.bmp")
 
 if __name__ == '__main__':
-    # test_puzzle = Puzzle()
-    # test_puzzle.select_puzzle_image()
-    # test_puzzle.open_image()
-    # test_puzzle.transpose_image()
-    # test_puzzle.convert_to_pieces(10, 10)
-    # test_puzzle.shuffle_pieces()
+    # Take some images and shuffle then export them.
+    puzzles = [("duck.bmp", (10,10)), ("two_faced_cat.jpg", (20,10))]
+    for puzzle_info in puzzles:
+        # Extract the information on the images
+        file = puzzle_info[0]
+        (x_count, y_count) = puzzle_info[1]
+        # Build a test puzzle
+        test_puzzle = Puzzle()
+        test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
+        test_puzzle.open_image()
+        test_puzzle.convert_to_pieces(x_count, y_count)
+        test_puzzle.shuffle_pieces()
+        test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + file)
 
-    filename = 'test_puzzle.pk'
-    # Puzzle.pickle_export(test_puzzle, filename)
-    f = open(filename, 'r')
-    test_puzzle = pickle.load(f)
-    f.close()
-    test_puzzle.export_puzzle(Puzzle.DEFAULT_PATH + "Puzzle_Export.bmp")
+    # filename = 'test_puzzle.pk'
+    # # Puzzle.pickle_export(test_puzzle, filename)
+    # f = open(filename, 'r')
+    # test_puzzle = pickle.load(f)
+    # f.close()
+    # test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "_Export.bmp")
 
     # Print helper method.
     print "Run complete."
