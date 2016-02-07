@@ -10,7 +10,11 @@ import random
 class Puzzle:
 
     DEFAULT_PATH = "./images/"
-    PRINT_DEBUG_MESSAGES = True
+    print_debug_messages = True
+
+    export_with_border = True
+    border_width = 3
+    border_outer_stripe_width = 1
 
     @staticmethod
     def pickle_export(obj, filename):
@@ -134,7 +138,7 @@ class Puzzle:
         if PuzzlePiece.rotation_enabled:
             self._pieces[0][0].randomize_rotation()
 
-    def output_puzzle(self, filename):
+    def export_puzzle(self, filename):
         """
         For a specified puzzle, it writes a bitmap image of the puzzle
         to the specified filename.
@@ -142,20 +146,58 @@ class Puzzle:
         """
         puzzle_width = self._piece_width * self._x_piece_count
         puzzle_height = self._piece_width * self._y_piece_count
+        # Widen the picture if it should have a border.
+        if Puzzle.export_with_border:
+            puzzle_width += (self._x_piece_count - 1) * Puzzle.border_width
+            puzzle_height += (self._y_piece_count - 1) * Puzzle.border_width
 
         # Create the array containing the pixels.
         pixels = Image.new("RGB", (puzzle_width, puzzle_height), "black")
 
+
         # Iterate through the pixels
         for x_piece in range(0, self._x_piece_count):
             x_offset = x_piece * self._piece_width
+            # Add the cell border if applicable
+            if Puzzle.export_with_border:
+                x_offset += x_piece * Puzzle.border_width
+
             for y_piece in range(0, self._y_piece_count):
                 y_offset = y_piece * self._piece_width
+                # Add the cell border if applicable
+                if Puzzle.export_with_border:
+                    y_offset += y_piece * Puzzle.border_width
+
                 # Do pixel by pixel copy
                 for x in range(0, self._piece_width):
                     for y in range(0, self._piece_width):
                         # Get the pixels from the selected piece
                         pixels.putpixel((x + x_offset, y + y_offset), self._pieces[x_piece][y_piece].getpixel(x, y))
+
+        # Add a white border
+        if Puzzle.export_with_border:
+            # Shorten variable names for readability
+            border_width = Puzzle.border_width
+            outer_strip_width = Puzzle.border_outer_stripe_width
+            # create row borders one at a time
+            for row in range(1, self._x_piece_count):  # Skip the first and last row
+                # Define the box for the border.
+                top_left_x = 0
+                top_left_y = (row - 1) * border_width + row * self._piece_width + outer_strip_width
+                bottom_right_x = puzzle_width
+                bottom_right_y = top_left_y + (border_width - 2 * outer_strip_width)
+                # Create the row border via a white box.
+                box = (top_left_x, top_left_y, bottom_right_x, bottom_right_y)
+                pixels.paste("white", box)
+            for col in range(1, self._y_piece_count):  # Skip the first and last row
+                # Define the box for the border.
+                top_left_x = (col - 1) * border_width + col * self._piece_width + outer_strip_width
+                top_left_y = 0
+                bottom_right_x = top_left_x + (border_width - 2 * outer_strip_width)
+                bottom_right_y = puzzle_height
+                # Create the row border via a white box.
+                box = (top_left_x, top_left_y, bottom_right_x, bottom_right_y)
+                pixels.paste("white", box)
 
         # Output the image file.
         pixels.save(filename)
@@ -181,14 +223,19 @@ class Puzzle:
         transpose_img.save(Puzzle.DEFAULT_PATH + "transpose.bmp")
 
 if __name__ == '__main__':
-    test_puzzle = Puzzle()
-    test_puzzle.select_puzzle_image()
-    test_puzzle.open_image()
-    #test_puzzle.transpose_image()
-    test_puzzle.convert_to_pieces(10, 10)
-    test_puzzle.shuffle_pieces()
-    #Puzzle.pickle_export(test_puzzle, 'test_puzzle.p')
-    test_puzzle.output_puzzle(Puzzle.DEFAULT_PATH + "Puzzle_Export.bmp")
+    # test_puzzle = Puzzle()
+    # test_puzzle.select_puzzle_image()
+    # test_puzzle.open_image()
+    # test_puzzle.transpose_image()
+    # test_puzzle.convert_to_pieces(10, 10)
+    # test_puzzle.shuffle_pieces()
+    #
+    filename = 'test_puzzle.pk'
+    # Puzzle.pickle_export(test_puzzle, filename)
+    f = open(filename, 'r')
+    test_puzzle = pickle.load(f)
+    f.close()
+    test_puzzle.export_puzzle(Puzzle.DEFAULT_PATH + "Puzzle_Export.bmp")
 
     # Print helper method.
     print "Run complete."
