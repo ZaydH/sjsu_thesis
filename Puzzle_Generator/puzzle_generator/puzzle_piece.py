@@ -4,6 +4,9 @@ import random
 
 class PuzzlePiece:
 
+    # Minimum width for a puzzle piece.
+    MINIMUM_WIDTH = 10
+
     class Rotation(Enum):
         """
         Enumerated type for representing the amount of rotation for
@@ -31,18 +34,27 @@ class PuzzlePiece:
     # May want to disable rotation so have a check for that.
     rotation_enabled = True
 
-    def __init__(self, width):
+    def __init__(self, width, pixel_array=None, start_x=None, start_y=None):
         """
         Constructur of an empty puzzle piece object
         :param width: int  Width of the puzzle piece in pixels
         """
         # Number of pixels in the width of the piece
+        if width < PuzzlePiece._MINIMUM_WIDTH:
+            raise ValueError("Specified width is less than the minimum width of %d" % {PuzzlePiece.MINIMUM_WIDTH})
         self._width = width
         # Create the matrix for storing the pixel information
-        self._pixels = [ [ -1 for x in range(0, width)] for x in range(0,width)]
+        # noinspection PyUnusedLocal
+        self._pixels = [[None for x in range(0, width)] for x in range(0, width)]
+        if pixel_array is None and (start_x is not None or start_y is not None):
+            raise ValueError("Argument pixel_array cannot be null if argument start_x or start_y are specified")
+        if pixel_array is not None and (start_x is None or start_y is None):
+            raise ValueError("If argument pixel_array is specified, neither start_x or start_y can be None")
         # Set a random rotation
-        self._rotation = -1 # Create a reference to prevent compiler warnings
+        self._rotation = None # Create a reference to prevent compiler warnings
         self.set_rotation(PuzzlePiece.Rotation.degree_0)
+
+
 
     def _get_unrotated_coordinates(self, rotated_x, rotated_y):
         """

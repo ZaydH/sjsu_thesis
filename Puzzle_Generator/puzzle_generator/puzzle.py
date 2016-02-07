@@ -3,11 +3,12 @@ import Tkinter
 import tkFileDialog
 from PIL import Image
 import math
+from puzzle_piece import PuzzlePiece
 
 class Puzzle:
 
     DEFAULT_PATH = "C:/Users/Zayd/Desktop/"
-    MINIMUM_PIECE_WIDTH = 10
+    PRINT_DEBUG_MESSAGES = True
 
     def __init__(self):
         """
@@ -18,10 +19,11 @@ class Puzzle:
         # Internal Pillow Image object.
         self._pil_img = None
         # Set the details on the image width
-        self._width = 0
-        self._height = 0
+        self._image_width = 0
+        self._image_height = 0
         # Initialize the puzzle information.
         self._pieces = []
+        self._piece_width = 0
         self._x_piece_count = 0
         self._y_piece_count = 0
 
@@ -50,25 +52,68 @@ class Puzzle:
         Opens the specified image filename and stores it with the puzzle.
         """
         self._pil_img = Image.open(self._filename)
-        self._width, self._height = self._pil_img.size
+        self._image_width, self._image_height = self._pil_img.size
 
     def convert_to_pieces(self, x_piece_count, y_piece_count):
 
         # Verify a valid pixel count.
-        numb_pixels = self._width * self._height
+        numb_pixels = self._image_width * self._image_height
         numb_pieces = x_piece_count * y_piece_count
         if numb_pixels < numb_pieces:
             raise ValueError("The number of pieces is more than the number of pixes. This is not allowed.")
 
         # Calculate the piece width based off the
-        piece_width = math.min(self._width / x_piece_count, self._height / y_piece_count)
-        if Puzzle.MINIMUM_PIECE_WIDTH < piece_width:
-            raise ValueError("For the specified piece counts, the piece size is less than the minimum. of %." % {Puzzle.MINIMUM_PIECE_WIDTH})
+        self._piece_width = math.min(self._image_width / x_piece_count, self._image_height / y_piece_count)
+        # noinspection PyUnusedLocal
+        self._pieces = [[None for y in range(0, y_piece_count)] for x in range(0, xpiece_count)]
+
+        # Calculate ignored pixel count for debugging purposes.
+        ignored_pixels = numb_pixels - (self._piece_width * x_piece_count * y_piece_count)
+        if Puzzle.DEFAULT_PATH and ignored_pixels > 0:
+            print "NOTE: %d pixels were not included in the puzzle." % {ignored_pixels}
+
+        # Only take the center of the images and exclude the ignored pixels
+        x_offset = (self._image_width - self._x_piece_count * self._piece_width) // 2
+        y_offset = (self._image_height - self._y_piece_count * self._piece_height) // 2
+
+        # Build the pixels
+        loaded_image = self._pil_img.load()
+        for x in range(0, x_piece_count):
+            x_start = x_offset + x * self._piece_width
+            for y in range(0, y_piece_count):
+                y_start = y_offset + y * self._piece_width
+                self._pieces[x][y] = PuzzlePiece(self._piece_width, loaded_image, x_start, y_start)
 
 
     def shuffle_pieces(self):
         pass
 
+
+    def output_puzzle(self, filename):
+        puzzle_width = self._piece_width * self._x_piece_count
+        puzzle_height = self._piece_height * self._y_piece_count
+
+
+    def _create_image_file(self, pixels, filename):
+        """
+        Writes a built image to a file.
+        :param pixels:
+        :param filename:
+        :return:
+        """
+        # Extract
+        width = len(pixels)
+        try:
+            height = len(pixels[0])
+        except:
+            raise ValueError("Pixel array must be two dimensional")
+        # Starting building the output image
+        output_img = Image.new("RGB", (width, height), "white")
+        for x in range(0, self._image_width):
+            for y in range(0, self._image_height):
+                output_img.putpixel(pixels[x][y])
+        # Save the output image.
+        output_img.save(filename)
 
     def transpose_image(self):
         """
@@ -76,19 +121,19 @@ class Puzzle:
         """
 
         # This has image height and width transposed.
-        transpose_img = Image.new("RGB", (self._height, self._width), "white")
+        transpose_img = Image.new("RGB", (self._image_height, self._image_width), "white")
 
         # Convert both images to pixels.
 
         # Iterate through all pixels in the original image
-        for w in range(0, self._width):
-            for h in range(0, self._height):
+        for w in range(0, self._image_width):
+            for h in range(0, self._image_height):
                 # Get the pixel's rgb signature from the source image
                 pixel = self._pil_img.getpixel((w,h))
                 transpose_img.putpixel((h,w), pixel)
 
         # Save the image to a file.
-        transpose_img.save(zsh_image.DEFAULT_PATH + "transpose.bmp")
+        transpose_img.save(Puzzle.DEFAULT_PATH + "transpose.bmp")
 
 if __name__== '__main__':
     test_image = Puzzle()
