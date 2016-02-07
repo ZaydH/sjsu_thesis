@@ -1,6 +1,9 @@
 from PIL import Image
 from enum import Enum
 import random
+from PIL import Image
+from pickle import dumps, loads
+
 
 class PuzzlePiece:
 
@@ -34,22 +37,29 @@ class PuzzlePiece:
     # May want to disable rotation so have a check for that.
     rotation_enabled = True
 
-    def __init__(self, width, pixel_array=None, start_x=None, start_y=None):
+    def __init__(self, width, image=None, start_x=None, start_y=None):
         """
         Constructur of an empty puzzle piece object
         :param width: int  Width of the puzzle piece in pixels
         """
         # Number of pixels in the width of the piece
-        if width < PuzzlePiece._MINIMUM_WIDTH:
+        if width < PuzzlePiece.MINIMUM_WIDTH:
             raise ValueError("Specified width is less than the minimum width of %d" % {PuzzlePiece.MINIMUM_WIDTH})
         self._width = width
         # Create the matrix for storing the pixel information
         # noinspection PyUnusedLocal
-        self._pixels = [[None for x in range(0, width)] for x in range(0, width)]
-        if pixel_array is None and (start_x is not None or start_y is not None):
-            raise ValueError("Argument pixel_array cannot be null if argument start_x or start_y are specified")
-        if pixel_array is not None and (start_x is None or start_y is None):
-            raise ValueError("If argument pixel_array is specified, neither start_x or start_y can be None")
+        self._pixels = Image.new("RGB", (width, width), "white")
+        if image is None and (start_x is not None or start_y is not None):
+            raise ValueError("Argument image cannot be null if argument start_x or start_y are specified")
+        if image is not None and (start_x is None or start_y is None):
+            raise ValueError("If argument image is specified, neither start_x or start_y can be None")
+        # If a valid pixel array is passed, then copy the contents to the piece.
+        if image is not None:
+            for x in range(0, width):
+                for y in range(0, width):
+                    pixel = image.getpixel((x + start_x, y + start_y))
+                    self._pixels.putpixel((x, y), pixel)
+
         # Set a random rotation
         self._rotation = None # Create a reference to prevent compiler warnings
         self.set_rotation(PuzzlePiece.Rotation.degree_0)
@@ -125,7 +135,7 @@ class PuzzlePiece:
         return rotated_x, rotated_y
 
 
-    def setpixel(self, x, y, pixel):
+    def putpixel(self, x, y, pixel):
         """
         Update's an image's pixel value.
         :param x:       Pixel's x coordinate
@@ -141,22 +151,21 @@ class PuzzlePiece:
         # Correct for any rotation
         (unrotated_x, unrotated_y) = self._get_unrotated_coordinates(x, y)
         # Updated the pixel value using the unrotated x and y coordinates
-        self._pixels[unrotated_x][unrotated_y] = pixel
+        self._pixels.putpixel((unrotated_x, unrotated_y), pixel)
 
-    def getpixel(self, x, y, pixel):
+    def getpixel(self, x, y):
         """
-        Update's an image's pixel value.
-        :param x: int   Pixel's x coordinate
-        :param y: int   Pixel's y coordinate
-        :param pixel:    New pixel value.  A Tuple in the format (Red, Green, Blue)
+        Get a pixel from a puzzle piece.
+        :param x: int   X coordinate for the pixel to get
+        :param y: int   Y coordinate for the pixel to get
+        :return:        Pixel at the piece's specified pixel.
         """
-
         if x >= self._width:
             raise ValueError("Pixel's \"x\" coordinate must be between 0 and width - 1")
         if y >= self._width:
             raise ValueError("Pixel's \"y\" coordinate must be between 0 and width - 1")
 
-        self._pixels = pixel
+        return self._pixels.getpixel((x, y))
 
     def set_rotation(self, rotation):
         """
@@ -167,7 +176,7 @@ class PuzzlePiece:
 
         PuzzlePiece.assert_rotation_enabled()
 
-        if rotation.value % self.Rotation.degree_90.value != 0:
+        if rotation.value % PuzzlePiece.Rotation.degree_90.value != 0:
             raise ValueError("Invalid rotation value.")
 
         self._rotation = rotation
