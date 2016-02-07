@@ -173,8 +173,8 @@ class PuzzlePiece:
         :type rotation: PuzzlePiece.Rotation
         :param rotation: The rotation of the specified puzzle piece.
         """
-
-        PuzzlePiece.assert_rotation_enabled()
+        if rotation != PuzzlePiece.Rotation.degree_0:
+            PuzzlePiece.assert_rotation_enabled()
 
         if rotation.value % PuzzlePiece.Rotation.degree_90.value != 0:
             raise ValueError("Invalid rotation value.")

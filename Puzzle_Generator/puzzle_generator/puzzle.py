@@ -9,7 +9,7 @@ import random
 
 class Puzzle:
 
-    DEFAULT_PATH = "C:/Users/Zayd/Desktop/"
+    DEFAULT_PATH = "./images/"
     PRINT_DEBUG_MESSAGES = True
 
     @staticmethod
@@ -124,13 +124,15 @@ class Puzzle:
                 last_piece = self._pieces[i % self._x_piece_count][i // self._y_piece_count]
                 random_piece = self._pieces[random_index % self._x_piece_count][random_index // self._y_piece_count]
                 # Rotate the selected piece
-                random_piece.randomize_rotation()
+                if PuzzlePiece.rotation_enabled:
+                    random_piece.randomize_rotation()
 
                 self._pieces[i % self._x_piece_count][i // self._y_piece_count] = random_piece
                 self._pieces[random_index % self._x_piece_count][random_index // self._y_piece_count] = last_piece
 
         # Since the [0, 0] piece is not shuffled, then randomize its rotation
-        self._pieces[0][0].randomize_rotation()
+        if PuzzlePiece.rotation_enabled:
+            self._pieces[0][0].randomize_rotation()
 
     def output_puzzle(self, filename):
         """
