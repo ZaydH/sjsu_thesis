@@ -5,34 +5,35 @@ from PIL import Image
 from pickle import dumps, loads
 
 
+class Rotation(Enum):
+    """
+    Enumerated type for representing the amount of rotation for
+    a puzzle piece.
+    **Note:** Pieces can only be rotated in 90 degree increments.
+    """
+
+    degree_0 = 0        # No rotation
+    degree_90 = 90      # 90 degree rotation
+    degree_180 = 180    # 180 degree rotation
+    degree_270 = 270    # 270 degree rotation
+    _degree_360 = 360   # Internal use only.  Same as 0 degree rotation.
+
+    @staticmethod
+    def get_all_rotations():
+
+        """
+        Gets a list of all valid values of Rotation
+        :return: List of rotation values in increasing order.
+        """
+
+        return (Rotation.degree_0, Rotation.degree_90, Rotation.degree_180,
+            Rotation.degree_270)
+
+
 class PuzzlePiece:
 
     # Minimum width for a puzzle piece.
     MINIMUM_WIDTH = 10
-
-    class Rotation(Enum):
-        """
-        Enumerated type for representing the amount of rotation for
-        a puzzle piece.
-        **Note:** Pieces can only be rotated in 90 degree increments.
-        """
-
-        degree_0 = 0        # No rotation
-        degree_90 = 90      # 90 degree rotation
-        degree_180 = 180    # 180 degree rotation
-        degree_270 = 270    # 270 degree rotation
-        _degree_360 = 360   # Internal use only.  Same as 0 degree rotation.
-
-        @staticmethod
-        def get_all_rotations():
-
-            """
-            Gets a list of all valid values of Rotation
-            :return: List of rotation values in increasing order.
-            """
-
-            return (PuzzlePiece.Rotation.degree_0, PuzzlePiece.Rotation.degree_90, PuzzlePiece.Rotation.degree_180,
-                PuzzlePiece.Rotation.degree_270)
 
     # May want to disable rotation so have a check for that.
     rotation_enabled = True
@@ -62,7 +63,7 @@ class PuzzlePiece:
 
         # Set a random rotation
         self._rotation = None # Create a reference to prevent compiler warnings
-        self.set_rotation(PuzzlePiece.Rotation.degree_0)
+        self.set_rotation(Rotation.degree_0)
 
 
 
@@ -86,15 +87,15 @@ class PuzzlePiece:
         # rotated x/y values full circle.  Hence, 0degree rotation takes no 90 degrees.
         # 90degree rotation takes 3 rotations, 180degrees takes 2, and 270 takes 1.
         # noinspection PyProtectedMember,PyUnresolvedReferences
-        numb_90_degree_rotations = (PuzzlePiece.Rotation._degree_360.value - self._rotation.value)
+        numb_90_degree_rotations = (Rotation._degree_360.value - self._rotation.value)
         # noinspection PyProtectedMember
-        numb_90_degree_rotations %= PuzzlePiece.Rotation._degree_360.value
-        numb_90_degree_rotations /= PuzzlePiece.Rotation.degree_90.value
+        numb_90_degree_rotations %= Rotation._degree_360.value
+        numb_90_degree_rotations /= Rotation.degree_90.value
         # Handle case where loop is not run.
         (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
         for i in range(0, numb_90_degree_rotations):
 
-            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, PuzzlePiece.Rotation.degree_90 )
+            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, Rotation.degree_90 )
             # Updated rotated values in case need to rotated again
             (rotated_x, rotated_y) = (unrotated_x, unrotated_y)
 
@@ -119,7 +120,7 @@ class PuzzlePiece:
             rotation = self._rotation
 
         # Calculate number of 90 degree rotations to perform.
-        numb_90_degree_rotations = rotation.value / PuzzlePiece.Rotation.degree_90.value
+        numb_90_degree_rotations = rotation.value / Rotation.degree_90.value
         # Each iteration of the loop rotates the x, y coordinates 90 degrees
         # Each a 180 degree rotation is two 90 degree rotations
         (rotated_x, rotated_y) = (unrotated_x, unrotated_y)  # In case loop is never run
@@ -170,13 +171,13 @@ class PuzzlePiece:
     def set_rotation(self, rotation):
         """
         Sets the puzzle piece's rotation.
-        :type rotation: PuzzlePiece.Rotation
+        :type rotation: Rotation
         :param rotation: The rotation of the specified puzzle piece.
         """
-        if rotation != PuzzlePiece.Rotation.degree_0:
+        if rotation != Rotation.degree_0:
             PuzzlePiece.assert_rotation_enabled()
 
-        if rotation.value % PuzzlePiece.Rotation.degree_90.value != 0:
+        if rotation.value % Rotation.degree_90.value != 0:
             raise ValueError("Invalid rotation value.")
 
         self._rotation = rotation
@@ -189,7 +190,7 @@ class PuzzlePiece:
     def get_rotation(self):
         """
         Returns the puzzle piece's rotation.
-        :return: PuzzlePiece.Rotation Puzzle piece's rotation
+        :return: Rotation Puzzle piece's rotation
         """
 
         return self._rotation
@@ -201,7 +202,7 @@ class PuzzlePiece:
 
         PuzzlePiece.assert_rotation_enabled()
         # Get the list of rotations
-        all_rotations = PuzzlePiece.Rotation.get_all_rotations()
+        all_rotations = Rotation.get_all_rotations()
         # Set the rotation to a randomly selected value
         i = random.randint(0, len(all_rotations) - 1)
         self.set_rotation(all_rotations[i])

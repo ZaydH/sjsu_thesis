@@ -2,10 +2,10 @@
 import Tkinter
 import tkFileDialog
 from PIL import Image
-import math
 from puzzle_piece import PuzzlePiece
 import pickle
 import random
+
 
 class Puzzle:
 
@@ -160,7 +160,6 @@ class Puzzle:
         # Output the image file.
         pixels.save(filename)
 
-
     def transpose_image(self):
         """
         Creates a new transposed image Image object.
@@ -181,15 +180,15 @@ class Puzzle:
         # Save the image to a file.
         transpose_img.save(Puzzle.DEFAULT_PATH + "transpose.bmp")
 
-if __name__== '__main__':
-    test_image = Puzzle()
-    test_image.select_puzzle_image()
-    test_image.open_image()
-    #test_image.transpose_image()
-    test_image.convert_to_pieces(10, 10)
-    test_image.shuffle_pieces()
-    #Puzzle.pickle_export(test_image, 'test_image.p')
-    test_image.output_puzzle(Puzzle.DEFAULT_PATH + "Puzzle_Export.bmp")
+if __name__ == '__main__':
+    test_puzzle = Puzzle()
+    test_puzzle.select_puzzle_image()
+    test_puzzle.open_image()
+    #test_puzzle.transpose_image()
+    test_puzzle.convert_to_pieces(10, 10)
+    test_puzzle.shuffle_pieces()
+    #Puzzle.pickle_export(test_puzzle, 'test_puzzle.p')
+    test_puzzle.output_puzzle(Puzzle.DEFAULT_PATH + "Puzzle_Export.bmp")
 
-
+    # Print helper method.
     print "Run complete."
