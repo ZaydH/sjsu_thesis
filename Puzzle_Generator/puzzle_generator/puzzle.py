@@ -27,12 +27,11 @@ class Puzzle:
         self._x_piece_count = 0
         self._y_piece_count = 0
 
-    def set_filename(self):
+    def select_puzzle_image(self):
         """
         Provides a file dialog for selecting the image to turn
         into a puzzle.
         """
-
         root = Tkinter.Tk()
         root.wm_title("Image Browser")
         w = Tkinter.Label(root, text="Please choose a .pages file to convert.")
@@ -93,6 +92,23 @@ class Puzzle:
         puzzle_width = self._piece_width * self._x_piece_count
         puzzle_height = self._piece_height * self._y_piece_count
 
+        # Create the array containing the pixels.
+        # noinspection PyUnusedLocal
+        pixels = [[None for y in range(0, puzzle_height)] for x in range(0, puzzle_width)]
+
+        # Iterate through the pixels
+        for x_piece in range(0, self._x_piece_count):
+            x_offset = x_piece * self._piece_width
+            for y_piece in range(0, self._y_piece_count):
+                y_offset = y_piece * self._piece_width
+                # Do pixel by pixel copy
+                for x in range(0, self._piece_width):
+                    for y in range(0, self._piece_width):
+                        # Get the pixels from the selected piece
+                        pixels[x + x_offset][y + y_offset] = self._pieces[x_piece][y_piece].get_pixel(x,y)
+
+        # Output the image file.
+        self._create_image_file(pixels, filename)
 
     def _create_image_file(self, pixels, filename):
         """
@@ -137,7 +153,10 @@ class Puzzle:
 
 if __name__== '__main__':
     test_image = Puzzle()
-    test_image.set_filename()
+    test_image.select_puzzle_image()
     test_image.open_image()
-    test_image.transpose_image()
+    #test_image.transpose_image()
+    test_image.output_puzzle(Puzzle.DEFAULT_PATH + "Puzzle_Export.bmp")
+    test_image.convert_to_pieces(10, 10)
+
     print "Run complete."
