@@ -1,10 +1,13 @@
 # Tkinter use for a file dialog box.
-import Tkinter, tkFileDialog
+import Tkinter
+import tkFileDialog
 from PIL import Image
+import math
 
 class Puzzle:
 
     DEFAULT_PATH = "C:/Users/Zayd/Desktop/"
+    MINIMUM_PIECE_WIDTH = 10
 
     def __init__(self):
         """
@@ -14,8 +17,13 @@ class Puzzle:
         self._filename = "<Not Specified>"
         # Internal Pillow Image object.
         self._pil_img = None
-        self._width = -1
-        self._height = -1
+        # Set the details on the image width
+        self._width = 0
+        self._height = 0
+        # Initialize the puzzle information.
+        self._pieces = []
+        self._x_piece_count = 0
+        self._y_piece_count = 0
 
     def set_filename(self):
         """
@@ -32,17 +40,41 @@ class Puzzle:
         file_options['filetypes'] = [ ('Bitmap Files', '.bmp') ]
         file_options['title'] = 'Image File Browser'
         if __name__== '__main__':
-            self._filename = zsh_image.DEFAULT_PATH + "duck.bmp"
+            self._filename = Puzzle.DEFAULT_PATH + "duck.bmp"
         else:
             # Store the selected file name
             self._filename = tkFileDialog.askopenfilename(**file_options) # **file_option mean keyword based arguments
 
     def open_image(self):
+        """
+        Opens the specified image filename and stores it with the puzzle.
+        """
         self._pil_img = Image.open(self._filename)
-        (self._width, self._height) = self._pil_img.size
+        self._width, self._height = self._pil_img.size
+
+    def convert_to_pieces(self, x_piece_count, y_piece_count):
+
+        # Verify a valid pixel count.
+        numb_pixels = self._width * self._height
+        numb_pieces = x_piece_count * y_piece_count
+        if numb_pixels < numb_pieces:
+            raise ValueError("The number of pieces is more than the number of pixes. This is not allowed.")
+
+        # Calculate the piece width based off the
+        piece_width = math.min(self._width / x_piece_count, self._height / y_piece_count)
+        if Puzzle.MINIMUM_PIECE_WIDTH < piece_width:
+            raise ValueError("For the specified piece counts, the piece size is less than the minimum. of %." % {Puzzle.MINIMUM_PIECE_WIDTH})
+
+
+    def shuffle_pieces(self):
+        pass
+
 
     def transpose_image(self):
-        # Create the new transposed image Image object.
+        """
+        Creates a new transposed image Image object.
+        """
+
         # This has image height and width transposed.
         transpose_img = Image.new("RGB", (self._height, self._width), "white")
 

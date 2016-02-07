@@ -28,6 +28,8 @@ class PuzzlePiece:
             return (PuzzlePiece.Rotation.degree_0, PuzzlePiece.Rotation.degree_90, PuzzlePiece.Rotation.degree_180,
                 PuzzlePiece.Rotation.degree_270)
 
+    # May want to disable rotation so have a check for that.
+    rotation_enabled = True
 
     def __init__(self, width):
         """
@@ -151,10 +153,17 @@ class PuzzlePiece:
         :param rotation: The rotation of the specified puzzle piece.
         """
 
+        PuzzlePiece.assert_rotation_enabled()
+
         if rotation.value % self.Rotation.degree_90.value != 0:
             raise ValueError("Invalid rotation value.")
 
         self._rotation = rotation
+
+    @staticmethod
+    def assert_rotation_enabled():
+        if not PuzzlePiece.rotation_enabled:
+            raise AttributeError("Cannot set rotation.  Rotation is disabled for puzzle pieces.")
 
     def get_rotation(self):
         """
@@ -163,6 +172,19 @@ class PuzzlePiece:
         """
 
         return self._rotation
+
+    def randomize_rotation(self):
+        """
+        Randomly sets the rotation of a piece.
+        """
+
+        PuzzlePiece.assert_rotation_enabled()
+        # Get the list of rotations
+        all_rotations = PuzzlePiece.Rotation.get_all_rotations()
+        # Set the rotation to a randomly selected value
+        i = random.randint(0, len(all_rotations) - 1)
+        self.set_rotation(all_rotations[i])
+
 
     def get_width(self):
         """
