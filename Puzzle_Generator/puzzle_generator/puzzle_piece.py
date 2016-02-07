@@ -56,10 +56,10 @@ class PuzzlePiece:
             raise ValueError("If argument image is specified, neither start_x or start_y can be None")
         # If a valid pixel array is passed, then copy the contents to the piece.
         if image is not None:
-            for x in range(0, width):
-                for y in range(0, width):
-                    pixel = image.getpixel((x + start_x, y + start_y))
-                    self._pixels.putpixel((x, y), pixel)
+            # Extract a subimage
+            box = (start_x, start_y, start_x + width, start_y + width)
+            self._pixels = image.crop(box)
+            assert(self._pixels.size == (width, width))
 
         # Set a random rotation
         self._rotation = None # Create a reference to prevent compiler warnings
