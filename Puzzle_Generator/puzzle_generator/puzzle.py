@@ -47,9 +47,16 @@ class Puzzle:
             raise IOError("Unable to write the pickle file to location \"%s\"." % (pickle_filename))
 
     def __init__(self,image_filename=None):
-        """
-        Puzzle Constructor.  It will optionally load an image into the puzzle as well.
-        :param image_filename:  String Optional name of the image to load into the puzzle.
+        """ Puzzle Constructor
+
+        Constructor that will optionally load an image into the puzzle as well.
+
+        Args:
+            image_filename (str): Name of the image to load into the puzzle. Defaults to None.
+
+        Returns:
+            Puzzle Object
+
         """
         self._filename = "<Not Specified>"
         # Internal Pillow Image object.
@@ -75,11 +82,6 @@ class Puzzle:
         Args:
             filename (str): If no filename is specified, then a file dialog is shown.  Defaults to None.
 
-        """
-        """
-        Sets the puzzle image file.  It can allow the user to specified an image or to
-        have a file dialog appear.
-        :param filename: String If no filename is specified, then a file dialog is shown.
         """
 
         # Check if a filename was specified.  If it was, store it and return.
@@ -114,7 +116,8 @@ class Puzzle:
             raise IOError("Unable to load the image at the specified location \"%s\"." % (self._filename))
 
     def convert_to_pieces(self, x_piece_count, y_piece_count):
-        """
+        """Puzzle Generator
+
         Given a puzzle, this function turns the puzzle into a set of pieces.
         **Note:** When creating the pieces, some of the source image may need to be discarded
         if the image size is not evenly divisible by the number of pieces specified
