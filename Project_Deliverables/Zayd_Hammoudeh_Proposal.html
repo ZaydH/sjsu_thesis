@@ -1,0 +1,124 @@
+<!-- Instructions:
+
+     1. Search and replace Your_Name with student's name
+     2. Insert description at location Description_Here.
+     3. Complete the Schedule of activities for 297 by for each week:
+        (a) Replacing Calender_Week_i with the dates for that week. 
+            For example, Feb.1-7.
+        (b) Replacing Read_And_Do_i with what will be accomplished that week.
+     4. Five descriptions of each deliverable by replacing Deliverable_i
+        with the description of that deliverable.
+     5. Fill in a list of references according to the example in that section.
+-->
+<<!--#echo var="center" -->>
+<h1>CS297 Proposal</h1>
+<h1>A Jigsaw Puzzle Problem Solver</h1>
+<p>Zayd Hammoudeh (zayd.hammoudeh@sjsu.edu)</p>
+<<!--#echo var="centerend" -->>
+
+<p><b>Advisor:</b> Dr. Chris Pollett</p>
+
+<p><b>Description:</b>
+</p>
+
+<p>
+Solving a jigsaw puzzle entails arranging a fixed set of pieces such that they reconstruct an original source image.  
+With a traditional jigsaw puzzle, there are two primary factors that significantly reduce the difficulty of the problem, 
+namely different piece shapes which mechancally limit the number of possible permutations as well as knowledge of the
+original source image, which allows the solver to determine with certainty whether two pieces are adjacent.
+<br><br>
+This project will develop a tool that will attempt to reconstruct a jigsaw puzzle of uniform, square pieces 
+for an unknown image.  It will avoid of the simplification of the problem done in existing research including: not allowing
+piece rotation, assuming knowledge of a low density version of the source image, and fixing the position of a subset of the
+puzzle pieces in their correct locations.
+</p>
+
+<p><b>Schedule:</b></p>
+
+<table  border="1" cellpadding="4"
+summary="This table has two columns. The left column indicates each
+week on the semester in turn. The right column indicates the task
+to be completed for that week."
+>
+<tr><td> Week 1:  
+Feb. 1-7</td><td valign="top">Project kickoff meeting with Dr. Pollett.  Begin work on the puzzle parser.</td></tr>
+<tr><td> Week 2:  
+Feb. 8-14</td><td valign="top"><b>Deliverable #1</b>: Jigsaw Puzzle Parser Complete</td></tr>
+<tr><td> Week 3:  
+Feb. 15-21</td><td valign="top">Begin literature review of existing approaches to solve the jigsaw puzzle problem.</td></tr>
+<tr><td> Week 4:  
+Feb. 22-28</td><td valign="top">Continue working on presentation of jigsaw puzzle problem literature review.</td></tr>
+<tr><td> Week 5:  
+Feb. 29 - Mar. 6</td><td valign="top"><b>Deliverable #2</b>: Complete presentation of existing literature</td></tr>
+<tr><td> Week 6:  
+Mar. 7-13</td><td valign="top">Begin work on a bottom-up jigsaw puzzle solver.</td></tr>
+<tr><td> Week 7:  
+Mar. 14-20</td><td valign="top">Continue work on the jigsaw puzzle solver.  Present initial work.</td></tr>
+<tr><td> Week 8:  
+Mar. 21-27</td><td valign="top">Continue work on the solver.  If one approach is complete, begin implementation
+								of a second technique.</td></tr>
+<tr><td> Week 9:  
+Mar. 28 - Apr. 3</td><td valign="top">SJSU Spring Break.  <b>Deliverable #3:</b> Complete first pass of a jigsaw puzzle solver.</td></tr>
+<tr><td> Week 10:  
+Apr. 4-10</td><td valign="top">Additional literature review on jigsaw puzzle solution metrics.</td></tr>
+<tr><td> Week 11:  
+Apr. 11-17</td><td valign="top">Begin implementing at least 3 metrics for comparing jigsaw puzzle results.</td></tr>
+<tr><td> Week 12:  
+Apr. 18-24</td><td valign="top"><b>Deliverable #4:</b> Complete jigsaw puzzle solution comparison across multiple
+								images (with different characteristics) using the implemented metrics.</td></tr>
+<tr><td> Week 13:  
+Apr. 25 - May 1</td><td valign="top">Finalize all work on the jigsaw puzzle solver in preparation for writing the
+									 CS297 final report.</td></tr>
+<tr><td> Week 14:  
+May 2-8</td><td valign="top">Begin work on CS297 final report.</td></tr>
+<tr><td> Week 15:  
+May 9-15</td><td valign="top">Continue working on the CS297 final report.</td></tr>
+<tr><td> Week 16:  
+May 16-22</td><td valign="top"><b>Deliverable 5</b>: Complete CS297 Final Report</td></tr>
+</table>
+
+<p><b>Deliverables:</b></p>
+<p> The full project will be done when CS298 is completed. The following will 
+be done by the end of CS297:</p>
+<ol>
+	<li><b>Jigsaw Puzzle Generator</b>: Given a source image, the generator will:
+		<ol type="a">
+			<li>Import a bitmap image</li>
+			<li>Parse the image into a specified number of equal size tiles (Note: 
+				some of the picture may be cropped during this process)</li>
+			<li>Perform a Fisher-Yates shuffle of the pieces</li>
+			<li>Optionally rotate each tile randomly</li>
+			<li>Display the shuffled image (with optional borders for clarity)</li>
+		</ol>
+	<br/></li>
+	
+	<li><b>Literature Review Presentation</b>: Create a presentation describing different, existing
+	techniques that are used to solve the jigsaw puzzle problem.
+	<br/><br/></li>
+	
+	<li><b>Basic Solver Framework</b>: Develop a basic framework that will perform a bottom-up
+	solution to the jigsaw problem.  It will utilize the techniques described in the literature review.
+	<br/><br/></li>
+	
+	<li><b>Multiple Comparative Metrics Results Presentation</b>: No one metric will sufficiently
+	quantify the quality of a jigsaw puzzle solution.  In this deliverable, I will implement at least three
+	solution comparison metrics and compare the results of these metrics across images with different
+	characteristics (e.g. high texture, images with duplicate pieces, etc.)	
+	<br/><br/></li>
+	<li><b>CS297 Final Report</b>: This is the culminating document for this semester’s activities.  
+		   It will include:
+			<ol>
+				<li>An overview of the project problem</li>
+				<li>Summary of previous work and solutions of the problem</li>
+				<li>Discuss the strategies I plan to use to solve the problem</li>
+				<li>Discuss the solution quality and metrics that will be used to 
+					compare solved puzzles.</li>
+				<li>Provide a description of the two tools implemented namely 
+					the image parser and the solver.</li>
+			</ol>
+	<br class="none" />
+	</li>
+</ol>
+<p><b>References:</b></p>
+<p>D. Sholomon, O. David, and N. S. Netanyahu, "A genetic algorithmbased solver for very 
+large jigsaw puzzles," in IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2013. </p>
