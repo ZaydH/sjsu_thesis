@@ -1,3 +1,9 @@
+"""Jigsaw Puzzle Problem Object
+
+.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
+"""
+
+
 # Tkinter use for a file dialog box.
 import Tkinter
 import tkFileDialog
@@ -6,8 +12,9 @@ from puzzle_piece import PuzzlePiece
 import pickle
 import random
 
-
 class Puzzle:
+    """
+    """
 
     DEFAULT_IMAGE_PATH = "./images/"
     print_debug_messages = True
@@ -16,27 +23,33 @@ class Puzzle:
     border_width = 3
     border_outer_stripe_width = 1
 
-    @staticmethod
-    def pickle_export(obj, filename):
-        """
-        Export a specified object to a pickle file.
-        :param obj:
-        :param filename:
-        """
-        f = open(filename, 'w')
-        pickle.dump(obj, f)
-        f.close()
 
-    @staticmethod
-    def pickle_import(obj, filename):
-        f = open(filename, 'r')
-        obj = pickle.load(f)
-        f.close()
+    # @staticmethod
+    # def pickle_import(obj, filename):
+    #     f = open(filename, 'r')
+    #     obj = pickle.load(f)
+    #     f.close
 
-    def __init__(self):
+    def pickle_export(self, pickle_filename):
+        """Puzzle Pickle Exporter
+
+        Exports the puzzle object to pickle for serialization.
+
+        Args:
+            pickle_filename (str): String Filename to write the pickle object to.
+
         """
-            Initalizes the base memory of an image including set a default file
-            name and the like.
+        try:
+            f = open(pickle_filename, 'w')
+            pickle.dump(self, f)
+            f.close()
+        except:
+            raise IOError("Unable to write the pickle file to location \"%s\"." % (pickle_filename))
+
+    def __init__(self,image_filename=None):
+        """
+        Puzzle Constructor.  It will optionally load an image into the puzzle as well.
+        :param image_filename:  String Optional name of the image to load into the puzzle.
         """
         self._filename = "<Not Specified>"
         # Internal Pillow Image object.
@@ -49,8 +62,20 @@ class Puzzle:
         self._piece_width = 0
         self._x_piece_count = 0
         self._y_piece_count = 0
+        if(image_filename is not None):
+            self.load_puzzle_image(image_filename)
 
-    def set_puzzle_image(self, filename = None):
+    def load_puzzle_image(self, filename=None):
+        """Puzzle Image Loader
+
+        Sets the puzzle image file.  If the user specifies a puzzle image filename, then the function will load it.
+        If no image file name is speficified, the functiuon will open a file dialog box for the user to explore
+        to the desired file.
+
+        Args:
+            filename (str): If no filename is specified, then a file dialog is shown.  Defaults to None.
+
+        """
         """
         Sets the puzzle image file.  It can allow the user to specified an image or to
         have a file dialog appear.
@@ -60,6 +85,7 @@ class Puzzle:
         # Check if a filename was specified.  If it was, store it and return.
         if filename is not None:
             self._filename = filename
+            self._open_image()
             return
 
         # If no filename is specified, then open a file dialog.
@@ -73,13 +99,19 @@ class Puzzle:
         file_options['title'] = 'Image File Browser'
         # Store the selected file name
         self._filename = tkFileDialog.askopenfilename(**file_options) # **file_option mean keyword based arguments
+        self._open_image()
 
-    def open_image(self):
+
+    def _open_image(self):
         """
-        Opens the specified image filename and stores it with the puzzle.
+        Loads the specified puzzle image into memory.  It also stores information on the puzzle
+        dimensions (e.g. width, height) into the puzzle object.
         """
-        self._pil_img = Image.open(self._filename)
-        self._image_width, self._image_height = self._pil_img.size
+        try:
+            self._pil_img = Image.open(self._filename)
+            self._image_width, self._image_height = self._pil_img.size
+        except:
+            raise IOError("Unable to load the image at the specified location \"%s\"." % (self._filename))
 
     def convert_to_pieces(self, x_piece_count, y_piece_count):
         """
@@ -87,8 +119,11 @@ class Puzzle:
         **Note:** When creating the pieces, some of the source image may need to be discarded
         if the image size is not evenly divisible by the number of pieces specified
         as parameters to this function.
-        :param x_piece_count: int   Number of pieces along the width of the puzzle
-        :param y_piece_count: int   Number of pieces along the height of the puzzle
+
+        Args:
+            x_piece_count (int): Number of pieces along the width of the puzzle
+            y_piece_count (int): Number of pieces along the height of the puzzle
+
         """
         # Verify a valid pixel count.
         numb_pixels = self._image_width * self._image_height
@@ -120,9 +155,11 @@ class Puzzle:
                 self._pieces[x][y] = PuzzlePiece(self._piece_width, self._pil_img, x_start, y_start)
 
     def shuffle_pieces(self):
-        """
-        Perform a Fisher-Yates shuffle of the puzzle's pieces and then
-        rotate the pieces.
+        """Puzzle Piece Shuffler
+
+        Perform a Fisher-Yates shuffle of the puzzle's pieces.  If rotation of Puzzle Pieces
+        is enabled, then this function will also perform piece rotation.
+
         """
         numb_pieces = self._x_piece_count * self._y_piece_count
         for i in range(numb_pieces - 1, 0, -1):
@@ -144,10 +181,16 @@ class Puzzle:
             self._pieces[0][0].randomize_rotation()
 
     def export_puzzle(self, filename):
-        """
-        For a specified puzzle, it writes a bitmap image of the puzzle
-        to the specified filename.
-        :param filename: String  Name of output file
+        """Puzzle Image Exporter
+
+        For a specified puzzle, it writes an image file to the specified filename.
+
+        Note:
+            Image file format is dependent on the file extension in the specified filename.
+
+        Args:
+            filename (str): File path of the image file name
+
         """
         puzzle_width = self._piece_width * self._x_piece_count
         puzzle_height = self._piece_width * self._y_piece_count
@@ -158,7 +201,6 @@ class Puzzle:
 
         # Create the array containing the pixels.
         pixels = Image.new("RGB", (puzzle_width, puzzle_height), "black")
-
 
         # Iterate through the pixels
         for x_piece in range(0, self._x_piece_count):
@@ -207,11 +249,16 @@ class Puzzle:
         # Output the image file.
         pixels.save(filename)
 
-    def transpose_image(self):
-        """
-        Creates a new transposed image Image object.
-        """
+    def _transpose_image(self):
+        """ Image Transposertr
 
+        Transposes an image by doing a pixel by pixel copy of the puzzle's image.  It then outputs the image.
+
+        Note:
+            This function was originally written to get experience with Pillow and as a basic debug framework.
+            Its proper functionality is not guaranteed for all revisions.
+
+        """
         # This has image height and width transposed.
         transpose_img = Image.new("RGB", (self._image_height, self._image_width), "white")
 
@@ -229,15 +276,15 @@ class Puzzle:
 
 if __name__ == '__main__':
     # Take some images and shuffle then export them.
-    puzzles = [("duck.bmp", (10,10)), ("two_faced_cat.jpg", (20,10))]
+    puzzles = [("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:
         # Extract the information on the images
         file = puzzle_info[0]
         (x_count, y_count) = puzzle_info[1]
         # Build a test puzzle
-        test_puzzle = Puzzle()
-        test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
-        test_puzzle.open_image()
+        test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + file)
+        # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
+        # test_puzzle.open_image()
         test_puzzle.convert_to_pieces(x_count, y_count)
         test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + file)
@@ -249,5 +296,6 @@ if __name__ == '__main__':
     # f.close()
     # test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "_Export.bmp")
 
-    # Print helper method.
-    print "Run complete."
+    # Debug message to let me know the run was completed.
+    if Puzzle.print_debug_messages:
+        print "Run complete."

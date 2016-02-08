@@ -1,3 +1,8 @@
+"""Jigsaw Puzzle Piece Class
+
+.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
+"""
+
 from PIL import Image
 from enum import Enum
 import random
@@ -6,12 +11,14 @@ from pickle import dumps, loads
 
 
 class Rotation(Enum):
-    """
-    Enumerated type for representing the amount of rotation for
-    a puzzle piece.
-    **Note:** Pieces can only be rotated in 90 degree increments.
-    """
+    """Puzzle Piece Rotation
 
+    Enumerated type for representing the amount of rotation for a puzzle piece.
+
+    Note:
+        Pieces can only be rotated in 90 degree increments.
+
+    """
     degree_0 = 0        # No rotation
     degree_90 = 90      # 90 degree rotation
     degree_180 = 180    # 180 degree rotation
@@ -20,10 +27,12 @@ class Rotation(Enum):
 
     @staticmethod
     def get_all_rotations():
-
         """
         Gets a list of all valid values of Rotation
-        :return: List of rotation values in increasing order.
+
+        Returns:
+            List[Rotation]: List of all valid rotation values in increasing order.
+
         """
 
         return (Rotation.degree_0, Rotation.degree_90, Rotation.degree_180,
@@ -40,9 +49,19 @@ class PuzzlePiece:
 
     def __init__(self, width, image=None, start_x=None, start_y=None):
         """
-        Constructur of an empty puzzle piece object
-        :param width: int  Width of the puzzle piece in pixels
+        Constructor of an empty puzzle piece object
+
+        Args:
+            width (int):
+            image (Optional[Image]): The second parameter. Defaults to None.
+            start_x (Optional[int]): Number of pieces along the image **widtgh**. Defaults to None.
+            start_y (Optional[int]): Number of pieces along the image **height**. Defaults to None.
+
+        Returns:
+            New puzzle piece
+
         """
+
         # Number of pixels in the width of the piece
         if width < PuzzlePiece.MINIMUM_WIDTH:
             raise ValueError("Specified width is less than the minimum width of %d" % {PuzzlePiece.MINIMUM_WIDTH})
@@ -68,7 +87,8 @@ class PuzzlePiece:
 
 
     def _get_unrotated_coordinates(self, rotated_x, rotated_y):
-        """
+        """X-Y Coordinate **Un-**Rotator
+
         For a given puzzle piece with its own rotation and width and already
         rotated x/y coordinates, this function calculates unrotated x/y coordinates.
 
@@ -76,10 +96,12 @@ class PuzzlePiece:
         Hence, we need to rotate rotated x/y coordinates into their unrotated
         equivalents.
 
-        :param rotated_x: int An already rotated x coordinate
-        :param rotated_y: int An already rotated y coordinate
+        Args:
+            rotated_x (int): An already rotated x coordinate
+            rotated_y (int): An already rotated y coordinate
 
-        :return: Tuple in the format (unrotated_x, unrotated_y)
+        Returns:
+            (int, int): Tuple in the format (unrotated_x, unrotated_y)
 
         """
 
@@ -103,16 +125,20 @@ class PuzzlePiece:
         return unrotated_x, unrotated_y
 
     def _get_rotated_coordinates(self, unrotated_x, unrotated_y, rotation=None):
-        """
+        """ XY Coordinator **Rotator**
+
         Given a specified puzzle piece with its own rotation and width,
         this function calculates rotated x and y values.  This keeps the
         object data unchanged during a rotation.
 
-        :param unrotated_x:   x coordinate to rotate
-        :param unrotated_y:   y coordinate to rotate
-        :param rotation:      Number of degrees to rotate.  Uses Rotation enum class.  If no rotation is specied, uses
-            the specified object's rotation.
-        :return:    Tuple in format (rotated_x, rotated_y)
+        Args:
+            unrotated_x (int): X coordinate to rotate
+            unrotated_y (int): Y coordinate to rotate
+            rotation (Rotation): Number of degrees to rotate.  Uses Rotation enum class.  If no rotation is
+                specified, then the function the specified object's rotation.
+
+        Returns:
+            (int, int): Tuple of rotated XY coordinates in the format (rotated_x, rotated_y)
 
         """
 
@@ -138,19 +164,27 @@ class PuzzlePiece:
     def get_image(self):
         """
         Gets the image for a particular piece.  It does appropriately
-        rotate the image.
-        :return: Piece's image with appropriate rotation
+
+        Returns:
+            (Image): Piece's image with appropriate rotation
+
         """
         return self._pixels.rotate(self._rotation.value)
 
     def putpixel(self, x, y, pixel):
-        """
-        Update's an image's pixel value.
-        :param x:       Pixel's x coordinate
-        :param y:       Pixel's y coordinate
-        :param pixel:   New pixel value.  A Tuple in the format (Red, Green, Blue)
-        """
+        """Pixel Updater
 
+        Update's an image's pixel value.
+
+        Args:
+            x (int):  Pixel's x coordinate
+            y (int):  Pixel's y coordinate
+            pixel: New pixel value.  A Tuple in the format (Red, Green, Blue)
+
+        Raises:
+            ValueError: x and y must be between 0 and (puzzle piece width - 1)
+
+        """
         if x >= self._width:
             raise ValueError("Pixel's \"x\" coordinate must be between 0 and width - 1")
         if y >= self._width:
@@ -162,11 +196,20 @@ class PuzzlePiece:
         self._pixels.putpixel((unrotated_x, unrotated_y), pixel)
 
     def getpixel(self, x, y):
-        """
-        Get a pixel from a puzzle piece.
-        :param x: int   X coordinate for the pixel to get
-        :param y: int   Y coordinate for the pixel to get
-        :return:        Pixel at the piece's specified pixel.
+        """Pixel Accessor
+
+        Gets a pixel from a puzzle piece.
+
+        Args:
+            x (int): X coordinate for the pixel to get
+            y (int): Y coordinate for the pixel to get
+
+        Returns:
+            Pixel at the piece's specified pixel.
+
+        Raises:
+            ValueError: x and y must be between 0 and (puzzle piece width - 1)
+
         """
         if x >= self._width:
             raise ValueError("Pixel's \"x\" coordinate must be between 0 and width - 1")
@@ -176,10 +219,13 @@ class PuzzlePiece:
         return self._pixels.getpixel((x, y))
 
     def set_rotation(self, rotation):
-        """
+        """Piece Rotation Modifier
+
         Sets the puzzle piece's rotation.
-        :type rotation: Rotation
-        :param rotation: The rotation of the specified puzzle piece.
+
+        Args:
+            rotation (Rotation): The rotation of the specified puzzle piece.
+
         """
         if rotation != Rotation.degree_0:
             PuzzlePiece.assert_rotation_enabled()
@@ -191,22 +237,36 @@ class PuzzlePiece:
 
     @staticmethod
     def assert_rotation_enabled():
+        """Illegal Rotation Checker
+
+        Checks if there is an attempt to rotate a puzzle piece while piece rotation is disabled.
+
+        Raises:
+            AttributeError: Variable 'rotation_enabled' is set to false.
+
+        """
         if not PuzzlePiece.rotation_enabled:
             raise AttributeError("Cannot set rotation.  Rotation is disabled for puzzle pieces.")
 
     def get_rotation(self):
-        """
-        Returns the puzzle piece's rotation.
-        :return: Rotation Puzzle piece's rotation
-        """
+        """Puzzle Piece Rotation Accessor
 
+        Get's a puzzle piece's rotation setting.  In most cases, a user should not need to call this
+        function.  Once 'set_rotation' is called, the return X-Y coordinates are returned
+        rotated.
+
+        Returns:
+            Rotation: Puzzle piece's rotation
+
+        """
         return self._rotation
 
     def randomize_rotation(self):
-        """
-        Randomly sets the rotation of a piece.
-        """
+        """Puzzle Piece Rotation Randomizer
 
+        Randomly sets the puzzle piece's rotation.
+
+        """
         PuzzlePiece.assert_rotation_enabled()
         # Get the list of rotations
         all_rotations = Rotation.get_all_rotations()
@@ -216,9 +276,12 @@ class PuzzlePiece:
 
 
     def get_width(self):
-        """
-        Gets the width of the puzzle piece in pixels
-        :return: Number of pixels wide the image is
-        """
+        """Puzzle Piece Width Accessor
 
+        Gets the width of the puzzle piece in pixels
+
+        Returns:
+            int: The width in number of pixels of the puzzle.
+
+        """
         return self._width
