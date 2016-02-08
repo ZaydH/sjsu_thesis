@@ -14,6 +14,8 @@ brew install little-cms2
 pip install Pillow --upgrade
 pip install enum34 --upgrade
 pip install docutils --upgrade
+pip install sphinx --upgrade
 
 # For more information, on install Pillow, see below:
 # https://pillow.readthedocs.org/en/latest/installation.html
+# Windows equivalent of the pip install command is "python -m pip install -U enum34"
