@@ -155,7 +155,8 @@ class Puzzle:
             x_start = x_offset + x * self._piece_width
             for y in range(0, y_piece_count):
                 y_start = y_offset + y * self._piece_width
-                self._pieces[x][y] = PuzzlePiece(self._piece_width, self._pil_img, x_start, y_start)
+                actual_location = (x, y)  # Location of the piece in the original board.
+                self._pieces[x][y] = PuzzlePiece(self._piece_width, actual_location, self._pil_img, x_start, y_start)
 
     def shuffle_pieces(self):
         """Puzzle Piece Shuffler
@@ -253,7 +254,7 @@ class Puzzle:
         pixels.save(filename)
 
     def _transpose_image(self):
-        """ Image Transposertr
+        """ Image Transposer
 
         Transposes an image by doing a pixel by pixel copy of the puzzle's image.  It then outputs the image.
 

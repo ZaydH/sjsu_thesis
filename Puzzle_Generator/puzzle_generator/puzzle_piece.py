@@ -39,6 +39,12 @@ class Rotation(Enum):
             Rotation.degree_270)
 
 
+class PieceSide(Enum):
+    top_side = 0
+    right_side = 1
+    bottom_side = 2
+    left_side = 3
+
 class PuzzlePiece:
 
     # Minimum width for a puzzle piece.
@@ -47,15 +53,18 @@ class PuzzlePiece:
     # May want to disable rotation so have a check for that.
     rotation_enabled = True
 
-    def __init__(self, width, image=None, start_x=None, start_y=None):
+    def __init__(self, width=None, actual_location=None, image=None, start_x=None, start_y=None):
         """
         Constructor of an empty puzzle piece object
 
         Args:
-            width (int):
+            width (int): The width (and length) of the puzzle piece in number of pixels.
+            actual_location [int, int]: Tuple of two ints showing the actual location of the image in the original image.
             image (Optional[Image]): The second parameter. Defaults to None.
-            start_x (Optional[int]): Number of pieces along the image **widtgh**. Defaults to None.
-            start_y (Optional[int]): Number of pieces along the image **height**. Defaults to None.
+            start_x (Optional[int]): Number of pieces along the image **width**. Defaults to None.  Used to extract
+                                     the pixels from the passed in image.
+            start_y (Optional[int]): Number of pieces along the image **height**. Defaults to None.  Used to extract
+                                     the pixels from the passed in image.
 
         Returns:
             New puzzle piece
@@ -66,22 +75,34 @@ class PuzzlePiece:
         if width < PuzzlePiece.MINIMUM_WIDTH:
             raise ValueError("Specified width is less than the minimum width of %d" % {PuzzlePiece.MINIMUM_WIDTH})
         self._width = width
+
         # Create the matrix for storing the pixel information
         # noinspection PyUnusedLocal
         self._pixels = Image.new("RGB", (width, width), "white")
-        if image is None and (start_x is not None or start_y is not None):
-            raise ValueError("Argument image cannot be null if argument start_x or start_y are specified")
-        if image is not None and (start_x is None or start_y is None):
-            raise ValueError("If argument image is specified, neither start_x or start_y can be None")
+        if image is None and (actual_location is not None or start_x is not None or start_y is not None):
+            raise ValueError("Argument image cannot be null if argument actual_location, start_x, or start_y " +
+                             "are specified")
+        if image is not None and (actual_location is  None or start_x is None or start_y is None):
+            raise ValueError("If argument image is specified, neither actual_location, start_x, or start_y can be None")
         # If a valid pixel array is passed, then copy the contents to the piece.
         if image is not None:
             # Extract a subimage
+            self._actual_location = actual_location
             box = (start_x, start_y, start_x + width, start_y + width)
             self._pixels = image.crop(box)
             assert(self._pixels.size == (width, width))
+        else:
+            self._actual_location = None
+
+        # Add information for when this piece appears in the puzzle
+        self._assigned_location = None
+        # Initialize empty neighbor list.
+        # noinspection PyUnusedLocal
+        self._assigned_sides = [None for x in range(PieceSide.top_side.value,
+                                                        PieceSide.left_side.value + 1)]
 
         # Set a random rotation
-        self._rotation = None # Create a reference to prevent compiler warnings
+        self._rotation = None  # Create a reference to prevent compiler warnings
         self.set_rotation(Rotation.degree_0)
 
 
@@ -285,3 +306,32 @@ class PuzzlePiece:
 
         """
         return self._width
+
+
+def calculate_pieces_edge_distance(piece1, piece1_edge, piece2, piece2_edge):
+    pass
+
+
+def get_edge_starting_and_ending_x_and_y(width, piece_side):
+    # Handle the dimension that is changing first.
+    # For a top to bottom pair, it is the x dimension
+    if piece_side == PieceSide.top_side or piece_side == PieceSide.bottom_side:
+        starting_x = 0
+        ending_x = width - 1
+    # For a left to right pair, it is the y dimension
+    else:
+        starting_y = 0
+        ending_y = width - 1
+
+    # Handle the dimension for each side that is unchanging
+    if piece_side == PieceSide.top_side:
+        starting_y = ending_y = 0
+    elif piece_side == PieceSide.bottom_side:
+        starting_y = ending_y = width - 1
+    elif piece_side == PieceSide.right_side:
+        starting_x = ending_x = width - 1
+    elif piece_side == PieceSide.left_side:
+        starting_x = ending_x = 0
+
+    # Return the start and end x/y coordinates
+    return [(starting_x, starting_y), (ending_x, ending_y)]
