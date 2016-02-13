@@ -12,7 +12,7 @@ from puzzle_piece import PuzzlePiece
 import pickle
 import random
 
-class Puzzle:
+class Puzzle(object):
     """
     """
 
@@ -237,7 +237,7 @@ class Puzzle:
 
                 # Paste the image from the piece.
                 box = (start_x, start_y, start_x + self._piece_width, start_y + self._piece_width)
-                piece_image = self._pieces[x_piece][y_piece].get_image()
+                piece_image = self._pieces[x_piece][y_piece].image()
                 assert(piece_image.size == (self._piece_width, self._piece_width))  # Verify the size
                 pixels.paste(piece_image, box)
 
@@ -269,7 +269,8 @@ class Puzzle:
         # Output the image file.
         pixels.save(filename)
 
-    def get_pieces(self):
+    @property
+    def pieces(self):
         return self._pieces
 
     def _transpose_image(self):

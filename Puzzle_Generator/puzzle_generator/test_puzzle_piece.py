@@ -10,9 +10,9 @@ class PuzzlePieceTestCase(unittest.TestCase):
         """
         Checks whether rotation of a puzzle piece works correctly
         """
-        width = 13
+        width = PuzzlePiece.MINIMUM_WIDTH + 5
         piece = PuzzlePiece(width)
-        piece.set_rotation(Rotation.degree_90)
+        piece.rotation = Rotation.degree_90
         # Rotate upper left piece
         self.assertTrue(piece._get_rotated_coordinates(0, 0) == (width - 1, 0))
         # Rotate lower left piece
@@ -20,7 +20,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         # Rotate piece to the right of the top left
         self.assertTrue(piece._get_rotated_coordinates(1, 0) == (width - 1, 1))
 
-        piece.set_rotation(Rotation.degree_180)
+        piece.rotation = Rotation.degree_180
         # Rotate upper left piece
         self.assertTrue(piece._get_rotated_coordinates(0, 0) == (width - 1, width - 1))
         # Rotate lower left piece
@@ -33,7 +33,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         self.assertTrue(width % 2 == 1)
         piece = PuzzlePiece(width)
         for rotation in Rotation.get_all_rotations():
-            piece.set_rotation(rotation)
+            piece.rotation = rotation
             # Since center of the puzzle, rotation should have no effect
             self.assertTrue(piece._get_rotated_coordinates(width // 2, width // 2) == (width // 2, width // 2))
 
@@ -47,7 +47,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
 
         width = 20
         piece = PuzzlePiece(width)
-        piece.set_rotation(Rotation.degree_180)
+        piece.rotation = Rotation.degree_180
         self.assertTrue(piece._get_unrotated_coordinates(width - 1, width - 1) == (0, 0))
 
         # Test  a set of widths
@@ -57,7 +57,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
             piece = PuzzlePiece(width)
             # Go through all the rotations
             for rotation in Rotation.get_all_rotations():
-                piece.set_rotation(rotation)
+                piece.rotation = rotation
                 # Test all possible x coordinates
                 for x in range(0, width):
                     # Test all possible y coordinates
@@ -72,6 +72,23 @@ class PuzzlePieceTestCase(unittest.TestCase):
                             print "unrotated_x = %d, unrotated_y = %d" % (unrotated_x, unrotated_y)
                         # Check the calculated value.
                         self.assertTrue((x, y) == (unrotated_x, unrotated_y))
+
+
+    def test_piece_neighbor(self):
+
+        # Define the puzzle piece
+        piece = PuzzlePiece(PuzzlePiece.MINIMUM_WIDTH)
+        coordinate = (PuzzlePiece.MINIMUM_WIDTH // 2, PuzzlePiece.MINIMUM_WIDTH // 2)
+        piece.assigned_location = coordinate
+
+        # Define the test conditions
+        sides = PieceSide.get_all_sides()
+        offset = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+        # Iterate through the sides and offsets and verify the neighbor is correct.
+        for i in range(0, len(sides)):
+            neighbor_coord = piece.get_neighbor_coordinate(sides[i])
+            self.assertTrue(neighbor_coord == (coordinate[0] + offset[i][0], coordinate[1] + offset[i][1]))
+
 
 
     def test_piece_edge_starting_and_ending_coordinates(self):

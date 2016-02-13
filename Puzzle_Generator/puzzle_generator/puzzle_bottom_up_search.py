@@ -1,11 +1,15 @@
 from puzzle_piece import PuzzlePiece
+from puzzle_piece import Rotation
+from puzzle_piece import PieceSide
 from puzzle import Puzzle
 from random import shuffle
 
 def perform_bottom_up_search(puzzle):
 
-
-    grid_length = max(puzzle._x_piece_count, puzzle._y_piece_count)
+    # Get the piece breakdown information
+    x_count = puzzle._x_piece_count
+    y_count = puzzle._y_piece_count
+    grid_length = max(x_count, y_count)
 
     # Build an array that is larger than the puzzle as it may build in any direction around the board
     # noinspection PyUnusedLocal
@@ -15,7 +19,7 @@ def perform_bottom_up_search(puzzle):
 
 
     # Get the puzzle's pieces and transfer them to a frontier set.
-    pieces = puzzle.get_pieces()
+    pieces = puzzle.pieces()
     unexplored_set = [pieces[x][y] for x in range(0, x_count) for y in range(0, y_count)]
     shuffle(unexplored_set)
 
@@ -27,31 +31,37 @@ def perform_bottom_up_search(puzzle):
 
     # Iterate until all pieces have been explored.
     while len(unexplored_set) > 0:
-        (next_piece, coordinate, rotation) = select_next_piece(unexplored_set, frontier_set, top_left, bottom_right,
-                                                               x_count, y_count)
+
+        # Get the next piece to assign.
+        next_piece = select_next_piece(unexplored_set, frontier_set, top_left, bottom_right, x_count, y_count)
 
         # Remove the piece from the unexplored set and place it in the board
         unexplored_set.remove(next_piece)
-        solution_grid[coordinate[0]][coordinate[1]] = next_piece
-        frontier_set.update(coordinate, next_piece) # Assume piece is in the frontier. Checked below.
+        next_piece_coord = next_piece.assigned_location
+        solution_grid[next_piece_coord[0]][next_piece_coord[1]] = next_piece
 
-        # Update the edges of the board.
-        top_left = (min(coordinate[0], top_left[0]), min(coordinate[1], top_left[1]))
-        bottom_right = (max(coordinate[0], bottom_right[0]), max(coordinate[1], bottom_right[1]))
+        # Assume piece is in the frontier. Checked below.
+        frontier_set.update(next_piece_coord, next_piece)
+
+        # Update the board edge coordinates.
+        top_left = (min(next_piece_coord[0], top_left[0]), min(next_piece_coord[1], top_left[1]))
+        bottom_right = (max(next_piece_coord[0], bottom_right[0]), max(next_piece_coord[1], bottom_right[1]))
 
         # Check the pieces neighbors and see if they can be removed from the frontier set.
-        # If they are and have no available neighbors, then remove it.
-        neighbor_coords = [coordinate,
-                           (coordinate[0] - 1, coordinate[1]), (coordinate[0] + 1, coordinate[1]),  # X Neighbors
-                           (coordinate[0], coordinate[1] - 1), (coordinate[0], coordinate[1] + 1)]  # Y Neighbors
+        # If they are and have no available neighbors, then remove the piece from the frontier.
+        neighbor_coords = [next_piece_coord,
+                           (next_piece_coord[0] - 1, next_piece_coord[1]),  # Left Neighbor
+                           (next_piece_coord[0] + 1, next_piece_coord[1]),  # Right Neighbor
+                           (next_piece_coord[0], next_piece_coord[1] - 1),  # Top neighbor
+                           (next_piece_coord[0], next_piece_coord[1] + 1)]  # Bottom Neighbor
         for coord in neighbor_coords:
             neighbor = frontier_set.get(coord)
             if neighbor is not None:
-                available_neighbors = determine_available_neighbors(coordinate, solution_grid,
+                available_neighbors = determine_available_neighbors(coord, solution_grid,
                                                                     top_left, bottom_right, x_count, y_count)
-                # If it has available neighbors add it to the frontier.
+                # If it has no neighbors delete from the frontier
                 if(len(available_neighbors) == 0):
-                    frontier_set.update(coordinate, next_piece)
+                    frontier_set.pop(coord)
 
     # Make the puzzle_solution
     solution_puzzle = Puzzle()
@@ -62,6 +72,11 @@ def determine_available_neighbors(piece_coord, solution_grid, top_left, bottom_r
     pass
 
 def select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bottom_right, x_count, y_count):
+
+    min_distance = sys.maxint
+    best_piece = None
+    best_piece_coord = None
+    best_piece_rotation = None
 
     for frontier_coord in frontier_set.keys():
         available_neighbors = determine_available_neighbors(frontier_coord, solution_grid, top_left, bottom_right,
@@ -74,11 +89,26 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bot
         # Iterate through the unexplored pieces.
         for new_piece in unexplored_set:
             for rotation in Rotation.get_all_rotations():
-                # Set the rotation of a piece.
-                new_piece.set_rotation(new_piece)
-                for neighbor_edge in available_neighbors:
+                # Set the rotation of the piece.
+                new_piece.rotation = rotation
+
+                # Go through all available edges for the frontier pin.
+                for frontier_edge in available_neighbors:
+                    other_edge = frontier_edge.get_paired_edge()
+
                     # Calculate the inter-piece distance.
-                    piece_distance = PuzzlePiece.get(frontier_piece, , new_piece, )
+                    piece_distance = PuzzlePiece.get(frontier_piece, frontier_edge, new_piece, other_edge)
+                    if best_piece is None or piece_distance < min_distance:
+                        best_piece = new_piece
+                        best_piece_coord = frontier_piece.get_neighbor_coordinate(frontier_edge)
+                        best_piece_rotation = rotation
+                        min_distance = piece_distance
+
+    # Set the best piece's assigned location and rotation
+    best_piece.assigned_location = best_piece_coord
+    best_piece.rotation = best_piece_rotation
+    # Return the best piece
+    return best_piece
 
 def make_puzzle_solution(solution_grid, top_left, bottom_right, x_count, y_count):
     # Build the output_grid

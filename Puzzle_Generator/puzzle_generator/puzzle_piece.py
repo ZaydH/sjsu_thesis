@@ -45,7 +45,44 @@ class PieceSide(Enum):
     bottom_side = 2
     left_side = 3
 
-class PuzzlePiece:
+    @staticmethod
+    def get_all_sides():
+        """
+        Gets all possible sides of a puzzle piece.
+
+        Returns ([PieceSide]): An list of puzzle pieces sides in the order: [top_side, right_side, bottom_side,
+        left_side].  Hence, the sides are listed clockwise starting from the top side.
+
+        """
+        return (PieceSide.top_side, PieceSide.right_side, PieceSide.bottom_side, PieceSide.left_side)
+
+    def get_paired_edge(self):
+        """
+        For a given side of a piece, this function returns the corresponding
+        piece of the neighbor that would be on that side.
+
+        Returns: Corresponding edge for the neighboring piece that would be
+        on the side of this piece.  For example, the right side of this piece
+        is adjacent to the left side of neighbor and vice versa.
+
+        """
+        if self == PieceSide.top_side:
+            return PieceSide.bottom_side
+
+        elif self == PieceSide.bottom_side:
+            return PieceSide.top_side
+
+        elif self == PieceSide.left_side:
+            return PieceSide.right_side
+
+        elif self == PieceSide.right_side:
+            return PieceSide.bottom_side
+
+        else:
+            assert False
+
+
+class PuzzlePiece(object):
 
     # Minimum width for a puzzle piece.
     MINIMUM_WIDTH = 10
@@ -99,11 +136,11 @@ class PuzzlePiece:
         # Initialize empty neighbor list.
         # noinspection PyUnusedLocal
         self._assigned_sides = [None for x in range(PieceSide.top_side.value,
-                                                        PieceSide.left_side.value + 1)]
+                                                    PieceSide.left_side.value + 1)]
 
         # Set a random rotation
         self._rotation = None  # Create a reference to prevent compiler warnings
-        self.set_rotation(Rotation.degree_0)
+        self.rotation = Rotation.degree_0
 
 
 
@@ -174,7 +211,7 @@ class PuzzlePiece:
         for i in range(0, numb_90_degree_rotations):
 
             # Calculate the rotated x and y
-            rotated_x = self.get_width() - 1 - unrotated_y
+            rotated_x = self.width - 1 - unrotated_y
             rotated_y = unrotated_x
             # update the unrotated x/y values in case need to rotate again
             (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
@@ -182,7 +219,23 @@ class PuzzlePiece:
         # Return the rotated x and y coordinates
         return rotated_x, rotated_y
 
-    def get_image(self):
+    @property
+    def assigned_location(self):
+        return self._assigned_location
+
+    @assigned_location.setter
+    def assigned_location(self, assigned_location):
+        """
+        Updates the assigned location of a piece in the puzzle.
+
+        Args:
+            assigned_location ([int, int]): Location where the piece is assigned in the X/Y grid.
+        """
+        assert len(assigned_location) == 2
+        self._assigned_location = assigned_location
+
+    @property
+    def image(self):
         """
         Gets the image for a particular piece.  It does appropriately
 
@@ -191,6 +244,37 @@ class PuzzlePiece:
 
         """
         return self._pixels.rotate(self._rotation.value)
+
+    def get_neighbor_coordinate(self, piece_side):
+        """
+        For the implicit piece, this function returns the x/y coordinates of the neighbor piece on the specified
+        side.
+
+        Args:
+            piece_side (PieceSide): Side of the piece where the neighbor
+                                    is located.
+
+        Returns (int, int): Tuple in the form of (x_coordinate, y_coordinate) for the neighbor piece.
+
+        """
+
+        # Verify the piece has an actual location.
+        assert self._assigned_location is not None
+        assigned_x, assigned_y = self._assigned_location
+
+        # Depending on the piece side, select the appropriate piece
+        if piece_side == PieceSide.top_side:
+            assert assigned_y > 0 # Verify not off the board
+            return (assigned_x, assigned_y - 1)
+        elif piece_side == PieceSide.bottom_side:
+            return (assigned_x, assigned_y + 1)
+        elif piece_side == PieceSide.left_side:
+            assert assigned_x > 0 # Verify not off the board
+            return (assigned_x - 1, assigned_y)
+        elif piece_side == PieceSide.right_side:
+            return (assigned_x + 1, assigned_y)
+        else:
+            assert False
 
     def putpixel(self, x, y, pixel):
         """Pixel Updater
@@ -239,7 +323,22 @@ class PuzzlePiece:
 
         return self._pixels.getpixel((x, y))
 
-    def set_rotation(self, rotation):
+    @property
+    def rotation(self):
+        """Puzzle Piece Rotation Accessor
+
+        Get's a puzzle piece's rotation setting.  In most cases, a user should not need to call this
+        function.  Once 'rotation' is called, the return X-Y coordinates are returned
+        rotated.
+
+        Returns:
+            Rotation: Puzzle piece's rotation
+
+        """
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, rotation):
         """Piece Rotation Modifier
 
         Sets the puzzle piece's rotation.
@@ -256,6 +355,7 @@ class PuzzlePiece:
 
         self._rotation = rotation
 
+
     @staticmethod
     def assert_rotation_enabled():
         """Illegal Rotation Checker
@@ -269,18 +369,6 @@ class PuzzlePiece:
         if not PuzzlePiece.rotation_enabled:
             raise AttributeError("Cannot set rotation.  Rotation is disabled for puzzle pieces.")
 
-    def get_rotation(self):
-        """Puzzle Piece Rotation Accessor
-
-        Get's a puzzle piece's rotation setting.  In most cases, a user should not need to call this
-        function.  Once 'set_rotation' is called, the return X-Y coordinates are returned
-        rotated.
-
-        Returns:
-            Rotation: Puzzle piece's rotation
-
-        """
-        return self._rotation
 
     def randomize_rotation(self):
         """Puzzle Piece Rotation Randomizer
@@ -293,11 +381,10 @@ class PuzzlePiece:
         all_rotations = Rotation.get_all_rotations()
         # Set the rotation to a randomly selected value
         i = random.randint(0, len(all_rotations) - 1)
-        self.set_rotation(all_rotations[i])
+        self.rotation(all_rotations[i])
 
-
-
-    def get_width(self):
+    @property
+    def width(self):
         """Puzzle Piece Width Accessor
 
         Gets the width of the puzzle piece in pixels
