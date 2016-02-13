@@ -296,6 +296,7 @@ class PuzzlePiece:
         self.set_rotation(all_rotations[i])
 
 
+
     def get_width(self):
         """Puzzle Piece Width Accessor
 

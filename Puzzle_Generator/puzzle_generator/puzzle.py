@@ -30,6 +30,22 @@ class Puzzle:
     #     obj = pickle.load(f)
     #     f.close
 
+    @staticmethod
+    def make_puzzle_from_pieces(pieces):
+        output_puzzle = Puzzle()
+        # Build the piece counts
+        output_puzzle._x_piece_count = len(pieces)
+        output_puzzle._y_piece_count = len(pieces[0])
+
+        # Store the piece width
+        (output_puzzle._piece_width, _) = pieces[0][0].size
+
+        # Store the list of pieces.
+        output_puzzle._pieces = pieces
+
+        return output_puzzle
+
+
     def pickle_export(self, pickle_filename):
         """Puzzle Pickle Exporter
 
@@ -46,7 +62,7 @@ class Puzzle:
         except:
             raise IOError("Unable to write the pickle file to location \"%s\"." % (pickle_filename))
 
-    def __init__(self,image_filename=None):
+    def __init__(self, image_filename=None):
         """ Puzzle Constructor
 
         Constructor that will optionally load an image into the puzzle as well.
@@ -97,7 +113,7 @@ class Puzzle:
         # Only display bitmap images in the browser.
         file_options = {}
         file_options['defaultextension'] = '.bmp'
-        file_options['filetypes'] = [ ('Bitmap Files', '.bmp') ]
+        file_options['filetypes'] = [('Bitmap Files', '.bmp')]
         file_options['title'] = 'Image File Browser'
         # Store the selected file name
         self._filename = tkFileDialog.askopenfilename(**file_options) # **file_option mean keyword based arguments
@@ -252,6 +268,9 @@ class Puzzle:
 
         # Output the image file.
         pixels.save(filename)
+
+    def get_pieces(self):
+        return self._pieces
 
     def _transpose_image(self):
         """ Image Transposer
