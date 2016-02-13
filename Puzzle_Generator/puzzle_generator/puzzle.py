@@ -12,6 +12,7 @@ from puzzle_piece import PuzzlePiece
 import pickle
 import random
 
+
 class Puzzle(object):
     """
     """
@@ -22,7 +23,6 @@ class Puzzle(object):
     export_with_border = False
     border_width = 3
     border_outer_stripe_width = 1
-
 
     # @staticmethod
     # def pickle_import(obj, filename):
@@ -45,7 +45,6 @@ class Puzzle(object):
 
         return output_puzzle
 
-
     def pickle_export(self, pickle_filename):
         """Puzzle Pickle Exporter
 
@@ -60,7 +59,7 @@ class Puzzle(object):
             pickle.dump(self, f)
             f.close()
         except:
-            raise IOError("Unable to write the pickle file to location \"%s\"." % (pickle_filename))
+            raise IOError("Unable to write the pickle file to location \"%s\"." % pickle_filename)
 
     def __init__(self, image_filename=None):
         """ Puzzle Constructor
@@ -85,14 +84,14 @@ class Puzzle(object):
         self._piece_width = 0
         self._x_piece_count = 0
         self._y_piece_count = 0
-        if(image_filename is not None):
+        if image_filename is not None:
             self.load_puzzle_image(image_filename)
 
     def load_puzzle_image(self, filename=None):
         """Puzzle Image Loader
 
         Sets the puzzle image file.  If the user specifies a puzzle image filename, then the function will load it.
-        If no image file name is speficified, the functiuon will open a file dialog box for the user to explore
+        If no image file name is specified, the function will open a file dialog box for the user to explore
         to the desired file.
 
         Args:
@@ -109,16 +108,13 @@ class Puzzle(object):
         # If no filename is specified, then open a file dialog.
         root = Tkinter.Tk()
         root.wm_title("Image Browser")
-        w = Tkinter.Label(root, text="Please choose a .pages file to convert.")
+        Tkinter.Label(root, text="Please choose a .pages file to convert.")
         # Only display bitmap images in the browser.
-        file_options = {}
-        file_options['defaultextension'] = '.bmp'
-        file_options['filetypes'] = [('Bitmap Files', '.bmp')]
-        file_options['title'] = 'Image File Browser'
+        file_options = {'defaultextension': '.bmp', 'filetypes': [('Bitmap Files', '.bmp')],
+                        'title': 'Image File Browser'}
         # Store the selected file name
-        self._filename = tkFileDialog.askopenfilename(**file_options) # **file_option mean keyword based arguments
+        self._filename = tkFileDialog.askopenfilename(**file_options)  # **file_option mean keyword based arguments
         self._open_image()
-
 
     def _open_image(self):
         """
@@ -129,7 +125,7 @@ class Puzzle(object):
             self._pil_img = Image.open(self._filename)
             self._image_width, self._image_height = self._pil_img.size
         except:
-            raise IOError("Unable to load the image at the specified location \"%s\"." % (self._filename))
+            raise IOError("Unable to load the image at the specified location \"%s\"." % self._filename)
 
     def convert_to_pieces(self, x_piece_count, y_piece_count):
         """Puzzle Generator
@@ -160,7 +156,7 @@ class Puzzle(object):
         # Calculate ignored pixel count for debugging purposes.
         ignored_pixels = numb_pixels - (self._piece_width * self._piece_width * numb_pieces)
         if Puzzle.DEFAULT_IMAGE_PATH and ignored_pixels > 0:
-            print "NOTE: %d pixels were not included in the puzzle." % (ignored_pixels)
+            print "NOTE: %d pixels were not included in the puzzle." % ignored_pixels
 
         # Only take the center of the images and exclude the ignored pixels
         x_offset = (self._image_width - self._x_piece_count * self._piece_width) // 2
@@ -273,6 +269,14 @@ class Puzzle(object):
     def pieces(self):
         return self._pieces
 
+    @property
+    def x_piece_count(self):
+        return self._x_piece_count
+
+    @property
+    def y_piece_count(self):
+        return self._y_piece_count
+
     def _transpose_image(self):
         """ Image Transposer
 
@@ -303,15 +307,15 @@ if __name__ == '__main__':
     puzzles = [("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:
         # Extract the information on the images
-        file = puzzle_info[0]
+        img_filename = puzzle_info[0]
         (x_count, y_count) = puzzle_info[1]
         # Build a test puzzle
-        test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + file)
-        # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
+        test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + img_filename)
+        # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + img_filename )
         # test_puzzle.open_image()
         test_puzzle.convert_to_pieces(x_count, y_count)
         test_puzzle.shuffle_pieces()
-        test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + file)
+        test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
 
     # filename = 'test_puzzle.pk'
     # # Puzzle.pickle_export(test_puzzle, filename)

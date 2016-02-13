@@ -89,8 +89,6 @@ class PuzzlePieceTestCase(unittest.TestCase):
             neighbor_coord = piece.get_neighbor_coordinate(sides[i])
             self.assertTrue(neighbor_coord == (coordinate[0] + offset[i][0], coordinate[1] + offset[i][1]))
 
-
-
     def test_piece_edge_starting_and_ending_coordinates(self):
 
         # Check top edge x and y

@@ -1,6 +1,5 @@
-from puzzle_piece import PuzzlePiece
-from puzzle_piece import Rotation
-from puzzle_piece import PieceSide
+import sys
+from puzzle_piece import PuzzlePiece, Rotation, PieceSide, calculate_pieces_edge_distance
 from puzzle import Puzzle
 from random import shuffle
 
@@ -15,7 +14,7 @@ def perform_bottom_up_search(puzzle):
     # noinspection PyUnusedLocal
     solution_grid = [[None for y in range(0, 2 * grid_length + 1)] for x in range(0, 2 * grid_length + 1)]
     # Initialize the board information
-    top__left = bottom_right = center = (grid_length, grid_length)
+    top_left = bottom_right = center = (grid_length, grid_length)
 
 
     # Get the puzzle's pieces and transfer them to a frontier set.
@@ -33,7 +32,8 @@ def perform_bottom_up_search(puzzle):
     while len(unexplored_set) > 0:
 
         # Get the next piece to assign.
-        next_piece = select_next_piece(unexplored_set, frontier_set, top_left, bottom_right, x_count, y_count)
+        next_piece = select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bottom_right,
+                                       x_count, y_count)
 
         # Remove the piece from the unexplored set and place it in the board
         unexplored_set.remove(next_piece)
@@ -57,7 +57,7 @@ def perform_bottom_up_search(puzzle):
         for coord in neighbor_coords:
             neighbor = frontier_set.get(coord)
             if neighbor is not None:
-                available_neighbors = determine_available_neighbors(coord, solution_grid,
+                available_neighbors = determine_available_neighbors(neighbor, solution_grid,
                                                                     top_left, bottom_right, x_count, y_count)
                 # If it has no neighbors delete from the frontier
                 if(len(available_neighbors) == 0):
@@ -68,8 +68,67 @@ def perform_bottom_up_search(puzzle):
     #solution_puzzle = make_puzzle_solution(solution_grid, top_left, bottom_right, x_count, y_count)
     solution_puzzle.export_puzzle("solution.bmp")
 
-def determine_available_neighbors(piece_coord, solution_grid, top_left, bottom_right, x_count, y_count):
-    pass
+def determine_available_neighbors(piece, solution_grid, top_left, bottom_right, x_count, y_count):
+    """
+
+    Args:
+        piece (PuzzlePiece):
+        solution_grid ([PuzzlePiece]):
+        top_left ([int, int]):
+        bottom_right ([int, int]):
+        x_count (int):
+        y_count (int):
+
+    Returns ([PieceSide]): The sides of the specified Puzzle Piece where new pieces could be
+                           placed.
+
+    """
+    # Verify the piece is assigned.
+    assert piece.assigned_location is not None
+
+    # Get the current board height
+    board_width = bottom_right[0] - top_left[0] + 1
+    board_height = bottom_right[1] - top_left[1] + 1
+    # Get the longer and shorter sides of the puzzle
+    min_xy_count = min(x_count, y_count)
+    max_xy_count = max(x_count, y_count)
+
+    # Determine whether it is valid to expand the board in either direction.
+    width_expandable = height_expandable = False
+    if board_width < min_xy_count or (board_width > min_xy_count and board_width < max_xy_count)\
+            or (board_width == min_xy_count and board_height <= min_xy_count and board_width < max_xy_count):
+        width_expandable = True
+    if board_height < min_xy_count or (board_height > min_xy_count and board_height < max_xy_count)\
+        or (board_height == min_xy_count and board_width <= min_xy_count and board_height < max_xy_count):
+        height_expandable = True
+
+    # Get all of the possible sides of a piece.
+    all_sides = PieceSide.get_all_sides()
+    available_neighbors = []
+    for side in all_sides:
+        # Get the coordinate of the neighbor piece
+        neighbor_coord = piece.get_neighbor_coordinate(side)
+
+        # If the location is already filled, definitely not an available neighbor
+        if solution_grid[neighbor_coord[0]][neighbor_coord[1]] is not None:
+            continue
+
+        # If the piece is within the existing range, then only check if coordinate is open
+        if neighbor_coord[0] >= top_left[0] and neighbor_coord[1] <= bottom_right[1]:
+            available_neighbors.append(side)
+            continue
+
+        # If the board is not expand and not within the existing board side, go to the next side
+        if (side == PieceSide.left_side or side == PieceSide.rightSide) and not width_expandable\
+                or (side == PieceSide.bottom_side or side == PieceSide.top_side) and not height_expandable:
+            continue
+        # Otherwise, add the piece.
+        else:
+            available_neighbors.append(side)
+            continue
+
+    # Return the set of available neighbors.
+    return available_neighbors
 
 def select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bottom_right, x_count, y_count):
 
@@ -79,12 +138,13 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bot
     best_piece_rotation = None
 
     for frontier_coord in frontier_set.keys():
-        available_neighbors = determine_available_neighbors(frontier_coord, solution_grid, top_left, bottom_right,
+        # Get the piece associated with the coordinate
+        frontier_piece = frontier_set.get(frontier_coord)
+        # Get the available neighbors of the frontier piece
+        available_neighbors = determine_available_neighbors(frontier_piece, solution_grid, top_left, bottom_right,
                                                             x_count, y_count)
         # in some rare cases (e.g. edge of board reached, a frontier piece may have no neighbors. If so continue.
         if(len(available_neighbors) == 0): continue
-
-        frontier_piece = frontier_set.get(frontier_coord)
 
         # Iterate through the unexplored pieces.
         for new_piece in unexplored_set:
@@ -97,7 +157,8 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bot
                     other_edge = frontier_edge.get_paired_edge()
 
                     # Calculate the inter-piece distance.
-                    piece_distance = PuzzlePiece.get(frontier_piece, frontier_edge, new_piece, other_edge)
+                    piece_distance = calculate_pieces_edge_distance(frontier_piece, frontier_edge,
+                                                                    new_piece, other_edge)
                     if best_piece is None or piece_distance < min_distance:
                         best_piece = new_piece
                         best_piece_coord = frontier_piece.get_neighbor_coordinate(frontier_edge)
@@ -112,9 +173,10 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, top_left, bot
 
 def make_puzzle_solution(solution_grid, top_left, bottom_right, x_count, y_count):
     # Build the output_grid
-    final_grid = [[None in y in range(0, y_count)] in x in range(0, x_count)]
+    # noinspection PyUnusedLocal
+    final_grid = [[None for y in range(0, y_count)] for x in range(0, x_count)]
     # Check if the board is unrotated
-    if(top_left[0] - bottom_right[0] + 1 == x_count):
+    if(bottom_right[0] - top_left[0] + 1 == x_count):
         for x in range(0, x_count):
             for y in range(0, y_count):
                 final_grid[x][y] = solution_grid[top_left[0] + x][top_left[1] + y]
