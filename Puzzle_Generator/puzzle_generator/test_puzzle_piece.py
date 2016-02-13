@@ -26,7 +26,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         # Rotate lower left piece
         self.assertTrue(piece._get_rotated_coordinates(0, width - 1) == (width - 1, 0))
         # Rotate piece to the right of the top left
-        self.assertTrue(piece._get_rotated_coordinates(1, 0) == (width - 1 -1, width - 1))
+        self.assertTrue(piece._get_rotated_coordinates(1, 0) == (width - 1 - 1, width - 1))
 
         # Test a second width
         width = 15
@@ -72,7 +72,6 @@ class PuzzlePieceTestCase(unittest.TestCase):
                             print "unrotated_x = %d, unrotated_y = %d" % (unrotated_x, unrotated_y)
                         # Check the calculated value.
                         self.assertTrue((x, y) == (unrotated_x, unrotated_y))
-
 
     def test_piece_neighbor(self):
 

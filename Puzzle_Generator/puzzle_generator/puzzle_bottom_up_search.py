@@ -163,7 +163,7 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
 
                 # Go through all available edges for the frontier pin.
                 for frontier_edge in available_neighbors:
-                    other_edge = frontier_edge.get_paired_edge()
+                    other_edge = frontier_edge.paired_edge
 
                     # Calculate the inter-piece distance.
                     piece_distance = calculate_pieces_edge_distance(frontier_piece, frontier_edge,

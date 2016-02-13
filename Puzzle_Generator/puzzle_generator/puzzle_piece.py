@@ -3,11 +3,9 @@
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
 
-from PIL import Image
 from enum import Enum
 import random
 from PIL import Image
-from pickle import dumps, loads
 
 
 class Rotation(Enum):
@@ -35,8 +33,7 @@ class Rotation(Enum):
 
         """
 
-        return (Rotation.degree_0, Rotation.degree_90, Rotation.degree_180,
-            Rotation.degree_270)
+        return Rotation.degree_0, Rotation.degree_90, Rotation.degree_180, Rotation.degree_270
 
 
 class PieceSide(Enum):
@@ -54,9 +51,10 @@ class PieceSide(Enum):
         left_side].  Hence, the sides are listed clockwise starting from the top side.
 
         """
-        return (PieceSide.top_side, PieceSide.right_side, PieceSide.bottom_side, PieceSide.left_side)
+        return PieceSide.top_side, PieceSide.right_side, PieceSide.bottom_side, PieceSide.left_side
 
-    def get_paired_edge(self):
+    @property
+    def paired_edge(self):
         """
         For a given side of a piece, this function returns the corresponding
         piece of the neighbor that would be on that side.
@@ -96,7 +94,8 @@ class PuzzlePiece(object):
 
         Args:
             width (int): The width (and length) of the puzzle piece in number of pixels.
-            actual_location [int, int]: Tuple of two ints showing the actual location of the image in the original image.
+            actual_location ([int, int]): Tuple of two ints showing the actual location of the image in the
+                                          original image.
             image (Optional[Image]): The second parameter. Defaults to None.
             start_x (Optional[int]): Number of pieces along the image **width**. Defaults to None.  Used to extract
                                      the pixels from the passed in image.
@@ -110,7 +109,7 @@ class PuzzlePiece(object):
 
         # Number of pixels in the width of the piece
         if width < PuzzlePiece.MINIMUM_WIDTH:
-            raise ValueError("Specified width is less than the minimum width of %d" % {PuzzlePiece.MINIMUM_WIDTH})
+            raise ValueError("Specified width is less than the minimum width of %d" % PuzzlePiece.MINIMUM_WIDTH)
         self._width = width
 
         # Create the matrix for storing the pixel information
@@ -119,12 +118,13 @@ class PuzzlePiece(object):
         if image is None and (actual_location is not None or start_x is not None or start_y is not None):
             raise ValueError("Argument image cannot be null if argument actual_location, start_x, or start_y " +
                              "are specified")
-        if image is not None and (actual_location is  None or start_x is None or start_y is None):
-            raise ValueError("If argument image is specified, neither actual_location, start_x, or start_y can be None")
+        if image is not None and (actual_location is None or start_x is None or start_y is None):
+            raise ValueError('If argument image is specified, neither actual_location, start_x, or start_y can be None')
         # If a valid pixel array is passed, then copy the contents to the piece.
         if image is not None:
             # Extract a subimage
             self._actual_location = actual_location
+            # noinspection PyTypeChecker
             box = (start_x, start_y, start_x + width, start_y + width)
             self._pixels = image.crop(box)
             assert(self._pixels.size == (width, width))
@@ -135,14 +135,12 @@ class PuzzlePiece(object):
         self._assigned_location = None
         # Initialize empty neighbor list.
         # noinspection PyUnusedLocal
-        self._assigned_sides = [None for x in range(PieceSide.top_side.value,
-                                                    PieceSide.left_side.value + 1)]
+        self._assigned_sides = [None for x in range(PieceSide.top_side,
+                                                    PieceSide.left_side + 1)]
 
         # Set a random rotation
         self._rotation = None  # Create a reference to prevent compiler warnings
         self.rotation = Rotation.degree_0
-
-
 
     def _get_unrotated_coordinates(self, rotated_x, rotated_y):
         """X-Y Coordinate **Un-**Rotator
@@ -167,15 +165,16 @@ class PuzzlePiece(object):
         # rotated x/y values full circle.  Hence, 0degree rotation takes no 90 degrees.
         # 90degree rotation takes 3 rotations, 180degrees takes 2, and 270 takes 1.
         # noinspection PyProtectedMember,PyUnresolvedReferences
-        numb_90_degree_rotations = (Rotation._degree_360.value - self._rotation.value)
+        numb_90_degree_rotations = (Rotation._degree_360 - self._rotation)
         # noinspection PyProtectedMember
-        numb_90_degree_rotations %= Rotation._degree_360.value
-        numb_90_degree_rotations /= Rotation.degree_90.value
+        numb_90_degree_rotations %= Rotation._degree_360
+        numb_90_degree_rotations /= Rotation.degree_90
         # Handle case where loop is not run.
         (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
         for i in range(0, numb_90_degree_rotations):
 
-            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, Rotation.degree_90 )
+            # noinspection PyTypeChecker
+            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, Rotation.degree_90)
             # Updated rotated values in case need to rotated again
             (rotated_x, rotated_y) = (unrotated_x, unrotated_y)
 
@@ -204,7 +203,7 @@ class PuzzlePiece(object):
             rotation = self._rotation
 
         # Calculate number of 90 degree rotations to perform.
-        numb_90_degree_rotations = rotation.value / Rotation.degree_90.value
+        numb_90_degree_rotations = rotation.value / Rotation.degree_90
         # Each iteration of the loop rotates the x, y coordinates 90 degrees
         # Each a 180 degree rotation is two 90 degree rotations
         (rotated_x, rotated_y) = (unrotated_x, unrotated_y)  # In case loop is never run
@@ -264,18 +263,22 @@ class PuzzlePiece(object):
 
         # Depending on the piece side, select the appropriate piece
         if piece_side == PieceSide.top_side:
-            assert assigned_y > 0 # Verify not off the board
-            return (assigned_x, assigned_y - 1)
+            assert assigned_y > 0  # Verify not off the board
+            return assigned_x, assigned_y - 1
+
         elif piece_side == PieceSide.bottom_side:
-            return (assigned_x, assigned_y + 1)
+            return assigned_x, assigned_y + 1
+
         elif piece_side == PieceSide.left_side:
-            assert assigned_x > 0 # Verify not off the board
-            return (assigned_x - 1, assigned_y)
+            assert assigned_x > 0  # Verify not off the board
+            return assigned_x - 1, assigned_y
+
         elif piece_side == PieceSide.right_side:
-            return (assigned_x + 1, assigned_y)
+            return assigned_x + 1, assigned_y
         else:
             assert False
 
+    # noinspection SpellCheckingInspection
     def putpixel(self, x, y, pixel):
         """Pixel Updater
 
@@ -300,6 +303,7 @@ class PuzzlePiece(object):
         # Updated the pixel value using the unrotated x and y coordinates
         self._pixels.putpixel((unrotated_x, unrotated_y), pixel)
 
+    # noinspection SpellCheckingInspection
     def getpixel(self, x, y):
         """Pixel Accessor
 
@@ -350,11 +354,10 @@ class PuzzlePiece(object):
         if rotation != Rotation.degree_0:
             PuzzlePiece.assert_rotation_enabled()
 
-        if rotation.value % Rotation.degree_90.value != 0:
+        if rotation.value % Rotation.degree_90 != 0:
             raise ValueError("Invalid rotation value.")
 
         self._rotation = rotation
-
 
     @staticmethod
     def assert_rotation_enabled():
@@ -369,7 +372,6 @@ class PuzzlePiece(object):
         if not PuzzlePiece.rotation_enabled:
             raise AttributeError("Cannot set rotation.  Rotation is disabled for puzzle pieces.")
 
-
     def randomize_rotation(self):
         """Puzzle Piece Rotation Randomizer
 
@@ -381,7 +383,7 @@ class PuzzlePiece(object):
         all_rotations = Rotation.get_all_rotations()
         # Set the rotation to a randomly selected value
         i = random.randint(0, len(all_rotations) - 1)
-        self.rotation(all_rotations[i])
+        self.rotation = all_rotations[i]
 
     @property
     def width(self):
@@ -398,7 +400,6 @@ class PuzzlePiece(object):
 
 def calculate_pieces_edge_distance(piece1, piece1_edge, piece2, piece2_edge):
     pass
-
 
 def get_edge_starting_and_ending_x_and_y(width, piece_side):
     # Handle the dimension that is changing first.

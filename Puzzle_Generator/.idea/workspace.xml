@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5f48255b-a0d9-46b6-8710-c8843b0d11e2" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/puzzle_generator/puzzle_bottom_up_search.py" afterPath="$PROJECT_DIR$/puzzle_generator/puzzle_bottom_up_search.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/puzzle_generator/puzzle_piece.py" afterPath="$PROJECT_DIR$/puzzle_generator/puzzle_piece.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py" afterPath="$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py" />
     </list>
     <ignored path="Puzzle_Generator.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,11 +25,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="puzzle.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="puzzle.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="270" column="0" selection-start-line="270" selection-start-column="0" selection-end-line="270" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.50165015">
+              <caret line="262" column="42" selection-start-line="262" selection-start-column="42" selection-end-line="262" selection-end-column="42" />
               <folding>
                 <element signature="e#131#145#0" expanded="true" />
               </folding>
@@ -39,8 +40,8 @@
       <file leaf-file-name="puzzle_bottom_up_search.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_bottom_up_search.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="38" selection-start-line="24" selection-start-column="38" selection-end-line="24" selection-end-column="38" />
+            <state vertical-scroll-proportion="-6.3448277">
+              <caret line="165" column="47" selection-start-line="165" selection-start-column="47" selection-end-line="165" selection-end-column="47" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -52,7 +53,7 @@
         <entry file="file://$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="89" column="107" selection-start-line="89" selection-start-column="107" selection-end-line="89" selection-end-column="107" />
+              <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -60,11 +61,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="puzzle_piece.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="puzzle_piece.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="9.534539">
-              <caret line="398" column="34" selection-start-line="398" selection-start-column="4" selection-end-line="398" selection-end-column="34" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="205" column="0" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
               <folding>
                 <element signature="e#90#111#0" expanded="true" />
               </folding>
@@ -89,11 +90,11 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/puzzle_generator/main.py" />
-        <option value="$PROJECT_DIR$/puzzle_generator/puzzle_piece.py" />
         <option value="$PROJECT_DIR$/docs/puzzle_piece.html" />
-        <option value="$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py" />
         <option value="$PROJECT_DIR$/puzzle_generator/puzzle.py" />
         <option value="$PROJECT_DIR$/puzzle_generator/puzzle_bottom_up_search.py" />
+        <option value="$PROJECT_DIR$/puzzle_generator/puzzle_piece.py" />
+        <option value="$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py" />
       </list>
     </option>
   </component>
@@ -443,11 +444,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32769555" sideWeight="0.3703125" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32980973" sideWeight="0.5229167" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32980973" sideWeight="0.47708333" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -459,7 +461,6 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32769555" sideWeight="0.6296875" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.47916666" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39957717" sideWeight="0.60833335" order="3" side_tool="false" content_ui="tabs" />
     </layout>
@@ -484,13 +485,8 @@
           <option name="timeStamp" value="90" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py</url>
-          <line>233</line>
-          <option name="timeStamp" value="92" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py</url>
-          <line>79</line>
+          <line>78</line>
           <option name="timeStamp" value="94" />
         </line-breakpoint>
       </breakpoints>
@@ -585,6 +581,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="328" column="0" selection-start-line="328" selection-start-column="0" selection-end-line="328" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -858,6 +855,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="328" column="0" selection-start-line="328" selection-start-column="0" selection-end-line="328" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -879,15 +877,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3250825">
           <caret line="742" column="0" selection-start-line="742" selection-start-column="0" selection-end-line="742" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle.py">
+    <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="270" column="0" selection-start-line="270" selection-start-column="0" selection-end-line="270" selection-end-column="0" />
+          <caret line="205" column="0" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
           <folding>
-            <element signature="e#131#145#0" expanded="true" />
+            <element signature="e#90#111#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -895,7 +894,7 @@
     <entry file="file://$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="89" column="107" selection-start-line="89" selection-start-column="107" selection-end-line="89" selection-end-column="107" />
+          <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -904,20 +903,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_bottom_up_search.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="38" selection-start-line="24" selection-start-column="38" selection-end-line="24" selection-end-column="38" />
+        <state vertical-scroll-proportion="-6.3448277">
+          <caret line="165" column="47" selection-start-line="165" selection-start-column="47" selection-end-line="165" selection-end-column="47" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py">
+    <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="9.534539">
-          <caret line="398" column="34" selection-start-line="398" selection-start-column="4" selection-end-line="398" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.50165015">
+          <caret line="262" column="42" selection-start-line="262" selection-start-column="42" selection-end-line="262" selection-end-column="42" />
           <folding>
-            <element signature="e#90#111#0" expanded="true" />
+            <element signature="e#131#145#0" expanded="true" />
           </folding>
         </state>
       </provider>
