@@ -176,7 +176,7 @@ class PuzzlePiece(object):
         self._rotation = None  # Create a reference to prevent compiler warnings
         self.rotation = PieceRotation.degree_0
 
-    def _get_unrotated_coordinates(self, rotated_x, rotated_y):
+    def _get_unrotated_coordinates(self, xy_coord):
         """X-Y Coordinate **Un-**Rotator
 
         For a given puzzle piece with its own rotation and width and already
@@ -187,8 +187,7 @@ class PuzzlePiece(object):
         equivalents.
 
         Args:
-            rotated_x (int): An already rotated x coordinate
-            rotated_y (int): An already rotated y coordinate
+            xy_coord ([int]): An already rotated x/y coordinate Tuple
 
         Returns:
             (int, int): Tuple in the format (unrotated_x, unrotated_y)
@@ -203,18 +202,18 @@ class PuzzlePiece(object):
         # noinspection PyRedundantParentheses,PyTypeChecker
         numb_90_degree_rotations = (self.rotation).get_numb_90_rotations_to_other(PieceRotation.degrees(0))
         # Handle case where loop is not run.
-        (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
+        unrotated_xy = xy_coord
         for i in range(0, numb_90_degree_rotations):
 
             # noinspection PyTypeChecker
-            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, PieceRotation.degree_90)
+            unrotated_xy = self._get_rotated_coordinates(xy_coord, PieceRotation.degree_90)
             # Updated rotated values in case need to rotated again
-            (rotated_x, rotated_y) = (unrotated_x, unrotated_y)
+            xy_coord = unrotated_xy
 
         # Return the unrotated coordinates
-        return unrotated_x, unrotated_y
+        return unrotated_xy
 
-    def _get_rotated_coordinates(self, unrotated_x, unrotated_y, rotation=None):
+    def _get_rotated_coordinates(self, xy_coord, rotation=None):
         """ XY Coordinator **Rotator**
 
         Given a specified puzzle piece with its own rotation and width,
@@ -222,8 +221,7 @@ class PuzzlePiece(object):
         object data unchanged during a rotation.
 
         Args:
-            unrotated_x (int): X coordinate to rotate
-            unrotated_y (int): Y coordinate to rotate
+            xy_coord ([int]): An X/Y coordinate Tuple to rotate
             rotation (PieceRotation): Number of degrees to rotate.  Uses PieceRotation enum class.  If no rotation is
                 specified, then the function the specified object's rotation.
 
@@ -240,14 +238,14 @@ class PuzzlePiece(object):
         numb_90_degree_rotations = (PieceRotation.degrees(0)).get_numb_90_rotations_to_other(rotation)
         # Each iteration of the loop rotates the x, y coordinates 90 degrees
         # Each a 180 degree rotation is two 90 degree rotations
-        (rotated_x, rotated_y) = (unrotated_x, unrotated_y)  # In case loop is never run
+        (rotated_x, rotated_y) = xy_coord  # In case loop is never run
         for i in range(0, numb_90_degree_rotations):
 
             # Calculate the rotated x and y
-            rotated_x = self.width - 1 - unrotated_y
-            rotated_y = unrotated_x
+            rotated_x = self.width - 1 - xy_coord[1]
+            rotated_y = xy_coord[0]
             # update the unrotated x/y values in case need to rotate again
-            (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
+            xy_coord = (rotated_x, rotated_y)
 
         # Return the rotated x and y coordinates
         return rotated_x, rotated_y
@@ -340,7 +338,7 @@ class PuzzlePiece(object):
             raise ValueError("Either pixel or color must be None.")
 
         # Correct for any rotation
-        unrotated_coord = self._get_unrotated_coordinates(xy_coord[0], xy_coord[1])
+        unrotated_coord = self._get_unrotated_coordinates(xy_coord)
         if pixel is not None:
             # Updated the pixel value using the unrotated x and y coordinates
             self._pixels.putpixel(unrotated_coord, pixel)
@@ -372,7 +370,8 @@ class PuzzlePiece(object):
         if xy_coord[1] >= self._width:
             raise ValueError("Pixel's \"y\" coordinate must be between 0 and width - 1")
 
-        return self._pixels.getpixel(xy_coord)
+        unrotated_coord = self._get_unrotated_coordinates(xy_coord)
+        return self._pixels.getpixel(unrotated_coord)
 
     def get_edge_start_corner_coordinate_and_pixel_step(self, piece_side):
         """
@@ -403,6 +402,22 @@ class PuzzlePiece(object):
 
         # Return the start and end x/y coordinates
         return start_coord, offset_step
+
+    def _set_side_color(self, side, pixel_color):
+        """Puzzle Piece Side Colorer
+
+        Sets the edge of an image to a specified color
+
+        Args:
+            side (PieceSide):
+            pixel_color (str): Color to change the pixels to on the specified side.
+
+        """
+        start_coord, pixel_step = self.get_edge_start_corner_coordinate_and_pixel_step(side)
+
+        for i in range(0, self.width):
+            pixel_coord = (start_coord[0] + i * pixel_step[0], start_coord[1] + i * pixel_step[1])
+            self.putpixel(pixel_coord, color=pixel_color)
 
     @property
     def rotation(self):
