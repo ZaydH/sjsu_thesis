@@ -8,8 +8,8 @@ import random
 from PIL import Image
 
 
-class Rotation(Enum):
-    """Puzzle Piece Rotation
+class PieceRotation(Enum):
+    """Puzzle Piece PieceRotation
 
     Enumerated type for representing the amount of rotation for a puzzle piece.
 
@@ -25,32 +25,34 @@ class Rotation(Enum):
 
     @staticmethod
     def degrees(n):
-        """
+        """PieceRotation Factory from Degree
+
         Factory method for getting the rotation enum based solely on the number of degrees of rotation.
 
         Args:
-            n (int): Rotation in degrees.  Must be in 90 degree increments (e.g. 0, 90, 180, 270 only)
+            n (int): PieceRotation in degrees.  Must be in 90 degree increments (e.g. 0, 90, 180, 270 only)
 
-        Returns (Rotation): Rotation enum for the specified number of degrees.
+        Returns (PieceRotation): PieceRotation enum for the specified number of degrees.
 
         """
         # noinspection PyUnresolvedReferences
-        assert n % Rotation.degree_90.value == 0 and n < Rotation._degree_360.value
+        assert n % PieceRotation.degree_90.value == 0 and n < PieceRotation._degree_360.value
         rot_cnt = n / 90
-        all_rotations = [Rotation.degree_0, Rotation.degree_90, Rotation.degree_180, Rotation.degree_270]
+        all_rotations = [PieceRotation.degree_0, PieceRotation.degree_90,
+                         PieceRotation.degree_180, PieceRotation.degree_270]
         return all_rotations[rot_cnt]
 
     @staticmethod
     def get_all_rotations():
         """
-        Gets a list of all valid values of Rotation
+        Gets a list of all valid values of PieceRotation
 
         Returns:
-            List[Rotation]: List of all valid rotation values in increasing order.
+            List[PieceRotation]: List of all valid rotation values in increasing order.
 
         """
 
-        return [Rotation.degree_0, Rotation.degree_90, Rotation.degree_180, Rotation.degree_270]
+        return [PieceRotation.degree_0, PieceRotation.degree_90, PieceRotation.degree_180, PieceRotation.degree_270]
 
     # noinspection PyUnresolvedReferences
     def get_numb_90_rotations_to_other(self, other):
@@ -58,15 +60,15 @@ class Rotation(Enum):
         Determines the number of 90 degree rotations from the current rotation to another rotation.
 
         Args:
-            other (Rotation: Another rotation
+            other (PieceRotation: Another rotation
 
         Returns (int): Number of 90 degree rotations required.  It is bounded between 0 and 3 as that is the minimum
         and maximum of clockwise rotations to move between any 90 degree angles without doing a complete revolution.
         """
         degree_difference = other.value - self.value
         if degree_difference < 0:
-            degree_difference += Rotation._degree_360.value
-        return degree_difference / Rotation.degree_90.value
+            degree_difference += PieceRotation._degree_360.value
+        return degree_difference / PieceRotation.degree_90.value
 
 
 class PieceSide(Enum):
@@ -92,9 +94,9 @@ class PieceSide(Enum):
         For a given side of a piece, this function returns the corresponding
         piece of the neighbor that would be on that side.
 
-        Returns: Corresponding edge for the neighboring piece that would be
-        on the side of this piece.  For example, the right side of this piece
-        is adjacent to the left side of neighbor and vice versa.
+        Returns (PieceSide): Corresponding edge for the neighboring piece that would be on the side of this piece.
+                             For example, the right side of this piece is adjacent to the left side of neighbor
+                             and vice versa.
 
         """
         if self == PieceSide.top_side:
@@ -121,7 +123,7 @@ class PuzzlePiece(object):
     # May want to disable rotation so have a check for that.
     rotation_enabled = True
 
-    def __init__(self, width=None, actual_location=None, image=None, start_x=None, start_y=None):
+    def __init__(self, width, actual_location=None, image=None, start_x=None, start_y=None):
         """
         Constructor of an empty puzzle piece object
 
@@ -172,7 +174,7 @@ class PuzzlePiece(object):
 
         # Set a random rotation
         self._rotation = None  # Create a reference to prevent compiler warnings
-        self.rotation = Rotation.degree_0
+        self.rotation = PieceRotation.degree_0
 
     def _get_unrotated_coordinates(self, rotated_x, rotated_y):
         """X-Y Coordinate **Un-**Rotator
@@ -199,13 +201,13 @@ class PuzzlePiece(object):
         # rotated x/y values full circle.  Hence, 0degree rotation takes no 90 degrees.
         # 90degree rotation takes 3 rotations, 180degrees takes 2, and 270 takes 1.
         # noinspection PyRedundantParentheses,PyTypeChecker
-        numb_90_degree_rotations = (self.rotation).get_numb_90_rotations_to_other(Rotation.degrees(0))
+        numb_90_degree_rotations = (self.rotation).get_numb_90_rotations_to_other(PieceRotation.degrees(0))
         # Handle case where loop is not run.
         (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
         for i in range(0, numb_90_degree_rotations):
 
             # noinspection PyTypeChecker
-            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, Rotation.degree_90)
+            (unrotated_x, unrotated_y) = self._get_rotated_coordinates(rotated_x, rotated_y, PieceRotation.degree_90)
             # Updated rotated values in case need to rotated again
             (rotated_x, rotated_y) = (unrotated_x, unrotated_y)
 
@@ -222,7 +224,7 @@ class PuzzlePiece(object):
         Args:
             unrotated_x (int): X coordinate to rotate
             unrotated_y (int): Y coordinate to rotate
-            rotation (Rotation): Number of degrees to rotate.  Uses Rotation enum class.  If no rotation is
+            rotation (PieceRotation): Number of degrees to rotate.  Uses PieceRotation enum class.  If no rotation is
                 specified, then the function the specified object's rotation.
 
         Returns:
@@ -235,7 +237,7 @@ class PuzzlePiece(object):
 
         # Calculate number of 90 degree rotations to perform.
         # noinspection PyUnresolvedReferences
-        numb_90_degree_rotations = (Rotation.degrees(0)).get_numb_90_rotations_to_other(rotation)
+        numb_90_degree_rotations = (PieceRotation.degrees(0)).get_numb_90_rotations_to_other(rotation)
         # Each iteration of the loop rotates the x, y coordinates 90 degrees
         # Each a 180 degree rotation is two 90 degree rotations
         (rotated_x, rotated_y) = (unrotated_x, unrotated_y)  # In case loop is never run
@@ -267,7 +269,8 @@ class PuzzlePiece(object):
 
     @property
     def image(self):
-        """
+        """Piece Image Accessor
+
         Gets the image for a particular piece.  It does appropriately
 
         Returns:
@@ -277,7 +280,8 @@ class PuzzlePiece(object):
         return self._pixels.rotate(self._rotation.value)
 
     def get_neighbor_coordinate(self, piece_side):
-        """
+        """Neighbor Coordinate Accessor
+
         For the implicit piece, this function returns the x/y coordinates of the neighbor piece on the specified
         side.
 
@@ -311,53 +315,64 @@ class PuzzlePiece(object):
             assert False
 
     # noinspection SpellCheckingInspection
-    def putpixel(self, x, y, pixel):
+    def putpixel(self, xy_coord, pixel=None, color=None):
         """Pixel Updater
 
         Update's an image's pixel value.
 
         Args:
-            x (int):  Pixel's x coordinate
-            y (int):  Pixel's y coordinate
-            pixel: New pixel value.  A Tuple in the format (Red, Green, Blue)
+            xy_coord ([int]): Integer of two tuples representing the pixel's x, y coordinate.  Note the top left pixel
+                              would be (0, 0) while bottom right is (width - 1, width - 1)
+            pixel ([int]): New pixel value.  A Tuple in the format (Red, Green, Blue)
+            color (Optional str): Name of the color for the pixel
 
         Raises:
             ValueError: x and y must be between 0 and (puzzle piece width - 1)
 
         """
-        if x >= self._width:
+        if xy_coord[0] >= self._width:
             raise ValueError("Pixel's \"x\" coordinate must be between 0 and width - 1")
-        if y >= self._width:
+        if xy_coord[1] >= self._width:
             raise ValueError("Pixel's \"y\" coordinate must be between 0 and width - 1")
+        if pixel is None and color is None:
+            raise ValueError("Pixel and color cannot both be None.")
+        if pixel is not None and color is not None:
+            raise ValueError("Either pixel or color must be None.")
 
         # Correct for any rotation
-        (unrotated_x, unrotated_y) = self._get_unrotated_coordinates(x, y)
-        # Updated the pixel value using the unrotated x and y coordinates
-        self._pixels.putpixel((unrotated_x, unrotated_y), pixel)
+        unrotated_coord = self._get_unrotated_coordinates(xy_coord[0], xy_coord[1])
+        if pixel is not None:
+            # Updated the pixel value using the unrotated x and y coordinates
+            self._pixels.putpixel(unrotated_coord, pixel)
+        elif color is not None:
+            temp_image = Image.new("RGB", (1, 1), color)
+            self._pixels.putpixel(unrotated_coord, temp_image.getpixel((0, 0)))
+        else:
+            assert False
 
     # noinspection SpellCheckingInspection
-    def getpixel(self, x, y):
+    def getpixel(self, xy_coord):
         """Pixel Accessor
 
         Gets a pixel from a puzzle piece.
 
         Args:
-            x (int): X coordinate for the pixel to get
-            y (int): Y coordinate for the pixel to get
+            xy_coord ([int]): Integer of two tuples representing the pixel's x, y coordinate.  Note the top left pixel
+                              would be (0, 0) while bottom right is (width - 1, width - 1)
 
-        Returns:
+        Returns ([int]):
             Pixel at the piece's specified pixel.
 
         Raises:
             ValueError: x and y must be between 0 and (puzzle piece width - 1)
 
         """
-        if x >= self._width:
+        if xy_coord[0] >= self._width:
             raise ValueError("Pixel's \"x\" coordinate must be between 0 and width - 1")
-        if y >= self._width:
+        if xy_coord[1] >= self._width:
             raise ValueError("Pixel's \"y\" coordinate must be between 0 and width - 1")
 
-        return self._pixels.getpixel((x, y))
+        return self._pixels.getpixel(xy_coord)
 
     def get_edge_start_corner_coordinate_and_pixel_step(self, piece_side):
         """
@@ -391,40 +406,40 @@ class PuzzlePiece(object):
 
     @property
     def rotation(self):
-        """Puzzle Piece Rotation Accessor
+        """Puzzle Piece PieceRotation Accessor
 
         Get's a puzzle piece's rotation setting.  In most cases, a user should not need to call this
         function.  Once 'rotation' is called, the return X-Y coordinates are returned
         rotated.
 
         Returns:
-            Rotation: Puzzle piece's rotation
+            PieceRotation: Puzzle piece's rotation
 
         """
         return self._rotation
 
     @rotation.setter
     def rotation(self, rotation):
-        """Piece Rotation Modifier
+        """Piece PieceRotation Modifier
 
         Sets the puzzle piece's rotation.
 
         Args:
-            rotation (Rotation): The rotation of the specified puzzle piece.
+            rotation (PieceRotation): The rotation of the specified puzzle piece.
 
         """
-        if rotation != Rotation.degree_0:
+        if rotation != PieceRotation.degree_0:
             PuzzlePiece.assert_rotation_enabled()
 
         # noinspection PyUnresolvedReferences
-        if rotation.value % Rotation.degree_90.value != 0:
+        if rotation.value % PieceRotation.degree_90.value != 0:
             raise ValueError("Invalid rotation value.")
 
         self._rotation = rotation
 
     @staticmethod
     def assert_rotation_enabled():
-        """Illegal Rotation Checker
+        """Illegal PieceRotation Checker
 
         Checks if there is an attempt to rotate a puzzle piece while piece rotation is disabled.
 
@@ -433,17 +448,17 @@ class PuzzlePiece(object):
 
         """
         if not PuzzlePiece.rotation_enabled:
-            raise AttributeError("Cannot set rotation.  Rotation is disabled for puzzle pieces.")
+            raise AttributeError("Cannot set rotation.  PieceRotation is disabled for puzzle pieces.")
 
     def randomize_rotation(self):
-        """Puzzle Piece Rotation Randomizer
+        """Puzzle Piece PieceRotation Randomizer
 
         Randomly sets the puzzle piece's rotation.
 
         """
         PuzzlePiece.assert_rotation_enabled()
         # Get the list of rotations
-        all_rotations = Rotation.get_all_rotations()
+        all_rotations = PieceRotation.get_all_rotations()
         # Set the rotation to a randomly selected value
         i = random.randint(0, len(all_rotations) - 1)
         self.rotation = all_rotations[i]
@@ -473,29 +488,36 @@ class PuzzlePiece(object):
         Returns (int): Sum of the squared difference between the RGB values of the pixels
         along the the specified side of piece1 and the corresponding side of piece2.
 
+        Raises:
+            ValueError: Width of piece1 and piece2 are not equal.
+
         """
 
         # Verify the two pieces have the same width
-        assert piece1.width == piece2.width
+        if piece1.width != piece2.width:
+            raise ValueError("To calculate inter-piece distance, the two pieces must have the same width.")
 
         # Get piece1's coordinate information
         piece1_start_coord, piece1_pixel_step = piece1.get_edge_start_corner_coordinate_and_pixel_step(piece1_side)
 
         # Get the piece2 coordinate information
         piece2_side = piece1_side.paired_edge
+        # noinspection PyTypeChecker
         piece2_start_coord, piece2_pixel_step = piece2.get_edge_start_corner_coordinate_and_pixel_step(piece2_side)
 
         pixel_sum = 0
         for i in range(0, piece1.width):
             # Get the pixel for piece1
-            piece1_pixel_coord = [start + i * offset for start, offset in zip(piece1_start_coord, piece1_pixel_step)]
-            piece1_pixel = (piece1_pixel_coord[0] + i * offset[0], piece1_pixel_coord[1] + i * offset[1])
+            piece1_pixel_coord = (piece1_start_coord[0] + i * piece1_pixel_step[0],
+                                  piece1_start_coord[1] + i * piece1_pixel_step[1])
+            piece1_pixel = piece1.getpixel(piece1_pixel_coord)
 
             # Get the pixel for piece2
-            piece2_pixel_coord = [start + i * offset for start, offset in zip(piece2_start_coord, piece2_pixel_step)]
-            piece2_pixel = (piece2_pixel_coord[0] + i * offset[0], piece2_pixel_coord[1] + i * offset[1])
+            piece2_pixel_coord = (piece2_start_coord[0] + i * piece2_pixel_step[0],
+                                  piece2_start_coord[1] + i * piece2_pixel_step[1])
+            piece2_pixel = piece2.getpixel(piece2_pixel_coord)
 
             # For this pixel pair, add the sum of their respective RGB differences
-            pixel_sum += sum([(pixel1_rgb - pixel2_rgb) ^ 2 for pixel1_rgb, pixel2_rgb in zip(piece1_pixel,
-                                                                                              piece2_pixel)])
+            pixel_sum += sum([(pixel1_rgb - pixel2_rgb) ** 2 for pixel1_rgb, pixel2_rgb in zip(piece1_pixel,
+                                                                                               piece2_pixel)])
         return pixel_sum

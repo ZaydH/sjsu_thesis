@@ -1,5 +1,5 @@
 import sys
-from puzzle_piece import PuzzlePiece, Rotation, PieceSide
+from puzzle_piece import PuzzlePiece, PieceRotation, PieceSide
 from puzzle import Puzzle
 from random import shuffle
 
@@ -157,7 +157,7 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
 
         # Iterate through the unexplored pieces.
         for new_piece in unexplored_set:
-            for rotation in Rotation.get_all_rotations():
+            for rotation in PieceRotation.get_all_rotations():
                 # Set the rotation of the piece.
                 new_piece.rotation = rotation
 

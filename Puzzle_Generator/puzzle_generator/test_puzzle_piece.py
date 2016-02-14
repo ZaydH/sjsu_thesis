@@ -1,10 +1,50 @@
 import unittest
-from puzzle_piece import PuzzlePiece, Rotation, PieceSide
+from puzzle_piece import PuzzlePiece, PieceRotation, PieceSide
+from PIL import Image
 
 
 class PuzzlePieceTestCase(unittest.TestCase):
 
     PRINT_DEBUG_MESSAGES = False
+
+    def test_width(self):
+        """
+        Tests the "width" property for the class "PuzzlePiece."
+        """
+        for width in range(PuzzlePiece.MINIMUM_WIDTH, 2*PuzzlePiece.MINIMUM_WIDTH + 1):
+            piece = PuzzlePiece(width)
+            self.assertTrue(width == piece.width)
+
+        # Test with a passed in image
+        width = 10 * PuzzlePiece.MINIMUM_WIDTH
+        white_piece = PuzzlePiece(width, (0, 0), Image.new("RGB", (width, width), "white"), 0, 0)
+        self.assertTrue(white_piece.width == width)
+
+        # Create a black piece and test its width since it is essentially free
+        black_piece = PuzzlePiece(width, (0, 0), Image.new("RGB", (width, width), "black"), 0, 0)
+        self.assertTrue(black_piece.width == width)
+
+        # Calculate distance between a set of white and black pixels
+        predicted_dist = 3 * (255 - 0) ** 2
+        predicted_dist *= width
+
+        # Test with different rotations and sides and ensure it does not affect the calculations.
+        for white_rotation in PieceRotation.get_all_rotations():
+            white_piece.rotation = white_rotation
+            for black_rotation in PieceRotation.get_all_rotations():
+                black_piece.rotation = black_rotation
+                for side in PieceSide.get_all_sides():
+                    actual_dist = PuzzlePiece.calculate_pieces_edge_distance(white_piece, side, black_piece)
+                    self.assertTrue(actual_dist == predicted_dist)
+
+                    # Ensure the calculation is the same bidirectionally
+                    other_side = side.paired_edge
+                    actual_dist = PuzzlePiece.calculate_pieces_edge_distance(black_piece, other_side, white_piece)
+                    self.assertTrue(actual_dist == predicted_dist)
+
+                    # Ensure the distance between a piece and itself is 0
+                    self.assertTrue(0 == PuzzlePiece.calculate_pieces_edge_distance(white_piece, side, white_piece))
+                    self.assertTrue(0 == PuzzlePiece.calculate_pieces_edge_distance(black_piece, side, black_piece))
 
     def test_get_rotated_puzzle_piece(self):
         """
@@ -12,7 +52,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         """
         width = PuzzlePiece.MINIMUM_WIDTH + 5
         piece = PuzzlePiece(width)
-        piece.rotation = Rotation.degree_90
+        piece.rotation = PieceRotation.degree_90
         # Rotate upper left piece
         self.assertTrue(piece._get_rotated_coordinates(0, 0) == (width - 1, 0))
         # Rotate lower left piece
@@ -20,7 +60,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         # Rotate piece to the right of the top left
         self.assertTrue(piece._get_rotated_coordinates(1, 0) == (width - 1, 1))
 
-        piece.rotation = Rotation.degree_180
+        piece.rotation = PieceRotation.degree_180
         # Rotate upper left piece
         self.assertTrue(piece._get_rotated_coordinates(0, 0) == (width - 1, width - 1))
         # Rotate lower left piece
@@ -32,15 +72,17 @@ class PuzzlePieceTestCase(unittest.TestCase):
         width = 15
         self.assertTrue(width % 2 == 1)
         piece = PuzzlePiece(width)
-        for rotation in Rotation.get_all_rotations():
+        for rotation in PieceRotation.get_all_rotations():
             piece.rotation = rotation
             # Since center of the puzzle, rotation should have no effect
             self.assertTrue(piece._get_rotated_coordinates(width // 2, width // 2) == (width // 2, width // 2))
 
     def test_get_numb_90_degree_rotations(self):
-
+        """
+        Tests the method "get_numb_90_rotations_to_other" in the class "PieceRotation"
+        """
         # Get all of the possible rotations
-        all_rotations = Rotation.get_all_rotations()
+        all_rotations = PieceRotation.get_all_rotations()
         tot_numb_rotation = len(all_rotations)
 
         # Iterate through all rotations and get the difference
@@ -63,7 +105,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
 
         width = 20
         piece = PuzzlePiece(width)
-        piece.rotation = Rotation.degree_180
+        piece.rotation = PieceRotation.degree_180
         self.assertTrue(piece._get_unrotated_coordinates(width - 1, width - 1) == (0, 0))
 
         # Test  a set of widths
@@ -72,7 +114,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
             # Create an example piece
             piece = PuzzlePiece(width)
             # Go through all the rotations
-            for rotation in Rotation.get_all_rotations():
+            for rotation in PieceRotation.get_all_rotations():
                 piece.rotation = rotation
                 # Test all possible x coordinates
                 for x in range(0, width):
@@ -89,7 +131,9 @@ class PuzzlePieceTestCase(unittest.TestCase):
                         self.assertTrue((x, y) == unrotated_coordinate)
 
     def test_piece_neighbor(self):
-
+        """
+        Tests the method "get_neighbor_coordinate" for the class "PuzzlePiece."
+        """
         # Define the puzzle piece
         piece = PuzzlePiece(PuzzlePiece.MINIMUM_WIDTH)
         coordinate = (PuzzlePiece.MINIMUM_WIDTH // 2, PuzzlePiece.MINIMUM_WIDTH // 2)
@@ -103,8 +147,10 @@ class PuzzlePieceTestCase(unittest.TestCase):
             neighbor_coord = piece.get_neighbor_coordinate(sides[i])
             self.assertTrue(neighbor_coord == (coordinate[0] + offset[i][0], coordinate[1] + offset[i][1]))
 
-    def test_piece_edge_starting_and_ending_coordinates(self):
-
+    def test_edge_start_corner_coordinate_and_pixel_step(self):
+        """
+        Tests the method ::"get_edge_start_corner_coordinate_and_pixel_step":: in the class "PuzzlePiece."
+        """
         # Check top edge x and y
         width = 10
         piece = PuzzlePiece(width)
@@ -128,6 +174,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         piece = PuzzlePiece(width)
         start_coord, offset = piece.get_edge_start_corner_coordinate_and_pixel_step(PieceSide.right_side)
         self.assertTrue(start_coord == (width - 1, 0) and offset == (0, 1))
+
 
 # If this function is main, then run the unit tests.
 if __name__ == "__main__":
