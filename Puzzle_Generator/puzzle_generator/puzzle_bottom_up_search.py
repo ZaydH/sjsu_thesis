@@ -1,5 +1,5 @@
 import sys
-from puzzle_piece import PuzzlePiece, Rotation, PieceSide, calculate_pieces_edge_distance
+from puzzle_piece import PuzzlePiece, Rotation, PieceSide
 from puzzle import Puzzle
 from random import shuffle
 
@@ -67,7 +67,7 @@ def perform_bottom_up_search(puzzle):
                 available_neighbors = determine_available_neighbors(neighbor, solution_grid,
                                                                     upper_left, bottom_right, x_count, y_count)
                 # If it has no neighbors delete from the frontier
-                if (len(available_neighbors) == 0):
+                if len(available_neighbors) == 0:
                     frontier_set.pop(coord)
 
     # Make the puzzle_solution
@@ -163,11 +163,9 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
 
                 # Go through all available edges for the frontier pin.
                 for frontier_edge in available_neighbors:
-                    other_edge = frontier_edge.paired_edge
-
                     # Calculate the inter-piece distance.
-                    piece_distance = calculate_pieces_edge_distance(frontier_piece, frontier_edge,
-                                                                    new_piece, other_edge)
+                    piece_distance = PuzzlePiece.calculate_pieces_edge_distance(frontier_piece, frontier_edge,
+                                                                                new_piece)
                     if best_piece is None or piece_distance < min_distance:
                         best_piece = new_piece
                         best_piece_coord = frontier_piece.get_neighbor_coordinate(frontier_edge)
@@ -186,7 +184,7 @@ def make_puzzle_solution(solution_grid, upper_left, bottom_right, x_count, y_cou
     # noinspection PyUnusedLocal
     final_grid = [[None for y in range(0, y_count)] for x in range(0, x_count)]
     # Check if the board is unrotated
-    if (bottom_right[0] - upper_left[0] + 1 == x_count):
+    if bottom_right[0] - upper_left[0] + 1 == x_count:
         for x in range(0, x_count):
             for y in range(0, y_count):
                 final_grid[x][y] = solution_grid[upper_left[0] + x][upper_left[1] + y]

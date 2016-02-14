@@ -327,6 +327,33 @@ class PuzzlePiece(object):
 
         return self._pixels.getpixel((x, y))
 
+    def get_edge_start_corner_coordinate_and_pixel_step(self, piece_side):
+        # Handle the dimension that is changing first.
+        # For a top to bottom pair, it is the x dimension
+        if piece_side == PieceSide.top_side or piece_side == PieceSide.bottom_side:
+            starting_x = 0
+            offset_step = (1, 0)
+        # For a left to right pair, it is the y dimension
+        else:
+            starting_y = 0
+            offset_step = (0, 1)
+
+        # Handle the dimension for each side that is unchanging
+        if piece_side == PieceSide.top_side:
+            starting_y = 0
+        elif piece_side == PieceSide.bottom_side:
+            starting_y = self._width - 1
+        elif piece_side == PieceSide.right_side:
+            starting_x = self._width - 1
+        elif piece_side == PieceSide.left_side:
+            starting_x = 0
+
+        # Return the start and end x/y coordinates
+        # noinspection PyUnboundLocalVariable
+        assert starting_x is not None and starting_y is not None
+        # noinspection PyUnboundLocalVariable
+        return [(starting_x, starting_y), offset_step]
+
     @property
     def rotation(self):
         """Puzzle Piece Rotation Accessor
@@ -397,30 +424,42 @@ class PuzzlePiece(object):
         """
         return self._width
 
+    @staticmethod
+    def calculate_pieces_edge_distance(piece1, piece1_side, piece2):
+        """
 
-def calculate_pieces_edge_distance(piece1, piece1_edge, piece2, piece2_edge):
-    pass
+        Args:
+            piece1 (PuzzlePiece): A single puzzle piece
+            piece1_side (PieceSide): The side of piece1 where piece2 will be placed.
+            piece2 (PuzzlePiece): Another puzzle piece that will be placed adjacent
+            to piece1.
 
-def get_edge_starting_and_ending_x_and_y(width, piece_side):
-    # Handle the dimension that is changing first.
-    # For a top to bottom pair, it is the x dimension
-    if piece_side == PieceSide.top_side or piece_side == PieceSide.bottom_side:
-        starting_x = 0
-        ending_x = width - 1
-    # For a left to right pair, it is the y dimension
-    else:
-        starting_y = 0
-        ending_y = width - 1
+        Returns (int): Sum of the squared difference between the RGB values of the pixels
+        along the the specified side of piece1 and the corresponding side of piece2.
 
-    # Handle the dimension for each side that is unchanging
-    if piece_side == PieceSide.top_side:
-        starting_y = ending_y = 0
-    elif piece_side == PieceSide.bottom_side:
-        starting_y = ending_y = width - 1
-    elif piece_side == PieceSide.right_side:
-        starting_x = ending_x = width - 1
-    elif piece_side == PieceSide.left_side:
-        starting_x = ending_x = 0
+        """
 
-    # Return the start and end x/y coordinates
-    return [(starting_x, starting_y), (ending_x, ending_y)]
+        # Verify the two pieces have the same width
+        assert piece1.width == piece2.width
+
+        # Get piece1's coordinate information
+        piece1_start_coord, piece1_pixel_step = piece1.get_edge_start_corner_coordinate_and_pixel_step(piece1_side)
+
+        # Get the piece2 coordinate information
+        piece2_side = piece1_side.paired_edge
+        piece2_start_coord, piece2_pixel_step = piece2.get_edge_start_corner_coordinate_and_pixel_step(piece2_side)
+
+        pixel_sum = 0
+        for i in range(0, piece1.width):
+            # Get the pixel for piece1
+            piece1_pixel_coord = [start + i * offset for start, offset in zip(piece1_start_coord, piece1_pixel_step)]
+            piece1_pixel = (piece1_pixel_coord[0] + i * offset[0], piece1_pixel_coord[1] + i * offset[1])
+
+            # Get the pixel for piece2
+            piece2_pixel_coord = [start + i * offset for start, offset in zip(piece2_start_coord, piece2_pixel_step)]
+            piece2_pixel = (piece2_pixel_coord[0] + i * offset[0], piece2_pixel_coord[1] + i * offset[1])
+
+            # For this pixel pair, add the sum of their respective RGB differences
+            pixel_sum += sum([(pixel1_rgb - pixel2_rgb) ^ 2 for pixel1_rgb, pixel2_rgb in zip(piece1_pixel,
+                                                                                              piece2_pixel)])
+        return pixel_sum
