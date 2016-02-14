@@ -1,8 +1,8 @@
-import sys
 from puzzle_piece import PuzzlePiece, PieceRotation, PieceSide
-from puzzle import Puzzle
+from puzzle import Puzzle, PickleHelper
+# noinspection PyUnresolvedReferences
 from random import shuffle
-
+import pickle
 
 def perform_bottom_up_search(puzzle):
     """
@@ -27,8 +27,8 @@ def perform_bottom_up_search(puzzle):
 
     # Get the puzzle's pieces and transfer them to the unexplored set.
     pieces = puzzle.pieces
-    unexplored_set = [pieces[x][y] for x in range(0, x_count) for y in range(0, y_count)]
-    #shuffle(unexplored_set)
+    unexplored_set = [pieces[x][y] for y in range(0, y_count) for x in range(0, x_count) ]
+    # shuffle(unexplored_set)
 
     # Select the first piece of the puzzle.
     mid_piece = (x_count // 2) + (y_count // 2) * x_count
@@ -39,6 +39,9 @@ def perform_bottom_up_search(puzzle):
 
     # Iterate until all pieces have been explored.
     while len(unexplored_set) > 0:
+
+        if len(unexplored_set) <= 12:
+            x = 1
 
         # Get the next piece to assign.
         next_piece = select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right,
@@ -73,7 +76,7 @@ def perform_bottom_up_search(puzzle):
                     frontier_set.pop(coord)
 
     # Make the puzzle_solution
-    return make_puzzle_solution(solution_grid, upper_left, bottom_right, x_count, y_count)
+    return make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, x_count, y_count)
 
 
 def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right, x_count, y_count):
@@ -123,12 +126,13 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
             continue
 
         # If the piece is within the existing range, then only check if coordinate is open
-        if neighbor_coord[0] >= upper_left[0] and neighbor_coord[1] <= bottom_right[1]:
+        if upper_left[0] <= neighbor_coord[0] <= bottom_right[0] \
+                and upper_left[1] <= neighbor_coord[1] <= bottom_right[1]:
             available_neighbors.append(side)
             continue
 
         # If the board is not expand and not within the existing board side, go to the next side
-        if (side == PieceSide.left_side or side == PieceSide.rightSide) and not width_expandable \
+        if (side == PieceSide.left_side or side == PieceSide.right_side) and not width_expandable \
                 or (side == PieceSide.bottom_side or side == PieceSide.top_side) and not height_expandable:
             continue
         # Otherwise, add the piece.
@@ -139,9 +143,8 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
     # Return the set of available neighbors.
     return available_neighbors
 
-
 def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right, x_count, y_count):
-    min_distance = sys.maxint
+    min_distance = None
     best_piece = None
     best_piece_coord = None
     best_piece_rotation = None
@@ -153,7 +156,8 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
         available_neighbors = determine_available_neighbors(frontier_piece, solution_grid, upper_left, bottom_right,
                                                             x_count, y_count)
         # in some rare cases (e.g. edge of board reached, a frontier piece may have no neighbors. If so continue.
-        if len(available_neighbors) == 0: continue
+        if len(available_neighbors) == 0:
+            continue
 
         # Iterate through the unexplored pieces.
         for new_piece in unexplored_set:
@@ -179,28 +183,47 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
     return best_piece
 
 
-def make_puzzle_solution(solution_grid, upper_left, bottom_right, x_count, y_count):
+def make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, x_count, y_count):
     # Build the output_grid
     # noinspection PyUnusedLocal
-    final_grid = [[None for y in range(0, y_count)] for x in range(0, x_count)]
-    # Check if the board is unrotated
-    if bottom_right[0] - upper_left[0] + 1 == x_count:
-        for x in range(0, x_count):
-            for y in range(0, y_count):
-                final_grid[x][y] = solution_grid[upper_left[0] + x][upper_left[1] + y]
-    # Board is rotated
-    else:
-        # Need to swap x and y axis in solution since rotation
-        for x in range(0, x_count):
-            for y in range(0, y_count):
-                final_grid[x][y] = solution_grid[bottom_right[0] - y][upper_left[1] + x]
+    puzzle._pieces = [[None for y in range(0, y_count)] for x in range(0, x_count)]
+    for x in range(0, x_count):
+        for y in range(0, y_count):
+                if bottom_right[0] - upper_left[0] + 1 == x_count:
+                    puzzle._pieces[x][y] = solution_grid[upper_left[0] + x][upper_left[1] + y]
+                # Board is rotated
+                # Need to swap x and y axis in solution since rotation
+                else:
+                    puzzle._pieces[x][y] = solution_grid[bottom_right[0] - y][upper_left[1] + x]
+                    # Special mode to force a rotation
+                    puzzle._pieces[x][y]._force_enable_rotate = True
+                    puzzle._pieces[x][y].rotate_90_degrees()
+                    # Disable special rotation mode
+                    puzzle._pieces[x][y]._force_enable_rotate = False
+                puzzle._pieces[x][y].assigned_location = (x, y)
 
     # Return a puzzle built from the individual pieces.
-    return Puzzle.make_puzzle_from_pieces(final_grid)
+    return puzzle
 
 
 if __name__ == '__main__':
-    puzzles = [("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
+
+    # tmp_puzzle = PickleHelper.importer("test_puzzle.pk")
+    # tmp_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + "test_puzzle.jpg")
+    # tmp_solution_grid = PickleHelper.importer("solution_grid.pk")
+    # tmp_upper_left = PickleHelper.importer("upper_left.pk")
+    # tmp_bottom_right = PickleHelper.importer("bottom_right.pk")
+    # tmp_x_count = PickleHelper.importer("x_count.pk")
+    # tmp_y_count = PickleHelper.importer("y_count.pk")
+    # tmp_puzzle = make_puzzle_solution(tmp_puzzle, tmp_solution_grid, tmp_upper_left,
+    #                                   tmp_bottom_right, tmp_x_count, tmp_y_count)
+    # tmp_puzzle.export_puzzle("images\pickle_solve.jpg")
+
+    # puzzles = [("boat_100x100.jpg", (2, 2)), ("che_100x100.gif", (2, 2)),
+    #            ("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
+    #            ("two_faced_cat.jpg", (20, 10))]
+    puzzles = [("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
+               ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:
         # Extract the information on the images
         img_filename = puzzle_info[0]
@@ -210,6 +233,6 @@ if __name__ == '__main__':
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
         # test_puzzle.open_image()
         test_puzzle.convert_to_pieces(img_x_count, img_y_count)
-        #test_puzzle.shuffle_pieces()
+        test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "pre_" + img_filename)
         solved_puzzle = perform_bottom_up_search(test_puzzle)
         solved_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "solved_" + img_filename)

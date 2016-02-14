@@ -17,11 +17,17 @@ class PieceRotation(Enum):
         Pieces can only be rotated in 90 degree increments.
 
     """
+
     degree_0 = 0        # No rotation
     degree_90 = 90      # 90 degree rotation
     degree_180 = 180    # 180 degree rotation
     degree_270 = 270    # 270 degree rotation
     _degree_360 = 360   # Internal use only.  Same as 0 degree rotation.
+
+    # May want to disable rotation so have a check for that.
+    @staticmethod
+    def is_rotation_enabled():
+        return False
 
     @staticmethod
     def degrees(n):
@@ -51,8 +57,10 @@ class PieceRotation(Enum):
             List[PieceRotation]: List of all valid rotation values in increasing order.
 
         """
-
-        return [PieceRotation.degree_0, PieceRotation.degree_90, PieceRotation.degree_180, PieceRotation.degree_270]
+        if PieceRotation.is_rotation_enabled():
+            return [PieceRotation.degree_0, PieceRotation.degree_90, PieceRotation.degree_180, PieceRotation.degree_270]
+        else:
+            return [PieceRotation.degree_0]
 
     # noinspection PyUnresolvedReferences
     def get_numb_90_rotations_to_other(self, other):
@@ -148,9 +156,6 @@ class PuzzlePiece(object):
     # Minimum width for a puzzle piece.
     MINIMUM_WIDTH = 10
 
-    # May want to disable rotation so have a check for that.
-    rotation_enabled = True
-
     def __init__(self, width, actual_location=None, image=None, start_x=None, start_y=None):
         """
         Constructor of an empty puzzle piece object
@@ -174,6 +179,9 @@ class PuzzlePiece(object):
         if width < PuzzlePiece.MINIMUM_WIDTH:
             raise ValueError("Specified width is less than the minimum width of %d" % PuzzlePiece.MINIMUM_WIDTH)
         self._width = width
+
+        # Disable force rotation by default.
+        self._force_enable_rotate = False
 
         # Create the matrix for storing the pixel information
         # noinspection PyUnusedLocal
@@ -312,7 +320,8 @@ class PuzzlePiece(object):
             (Image): Piece's image with appropriate rotation
 
         """
-        return self._pixels.rotate(self._rotation.value)
+        rotation_angle = self.rotation.value
+        return self._pixels.rotate(rotation_angle)
 
     def get_neighbor_coordinate(self, piece_side):
         """Neighbor Coordinate Accessor
@@ -490,7 +499,7 @@ class PuzzlePiece(object):
             rotation (PieceRotation): The rotation of the specified puzzle piece.
 
         """
-        if rotation != PieceRotation.degree_0:
+        if not self._force_enable_rotate and rotation != PieceRotation.degree_0:
             PuzzlePiece.assert_rotation_enabled()
 
         # noinspection PyUnresolvedReferences
@@ -509,7 +518,7 @@ class PuzzlePiece(object):
             AttributeError: Variable 'rotation_enabled' is set to false.
 
         """
-        if not PuzzlePiece.rotation_enabled:
+        if not PieceRotation.is_rotation_enabled():
             raise AttributeError("Cannot set rotation.  PieceRotation is disabled for puzzle pieces.")
 
     def randomize_rotation(self):
