@@ -70,6 +70,33 @@ class PieceRotation(Enum):
             degree_difference += PieceRotation._degree_360.value
         return degree_difference / PieceRotation.degree_90.value
 
+    def rotate_90_degrees(self, numb_times=None):
+        """Rotation Rotator
+
+        Rotates a given rotation by 90 degrees.
+
+        Args:
+            numb_times (Optional int): Number of times to rotator.  If not specified, it rotates once.
+
+        Returns (PieceRotation): Current rotation rotated by 90 degrees.  The rotated value is between
+                                 0 and 270 degrees.
+
+        """
+        # noinspection PyUnresolvedReferences
+        if numb_times is None:
+            new_rotation_degree = (self.value + PieceRotation.degree_90.value) % PieceRotation._degree_360.value
+            return PieceRotation.degrees(new_rotation_degree)
+        else:
+            numb_times %= 4  # Four rotations is the same as zero rotations so normalize between 0 and 3.
+
+        # Specify the number of times to rotate.
+        new_rotation = self
+        for i in range(0, numb_times):
+            new_rotation = new_rotation.rotate_90_degrees()
+
+        # Return the rotation
+        return new_rotation
+
 
 class PieceSide(Enum):
     top_side = 0
@@ -418,6 +445,16 @@ class PuzzlePiece(object):
         for i in range(0, self.width):
             pixel_coord = (start_coord[0] + i * pixel_step[0], start_coord[1] + i * pixel_step[1])
             self.putpixel(pixel_coord, color=pixel_color)
+
+    def rotate_90_degrees(self):
+        """Puzzle Piece Incremental Rotator
+
+        Rotates a puzzle piece by 90 degrees
+
+        """
+
+        # Get the degree of the current piece
+        self.rotation = self.rotation.rotate_90_degrees()
 
     @property
     def rotation(self):

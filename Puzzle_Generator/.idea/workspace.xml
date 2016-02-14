@@ -37,8 +37,8 @@
       <file leaf-file-name="test_puzzle_piece.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="3.375">
-              <caret line="150" column="34" selection-start-line="150" selection-start-column="34" selection-end-line="150" selection-end-column="34" />
+            <state vertical-scroll-proportion="0.03125">
+              <caret line="100" column="39" selection-start-line="100" selection-start-column="39" selection-end-line="100" selection-end-column="39" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -50,7 +50,7 @@
         <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="340" column="67" selection-start-line="340" selection-start-column="67" selection-end-line="340" selection-end-column="67" />
+              <caret line="568" column="0" selection-start-line="568" selection-start-column="0" selection-end-line="568" selection-end-column="0" />
               <folding>
                 <element signature="e#90#111#0" expanded="true" />
               </folding>
@@ -58,11 +58,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_puzzle.pk" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/puzzle_generator/test_puzzle.pk">
+      <file leaf-file-name="case.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Python27/Lib/unittest/case.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="328" column="0" selection-start-line="328" selection-start-column="0" selection-end-line="328" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Python27/Lib/site-packages/enum/__init__.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -460,34 +470,34 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Calculate_Dist - 2016.02.13 at 19h 49m 31s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 19h 50m 50s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 19h 57m 22s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 19h 58m 12s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 19h 58m 16s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 20h 41m 17s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 20h 42m 54s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 20h 47m 28s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Calculate_Dist - 2016.02.13 at 20h 48m 33s.xml">
-      <configuration name="Calculate_Dist" configurationId="tests" />
-    </history-entry>
     <history-entry file="Calculate_Dist - 2016.02.13 at 20h 57m 16s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 21h 48m 26s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 21h 48m 58s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 21h 59m 18s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 21h 59m 34s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 22h 06m 59s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 22h 09m 35s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 22h 15m 08s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 22h 17m 28s.xml">
+      <configuration name="Calculate_Dist" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Calculate_Dist - 2016.02.13 at 22h 18m 48s.xml">
       <configuration name="Calculate_Dist" configurationId="tests" />
     </history-entry>
   </component>
@@ -497,15 +507,15 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32769555" sideWeight="0.39635417" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32769555" sideWeight="0.4015625" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.47291666" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32769555" sideWeight="0.60364586" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32769555" sideWeight="0.5984375" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39957717" sideWeight="0.58489585" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28858352" sideWeight="0.57708335" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -527,13 +537,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py</url>
-          <line>532</line>
-          <option name="timeStamp" value="128" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -544,7 +547,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="129" />
+      <option name="time" value="139" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="tests">
@@ -583,7 +586,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -913,7 +916,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="178" column="21" selection-start-line="178" selection-start-column="21" selection-end-line="178" selection-end-column="21" />
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -950,26 +953,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/enum/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="735" column="0" selection-start-line="735" selection-start-column="0" selection-end-line="735" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/site-packages/PIL/Image.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1200" column="0" selection-start-line="1200" selection-start-column="0" selection-end-line="1200" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/unittest/case.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.32401314">
-          <caret line="329" column="0" selection-start-line="329" selection-start-column="0" selection-end-line="329" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -990,16 +977,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="340" column="67" selection-start-line="340" selection-start-column="67" selection-end-line="340" selection-end-column="67" />
-          <folding>
-            <element signature="e#90#111#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/puzzle_generator/test_puzzle.pk">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1008,10 +985,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/enum/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/unittest/case.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="328" column="0" selection-start-line="328" selection-start-column="0" selection-end-line="328" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/puzzle_generator/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="568" column="0" selection-start-line="568" selection-start-column="0" selection-end-line="568" selection-end-column="0" />
+          <folding>
+            <element signature="e#90#111#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/puzzle_generator/test_puzzle_piece.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.375">
-          <caret line="150" column="34" selection-start-line="150" selection-start-column="34" selection-end-line="150" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.03125">
+          <caret line="100" column="39" selection-start-line="100" selection-start-column="39" selection-end-line="100" selection-end-column="39" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

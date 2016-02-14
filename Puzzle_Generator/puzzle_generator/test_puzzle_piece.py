@@ -25,8 +25,9 @@ class PuzzlePieceTestCase(unittest.TestCase):
         self.assertTrue(black_piece.width == width)
 
         # Calculate distance between a set of white and black pixels
-        predicted_dist = 3 * (255 - 0) ** 2
-        predicted_dist *= width
+        black_white_pixel_dist = 3 * (255 - 0) ** 2
+        black_white_edge_dist = black_white_pixel_dist * width
+        same_color_dist = 0
 
         # Test with different rotations and sides and ensure it does not affect the calculations.
         for white_rotation in PieceRotation.get_all_rotations():
@@ -35,25 +36,89 @@ class PuzzlePieceTestCase(unittest.TestCase):
                 black_piece.rotation = black_rotation
                 for side in PieceSide.get_all_sides():
                     actual_dist = PuzzlePiece.calculate_pieces_edge_distance(white_piece, side, black_piece)
-                    self.assertTrue(actual_dist == predicted_dist)
+                    self.assertTrue(actual_dist == black_white_edge_dist)
 
                     # Ensure the calculation is the same bidirectionally
                     other_side = side.paired_edge
                     actual_dist = PuzzlePiece.calculate_pieces_edge_distance(black_piece, other_side, white_piece)
-                    self.assertTrue(actual_dist == predicted_dist)
+                    self.assertTrue(actual_dist == black_white_edge_dist)
 
                     # Ensure the distance between a piece and itself is 0
-                    self.assertTrue(0 == PuzzlePiece.calculate_pieces_edge_distance(white_piece, side, white_piece))
-                    self.assertTrue(0 == PuzzlePiece.calculate_pieces_edge_distance(black_piece, side, black_piece))
+                    self.assertTrue(same_color_dist ==
+                                    PuzzlePiece.calculate_pieces_edge_distance(white_piece, side, white_piece))
+                    self.assertTrue(same_color_dist ==
+                                    PuzzlePiece.calculate_pieces_edge_distance(black_piece, side, black_piece))
 
         # Color the side of the black piece white
         black_piece.rotation = PieceRotation.degree_0
         black_piece._set_side_color(PieceSide.left_side, "white")
-        self.assertTrue(0 == PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
 
         # Rotate the black piece 90 degrees and compare that side to the white piece.
         black_piece.rotation = PieceRotation.degree_90
-        self.assertTrue(0 == PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        black_piece._set_side_color(PieceSide.top_side, "black")
+        self.assertTrue(black_white_edge_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+
+        # Set the color while rotated.
+        black_piece._set_side_color(PieceSide.bottom_side, "white")
+        black_piece.rotate_90_degrees()
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        self.assertTrue(black_white_edge_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.right_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.bottom_side, white_piece))
+
+        # Rotate 90 degrees (total 90 degrees)
+        black_piece.rotate_90_degrees()
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.right_side, white_piece))
+        self.assertTrue(black_white_edge_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.bottom_side, white_piece))
+
+        # Rotate 90 more degrees (total 180 degrees)
+        black_piece.rotate_90_degrees()
+        self.assertTrue(black_white_edge_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.right_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.bottom_side, white_piece))
+
+        # Rotate 90 more degrees (total 270 degrees)
+        black_piece.rotate_90_degrees()
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
+        self.assertTrue(black_white_edge_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.right_side, white_piece))
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.bottom_side, white_piece))
+
+        # Rotate 90 more degrees (total 360 degrees)
+        black_piece.rotate_90_degrees()
+        self.assertTrue(same_color_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.left_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.top_side, white_piece))
+        self.assertTrue(black_white_edge_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.right_side, white_piece))
+        self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
+                        PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.bottom_side, white_piece))
+
 
     def test_get_rotated_puzzle_piece(self):
         """
@@ -110,6 +175,24 @@ class PuzzlePieceTestCase(unittest.TestCase):
                 predicted_numb_rotations = (tot_numb_rotation + (j - i)) % tot_numb_rotation
                 # Verify actual matches predicted
                 self.assertTrue(rot1.get_numb_90_rotations_to_other(rot2) == predicted_numb_rotations)
+
+    def test_90_degree_rotator(self):
+        """
+        Tests the method "rotate_90_degrees" in the PieceRotation class.
+        """
+        # Rotate 90 degrees with no pass parameter.
+        rotation_270_degree = PieceRotation.degree_270
+        self.assertTrue(rotation_270_degree.rotate_90_degrees() == PieceRotation.degree_0)
+        # Rotate 90 degrees with 90 degrees pass parameter.
+        self.assertTrue(rotation_270_degree.rotate_90_degrees(1) == PieceRotation.degree_0)
+        # Rotate 450 degrees
+        self.assertTrue(rotation_270_degree.rotate_90_degrees(5) == PieceRotation.degree_0)
+        # Rotate 180 degrees with six rotations.
+        self.assertTrue(rotation_270_degree.rotate_90_degrees(2) == PieceRotation.degree_90)
+        # Rotate 270 degrees with three rotations.
+        self.assertTrue(rotation_270_degree.rotate_90_degrees(3) == PieceRotation.degree_180)
+        # Rotate 270 degrees with three rotations.
+        self.assertTrue(rotation_270_degree.rotate_90_degrees(4) == PieceRotation.degree_270)
 
     def test_get_unrotated_puzzle_piece(self):
         """
