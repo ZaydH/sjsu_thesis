@@ -24,6 +24,23 @@ class Rotation(Enum):
     _degree_360 = 360   # Internal use only.  Same as 0 degree rotation.
 
     @staticmethod
+    def degrees(n):
+        """
+        Factory method for getting the rotation enum based solely on the number of degrees of rotation.
+
+        Args:
+            n (int): Rotation in degrees.  Must be in 90 degree increments (e.g. 0, 90, 180, 270 only)
+
+        Returns (Rotation): Rotation enum for the specified number of degrees.
+
+        """
+        # noinspection PyUnresolvedReferences
+        assert n % Rotation.degree_90.value == 0 and n < Rotation._degree_360.value
+        rot_cnt = n / 90
+        all_rotations = [Rotation.degree_0, Rotation.degree_90, Rotation.degree_180, Rotation.degree_270]
+        return all_rotations[rot_cnt]
+
+    @staticmethod
     def get_all_rotations():
         """
         Gets a list of all valid values of Rotation
@@ -33,7 +50,23 @@ class Rotation(Enum):
 
         """
 
-        return Rotation.degree_0, Rotation.degree_90, Rotation.degree_180, Rotation.degree_270
+        return [Rotation.degree_0, Rotation.degree_90, Rotation.degree_180, Rotation.degree_270]
+
+    # noinspection PyUnresolvedReferences
+    def get_numb_90_rotations_to_other(self, other):
+        """
+        Determines the number of 90 degree rotations from the current rotation to another rotation.
+
+        Args:
+            other (Rotation: Another rotation
+
+        Returns (int): Number of 90 degree rotations required.  It is bounded between 0 and 3 as that is the minimum
+        and maximum of clockwise rotations to move between any 90 degree angles without doing a complete revolution.
+        """
+        degree_difference = other.value - self.value
+        if degree_difference < 0:
+            degree_difference += Rotation._degree_360.value
+        return degree_difference / Rotation.degree_90.value
 
 
 class PieceSide(Enum):
@@ -51,7 +84,7 @@ class PieceSide(Enum):
         left_side].  Hence, the sides are listed clockwise starting from the top side.
 
         """
-        return PieceSide.top_side, PieceSide.right_side, PieceSide.bottom_side, PieceSide.left_side
+        return [PieceSide.top_side, PieceSide.right_side, PieceSide.bottom_side, PieceSide.left_side]
 
     @property
     def paired_edge(self):
@@ -135,8 +168,7 @@ class PuzzlePiece(object):
         self._assigned_location = None
         # Initialize empty neighbor list.
         # noinspection PyUnusedLocal
-        self._assigned_sides = [None for x in range(PieceSide.top_side,
-                                                    PieceSide.left_side + 1)]
+        self._assigned_sides = [None for x in PieceSide.get_all_sides()]
 
         # Set a random rotation
         self._rotation = None  # Create a reference to prevent compiler warnings
@@ -161,14 +193,13 @@ class PuzzlePiece(object):
 
         """
 
+        assert self.rotation is not None
+
         # Number of rotations is equal to the number of rotations required to make the
         # rotated x/y values full circle.  Hence, 0degree rotation takes no 90 degrees.
         # 90degree rotation takes 3 rotations, 180degrees takes 2, and 270 takes 1.
-        # noinspection PyProtectedMember,PyUnresolvedReferences
-        numb_90_degree_rotations = (Rotation._degree_360 - self._rotation)
-        # noinspection PyProtectedMember
-        numb_90_degree_rotations %= Rotation._degree_360
-        numb_90_degree_rotations /= Rotation.degree_90
+        # noinspection PyRedundantParentheses,PyTypeChecker
+        numb_90_degree_rotations = (self.rotation).get_numb_90_rotations_to_other(Rotation.degrees(0))
         # Handle case where loop is not run.
         (unrotated_x, unrotated_y) = (rotated_x, rotated_y)
         for i in range(0, numb_90_degree_rotations):
@@ -203,7 +234,8 @@ class PuzzlePiece(object):
             rotation = self._rotation
 
         # Calculate number of 90 degree rotations to perform.
-        numb_90_degree_rotations = rotation.value / Rotation.degree_90
+        # noinspection PyUnresolvedReferences
+        numb_90_degree_rotations = (Rotation.degrees(0)).get_numb_90_rotations_to_other(rotation)
         # Each iteration of the loop rotates the x, y coordinates 90 degrees
         # Each a 180 degree rotation is two 90 degree rotations
         (rotated_x, rotated_y) = (unrotated_x, unrotated_y)  # In case loop is never run
@@ -328,31 +360,34 @@ class PuzzlePiece(object):
         return self._pixels.getpixel((x, y))
 
     def get_edge_start_corner_coordinate_and_pixel_step(self, piece_side):
+        """
+
+        Args:
+            piece_side (PieceSide): Side of the piece whose starting corner pixel is being returned.
+
+        Returns ([[int], [int]]:
+
+        """
+        assert piece_side in PieceSide.get_all_sides()
+
         # Handle the dimension that is changing first.
         # For a top to bottom pair, it is the x dimension
-        if piece_side == PieceSide.top_side or piece_side == PieceSide.bottom_side:
-            starting_x = 0
-            offset_step = (1, 0)
+        if piece_side == PieceSide.top_side or piece_side == PieceSide.left_side:
+            start_coord = (0, 0)
+        elif piece_side == PieceSide.right_side:
+            start_coord = (self._width - 1, 0)
         # For a left to right pair, it is the y dimension
         else:
-            starting_y = 0
-            offset_step = (0, 1)
+            start_coord = (0, self._width - 1)
 
         # Handle the dimension for each side that is unchanging
-        if piece_side == PieceSide.top_side:
-            starting_y = 0
-        elif piece_side == PieceSide.bottom_side:
-            starting_y = self._width - 1
-        elif piece_side == PieceSide.right_side:
-            starting_x = self._width - 1
-        elif piece_side == PieceSide.left_side:
-            starting_x = 0
+        if piece_side == PieceSide.top_side or piece_side == PieceSide.bottom_side:
+            offset_step = (1, 0)
+        else:
+            offset_step = (0, 1)
 
         # Return the start and end x/y coordinates
-        # noinspection PyUnboundLocalVariable
-        assert starting_x is not None and starting_y is not None
-        # noinspection PyUnboundLocalVariable
-        return [(starting_x, starting_y), offset_step]
+        return start_coord, offset_step
 
     @property
     def rotation(self):
@@ -381,7 +416,8 @@ class PuzzlePiece(object):
         if rotation != Rotation.degree_0:
             PuzzlePiece.assert_rotation_enabled()
 
-        if rotation.value % Rotation.degree_90 != 0:
+        # noinspection PyUnresolvedReferences
+        if rotation.value % Rotation.degree_90.value != 0:
             raise ValueError("Invalid rotation value.")
 
         self._rotation = rotation

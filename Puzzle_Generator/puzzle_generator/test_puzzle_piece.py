@@ -1,5 +1,5 @@
 import unittest
-from puzzle_piece import PuzzlePiece, Rotation, PieceSide, get_edge_starting_and_ending_x_and_y
+from puzzle_piece import PuzzlePiece, Rotation, PieceSide
 
 
 class PuzzlePieceTestCase(unittest.TestCase):
@@ -37,6 +37,22 @@ class PuzzlePieceTestCase(unittest.TestCase):
             # Since center of the puzzle, rotation should have no effect
             self.assertTrue(piece._get_rotated_coordinates(width // 2, width // 2) == (width // 2, width // 2))
 
+    def test_get_numb_90_degree_rotations(self):
+
+        # Get all of the possible rotations
+        all_rotations = Rotation.get_all_rotations()
+        tot_numb_rotation = len(all_rotations)
+
+        # Iterate through all rotations and get the difference
+        for i in range(0, len(all_rotations)):
+            rot1 = all_rotations[i]
+            for j in range(0, len(all_rotations)):
+                rot2 = all_rotations[j]
+                # Calculate the predicted number of rotations.
+                predicted_numb_rotations = (tot_numb_rotation + (j - i)) % tot_numb_rotation
+                # Verify actual matches predicted
+                self.assertTrue(rot1.get_numb_90_rotations_to_other(rot2) == predicted_numb_rotations)
+
     def test_get_unrotated_puzzle_piece(self):
         """
         Tests getting the unrotated x/y coordinate behavior of the puzzle piece
@@ -63,15 +79,14 @@ class PuzzlePieceTestCase(unittest.TestCase):
                     # Test all possible y coordinates
                     for y in range(0, width):
                         rotated_x, rotated_y = piece._get_rotated_coordinates(x, y)
-                        unrotated_x, unrotated_y = piece._get_unrotated_coordinates(rotated_x,
-                                                                                    rotated_y)
+                        unrotated_coordinate = piece._get_unrotated_coordinates(rotated_x, rotated_y)
                         # Print test conditions if enabled.
                         if PuzzlePieceTestCase.PRINT_DEBUG_MESSAGES:
                             print "Setting: width = %d, x = %d, y = %d, rotation = %d" % (width, x, y, rotation.value)
                             print "rotated_x = %d, rotated_y = %d" % (rotated_x, rotated_y)
-                            print "unrotated_x = %d, unrotated_y = %d" % (unrotated_x, unrotated_y)
+                            print "unrotated_x = %d, unrotated_y = %d" % unrotated_coordinate
                         # Check the calculated value.
-                        self.assertTrue((x, y) == (unrotated_x, unrotated_y))
+                        self.assertTrue((x, y) == unrotated_coordinate)
 
     def test_piece_neighbor(self):
 
@@ -92,23 +107,27 @@ class PuzzlePieceTestCase(unittest.TestCase):
 
         # Check top edge x and y
         width = 10
-        (x1, y1), (x2, y2) = get_edge_starting_and_ending_x_and_y(width, PieceSide.top_side)
-        self.assertTrue((x1 == 0) and (y1 == 0) and (x2 == width - 1) and (y2 == 0))
+        piece = PuzzlePiece(width)
+        start_coord, offset = piece.get_edge_start_corner_coordinate_and_pixel_step(PieceSide.top_side)
+        self.assertTrue(start_coord == (0, 0) and offset == (1, 0))
 
         # Check bottom edge x and y
         width = 500
-        (x1, y1), (x2, y2) = get_edge_starting_and_ending_x_and_y(width, PieceSide.bottom_side)
-        self.assertTrue((x1 == 0) and (y1 == width - 1) and (x2 == width - 1) and (y2 == width - 1))
+        piece = PuzzlePiece(width)
+        start_coord, offset = piece.get_edge_start_corner_coordinate_and_pixel_step(PieceSide.bottom_side)
+        self.assertTrue(start_coord == (0, width - 1) and offset == (1, 0))
 
         # Check top edge x and y
         width = 20
-        (x1, y1), (x2, y2) = get_edge_starting_and_ending_x_and_y(width, PieceSide.left_side)
-        self.assertTrue((x1 == 0) and (y1 == 0) and (x2 == 0) and (y2 == width - 1))
+        piece = PuzzlePiece(width)
+        start_coord, offset = piece.get_edge_start_corner_coordinate_and_pixel_step(PieceSide.left_side)
+        self.assertTrue(start_coord == (0, 0) and offset == (0, 1))
 
         # Check bottom edge x and y
         width = 500
-        (x1, y1), (x2, y2) = get_edge_starting_and_ending_x_and_y(width, PieceSide.right_side)
-        self.assertTrue((x1 == width - 1) and (y1 == 0) and (x2 == width - 1) and (y2 == width - 1))
+        piece = PuzzlePiece(width)
+        start_coord, offset = piece.get_edge_start_corner_coordinate_and_pixel_step(PieceSide.right_side)
+        self.assertTrue(start_coord == (width - 1, 0) and offset == (0, 1))
 
 # If this function is main, then run the unit tests.
 if __name__ == "__main__":
