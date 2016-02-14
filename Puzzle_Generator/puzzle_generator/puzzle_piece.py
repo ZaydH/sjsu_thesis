@@ -82,8 +82,9 @@ class PieceRotation(Enum):
                                  0 and 270 degrees.
 
         """
-        # noinspection PyUnresolvedReferences
+
         if numb_times is None:
+            # noinspection PyUnresolvedReferences
             new_rotation_degree = (self.value + PieceRotation.degree_90.value) % PieceRotation._degree_360.value
             return PieceRotation.degrees(new_rotation_degree)
         else:
@@ -283,13 +284,22 @@ class PuzzlePiece(object):
 
     @assigned_location.setter
     def assigned_location(self, assigned_location):
-        """
+        """Assigned Locator Setter Property
+
         Updates the assigned location of a piece in the puzzle.
 
         Args:
             assigned_location ([int, int]): Location where the piece is assigned in the X/Y grid.
+
+        raises:
+            ValueError:
         """
-        assert len(assigned_location) == 2
+        if len(assigned_location) != 2:
+            raise ValueError("Assigned location must be a tuple of integers of length 2.")
+        if assigned_location[0] < 0:
+            raise ValueError("Minimum value for the assigned location of the x coordinate is 0.")
+        if assigned_location[1] < 0:
+            raise ValueError("Minimum value for the assigned location of the y coordinate is 0.")
         self._assigned_location = assigned_location
 
     @property

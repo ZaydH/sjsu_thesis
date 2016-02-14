@@ -231,10 +231,12 @@ class Puzzle(object):
                 if Puzzle.export_with_border:
                     start_y += y_piece * Puzzle.border_width
 
-                # Paste the image from the piece.
-                box = (start_x, start_y, start_x + self._piece_width, start_y + self._piece_width)
-                piece_image = self._pieces[x_piece][y_piece].image()
+                # Get the image for thie specified piece.
+                piece_image = self._pieces[x_piece][y_piece].image
                 assert(piece_image.size == (self._piece_width, self._piece_width))  # Verify the size
+                # Define the box where the piece will be placed
+                box = (start_x, start_y, start_x + self._piece_width, start_y + self._piece_width)
+                # Paste the image from the piece.
                 pixels.paste(piece_image, box)
 
         # Add a white border
@@ -308,12 +310,12 @@ if __name__ == '__main__':
     for puzzle_info in puzzles:
         # Extract the information on the images
         img_filename = puzzle_info[0]
-        (x_count, y_count) = puzzle_info[1]
+        (piece_x_count, piece_y_count) = puzzle_info[1]
         # Build a test puzzle
         test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + img_filename)
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + img_filename )
         # test_puzzle.open_image()
-        test_puzzle.convert_to_pieces(x_count, y_count)
+        test_puzzle.convert_to_pieces(piece_x_count, piece_y_count)
         test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
 

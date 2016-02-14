@@ -17,22 +17,24 @@ def perform_bottom_up_search(puzzle):
     # Get the piece breakdown information
     x_count = puzzle.x_piece_count
     y_count = puzzle.y_piece_count
-    grid_length = max(x_count, y_count)
+    max_xy_piece_count = max(puzzle.x_piece_count, puzzle.y_piece_count)
 
     # Build an array that is larger than the puzzle as it may build in any direction around the board
     # noinspection PyUnusedLocal
-    solution_grid = [[None for y in range(0, 2 * grid_length + 1)] for x in range(0, 2 * grid_length + 1)]
+    solution_grid = [[None for y in range(0, 2 * max_xy_piece_count + 1)] for x in range(0, 2 * max_xy_piece_count + 1)]
     # Initialize the board information
-    upper_left = bottom_right = center = (grid_length, grid_length)
+    upper_left = bottom_right = center = (max_xy_piece_count, max_xy_piece_count)
 
-    # Get the puzzle's pieces and transfer them to a frontier set.
-    pieces = puzzle.pieces()
+    # Get the puzzle's pieces and transfer them to the unexplored set.
+    pieces = puzzle.pieces
     unexplored_set = [pieces[x][y] for x in range(0, x_count) for y in range(0, y_count)]
-    shuffle(unexplored_set)
+    #shuffle(unexplored_set)
 
     # Select the first piece of the puzzle.
-    first_piece = unexplored_set.pop()
-    frontier_set = {center: first_piece}
+    mid_piece = (x_count // 2) + (y_count // 2) * x_count
+    first_piece = unexplored_set.pop(mid_piece)  # Take a piece from the middle of the unexplored set.
+    first_piece.assigned_location = center
+    frontier_set = {center: first_piece}  # Add the first piece to the frontier set.
     solution_grid[center[0]][center[1]] = first_piece
 
     # Iterate until all pieces have been explored.
@@ -71,9 +73,7 @@ def perform_bottom_up_search(puzzle):
                     frontier_set.pop(coord)
 
     # Make the puzzle_solution
-    solution_puzzle = Puzzle()
-    # solution_puzzle = make_puzzle_solution(solution_grid, upper_left, bottom_right, x_count, y_count)
-    solution_puzzle.export_puzzle("solution.bmp")
+    return make_puzzle_solution(solution_grid, upper_left, bottom_right, x_count, y_count)
 
 
 def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right, x_count, y_count):
@@ -204,11 +204,12 @@ if __name__ == '__main__':
     for puzzle_info in puzzles:
         # Extract the information on the images
         img_filename = puzzle_info[0]
-        (x_count, y_count) = puzzle_info[1]
+        (img_x_count, img_y_count) = puzzle_info[1]
         # Build a test puzzle
         test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + img_filename)
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
         # test_puzzle.open_image()
-        test_puzzle.convert_to_pieces(x_count, y_count)
-        test_puzzle.shuffle_pieces()
-        test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
+        test_puzzle.convert_to_pieces(img_x_count, img_y_count)
+        #test_puzzle.shuffle_pieces()
+        solved_puzzle = perform_bottom_up_search(test_puzzle)
+        solved_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "solved_" + img_filename)

@@ -119,7 +119,6 @@ class PuzzlePieceTestCase(unittest.TestCase):
         self.assertTrue(black_white_edge_dist - black_white_pixel_dist ==
                         PuzzlePiece.calculate_pieces_edge_distance(black_piece, PieceSide.bottom_side, white_piece))
 
-
     def test_get_rotated_puzzle_piece(self):
         """
         Checks whether rotation of a puzzle piece works correctly
