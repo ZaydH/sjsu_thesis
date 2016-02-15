@@ -45,7 +45,7 @@ class PuzzlePiece:
     MINIMUM_WIDTH = 10
 
     # May want to disable rotation so have a check for that.
-    rotation_enabled = True
+    rotation_enabled = False
 
     def __init__(self, width, image=None, start_x=None, start_y=None):
         """

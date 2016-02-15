@@ -19,16 +19,9 @@ class Puzzle:
     DEFAULT_IMAGE_PATH = "./images/"
     print_debug_messages = True
 
-    export_with_border = False
+    export_with_border = True
     border_width = 3
     border_outer_stripe_width = 1
-
-
-    # @staticmethod
-    # def pickle_import(obj, filename):
-    #     f = open(filename, 'r')
-    #     obj = pickle.load(f)
-    #     f.close
 
     def pickle_export(self, pickle_filename):
         """Puzzle Pickle Exporter
@@ -230,7 +223,7 @@ class Puzzle:
             border_width = Puzzle.border_width
             outer_strip_width = Puzzle.border_outer_stripe_width
             # create row borders one at a time
-            for row in range(1, self._x_piece_count):  # Skip the first and last row
+            for row in range(1, self._y_piece_count):  # Skip the first and last row
                 # Define the box for the border.
                 top_left_x = 0
                 top_left_y = (row - 1) * border_width + row * self._piece_width + outer_strip_width
@@ -239,7 +232,7 @@ class Puzzle:
                 # Create the row border via a white box.
                 box = (top_left_x, top_left_y, bottom_right_x, bottom_right_y)
                 pixels.paste("white", box)
-            for col in range(1, self._y_piece_count):  # Skip the first and last row
+            for col in range(1, self._x_piece_count):  # Skip the first and last row
                 # Define the box for the border.
                 top_left_x = (col - 1) * border_width + col * self._piece_width + outer_strip_width
                 top_left_y = 0
@@ -279,7 +272,7 @@ class Puzzle:
 
 if __name__ == '__main__':
     # Take some images and shuffle then export them.
-    puzzles = [("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
+    puzzles = [("muffins_with_peppers.jpg", (16, 9)), ("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:
         # Extract the information on the images
         file = puzzle_info[0]
@@ -289,7 +282,7 @@ if __name__ == '__main__':
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
         # test_puzzle.open_image()
         test_puzzle.convert_to_pieces(x_count, y_count)
-        test_puzzle.shuffle_pieces()
+        # test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + file)
 
     # filename = 'test_puzzle.pk'
