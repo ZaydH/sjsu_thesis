@@ -272,7 +272,7 @@ class Puzzle:
 
 if __name__ == '__main__':
     # Take some images and shuffle then export them.
-    puzzles = [("muffins_with_peppers.jpg", (16, 9)), ("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
+    puzzles = [("muffins_with_peppers.jpg", (10, 6)), ("duck.bmp", (10, 10)), ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:
         # Extract the information on the images
         file = puzzle_info[0]
