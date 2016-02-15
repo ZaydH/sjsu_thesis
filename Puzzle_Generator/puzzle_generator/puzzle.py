@@ -149,6 +149,8 @@ class Puzzle:
             for y in range(0, y_piece_count):
                 y_start = y_offset + y * self._piece_width
                 self._pieces[x][y] = PuzzlePiece(self._piece_width, self._pil_img, x_start, y_start)
+                if PuzzlePiece.rotation_enabled:
+                    self._pieces[x][y].randomize_rotation()
 
     def shuffle_pieces(self):
         """Puzzle Piece Shuffler
