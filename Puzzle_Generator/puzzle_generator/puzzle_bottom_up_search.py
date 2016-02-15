@@ -1,8 +1,11 @@
 from puzzle_piece import PuzzlePiece, PieceRotation, PieceSide
+# noinspection PyUnresolvedReferences
 from puzzle import Puzzle, PickleHelper
 # noinspection PyUnresolvedReferences
 from random import shuffle
+# noinspection PyUnresolvedReferences
 import pickle
+
 
 def perform_bottom_up_search(puzzle):
     """
@@ -27,7 +30,7 @@ def perform_bottom_up_search(puzzle):
 
     # Get the puzzle's pieces and transfer them to the unexplored set.
     pieces = puzzle.pieces
-    unexplored_set = [pieces[x][y] for y in range(0, y_count) for x in range(0, x_count) ]
+    unexplored_set = [pieces[x][y] for y in range(0, y_count) for x in range(0, x_count)]
     # shuffle(unexplored_set)
 
     # Select the first piece of the puzzle.
@@ -40,8 +43,6 @@ def perform_bottom_up_search(puzzle):
     # Iterate until all pieces have been explored.
     while len(unexplored_set) > 0:
 
-        if len(unexplored_set) <= 12:
-            x = 1
 
         # Get the next piece to assign.
         next_piece = select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right,
@@ -143,6 +144,7 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
     # Return the set of available neighbors.
     return available_neighbors
 
+
 def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right, x_count, y_count):
     min_distance = None
     best_piece = None
@@ -183,6 +185,7 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
     return best_piece
 
 
+# noinspection PyProtectedMember
 def make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, x_count, y_count):
     # Build the output_grid
     # noinspection PyUnusedLocal
@@ -219,11 +222,11 @@ if __name__ == '__main__':
     #                                   tmp_bottom_right, tmp_x_count, tmp_y_count)
     # tmp_puzzle.export_puzzle("images\pickle_solve.jpg")
 
-    # puzzles = [("boat_100x100.jpg", (2, 2)), ("che_100x100.gif", (2, 2)),
-    #            ("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
-    #            ("two_faced_cat.jpg", (20, 10))]
-    puzzles = [("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
+    puzzles = [("boat_100x100.jpg", (2, 2)), ("che_100x100.gif", (2, 2)),
+               ("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
                ("two_faced_cat.jpg", (20, 10))]
+    # puzzles = [("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
+    #            ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:
         # Extract the information on the images
         img_filename = puzzle_info[0]

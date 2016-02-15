@@ -27,7 +27,14 @@ class PieceRotation(Enum):
     # May want to disable rotation so have a check for that.
     @staticmethod
     def is_rotation_enabled():
-        return False
+        """Piece Rotation Manager
+
+        Checks whether puzzle piece rotation is enabled or disabled.
+
+        Returns (bool): True if rotation is enabled and False otherwise.
+
+        """
+        return True
 
     @staticmethod
     def degrees(n):
@@ -589,6 +596,6 @@ class PuzzlePiece(object):
             piece2_pixel = piece2.getpixel(piece2_pixel_coord)
 
             # For this pixel pair, add the sum of their respective RGB differences
-            pixel_sum += sum([(pixel1_rgb - pixel2_rgb) ** 2 for pixel1_rgb, pixel2_rgb in zip(piece1_pixel,
-                                                                                               piece2_pixel)])
+            pixel_sum += sum([abs((pixel1_rgb - pixel2_rgb) ** 2) for pixel1_rgb, pixel2_rgb in zip(piece1_pixel,
+                                                                                                    piece2_pixel)])
         return pixel_sum

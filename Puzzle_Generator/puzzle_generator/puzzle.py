@@ -8,7 +8,7 @@
 import Tkinter
 import tkFileDialog
 from PIL import Image
-from puzzle_piece import PuzzlePiece
+from puzzle_piece import PuzzlePiece, PieceRotation
 import pickle
 import random
 
@@ -335,7 +335,7 @@ if __name__ == '__main__':
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + img_filename )
         # test_puzzle.open_image()
         test_puzzle.convert_to_pieces(piece_x_count, piece_y_count)
-        #test_puzzle.shuffle_pieces()
+        # test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
 
     # filename = 'test_puzzle.pk'
