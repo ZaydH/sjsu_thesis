@@ -18,15 +18,15 @@ def perform_bottom_up_search(puzzle):
 
     """
     # Get the piece breakdown information
-    grid_x_size = puzzle.x_piece_count
-    grid_y_size = puzzle.y_piece_count
-    max_xy_piece_count = max(puzzle.x_piece_count, puzzle.y_piece_count)
+    grid_x_size = puzzle.grid_x_size
+    grid_y_size = puzzle.grid_y_size
+    max_xy_grid = max(puzzle.grid_x_size, puzzle.grid_y_size)
 
     # Build an array that is larger than the puzzle as it may build in any direction around the board
     # noinspection PyUnusedLocal
-    solution_grid = [[None for y in range(0, 2 * max_xy_piece_count + 1)] for x in range(0, 2 * max_xy_piece_count + 1)]
+    solution_grid = [[None for y in range(0, 2 * max_xy_grid + 1)] for x in range(0, 2 * max_xy_grid + 1)]
     # Initialize the board information
-    upper_left = bottom_right = center = (max_xy_piece_count, max_xy_piece_count)
+    upper_left = bottom_right = center = (max_xy_grid, max_xy_grid)
 
     # Get the puzzle's pieces and transfer them to the unexplored set.
     pieces = puzzle.pieces
@@ -102,17 +102,17 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
     board_width = bottom_right[0] - upper_left[0] + 1
     board_height = bottom_right[1] - upper_left[1] + 1
     # Get the longer and shorter sides of the puzzle
-    min_xgrid_y_size = min(grid_x_size, grid_y_size)
-    max_xgrid_y_size = max(grid_x_size, grid_y_size)
+    min_xy_grid_size = min(grid_x_size, grid_y_size)
+    max_xy_grid_size = max(grid_x_size, grid_y_size)
 
     # Determine whether it is valid to expand the board in either direction.
     width_expandable = height_expandable = False
-    if board_width < min_xgrid_y_size or (min_xgrid_y_size < board_width < max_xgrid_y_size) \
-            or (board_width == min_xgrid_y_size and board_height <= min_xgrid_y_size and board_width < max_xgrid_y_size):
+    if board_width < min_xy_grid_size or (min_xy_grid_size < board_width < max_xy_grid_size) \
+            or (board_width == min_xy_grid_size and board_height <= min_xy_grid_size and board_width < max_xy_grid_size):
         width_expandable = True
 
-    if board_height < min_xgrid_y_size or (min_xgrid_y_size < board_height < max_xgrid_y_size) \
-            or (board_height == min_xgrid_y_size and board_width <= min_xgrid_y_size and board_height < max_xgrid_y_size):
+    if board_height < min_xy_grid_size or (min_xy_grid_size < board_height < max_xy_grid_size) \
+            or (board_height == min_xy_grid_size and board_width <= min_xy_grid_size and board_height < max_xy_grid_size):
         height_expandable = True
 
     # Get all of the possible sides of a piece.

@@ -189,6 +189,8 @@ class PuzzlePiece(object):
 
         # Disable force rotation by default.
         self._force_enable_rotate = False
+        # Used in Pickling
+        self._pixels_pickle = None
 
         # Create the matrix for storing the pixel information
         # noinspection PyUnusedLocal
@@ -218,6 +220,28 @@ class PuzzlePiece(object):
         # Set a random rotation
         self._rotation = None  # Create a reference to prevent compiler warnings
         self.rotation = PieceRotation.degree_0
+
+    def pickle_export_configure(self):
+        """Puzzle Piece Export Configurer
+
+        This function should be run if a puzzle piece is to be exported via Pickle.  It properly and safely configures
+        the PIL image so that it is not corrupted upon Pickle importing.
+
+        """
+        self._pixels_pickle = {'pixels': self._pixels.tobytes(),
+                                'size': self._pixels.size,
+                                'mode': self._pixels.mode}
+
+    def pickle_import_configure(self):
+        """Puzzle Piece Import Configurer
+
+        Upon Pickle reimport, this function reinitializes the image object from the bytes representation that was
+        exported as part of the pickle.
+
+        """
+        self._pixels = Image.frombytes(self._pixels_pickle['mode'],
+                                       self._pixels_pickle['size'],
+                                       self._pixels_pickle['pixels'])
 
     def _get_unrotated_coordinates(self, xy_coord):
         """X-Y Coordinate **Un-**Rotator
