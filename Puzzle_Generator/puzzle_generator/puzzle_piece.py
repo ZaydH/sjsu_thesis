@@ -163,6 +163,9 @@ class PuzzlePiece(object):
     # Minimum width for a puzzle piece.
     MINIMUM_WIDTH = 10
 
+    # Difference between X/Y Used as a Power.
+    PIECE_DISTANCE_POWER = 9
+
     def __init__(self, width, actual_location=None, image=None, start_x=None, start_y=None):
         """
         Constructor of an empty puzzle piece object
@@ -229,8 +232,8 @@ class PuzzlePiece(object):
 
         """
         self._pixels_pickle = {'pixels': self._pixels.tobytes(),
-                                'size': self._pixels.size,
-                                'mode': self._pixels.mode}
+                               'size': self._pixels.size,
+                               'mode': self._pixels.mode}
 
     def pickle_import_configure(self):
         """Puzzle Piece Import Configurer
@@ -620,6 +623,6 @@ class PuzzlePiece(object):
             piece2_pixel = piece2.getpixel(piece2_pixel_coord)
 
             # For this pixel pair, add the sum of their respective RGB differences
-            pixel_sum += sum([abs((pixel1_rgb - pixel2_rgb) ** 2) for pixel1_rgb, pixel2_rgb in zip(piece1_pixel,
-                                                                                                    piece2_pixel)])
+            pixel_sum += sum([abs((pixel1_rgb - pixel2_rgb) ** PuzzlePiece.PIECE_DISTANCE_POWER)
+                              for pixel1_rgb, pixel2_rgb in zip(piece1_pixel, piece2_pixel)])
         return pixel_sum

@@ -25,7 +25,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         self.assertTrue(black_piece.width == width)
 
         # Calculate distance between a set of white and black pixels
-        black_white_pixel_dist = 3 * (255 - 0) ** 2
+        black_white_pixel_dist = 3 * (255 - 0) ** PuzzlePiece.PIECE_DISTANCE_POWER
         black_white_edge_dist = black_white_pixel_dist * width
         same_color_dist = 0
 

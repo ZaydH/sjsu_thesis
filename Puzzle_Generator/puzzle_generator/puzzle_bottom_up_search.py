@@ -211,20 +211,11 @@ def make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, grid_x
 
 if __name__ == '__main__':
 
-    # tmp_puzzle = PickleHelper.importer("test_puzzle.pk")
-    # tmp_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + "test_puzzle.jpg")
-    # tmp_solution_grid = PickleHelper.importer("solution_grid.pk")
-    # tmp_upper_left = PickleHelper.importer("upper_left.pk")
-    # tmp_bottom_right = PickleHelper.importer("bottom_right.pk")
-    # tmp_grid_x_size = PickleHelper.importer("grid_x_size.pk")
-    # tmp_grid_y_size = PickleHelper.importer("grid_y_size.pk")
-    # tmp_puzzle = make_puzzle_solution(tmp_puzzle, tmp_solution_grid, tmp_upper_left,
-    #                                   tmp_bottom_right, tmp_grid_x_size, tmp_grid_y_size)
-    # tmp_puzzle.export_puzzle("images\pickle_solve.jpg")
-
+    # Full List of Images to Import
     puzzles = [("boat_100x100.jpg", (2, 2)), ("che_100x100.gif", (2, 2)),
                ("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
                ("two_faced_cat.jpg", (20, 10))]
+    # Reducated list of images.
     # puzzles = [("muffins_300x200.jpg", (6, 4)), ("duck.bmp", (10, 10)),
     #            ("two_faced_cat.jpg", (20, 10))]
     for puzzle_info in puzzles:

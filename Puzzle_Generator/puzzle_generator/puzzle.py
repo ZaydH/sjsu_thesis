@@ -419,13 +419,6 @@ if __name__ == '__main__':
         # test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
 
-    # filename = 'test_puzzle.pk'
-    # # Puzzle.pickle_export(test_puzzle, filename)
-    # f = open(filename, 'r')
-    # test_puzzle = pickle.load(f)
-    # f.close()
-    # test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "_Export.bmp")
-
     # Debug message to let me know the run was completed.
     if Puzzle.print_debug_messages:
         print "Run complete."
