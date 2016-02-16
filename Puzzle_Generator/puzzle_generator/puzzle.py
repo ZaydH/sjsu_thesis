@@ -329,12 +329,12 @@ if __name__ == '__main__':
     for puzzle_info in puzzles:
         # Extract the information on the images
         img_filename = puzzle_info[0]
-        (piece_x_count, piece_y_count) = puzzle_info[1]
+        (piece_grid_x_size, piece_grid_y_size) = puzzle_info[1]
         # Build a test puzzle
         test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + img_filename)
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + img_filename )
         # test_puzzle.open_image()
-        test_puzzle.convert_to_pieces(piece_x_count, piece_y_count)
+        test_puzzle.convert_to_pieces(piece_grid_x_size, piece_grid_y_size)
         # test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
 

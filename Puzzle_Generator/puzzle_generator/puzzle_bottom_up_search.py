@@ -18,8 +18,8 @@ def perform_bottom_up_search(puzzle):
 
     """
     # Get the piece breakdown information
-    x_count = puzzle.x_piece_count
-    y_count = puzzle.y_piece_count
+    grid_x_size = puzzle.x_piece_count
+    grid_y_size = puzzle.y_piece_count
     max_xy_piece_count = max(puzzle.x_piece_count, puzzle.y_piece_count)
 
     # Build an array that is larger than the puzzle as it may build in any direction around the board
@@ -30,11 +30,11 @@ def perform_bottom_up_search(puzzle):
 
     # Get the puzzle's pieces and transfer them to the unexplored set.
     pieces = puzzle.pieces
-    unexplored_set = [pieces[x][y] for y in range(0, y_count) for x in range(0, x_count)]
+    unexplored_set = [pieces[x][y] for y in range(0, grid_y_size) for x in range(0, grid_x_size)]
     # shuffle(unexplored_set)
 
     # Select the first piece of the puzzle.
-    mid_piece = (x_count // 2) + (y_count // 2) * x_count
+    mid_piece = (grid_x_size // 2) + (grid_y_size // 2) * grid_x_size
     first_piece = unexplored_set.pop(mid_piece)  # Take a piece from the middle of the unexplored set.
     first_piece.assigned_location = center
     frontier_set = {center: first_piece}  # Add the first piece to the frontier set.
@@ -46,7 +46,7 @@ def perform_bottom_up_search(puzzle):
 
         # Get the next piece to assign.
         next_piece = select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right,
-                                       x_count, y_count)
+                                       grid_x_size, grid_y_size)
 
         # Remove the piece from the unexplored set and place it in the board
         unexplored_set.remove(next_piece)
@@ -71,16 +71,16 @@ def perform_bottom_up_search(puzzle):
             neighbor = frontier_set.get(coord)
             if neighbor is not None:
                 available_neighbors = determine_available_neighbors(neighbor, solution_grid,
-                                                                    upper_left, bottom_right, x_count, y_count)
+                                                                    upper_left, bottom_right, grid_x_size, grid_y_size)
                 # If it has no neighbors delete from the frontier
                 if len(available_neighbors) == 0:
                     frontier_set.pop(coord)
 
     # Make the puzzle_solution
-    return make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, x_count, y_count)
+    return make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, grid_x_size, grid_y_size)
 
 
-def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right, x_count, y_count):
+def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right, grid_x_size, grid_y_size):
     """
 
     Args:
@@ -88,8 +88,8 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
         solution_grid ([PuzzlePiece]):
         upper_left ([int, int]):
         bottom_right ([int, int]):
-        x_count (int):
-        y_count (int):
+        grid_x_size (int):
+        grid_y_size (int):
 
     Returns ([PieceSide]): The sides of the specified Puzzle Piece where new pieces could be
                            placed.
@@ -102,17 +102,17 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
     board_width = bottom_right[0] - upper_left[0] + 1
     board_height = bottom_right[1] - upper_left[1] + 1
     # Get the longer and shorter sides of the puzzle
-    min_xy_count = min(x_count, y_count)
-    max_xy_count = max(x_count, y_count)
+    min_xgrid_y_size = min(grid_x_size, grid_y_size)
+    max_xgrid_y_size = max(grid_x_size, grid_y_size)
 
     # Determine whether it is valid to expand the board in either direction.
     width_expandable = height_expandable = False
-    if board_width < min_xy_count or (min_xy_count < board_width < max_xy_count) \
-            or (board_width == min_xy_count and board_height <= min_xy_count and board_width < max_xy_count):
+    if board_width < min_xgrid_y_size or (min_xgrid_y_size < board_width < max_xgrid_y_size) \
+            or (board_width == min_xgrid_y_size and board_height <= min_xgrid_y_size and board_width < max_xgrid_y_size):
         width_expandable = True
 
-    if board_height < min_xy_count or (min_xy_count < board_height < max_xy_count) \
-            or (board_height == min_xy_count and board_width <= min_xy_count and board_height < max_xy_count):
+    if board_height < min_xgrid_y_size or (min_xgrid_y_size < board_height < max_xgrid_y_size) \
+            or (board_height == min_xgrid_y_size and board_width <= min_xgrid_y_size and board_height < max_xgrid_y_size):
         height_expandable = True
 
     # Get all of the possible sides of a piece.
@@ -145,7 +145,7 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
     return available_neighbors
 
 
-def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right, x_count, y_count):
+def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right, grid_x_size, grid_y_size):
     min_distance = None
     best_piece = None
     best_piece_coord = None
@@ -156,7 +156,7 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
         frontier_piece = frontier_set.get(frontier_coord)
         # Get the available neighbors of the frontier piece
         available_neighbors = determine_available_neighbors(frontier_piece, solution_grid, upper_left, bottom_right,
-                                                            x_count, y_count)
+                                                            grid_x_size, grid_y_size)
         # in some rare cases (e.g. edge of board reached, a frontier piece may have no neighbors. If so continue.
         if len(available_neighbors) == 0:
             continue
@@ -186,13 +186,13 @@ def select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, b
 
 
 # noinspection PyProtectedMember
-def make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, x_count, y_count):
+def make_puzzle_solution(puzzle, solution_grid, upper_left, bottom_right, grid_x_size, grid_y_size):
     # Build the output_grid
     # noinspection PyUnusedLocal
-    puzzle._pieces = [[None for y in range(0, y_count)] for x in range(0, x_count)]
-    for x in range(0, x_count):
-        for y in range(0, y_count):
-                if bottom_right[0] - upper_left[0] + 1 == x_count:
+    puzzle._pieces = [[None for y in range(0, grid_y_size)] for x in range(0, grid_x_size)]
+    for x in range(0, grid_x_size):
+        for y in range(0, grid_y_size):
+                if bottom_right[0] - upper_left[0] + 1 == grid_x_size:
                     puzzle._pieces[x][y] = solution_grid[upper_left[0] + x][upper_left[1] + y]
                 # Board is rotated
                 # Need to swap x and y axis in solution since rotation
@@ -216,10 +216,10 @@ if __name__ == '__main__':
     # tmp_solution_grid = PickleHelper.importer("solution_grid.pk")
     # tmp_upper_left = PickleHelper.importer("upper_left.pk")
     # tmp_bottom_right = PickleHelper.importer("bottom_right.pk")
-    # tmp_x_count = PickleHelper.importer("x_count.pk")
-    # tmp_y_count = PickleHelper.importer("y_count.pk")
+    # tmp_grid_x_size = PickleHelper.importer("grid_x_size.pk")
+    # tmp_grid_y_size = PickleHelper.importer("grid_y_size.pk")
     # tmp_puzzle = make_puzzle_solution(tmp_puzzle, tmp_solution_grid, tmp_upper_left,
-    #                                   tmp_bottom_right, tmp_x_count, tmp_y_count)
+    #                                   tmp_bottom_right, tmp_grid_x_size, tmp_grid_y_size)
     # tmp_puzzle.export_puzzle("images\pickle_solve.jpg")
 
     puzzles = [("boat_100x100.jpg", (2, 2)), ("che_100x100.gif", (2, 2)),
@@ -230,12 +230,12 @@ if __name__ == '__main__':
     for puzzle_info in puzzles:
         # Extract the information on the images
         img_filename = puzzle_info[0]
-        (img_x_count, img_y_count) = puzzle_info[1]
+        (img_grid_x_size, img_grid_y_size) = puzzle_info[1]
         # Build a test puzzle
         test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + img_filename)
         # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + file )
         # test_puzzle.open_image()
-        test_puzzle.convert_to_pieces(img_x_count, img_y_count)
+        test_puzzle.convert_to_pieces(img_grid_x_size, img_grid_y_size)
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "pre_" + img_filename)
         solved_puzzle = perform_bottom_up_search(test_puzzle)
         solved_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "solved_" + img_filename)

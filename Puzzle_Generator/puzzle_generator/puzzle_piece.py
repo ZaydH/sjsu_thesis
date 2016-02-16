@@ -34,7 +34,7 @@ class PieceRotation(Enum):
         Returns (bool): True if rotation is enabled and False otherwise.
 
         """
-        return True
+        return False
 
     @staticmethod
     def degrees(n):
