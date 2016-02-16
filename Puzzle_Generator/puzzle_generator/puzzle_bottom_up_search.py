@@ -43,7 +43,6 @@ def perform_bottom_up_search(puzzle):
     # Iterate until all pieces have been explored.
     while len(unexplored_set) > 0:
 
-
         # Get the next piece to assign.
         next_piece = select_next_piece(solution_grid, unexplored_set, frontier_set, upper_left, bottom_right,
                                        grid_x_size, grid_y_size)
@@ -107,12 +106,12 @@ def determine_available_neighbors(piece, solution_grid, upper_left, bottom_right
 
     # Determine whether it is valid to expand the board in either direction.
     width_expandable = height_expandable = False
-    if board_width < min_xy_grid_size or (min_xy_grid_size < board_width < max_xy_grid_size) \
-            or (board_width == min_xy_grid_size and board_height <= min_xy_grid_size and board_width < max_xy_grid_size):
+    if board_width < min_xy_grid_size or (min_xy_grid_size < board_width < max_xy_grid_size) or \
+            (board_width == min_xy_grid_size and board_height <= min_xy_grid_size and board_width < max_xy_grid_size):
         width_expandable = True
 
-    if board_height < min_xy_grid_size or (min_xy_grid_size < board_height < max_xy_grid_size) \
-            or (board_height == min_xy_grid_size and board_width <= min_xy_grid_size and board_height < max_xy_grid_size):
+    if board_height < min_xy_grid_size or (min_xy_grid_size < board_height < max_xy_grid_size) or \
+            (board_height == min_xy_grid_size and board_width <= min_xy_grid_size and board_height < max_xy_grid_size):
         height_expandable = True
 
     # Get all of the possible sides of a piece.
@@ -230,3 +229,5 @@ if __name__ == '__main__':
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "pre_" + img_filename)
         solved_puzzle = perform_bottom_up_search(test_puzzle)
         solved_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "solved_" + img_filename)
+
+    print "Bottom-Up Solver Complete."

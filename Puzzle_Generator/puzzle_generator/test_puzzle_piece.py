@@ -18,10 +18,12 @@ class PuzzlePieceTestCase(unittest.TestCase):
         # Test with a passed in image
         width = 10 * PuzzlePiece.MINIMUM_WIDTH
         white_piece = PuzzlePiece(width, (0, 0), Image.new("RGB", (width, width), "white"), 0, 0)
+        white_piece._force_enable_rotate = True
         self.assertTrue(white_piece.width == width)
 
         # Create a black piece and test its width since it is essentially free
         black_piece = PuzzlePiece(width, (0, 0), Image.new("RGB", (width, width), "black"), 0, 0)
+        black_piece._force_enable_rotate = True
         self.assertTrue(black_piece.width == width)
 
         # Calculate distance between a set of white and black pixels
@@ -125,6 +127,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
         """
         width = PuzzlePiece.MINIMUM_WIDTH + 5
         piece = PuzzlePiece(width)
+        piece._force_enable_rotate = True
         piece.rotation = PieceRotation.degree_90
         # Rotate upper left piece
         xy_coord = (0, 0)
@@ -203,6 +206,7 @@ class PuzzlePieceTestCase(unittest.TestCase):
 
         width = 20
         piece = PuzzlePiece(width)
+        piece._force_enable_rotate = True
         piece.rotation = PieceRotation.degree_180
         xy_coord = (width - 1, width - 1)
         self.assertTrue(piece._get_unrotated_coordinates(xy_coord) == (0, 0))
