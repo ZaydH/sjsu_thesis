@@ -215,7 +215,7 @@ class Puzzle(object):
 
         # Configure the puzzle pieces for export.
         for x in range(0, obj.grid_x_size):
-            for y in range(0, obj.grid_x_size):
+            for y in range(0, obj.grid_y_size):
                 # noinspection PyProtectedMember
                 obj._pieces[x][y].pickle_import_configure()
 
@@ -409,12 +409,12 @@ if __name__ == '__main__':
         (piece_grid_x_size, piece_grid_y_size) = puzzle_info[1]
         # Build a test puzzle
         test_puzzle = Puzzle(Puzzle.DEFAULT_IMAGE_PATH + img_filename)
+
         # test_puzzle.convert_to_pieces(piece_grid_x_size, piece_grid_y_size)
         # test_puzzle.pickle_export("test_puzzle.pk")
         # test_puzzle = Puzzle.pickle_import("test_puzzle.pk")
         # test_puzzle.export_puzzle("pickle_" + img_filename)
-        # test_puzzle.set_puzzle_image(Puzzle.DEFAULT_IMAGE_PATH + img_filename )
-        # test_puzzle.open_image()
+
         test_puzzle.convert_to_pieces(piece_grid_x_size, piece_grid_y_size)
         # test_puzzle.shuffle_pieces()
         test_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "puzzle_" + img_filename)
