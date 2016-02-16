@@ -230,4 +230,6 @@ if __name__ == '__main__':
         solved_puzzle = perform_bottom_up_search(test_puzzle)
         solved_puzzle.export_puzzle(Puzzle.DEFAULT_IMAGE_PATH + "solved_" + img_filename)
 
-    print "Bottom-Up Solver Complete."
+        print img_filename + " solving completed."
+
+    print "All bottom-up puzzle solving completed."
