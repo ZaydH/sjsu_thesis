@@ -236,6 +236,7 @@ class PuzzlePiece(object):
     @staticmethod
     def calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):
         """
+        Uses the Asymmetric Distance function to calculate the distance between two puzzle pieces.
 
         Args:
             piece_i (PuzzlePiece):

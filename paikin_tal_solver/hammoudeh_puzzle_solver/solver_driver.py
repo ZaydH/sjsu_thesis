@@ -1,8 +1,9 @@
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle
-from paikin_tal_solver.paikin_tal_solver import PaikinTalSolver
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
+from paikin_tal_solver.solver import PaikinTalSolver
 
 
-def paikin_tal_driver(images):
+def paikin_tal_driver(image_files):
     """
     Runs the Paikin and Tal image solver.
 
@@ -19,12 +20,12 @@ def paikin_tal_driver(images):
         combined_pieces.append(puzzles[i].pieces)
 
     # Create the Paikin Tal Solver
-    paikin_tal_solver = PaikinTalSolver(numb_puzzles, combined_pieces)
+    paikin_tal_solver = PaikinTalSolver(numb_puzzles, combined_pieces, PuzzlePiece.calculate_asymmetric_distance)
 
     # Run the solver
     paikin_tal_solver.run()
 
 
 if __name__ == "__main__":
-    images = ["muffins_300x200.jpg"]
+    images = [".\images\muffins_300x200.jpg"]
     paikin_tal_driver(images)

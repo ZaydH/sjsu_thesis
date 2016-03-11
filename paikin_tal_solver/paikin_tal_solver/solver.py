@@ -1,15 +1,7 @@
 import random
-from enum import Enum
+
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
-
-
-class PuzzleType(Enum):
-    """
-    Type of the puzzle to solve.  Type 1 has no piece rotation while type 2 allows piece rotation.
-    """
-
-    type1 = 1
-    type2 = 2
 
 
 class PaikinTalSolver(object):
@@ -51,7 +43,8 @@ class PaikinTalSolver(object):
         self._distance_function = distance_function
 
         # Calculate the inter-piece distances.
-        self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function)
+        self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function,
+                                                        PaikinTalSolver.puzzle_type())
 
     # noinspection PyMethodMayBeStatic
     def run(self):

@@ -1,6 +1,7 @@
 import numpy
+
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
-from paikin_tal_solver.paikin_tal_solver import PaikinTalSolver, PuzzleType
 
 
 class InterPieceDistance(object):
@@ -14,7 +15,7 @@ class InterPieceDistance(object):
     # Since a type 2 puzzle, then for each side of x_i, x_j can be rotated up to four different ways.
     TYPE2_POSSIBLE_PAIRINGS = 4
 
-    def __init__(self, pieces, distance_function):
+    def __init__(self, pieces, distance_function, puzzle_type):
         """
         Stores the piece to piece distance
 
@@ -29,6 +30,9 @@ class InterPieceDistance(object):
 
         # store the distance function used for calculations.
         self._distance_function = distance_function
+
+        # Store the puzzle type
+        self._puzzle_type = puzzle_type
 
         # Initialize the data structures for this class.
         self._piece_distances = None
@@ -51,7 +55,7 @@ class InterPieceDistance(object):
         """
         # Based on the puzzle type, determine the number of possible piece to piece pairings.
         if InterPieceDistance.TYPE1_POSSIBLE_PAIRINGS:
-            numb_possible_pairings = (PaikinTalSolver.puzzle_type() == PuzzleType.type1)
+            numb_possible_pairings = (self._puzzle_type == PuzzleType.type1)
         else:
             numb_possible_pairings = InterPieceDistance.TYPE2_POSSIBLE_PAIRINGS
 
@@ -65,13 +69,13 @@ class InterPieceDistance(object):
                 for x_i_side in PuzzlePieceSide.get_all_sides():
 
                     # For type one puzzles, only a single possible complementary side
-                    if PaikinTalSolver.puzzle_type() == PuzzleType.type1:
+                    if self._puzzle_type == PuzzleType.type1:
                         complimentary_side = x_i_side.complimentary_side()
                         dist = self._distance_function(pieces[x_i], x_i_side, pieces[x_j], complimentary_side)
                         self._piece_distances[x_i, x_j, x_i_side.value, 0] = dist
 
                     # For type two puzzles, handle all possible combinations of sides (16 in total).
-                    if PaikinTalSolver.puzzle_type() == PuzzleType.type2:
+                    if self._puzzle_type == PuzzleType.type2:
                         for x_j_side in PuzzlePieceSide.get_all_sides():
                             # Calculate the distance between the two pieces.
                             dist = self._distance_function(pieces[x_i], x_i_side, pieces[x_j], x_j_side)
@@ -101,9 +105,9 @@ class InterPieceDistance(object):
                     if x_i == y_i:
                         continue
                     # Check all possible pairings.  This is dependent on the type of possible
-                    if PaikinTalSolver.puzzle_type() == PuzzleType.type1:
+                    if self._puzzle_type == PuzzleType.type1:
                         all_other_sides = [side.complimentary_side()]
-                    elif PaikinTalSolver.puzzle_type() == PuzzleType.type2:
+                    elif self._puzzle_type == PuzzleType.type2:
                         all_other_sides = PuzzlePieceSide.get_all_sides()
                     # noinspection PyUnboundLocalVariable
                     for other_side in all_other_sides:
