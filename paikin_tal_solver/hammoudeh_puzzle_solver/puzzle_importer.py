@@ -89,8 +89,8 @@ class Puzzle(object):
         """
 
         # Calculate the piece information.
-        grid_x_size = math.floor(self._img_width / self.piece_width)
-        grid_y_size = math.floor(self._img_height / self.piece_width)
+        grid_x_size = int(math.floor(self._img_width / self.piece_width))  # Floor in python returns a float
+        grid_y_size = int(math.floor(self._img_height / self.piece_width))  # Floor in python returns a float
         if grid_x_size == 0 or grid_y_size == 0:
             raise ValueError("Image size is too small for the image.  Check your setup")
 
@@ -119,7 +119,8 @@ class Puzzle(object):
                 piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
 
                 # Create the puzzle piece and assign to the location.
-                self._pieces.append(PuzzlePiece(self._id, piece_img))
+                location = (x_i, y_i)
+                self._pieces.append(PuzzlePiece(self._id, location, piece_img))
 
 
     @property
