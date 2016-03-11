@@ -3,12 +3,10 @@
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
 import os
-
-# from PIL import Image
 import math
 import numpy
 import cv2  # OpenCV
-import pickle
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
 
 
 class Puzzle(object):
@@ -46,6 +44,9 @@ class Puzzle(object):
         self._piece_width = Puzzle.DEFAULT_PIECE_WIDTH
         self._img_width = None
         self._img_height = None
+
+        # No pieces for the puzzle yet.
+        self._pieces = []
 
         # Stores the image file and then loads it.
         self._filename = image_filename
@@ -96,16 +97,29 @@ class Puzzle(object):
         # Store the grid size.
         self._grid_size = (grid_x_size, grid_y_size)
 
-        # Store the original width and height and recalulate the new width and height.
+        # Store the original width and height and recalculate the new width and height.
         original_width = self._img_width
         original_height = self._img_height
         self._img_width = grid_x_size * self.piece_width
         self._img_height = grid_y_size * self.piece_width
 
-        # Shave off the edge of the image.
-        upper_left = ((original_width - self._img_width) / 2, (original_height - self._img_height) / 2)
-        self._img = Puzzle.extract_subimage(self._img, upper_left, (self._img_width, self._img_height))
-        #Puzzle.display_image(img2)
+        # Shave off the edge of the image LAB and BGR images
+        puzzle_upper_left = ((original_width - self._img_width) / 2, (original_height - self._img_height) / 2)
+        self._img = Puzzle.extract_subimage(self._img, puzzle_upper_left, (self._img_width, self._img_height))
+        self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_width, self._img_height))
+        Puzzle.display_image(self.img_LAB)
+
+        # Break the board into pieces.
+        piece_size = (self.piece_width, self.piece_width)
+        self._pieces = []  # Create an empty array to hold the puzzle pieces.
+        for x_i in range(0, grid_x_size):
+            for y_i in range(0, grid_x_size):
+                piece_upper_left = (puzzle_upper_left[0] + x_i * piece_size[0],
+                                    puzzle_upper_left[1] + y_i * piece_size[1])
+                piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
+
+                # Create the puzzle piece and assign to the location.
+                self._pieces.append(PuzzlePiece(self._id, piece_img))
 
     @property
     def piece_width(self):
