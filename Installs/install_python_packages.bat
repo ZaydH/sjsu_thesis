@@ -5,6 +5,7 @@ call:pip_install Pillow
 call:pip_install enum34
 call:pip_install docutils
 call:pip_install sphinx
+call:pip_install numpy
 
 
 :: End of installation.
