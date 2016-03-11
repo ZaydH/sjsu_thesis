@@ -29,7 +29,8 @@ class Puzzle(object):
 
     print_debug_messages = True
 
-    DEFAULT_PIECE_WIDTH = 28  # Width of a puzzle in pixels
+    # DEFAULT_PIECE_WIDTH = 28  # Width of a puzzle in pixels
+    DEFAULT_PIECE_WIDTH = 25  # Width of a puzzle in pixels
 
     export_with_border = True
     border_width = 3
@@ -86,7 +87,7 @@ class Puzzle(object):
             raise IOError("Unable to load the image at the specified location \"%s\"." % self._filename)
 
         # Get the image dimensions.
-        (self._img_width, self._img_height, _) = self._img.shape
+        self._img_height, self._img_width = self._img.shape[:2]
 
         # Make a LAB version of the image.
         self._img_LAB = cv2.cvtColor(self._img, cv2.COLOR_BGR2LAB)
@@ -127,7 +128,7 @@ class Puzzle(object):
         piece_size = (self.piece_width, self.piece_width)
         self._pieces = []  # Create an empty array to hold the puzzle pieces.
         for x_i in range(0, grid_x_size):
-            for y_i in range(0, grid_x_size):
+            for y_i in range(0, grid_y_size):
                 piece_upper_left = (puzzle_upper_left[0] + x_i * piece_size[0],
                                     puzzle_upper_left[1] + y_i * piece_size[1])
                 piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
@@ -175,7 +176,7 @@ class Puzzle(object):
             img_end.append(upper_left[i] + size[i])
 
         # Return the sub image.
-        return img[upper_left[0]:img_end[0], upper_left[1]:img_end[1], :]
+        return img[upper_left[1]:img_end[1], upper_left[0]:img_end[0], :]
 
     @staticmethod
     def display_image(img):

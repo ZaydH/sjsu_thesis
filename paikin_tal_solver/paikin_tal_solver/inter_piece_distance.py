@@ -40,6 +40,9 @@ class InterPieceDistance(object):
         self._possible_start_pieces = None
 
         # Calculate the best buddies using the inter-distance information.
+        self.calculate_inter_piece_distances(pieces)
+
+        # Calculate the best buddies using the inter-distance information.
         self.find_best_buddies()
 
         # Find the set of valid starter pieces.
@@ -61,7 +64,7 @@ class InterPieceDistance(object):
 
         # Build an empty array to store the piece to piece distances
         self._piece_distances = numpy.empty((self._piece_count, self._piece_count,
-                                             PuzzlePieceSide.numb_sides(), numb_possible_pairings))
+                                             PuzzlePieceSide.get_numb_sides(), numb_possible_pairings))
 
         # Calculates the piece to piece distances so we only need to do it once.
         for x_i in range(0, self._piece_count):
@@ -70,22 +73,26 @@ class InterPieceDistance(object):
 
                     # For type one puzzles, only a single possible complementary side
                     if self._puzzle_type == PuzzleType.type1:
-                        complimentary_side = x_i_side.complimentary_side()
-                        dist = self._distance_function(pieces[x_i], x_i_side, pieces[x_j], complimentary_side)
+                        complementary_side = x_i_side.complementary_side()
+                        dist = self._distance_function(pieces[x_i], x_i_side,
+                                                       pieces[x_j], complementary_side)
+
                         self._piece_distances[x_i, x_j, x_i_side.value, 0] = dist
 
                     # For type two puzzles, handle all possible combinations of sides (16 in total).
                     if self._puzzle_type == PuzzleType.type2:
                         for x_j_side in PuzzlePieceSide.get_all_sides():
                             # Calculate the distance between the two pieces.
-                            dist = self._distance_function(pieces[x_i], x_i_side, pieces[x_j], x_j_side)
+                            dist = self._distance_function(pieces[x_i], x_i_side,
+                                                           pieces[x_j], x_j_side)
+
                             self._piece_distances[x_i, x_j, x_i_side.value, x_j_side.value] = dist
 
     def find_best_buddies(self):
         """
         Finds the best buddies for this set of distance calculations.
 
-        The best buddies information is stored with the interpiece distances.
+        The best buddies information is stored with the inter-piece distances.
         """
 
         # Can have a single best buddy per side.

@@ -22,19 +22,20 @@ class PaikinTalSolver(object):
         """
         return PaikinTalSolver._puzzle_type
 
-    def __init__(self, pieces, numb_puzzles, distance_function):
+    def __init__(self, numb_puzzles, pieces, distance_function):
         """
         Constructor for the Paikan and Tal solver.
 
         Args:
-            pieces ([PuzzlePiece])):
             numb_puzzles (int): Number of Puzzles to be solved.
+            pieces ([PuzzlePiece])): List of puzzle pieces
             distance_function: Calculates the distance between two PuzzlePiece objects.
 
         """
 
         # Store the number of pieces.  Shuffle for good measure.
-        self._pieces = random.shuffle(pieces)
+        #self._pieces = random.shuffle(pieces)
+        self._pieces = pieces
 
         # Store the number of puzzles these collective set of pieces comprise.
         self._numb_puzzles = numb_puzzles

@@ -120,7 +120,7 @@ class PuzzlePiece(object):
         """
 
         self._orig_puzzle_id = puzzle_id
-        self._assigned_puzzle_id = puzzle_id
+        self._assigned_puzzle_id = None
 
         # Store the original location of the puzzle piece and initialize a placeholder x/y location.
         self._orig_loc = location
@@ -128,7 +128,7 @@ class PuzzlePiece(object):
 
         # Store the image data
         self._img = img
-        (width, length, dim) = self._img.shape
+        (length, width, dim) = self._img.shape
         if width != length:
             raise ValueError("Only square puzzle pieces are supported at this time.")
         if dim != PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS:
@@ -208,9 +208,9 @@ class PuzzlePiece(object):
             raise ValueError("Row number for a piece must be less than the puzzle's pieces width")
 
         if reverse:
-            return self._img[row_numb, ::-1, :]
+            return self._img[::-1, row_numb, :]
         else:
-            return self._img[row_numb, :, :]
+            return self._img[:, row_numb, :]
 
     def get_column_pixels(self, col_numb, reverse=False):
         """
@@ -229,9 +229,9 @@ class PuzzlePiece(object):
             raise ValueError("Column number for a piece must be less than the puzzle's pieces width")
         # If you reverse, change the order of the pixels.
         if reverse:
-            return self._img[::-1, col_numb, :]
+            return self._img[col_numb, ::-1, :]
         else:
-            return self._img[:, col_numb, :]
+            return self._img[col_numb, :, :]
 
     @staticmethod
     def calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):
@@ -306,5 +306,6 @@ class PuzzlePiece(object):
         pixel_diff = predicted_j - j_border
 
         # Return the sum of the absolute values.
-        return numpy.absolute(pixel_diff).sum
+        pixel_diff = numpy.absolute(pixel_diff).sum
+        return numpy.sum(pixel_diff)
 
