@@ -15,9 +15,12 @@ call:conda_install enum34 -y
 call:conda_install docutils -y
 call:conda_install sphinx -y
 call:conda_install numpy -y
-call:conda_install scitkit-image -y
+call:conda_install scikit-image -y
 call:conda_install scipy -y
 call:conda_install scikit-learn -y
+
+:conda_install_from_conda_direct opencv3
+:conda_install_from_conda_direct opencv2
 
 
 echo.
@@ -33,5 +36,15 @@ echo.
 echo.
 echo.Installing package: %~1
 conda install %~1 -y
+echo.
+goto:eof
+
+
+:conda_install_from_conda_direct
+echo.
+echo.
+echo.
+echo.Installing package: %~1
+conda install -c https://conda.anaconda.org/menpo %~1
 echo.
 goto:eof
