@@ -123,6 +123,11 @@ class Puzzle(object):
         self._img = Puzzle.extract_subimage(self._img, puzzle_upper_left, (self._img_width, self._img_height))
         self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_width, self._img_height))
         # Puzzle.display_image(self._img)
+        #
+        # for i in range(0, 5):
+        #     for j in range(0, 5):
+        #         pixel = self._img[i,j]
+        #         x =1
 
         # Break the board into pieces.
         piece_size = (self.piece_width, self.piece_width)

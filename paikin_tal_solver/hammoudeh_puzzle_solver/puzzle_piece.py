@@ -208,9 +208,9 @@ class PuzzlePiece(object):
             raise ValueError("Row number for a piece must be less than the puzzle's pieces width")
 
         if reverse:
-            return self._img[::-1, row_numb, :]
+            return self._img[row_numb, ::-1, :]
         else:
-            return self._img[:, row_numb, :]
+            return self._img[row_numb, :, :]
 
     def get_column_pixels(self, col_numb, reverse=False):
         """
@@ -229,9 +229,9 @@ class PuzzlePiece(object):
             raise ValueError("Column number for a piece must be less than the puzzle's pieces width")
         # If you reverse, change the order of the pixels.
         if reverse:
-            return self._img[col_numb, ::-1, :]
+            return self._img[::-1, col_numb, :]
         else:
-            return self._img[col_numb, :, :]
+            return self._img[:, col_numb, :]
 
     @staticmethod
     def calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):
@@ -302,10 +302,10 @@ class PuzzlePiece(object):
             raise ValueError("Invalid edge for piece i")
 
         # Calculate the value of pixels on piece j's edge.
-        predicted_j = 2*i_border - i_second_to_last
-        pixel_diff = predicted_j - j_border
+        predicted_j = 2*(i_border.astype(numpy.int16)) - i_second_to_last.astype(numpy.int16)
+        pixel_diff = predicted_j.astype(numpy.int16) - j_border.astype(numpy.int16)
 
         # Return the sum of the absolute values.
-        pixel_diff = numpy.absolute(pixel_diff).sum
-        return numpy.sum(pixel_diff)
+        pixel_diff = numpy.absolute(pixel_diff)
+        return numpy.sum(pixel_diff, dtype=numpy.int32)
 

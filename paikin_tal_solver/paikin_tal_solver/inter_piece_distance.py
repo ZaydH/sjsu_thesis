@@ -36,7 +36,7 @@ class InterPieceDistance(object):
 
         # Initialize the data structures for this class.
         self._piece_distances = None
-        self.best_buddies = None
+        self._best_buddies = None
         self._possible_start_pieces = None
 
         # Calculate the best buddies using the inter-distance information.
@@ -57,8 +57,8 @@ class InterPieceDistance(object):
 
         """
         # Based on the puzzle type, determine the number of possible piece to piece pairings.
-        if InterPieceDistance.TYPE1_POSSIBLE_PAIRINGS:
-            numb_possible_pairings = (self._puzzle_type == PuzzleType.type1)
+        if self._puzzle_type == PuzzleType.type1:
+            numb_possible_pairings = InterPieceDistance.TYPE1_POSSIBLE_PAIRINGS
         else:
             numb_possible_pairings = InterPieceDistance.TYPE2_POSSIBLE_PAIRINGS
 
@@ -69,8 +69,11 @@ class InterPieceDistance(object):
         # Calculates the piece to piece distances so we only need to do it once.
         for x_i in range(0, self._piece_count):
             for x_j in range(0, self._piece_count):
-                for x_i_side in PuzzlePieceSide.get_all_sides():
 
+                if x_i == x_j:  # Do not compare a piece to itself.
+                    continue
+
+                for x_i_side in PuzzlePieceSide.get_all_sides():
                     # For type one puzzles, only a single possible complementary side
                     if self._puzzle_type == PuzzleType.type1:
                         complementary_side = x_i_side.complementary_side()
@@ -97,8 +100,7 @@ class InterPieceDistance(object):
 
         # Can have a single best buddy per side.
         shape = self._piece_distances.shape
-        best_distance = numpy.empty(shape[0], shape[2])
-
+        best_distance = [[0 for _ in range(shape[2])] for _ in range(shape[0])]  # Can't use numpy since taking a tuple
         # Find the best buddies for each piece on each side.
         for x_i in range(0, shape[0]):
             for side in PuzzlePieceSide.get_all_sides():  # Iterate through all the sides.
@@ -107,40 +109,41 @@ class InterPieceDistance(object):
                 first_check = True
 
                 # Find the closest neighbor
-                for y_i in range(0, shape[1]):
+                for x_j in range(0, shape[1]):
                     # A patch cannot be it own best friend so skip itself.
-                    if x_i == y_i:
+                    if x_i == x_j:
                         continue
                     # Check all possible pairings.  This is dependent on the type of possible
                     if self._puzzle_type == PuzzleType.type1:
-                        all_other_sides = [side.complimentary_side()]
+                        all_other_sides = [side.complementary_side()]
                     elif self._puzzle_type == PuzzleType.type2:
                         all_other_sides = PuzzlePieceSide.get_all_sides()
                     # noinspection PyUnboundLocalVariable
-                    for other_side in all_other_sides:
+                    for other_side in range(0, len(all_other_sides)):
 
                         # Check if the two pieces are the closest to each other.
-                        if first_check or self._piece_distances[x_i, y_i, side, other_side.value] \
-                                          < best_distance[x_i, y_i, side.value]:
+                        i_to_j_distance = self._piece_distances[x_i, x_j, side.value, other_side]
+                        if first_check or i_to_j_distance < best_distance[x_i][side.value][0]:
                             # Store the best distance.
-                            best_distance[x_i, side] = (self._piece_distances[x_i, y_i, side.value, other_side.value],
-                                                        y_i, other_side)
+                            best_distance[x_i][side.value] = (i_to_j_distance, x_j, all_other_sides[other_side].value)
                             first_check = False
 
         # Now that best distances have been found, check for best buddies.
-        self.best_buddies = numpy.empty(shape[0], shape[1], shape[2])
+        self._best_buddies = numpy.empty((shape[0], shape[2]))
         for x_i in range(0, shape[0]):
             for side in range(0, shape[2]):  # Iterate through all the sides.
-                # bb = "Best Buddy"
+                # bb means "Best Buddy"
                 # Get the information on x_i's best buddy
-                (_, x_bb, x_bb_side) = best_distance[x_i, side]
+                (_, x_bb, x_bb_side) = best_distance[x_i][side]
                 # Get the information from the best buddy itself.
-                (_, y_bb, y_bb_side) = best_distance[x_bb, side]
+                (_, y_bb, y_bb_side) = best_distance[x_bb][x_bb_side]
 
                 # Check if we agreed on being best buddies
                 if x_i == y_bb and side == y_bb_side:
-                    self.best_buddies[x_i, side] = y_bb
-                    self.best_buddies[y_bb, y_bb_side] = x_i
+                    self._best_buddies[x_i, side] = x_bb
+                    self._best_buddies[x_bb, x_bb_side] = y_bb
+                else:
+                    self._best_buddies[x_i, side] = None
 
     def find_start_piece_candidates(self):
         """
