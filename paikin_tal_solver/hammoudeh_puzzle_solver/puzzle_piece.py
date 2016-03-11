@@ -1,4 +1,5 @@
 from enum import Enum
+import numpy
 
 
 class PuzzlePieceRotation(Enum):
@@ -15,9 +16,6 @@ class PuzzlePieceRotation(Enum):
     degree_90 = 90      # 90 degree rotation
     degree_180 = 180    # 180 degree rotation
     degree_270 = 270    # 270 degree rotation
-
-
-
 
     @staticmethod
     def _calculate_xy_rotation(width, rotation, x, y):
@@ -102,6 +100,11 @@ class PuzzlePieceSide(Enum):
 
 
 class PuzzlePiece(object):
+    """
+    Puzzle Piece Object.  It is a very simple object that stores the puzzle piece's pixel information in a
+    NumPY array.  It also stores the piece's original information (e.g. X/Y location and puzzle ID) along with
+    what was determined by the solver.
+    """
 
     NUMB_LAB_COLORSPACE_DIMENSIONS = 3
 
@@ -209,7 +212,7 @@ class PuzzlePiece(object):
         else:
             return self._img[row_numb, :, :]
 
-    def get_col_pixels(self, col_numb, reverse=False):
+    def get_column_pixels(self, col_numb, reverse=False):
         """
         Extracts a row of pixels from a puzzle piece.
 
@@ -224,8 +227,83 @@ class PuzzlePiece(object):
             raise ValueError("Column number for a piece must be greater than or equal to zero.")
         if col_numb >= self._width:
             raise ValueError("Column number for a piece must be less than the puzzle's pieces width")
-
+        # If you reverse, change the order of the pixels.
         if reverse:
             return self._img[::-1, col_numb, :]
         else:
             return self._img[:, col_numb, :]
+
+    @staticmethod
+    def calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):
+        """
+
+        Args:
+            piece_i (PuzzlePiece):
+            piece_i_side (PuzzlePieceSide):
+            piece_j (PuzzlePiece):
+            piece_j_side (PuzzlePieceSide): Side of piece j that is adjacent to piece i.
+
+        Returns (double):
+            Distance between
+        """
+
+        # Get the border and second to last ROW on the TOP side of piece i
+        if piece_i_side == PuzzlePieceSide.top:
+            i_border = piece_i.get_row_pixels(0)
+            i_second_to_last = 2*i_border - piece_i.get_row_pixels(1)
+
+        # Get the border and second to last COLUMN on the RIGHT side of piece i
+        elif piece_i_side == PuzzlePieceSide.right:
+            i_border = piece_i.get_column_pixels(piece_i.width - 1)
+            i_second_to_last = piece_i.get_column_pixels(piece_i.width - 2)
+
+        # Get the border and second to last ROW on the BOTTOM side of piece i
+        elif piece_i_side == PuzzlePieceSide.bottom:
+            i_border = piece_i.get_row_pixels(piece_i.width - 1)
+            i_second_to_last = piece_i.get_row_pixels(piece_i.width - 2)
+
+        # Get the border and second to last COLUMN on the LEFT side of piece i
+        elif piece_i_side == PuzzlePieceSide.left:
+            i_border = piece_i.get_column_pixels(0)
+            i_second_to_last = piece_i.get_column_pixels(1)
+        else:
+            raise ValueError("Invalid edge for piece i")
+
+        # If rotation is allowed need to reverse pixel order in some cases.
+        reverse = False # By default do not reverse
+        # Always need to reverse when they are the same side
+        if piece_i_side == piece_j_side:
+            reverse = True
+        # Get the pixels along the TOP of piece_j
+        if piece_j_side == PuzzlePieceSide.top:
+            if piece_i_side == PuzzlePieceSide.right:
+                reverse = True
+            j_border = piece_j.get_row_pixels(0, reverse)
+
+        # Get the pixels along the RIGHT of piece_j
+        elif piece_j_side == PuzzlePieceSide.right:
+            if piece_i_side == PuzzlePieceSide.top:
+                reverse = True
+            j_border = piece_j.get_column_pixels(piece_i.width - 1, reverse)
+
+        # Get the pixels along the BOTTOM of piece_j
+        elif piece_j_side == PuzzlePieceSide.bottom:
+            if piece_i_side == PuzzlePieceSide.left:
+                reverse = True
+            j_border = piece_j.get_row_pixels(piece_i.width - 1, reverse)
+
+        # Get the pixels along the RIGHT of piece_j
+        elif piece_j_side == PuzzlePieceSide.left:
+            if piece_i_side == PuzzlePieceSide.bottom:
+                reverse = True
+            j_border = piece_j.get_column_pixels(0, reverse)
+        else:
+            raise ValueError("Invalid edge for piece i")
+
+        # Calculate the value of pixels on piece j's edge.
+        predicted_j = 2*i_border - i_second_to_last
+        pixel_diff = predicted_j - j_border
+
+        # Return the sum of the absolute values.
+        return numpy.absolute(pixel_diff).sum
+
