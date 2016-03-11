@@ -34,7 +34,6 @@ class Puzzle(object):
             Puzzle Object
 
         """
-
         # Internal Pillow Image object.
         self._id = id_number
         self._img = None
@@ -121,6 +120,16 @@ class Puzzle(object):
 
                 # Create the puzzle piece and assign to the location.
                 self._pieces.append(PuzzlePiece(self._id, piece_img))
+
+
+    @property
+    def pieces(self):
+        """
+        Gets all of the pieces in this puzzle.
+
+        Returns ([PuzzlePiece]):
+        """
+        return self._pieces
 
     @property
     def piece_width(self):
