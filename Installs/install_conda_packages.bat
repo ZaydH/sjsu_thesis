@@ -3,21 +3,21 @@ echo.
 echo.
 echo.
 echo.Updating Python to the latest 2.x version
-conda update python
+conda update python -y
 echo.Python update complete.
 
 echo. 
 echo.  
 echo.Installing Python packages.
-call:conda_install pip -y
-call:conda_install Pillow -y
-call:conda_install enum34 -y
-call:conda_install docutils -y
-call:conda_install sphinx -y
-call:conda_install numpy -y
-call:conda_install scikit-image -y
-call:conda_install scipy -y
-call:conda_install scikit-learn -y
+call:conda_basic_install pip
+call:conda_basic_install Pillow
+call:conda_basic_install enum34
+call:conda_basic_install docutils
+call:conda_basic_install sphinx
+call:conda_basic_install numpy
+call:conda_basic_install scikit-image
+call:conda_basic_install scipy
+call:conda_basic_install scikit-learn
 
 :conda_install_from_conda_direct opencv3
 :conda_install_from_conda_direct opencv2
@@ -30,7 +30,7 @@ pause
 goto:eof
 
 
-:conda_install
+:conda_basic_install
 echo.
 echo.
 echo.
