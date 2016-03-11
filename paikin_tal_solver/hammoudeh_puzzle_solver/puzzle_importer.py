@@ -4,6 +4,7 @@
 """
 import os
 import math
+# noinspection PyUnresolvedReferences
 import numpy
 import cv2  # OpenCV
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
@@ -107,7 +108,7 @@ class Puzzle(object):
         puzzle_upper_left = ((original_width - self._img_width) / 2, (original_height - self._img_height) / 2)
         self._img = Puzzle.extract_subimage(self._img, puzzle_upper_left, (self._img_width, self._img_height))
         self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_width, self._img_height))
-        Puzzle.display_image(self.img_LAB)
+        # Puzzle.display_image(self._img)
 
         # Break the board into pieces.
         piece_size = (self.piece_width, self.piece_width)
