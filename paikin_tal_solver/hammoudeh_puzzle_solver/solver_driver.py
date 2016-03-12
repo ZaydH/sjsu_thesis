@@ -20,7 +20,8 @@ def paikin_tal_driver(image_files):
         combined_pieces += puzzles[i].pieces
 
     # puzzles[0]._assign_all_pieces_to_original_location()
-    # dummy_puzzle = Puzzle.reconstruct_from_pieces(puzzles[0]._pieces)
+    # puzzles[0].randomize_puzzle_pieces()
+    # Puzzle.reconstruct_from_pieces(puzzles[0]._pieces)
 
     # Create the Paikin Tal Solver
     paikin_tal_solver = PaikinTalSolver(numb_puzzles, combined_pieces, PuzzlePiece.calculate_asymmetric_distance)

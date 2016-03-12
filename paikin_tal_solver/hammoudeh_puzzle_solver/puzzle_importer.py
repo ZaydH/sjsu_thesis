@@ -5,6 +5,8 @@
 import copy
 import os
 import math
+import random
+
 import numpy
 import cv2  # OpenCV
 from enum import Enum
@@ -227,7 +229,24 @@ class Puzzle(object):
         output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
         Puzzle.display_image(output_puzzle._img)
 
+    def randomize_puzzle_pieces(self):
+        """
+        Puzzle Piece Randomizer
 
+        Randomly assigns puzzle pieces to different locations.
+        """
+
+        # Get all locations in the image.
+        all_locations = []
+        for piece in self._pieces:
+            all_locations.append(piece.location)
+
+        # Shuffle the image locations
+        random.shuffle(all_locations)
+
+        # Reassign the pieces to random locations
+        for i in range(0, len(self._pieces)):
+            self._pieces[i].location = all_locations[i]
 
     def get_min_and_max_row_and_columns(self):
         """
