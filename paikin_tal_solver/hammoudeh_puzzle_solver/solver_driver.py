@@ -1,3 +1,5 @@
+import numpy
+
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.solver import PaikinTalSolver
@@ -19,8 +21,11 @@ def paikin_tal_driver(image_files):
         # Concatenate to the list of all pieces.
         combined_pieces += puzzles[i].pieces
 
+    # Puzzle.display_image(numpy.rot90(puzzles[0]._img, 2))
     # puzzles[0]._assign_all_pieces_to_original_location()
-    # puzzles[0].randomize_puzzle_pieces()
+    # puzzles[0].randomize_puzzle_piece_locations()
+    # Puzzle.reconstruct_from_pieces(puzzles[0]._pieces)
+    # puzzles[0].randomize_puzzle_piece_rotations()
     # Puzzle.reconstruct_from_pieces(puzzles[0]._pieces)
 
     # Create the Paikin Tal Solver

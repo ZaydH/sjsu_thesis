@@ -11,7 +11,7 @@ import numpy
 import cv2  # OpenCV
 from enum import Enum
 
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
 
 
 class PuzzleType(Enum):
@@ -22,17 +22,19 @@ class PuzzleType(Enum):
     type1 = 1
     type2 = 2
 
+
+class ImageColor(Enum):
+        """
+        Used to create solid color images for base images and for image manipulation.
+        """
+        black = 1
+
+
 class Puzzle(object):
     """
     Puzzle Object represents a single Jigsaw Puzzle.  It can import a puzzle from an image file and
     create the puzzle pieces.
     """
-
-    class ImageColor(Enum):
-        """
-        Used to create solid color images for base images and for image manipulation.
-        """
-        black = 1
 
     print_debug_messages = True
 
@@ -136,12 +138,6 @@ class Puzzle(object):
         puzzle_upper_left = ((original_height - self._img_height) / 2, (original_width - self._img_width) / 2)
         self._img = Puzzle.extract_subimage(self._img, puzzle_upper_left, (self._img_height, self._img_width))
         self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_height, self._img_width))
-        # Puzzle.display_image(self._img)
-        #
-        # for i in range(0, 5):
-        #     for j in range(0, 5):
-        #         pixel = self._img[i,j]
-        #         x =1
 
         # Break the board into pieces.
         piece_size = (self.piece_width, self.piece_width)
@@ -174,7 +170,6 @@ class Puzzle(object):
 
         """
         return self._piece_width
-
 
     @staticmethod
     def reconstruct_from_pieces(pieces, id_numb=-1):
@@ -219,7 +214,7 @@ class Puzzle(object):
 
         # Define the numpy array that will hold the reconstructed image.
         puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
-        output_puzzle._img = Puzzle.create_solid_bgr_image(puzzle_array_size, Puzzle.ImageColor.black)
+        output_puzzle._img = Puzzle.create_solid_bgr_image(puzzle_array_size, ImageColor.black)
 
         # Insert the pieces into the puzzle
         for piece in output_puzzle._pieces:
@@ -229,9 +224,9 @@ class Puzzle(object):
         output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
         Puzzle.display_image(output_puzzle._img)
 
-    def randomize_puzzle_pieces(self):
+    def randomize_puzzle_piece_locations(self):
         """
-        Puzzle Piece Randomizer
+        Puzzle Piece Location Randomizer
 
         Randomly assigns puzzle pieces to different locations.
         """
@@ -248,6 +243,15 @@ class Puzzle(object):
         for i in range(0, len(self._pieces)):
             self._pieces[i].location = all_locations[i]
 
+    def randomize_puzzle_piece_rotations(self):
+        """
+        Puzzle Piece Rotation Randomizer
+
+        Assigns a random rotation to each piece in the puzzle.
+        """
+        for piece in self._pieces:
+            piece.rotation = PuzzlePieceRotation.random_rotation()
+
     def get_min_and_max_row_and_columns(self):
         """
         Min/Max Row and Column Finder
@@ -259,8 +263,8 @@ class Puzzle(object):
         Tuple in the form: (min_row, max_row, min_column, max_column)
         """
         first_piece = self._pieces[0]
-        min_row = max_row = first_piece._assigned_loc[0]
-        min_col = max_col = first_piece._assigned_loc[1]
+        min_row = max_row = first_piece.location[0]
+        min_col = max_col = first_piece.location[1]
         for i in range(0, len(self._pieces)):
             # Verify all pieces are the same size
             if Puzzle.print_debug_messages:
@@ -290,6 +294,7 @@ class Puzzle(object):
             # noinspection PyProtectedMember
             piece._assign_to_original_location()
 
+    # noinspection PyUnusedLocal
     @staticmethod
     def create_solid_bgr_image(size, color):
         """
@@ -301,7 +306,7 @@ class Puzzle(object):
 
         Args:
             size ([int]): Size of the image in height by width
-            color (Puzzle.ImageColor): Solid color of the image.
+            color (ImageColor): Solid color of the image.
 
         Returns:
         NumPy array representing a BGR image of the specified solid color
@@ -338,12 +343,18 @@ class Puzzle(object):
         Args:
             piece (PuzzlePiece): Puzzle piece to be inserted into the puzzle's image.
         """
-        piece_bgr = piece.bgr_image()
         piece_loc = piece.location
 
         # Define the upper left corner of the piece to insert
         upper_left = (piece_loc[0] * piece.width, piece_loc[1] * piece.width)
-        Puzzle.insert_subimage(self._img, upper_left, piece_bgr)
+
+        # Select whether to display the image rotated
+        piece_bgr = piece.bgr_image()
+        if piece.rotation is None or piece.rotation == PuzzlePieceRotation.degree_0:
+            Puzzle.insert_subimage(self._img, upper_left, piece_bgr)
+        else:
+            rotated_img = numpy.rot90(piece_bgr, piece.rotation.value / 90)
+            Puzzle.insert_subimage(self._img, upper_left, rotated_img)
 
     @staticmethod
     def insert_subimage(master_img, upper_left, subimage):
@@ -387,6 +398,7 @@ class Puzzle(object):
         cv2.imshow('image', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+
 
     @staticmethod
     def save_to_file(img, filename):
