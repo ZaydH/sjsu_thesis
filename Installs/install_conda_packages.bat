@@ -19,8 +19,8 @@ call:conda_basic_install scikit-image
 call:conda_basic_install scipy
 call:conda_basic_install scikit-learn
 
-:conda_install_from_conda_direct opencv3
-:conda_install_from_conda_direct opencv2
+call:conda_install_from_conda_direct opencv3
+call:conda_install_from_conda_direct opencv
 
 
 echo.
@@ -45,6 +45,6 @@ echo.
 echo.
 echo.
 echo.Installing package: %~1
-conda install -c https://conda.anaconda.org/menpo %~1
+conda install -c https://conda.anaconda.org/menpo %~1 -y
 echo.
 goto:eof
