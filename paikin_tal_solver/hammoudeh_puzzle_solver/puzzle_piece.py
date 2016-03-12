@@ -1,6 +1,6 @@
 from enum import Enum
 import numpy
-
+import cv2  # Open CV
 
 class PuzzlePieceRotation(Enum):
     """Puzzle Piece PieceRotation
@@ -83,14 +83,14 @@ class PuzzlePiece(object):
 
     NUMB_LAB_COLORSPACE_DIMENSIONS = 3
 
-    def __init__(self, puzzle_id, location, img):
+    def __init__(self, puzzle_id, location, lab_img):
         """
         Puzzle Piece Constructor.
 
         Args:
             puzzle_id (int): Puzzle identification number
             location ([int]): (row, column) location of this piece.
-            img: Image data in the form of a numpy array.
+            lab_img: Image data in the form of a numpy array.
 
         """
 
@@ -102,7 +102,7 @@ class PuzzlePiece(object):
         self._assigned_loc = None
 
         # Store the image data
-        self._img = img
+        self._img = lab_img
         (length, width, dim) = self._img.shape
         if width != length:
             raise ValueError("Only square puzzle pieces are supported at this time.")
@@ -166,6 +166,25 @@ class PuzzlePiece(object):
         """
         self._assigned_puzzle_id = new_puzzle_id
 
+    @property
+    def lab_image(self):
+        """
+        Get's a puzzle piece's image in the LAB colorspace.
+
+        Returns:
+        Numpy array of the piece's lab image.
+        """
+        return self._img
+
+    def bgr_image(self):
+        """
+        Get's a puzzle piece's image in the BGR colorspace.
+
+        Returns:
+        Numpy array of the piece's BGR image.
+        """
+        return cv2.cvtColor(self._img, cv2.COLOR_LAB2BGR)
+
     def get_row_pixels(self, row_numb, reverse=False):
         """
         Extracts a row of pixels from a puzzle piece.
@@ -207,6 +226,13 @@ class PuzzlePiece(object):
             return self._img[::-1, col_numb, :]
         else:
             return self._img[:, col_numb, :]
+
+    def _assign_to_original_location(self):
+        """Loopback Assigner
+
+        Test Method Only.  Correctly assigns a piece to its original location.
+        """
+        self._assigned_loc = self._orig_loc
 
     @staticmethod
     def calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):

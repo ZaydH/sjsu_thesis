@@ -5,7 +5,6 @@
 import copy
 import os
 import math
-# noinspection PyUnresolvedReferences
 import numpy
 import cv2  # OpenCV
 from enum import Enum
@@ -21,17 +20,25 @@ class PuzzleType(Enum):
     type1 = 1
     type2 = 2
 
-
 class Puzzle(object):
     """
     Puzzle Object represents a single Jigsaw Puzzle.  It can import a puzzle from an image file and
     create the puzzle pieces.
     """
 
+    class ImageColor(Enum):
+        """
+        Used to create solid color images for base images and for image manipulation.
+        """
+        black = 1
+
     print_debug_messages = True
 
     # DEFAULT_PIECE_WIDTH = 28  # Width of a puzzle in pixels
     DEFAULT_PIECE_WIDTH = 25  # Width of a puzzle in pixels
+
+    # Define the number of dimensions in the BGR space (i.e. blue, green, red)
+    NUMBER_BGR_DIMENSIONS = 3
 
     export_with_border = True
     border_width = 3
@@ -124,9 +131,9 @@ class Puzzle(object):
         self._img_height = numb_rows * self.piece_width
 
         # Shave off the edge of the image LAB and BGR images
-        puzzle_upper_left = ((original_width - self._img_width) / 2, (original_height - self._img_height) / 2)
-        self._img = Puzzle.extract_subimage(self._img, puzzle_upper_left, (self._img_width, self._img_height))
-        self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_width, self._img_height))
+        puzzle_upper_left = ((original_height - self._img_height) / 2, (original_width - self._img_width) / 2)
+        self._img = Puzzle.extract_subimage(self._img, puzzle_upper_left, (self._img_height, self._img_width))
+        self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_height, self._img_width))
         # Puzzle.display_image(self._img)
         #
         # for i in range(0, 5):
@@ -137,10 +144,10 @@ class Puzzle(object):
         # Break the board into pieces.
         piece_size = (self.piece_width, self.piece_width)
         self._pieces = []  # Create an empty array to hold the puzzle pieces.
-        for col in range(0, numb_cols):
-            for row in range(0, numb_rows):
-                piece_upper_left = (puzzle_upper_left[0] + col * piece_size[0],
-                                    puzzle_upper_left[1] + row * piece_size[1])
+        for row in range(0, numb_rows):
+            for col in range(0, numb_cols):
+                piece_upper_left = (puzzle_upper_left[0] + row * piece_size[0],
+                                    puzzle_upper_left[1] + col * piece_size[1])
                 piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
 
                 # Create the puzzle piece and assign to the location.
@@ -183,28 +190,64 @@ class Puzzle(object):
         if len(pieces) == 0:
             raise ValueError("Error: Each puzzle must have at least one piece.")
 
-        # Create the puzzle to return.
+        # Create the puzzle to return.  Give it an ID number.
         output_puzzle = Puzzle(id_numb)
+        output_puzzle._id = id_numb
 
         # Create a copy of the pieces.
-        copy_pieces = copy.deepcopy(pieces)
+        output_puzzle._pieces = copy.deepcopy(pieces)
 
         # Get the first piece and use its information
-        first_piece = copy_pieces[0]
+        first_piece = output_puzzle._pieces[0]
         output_puzzle._piece_width = first_piece.width
-        first_piece_loc = first_piece.location
 
         # Find the min and max row and column.
-        min_row = max_row = first_piece_loc[0]
-        min_col = max_col = first_piece_loc[1]
-        for i in range(0, len(copy_pieces)):
+        (min_row, max_row, min_col, max_col) = output_puzzle.get_min_and_max_row_and_columns()
 
+        # Normalize their locations based off all the pieces in the board.
+        for piece in output_puzzle._pieces:
+            loc = piece.location
+            piece.location = (loc[0] - min_row, loc[1] - min_col)
+
+        # Store the grid size
+        output_puzzle._grid_size = (max_row - min_row + 1, max_col - min_col + 1)
+        # Calculate the size of the image
+        output_puzzle._img_width = output_puzzle._grid_size[1] * output_puzzle.piece_width
+        output_puzzle._img_height = output_puzzle._grid_size[0] * output_puzzle.piece_width
+
+        # Define the numpy array that will hold the reconstructed image.
+        puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
+        output_puzzle._img = Puzzle.create_solid_bgr_image(puzzle_array_size, Puzzle.ImageColor.black)
+
+        # Insert the pieces into the puzzle
+        for piece in output_puzzle._pieces:
+            output_puzzle.insert_piece_into_image(piece)
+
+        # Convert the image to LAB format.
+        output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
+        Puzzle.display_image(output_puzzle._img)
+
+
+
+    def get_min_and_max_row_and_columns(self):
+        """
+        Min/Max Row and Column Finder
+
+        For a given set of pieces, this function returns the minimum and maximum of the columns and rows
+        across all of the pieces.
+
+        Returns ([int]):
+        Tuple in the form: (min_row, max_row, min_column, max_column)
+        """
+        first_piece = self._pieces[0]
+        min_row = max_row = first_piece._assigned_loc[0]
+        min_col = max_col = first_piece._assigned_loc[1]
+        for i in range(0, len(self._pieces)):
             # Verify all pieces are the same size
             if Puzzle.print_debug_messages:
-                assert(output_puzzle.piece_width == copy_pieces[i].width)
-
+                assert(self.piece_width == self._pieces[i].width)
             # Get the location of the piece
-            temp_loc = copy_pieces[1]
+            temp_loc = self._pieces[i].location
             # Update the min and max row if needed
             if min_row > temp_loc[0]:
                 min_row = temp_loc[0]
@@ -216,12 +259,36 @@ class Puzzle(object):
             elif max_col < temp_loc[1]:
                 max_col = temp_loc[1]
 
-        # Store the grid size
-        output_puzzle._grid_size = (max_row - min_row + 1, max_col - min_col + 1)
-        # Calculate the size of the image
-        output_puzzle._img_width = output_puzzle._grid_size[1] * output_puzzle.piece_width
-        output_puzzle._img_height = output_puzzle._grid_size[0] * output_puzzle.piece_width
-        
+        # Return the minimum and maximum row/column information
+        return min_row, max_row, min_col, max_col
+
+    def _assign_all_pieces_to_original_location(self):
+        """Piece Correct Assignment
+
+        Test Method Only. Assigns each piece to its original location for debug purposes.
+        """
+        for piece in self._pieces:
+            # noinspection PyProtectedMember
+            piece._assign_to_original_location()
+
+    @staticmethod
+    def create_solid_bgr_image(size, color):
+        """
+        Solid BGR Image Creator
+
+        Creates a BGR Image (i.e. NumPy) array of the specified size.
+
+        RIGHT NOW ONLY BLACK is supported.
+
+        Args:
+            size ([int]): Size of the image in height by width
+            color (Puzzle.ImageColor): Solid color of the image.
+
+        Returns:
+        NumPy array representing a BGR image of the specified solid color
+        """
+        dimensions = (size[0], size[1], Puzzle.NUMBER_BGR_DIMENSIONS)
+        return numpy.zeros(dimensions, numpy.uint8)
 
     @staticmethod
     def extract_subimage(img, upper_left, size):
@@ -243,7 +310,51 @@ class Puzzle(object):
             img_end.append(upper_left[i] + size[i])
 
         # Return the sub image.
-        return img[upper_left[1]:img_end[1], upper_left[0]:img_end[0], :]
+        return img[upper_left[0]:img_end[0], upper_left[1]:img_end[1], :]
+
+    def insert_piece_into_image(self, piece):
+        """
+        Takes a puzzle piece and converts its image into BGR then adds it to the master image.
+
+        Args:
+            piece (PuzzlePiece): Puzzle piece to be inserted into the puzzle's image.
+        """
+        piece_bgr = piece.bgr_image()
+        piece_loc = piece.location
+
+        # Define the upper left corner of the piece to insert
+        upper_left = (piece_loc[0] * piece.width, piece_loc[1] * piece.width)
+        Puzzle.insert_subimage(self._img, upper_left, piece_bgr)
+
+    @staticmethod
+    def insert_subimage(master_img, upper_left, subimage):
+        """
+        Given an image (in the form of a NumPy array), insert another image into it.
+
+        Args:
+            master_img : Image in the form of a NumPy array where the sub-image will be inserted
+            upper_left ([int]): upper left location of the the master image where the sub image will be inserted
+            subimage ([int]): Sub-image to be inserted into the master image.
+
+        Returns:
+        Sub image as a numpy array
+        """
+
+        # Verify the upper left input value is valid.
+        if Puzzle.print_debug_messages and upper_left[0] < 0 or upper_left[1] < 0:
+            raise ValueError("Error: upper left is off the image grid. Row and column must be >=0")
+
+        # Calculate the lower right of the image
+        subimage_shape = subimage.shape
+        bottom_right = [upper_left[0] + subimage_shape[0], upper_left[1] + subimage_shape[1]]
+
+        # Verify that the shape information is valid.
+        if Puzzle.print_debug_messages:
+            master_shape = master_img.shape
+            assert master_shape[0] >= bottom_right[0] and master_shape[1] >= bottom_right[1]
+
+        # Insert the subimage.
+        master_img[upper_left[0]:bottom_right[0], upper_left[1]:bottom_right[1], :] = subimage
 
     @staticmethod
     def display_image(img):
