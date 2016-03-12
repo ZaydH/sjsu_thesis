@@ -2,6 +2,7 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
+import copy
 import os
 import math
 # noinspection PyUnresolvedReferences
@@ -36,14 +37,14 @@ class Puzzle(object):
     border_width = 3
     border_outer_stripe_width = 1
 
-    def __init__(self, id_number, image_filename):
+    def __init__(self, id_number, image_filename=None):
         """Puzzle Constructor
 
         Constructor that will optionally load an image into the puzzle as well.
 
         Args:
             id_number (int): ID number for the image.  It is used for multiple image puzzles.
-            image_filename (str): File path of the image to load
+            image_filename (Optional str): File path of the image to load
 
         Returns:
             Puzzle Object
@@ -62,6 +63,10 @@ class Puzzle(object):
 
         # No pieces for the puzzle yet.
         self._pieces = []
+
+        if image_filename is None:
+            self._filename = ""
+            return
 
         # Stores the image file and then loads it.
         self._filename = image_filename
@@ -104,19 +109,19 @@ class Puzzle(object):
         """
 
         # Calculate the piece information.
-        grid_x_size = int(math.floor(self._img_width / self.piece_width))  # Floor in python returns a float
-        grid_y_size = int(math.floor(self._img_height / self.piece_width))  # Floor in python returns a float
-        if grid_x_size == 0 or grid_y_size == 0:
+        numb_cols = int(math.floor(self._img_width / self.piece_width))  # Floor in python returns a float
+        numb_rows = int(math.floor(self._img_height / self.piece_width))  # Floor in python returns a float
+        if numb_cols == 0 or numb_rows == 0:
             raise ValueError("Image size is too small for the image.  Check your setup")
 
         # Store the grid size.
-        self._grid_size = (grid_x_size, grid_y_size)
+        self._grid_size = (numb_rows, numb_cols)
 
         # Store the original width and height and recalculate the new width and height.
         original_width = self._img_width
         original_height = self._img_height
-        self._img_width = grid_x_size * self.piece_width
-        self._img_height = grid_y_size * self.piece_width
+        self._img_width = numb_cols * self.piece_width
+        self._img_height = numb_rows * self.piece_width
 
         # Shave off the edge of the image LAB and BGR images
         puzzle_upper_left = ((original_width - self._img_width) / 2, (original_height - self._img_height) / 2)
@@ -132,14 +137,14 @@ class Puzzle(object):
         # Break the board into pieces.
         piece_size = (self.piece_width, self.piece_width)
         self._pieces = []  # Create an empty array to hold the puzzle pieces.
-        for x_i in range(0, grid_x_size):
-            for y_i in range(0, grid_y_size):
-                piece_upper_left = (puzzle_upper_left[0] + x_i * piece_size[0],
-                                    puzzle_upper_left[1] + y_i * piece_size[1])
+        for col in range(0, numb_cols):
+            for row in range(0, numb_rows):
+                piece_upper_left = (puzzle_upper_left[0] + col * piece_size[0],
+                                    puzzle_upper_left[1] + row * piece_size[1])
                 piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
 
                 # Create the puzzle piece and assign to the location.
-                location = (x_i, y_i)
+                location = (row, col)
                 self._pieces.append(PuzzlePiece(self._id, location, piece_img))
 
     @property
@@ -160,6 +165,63 @@ class Puzzle(object):
 
         """
         return self._piece_width
+
+
+    @staticmethod
+    def reconstruct_from_pieces(pieces, id_numb=-1):
+        """
+        Constructs a puzzle from a set of pieces.
+
+        Args:
+            pieces ([PuzzlePiece]): Set of puzzle pieces that comprise the puzzle.
+            id_numb (Optional int): Identification number for the puzzle
+
+        Returns (Puzzle):
+        Puzzle constructed from the pieces.
+        """
+
+        if len(pieces) == 0:
+            raise ValueError("Error: Each puzzle must have at least one piece.")
+
+        # Create the puzzle to return.
+        output_puzzle = Puzzle(id_numb)
+
+        # Create a copy of the pieces.
+        copy_pieces = copy.deepcopy(pieces)
+
+        # Get the first piece and use its information
+        first_piece = copy_pieces[0]
+        output_puzzle._piece_width = first_piece.width
+        first_piece_loc = first_piece.location
+
+        # Find the min and max row and column.
+        min_row = max_row = first_piece_loc[0]
+        min_col = max_col = first_piece_loc[1]
+        for i in range(0, len(copy_pieces)):
+
+            # Verify all pieces are the same size
+            if Puzzle.print_debug_messages:
+                assert(output_puzzle.piece_width == copy_pieces[i].width)
+
+            # Get the location of the piece
+            temp_loc = copy_pieces[1]
+            # Update the min and max row if needed
+            if min_row > temp_loc[0]:
+                min_row = temp_loc[0]
+            elif max_row < temp_loc[0]:
+                max_row = temp_loc[0]
+            # Update the min and max column if needed
+            if min_col > temp_loc[1]:
+                min_col = temp_loc[1]
+            elif max_col < temp_loc[1]:
+                max_col = temp_loc[1]
+
+        # Store the grid size
+        output_puzzle._grid_size = (max_row - min_row + 1, max_col - min_col + 1)
+        # Calculate the size of the image
+        output_puzzle._img_width = output_puzzle._grid_size[1] * output_puzzle.piece_width
+        output_puzzle._img_height = output_puzzle._grid_size[0] * output_puzzle.piece_width
+        
 
     @staticmethod
     def extract_subimage(img, upper_left, size):

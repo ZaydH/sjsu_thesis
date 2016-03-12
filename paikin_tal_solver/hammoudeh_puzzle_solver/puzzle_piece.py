@@ -17,31 +17,6 @@ class PuzzlePieceRotation(Enum):
     degree_180 = 180    # 180 degree rotation
     degree_270 = 270    # 270 degree rotation
 
-    @staticmethod
-    def _calculate_xy_rotation(width, rotation, x, y):
-        """
-        To simplify the implementation, the puzzle data is never rotated.  Rather, for a given set of X/Y coordinates
-        this function rotates them and then returns the rotated coordinates.
-
-        Args:
-            width (int):    Width of a puzzle piece in number of pixels.
-            rotation(PuzzlePieceRotation): Specified rotation of the puzzle piece.
-            x (int):        Unrotated X coordinate
-            y (int):        Unrotated Y coordinate
-
-        Returns ((int,int)):
-            Rotated X/Y coordinates.
-
-        """
-        if rotation == PuzzlePieceRotation.degree_0:
-            return x, y
-        if rotation == PuzzlePieceRotation.degree_90:
-            return width - 1 - y, x
-        if rotation == PuzzlePieceRotation.degree_180:
-            return width - 1 - x, width - 1 - y
-        if rotation == PuzzlePieceRotation.degree_270:
-            return y, width - 1 - x
-
 
 class PuzzlePieceSide(Enum):
     """Puzzle Piece Side
@@ -114,7 +89,7 @@ class PuzzlePiece(object):
 
         Args:
             puzzle_id (int): Puzzle identification number
-            location ([int]): XY location of this piece.
+            location ([int]): (row, column) location of this piece.
             img: Image data in the form of a numpy array.
 
         """
@@ -153,7 +128,7 @@ class PuzzlePiece(object):
         """
         Gets the location of the puzzle piece on the board.
 
-        Returns ([int]): Tuple of the (x_location, y_location)
+        Returns ([int]): Tuple of the (row, column)
 
         """
         return self._assigned_loc
@@ -176,7 +151,7 @@ class PuzzlePiece(object):
         """
         Gets the location of the puzzle piece on the board.
 
-        Returns ([int]): Tuple of the (x_location, y_location)
+        Returns (int): Assigned Puzzle ID number.
 
         """
         return self._assigned_puzzle_id
