@@ -224,6 +224,8 @@ class Puzzle(object):
         output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
         Puzzle.display_image(output_puzzle._img)
 
+        return output_puzzle
+
     def randomize_puzzle_piece_locations(self):
         """
         Puzzle Piece Location Randomizer
