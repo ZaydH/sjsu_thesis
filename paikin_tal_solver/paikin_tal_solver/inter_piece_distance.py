@@ -1,7 +1,34 @@
 import numpy
+import sys
 
 from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
+
+
+class PieceDistanceInformation(object):
+
+    def __init__(self, id_numb, numb_pieces, puzzle_type):
+        self._id = id_numb
+        self._numb_pieces = numb_pieces
+        self._puzzle_type = puzzle_type
+
+        self._second_best_distance = sys.float_info.min
+
+        self._inter_piece_distance = None
+        self._best_buddies = None
+        self._best_buddy_count = None
+
+    @property
+    def piece_id(self):
+        """
+        Piece ID Accessor
+
+        Gets the piece identification number for a PieceDistanceInformation object
+
+        Returns (int): Piece identification number
+        """
+        return self._id
+
 
 
 class InterPieceDistance(object):
@@ -153,4 +180,18 @@ class InterPieceDistance(object):
         This list is sorted from best starter piece to worst.
         """
         self._possible_start_pieces = []
+
+        # Store how many best buddies a piece has
+        best_buddies_count = numpy.zeros(self._piece_count)
+
+        # Calculate each pieces best buddy count for each piece
+        for x_i in range(0, self._piece_count):
+            for i_side in range(0, PuzzlePieceSide.get_numb_sides()):
+                if self._best_buddies[x_i, i_side] is not None:
+                    best_buddies_count[x_i] += 1
+
+        # Store the number of best budies in the piece's neighborhood
+        neighborhood_best_buddies_count = numpy.zeros(self._piece_count)
+        for
+
         pass
