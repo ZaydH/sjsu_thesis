@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="347c6f18-024b-4c50-be46-e2779712015b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Puzzle_Generator/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Puzzle_Generator/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/zhammoud.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/zhammoud.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/paikin_tal_solver.iml" afterPath="$PROJECT_DIR$/.idea/paikin_tal_solver.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
@@ -31,21 +30,40 @@
       <file leaf-file-name="inter_piece_distance.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33287102">
-              <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6555944">
+              <caret line="392" column="0" selection-start-line="392" selection-start-column="0" selection-end-line="392" selection-end-column="0" />
               <folding>
-                <element signature="e#0#12#0" expanded="true" />
+                <element signature="e#216#9011#0" expanded="false" />
+                <element signature="e#216#439#1" expanded="false" />
+                <element signature="e#543#1059#0" expanded="false" />
+                <element signature="e#1107#1308#0" expanded="false" />
+                <element signature="e#1107#1284#1" expanded="false" />
+                <element signature="e#1383#1666#0" expanded="false" />
+                <element signature="e#1383#1493#1" expanded="false" />
+                <element signature="e#1756#1925#0" expanded="false" />
+                <element signature="e#2000#2451#0" expanded="false" />
+                <element signature="e#2000#2240#1" expanded="false" />
+                <element signature="e#2504#2933#0" expanded="false" />
+                <element signature="e#2504#2878#1" expanded="false" />
+                <element signature="e#2977#3364#0" expanded="false" />
+                <element signature="e#2977#3318#1" expanded="false" />
+                <element signature="e#3437#4248#0" expanded="false" />
+                <element signature="e#3437#3847#1" expanded="false" />
+                <element signature="e#4332#9011#0" expanded="false" />
+                <element signature="e#4332#4587#1" expanded="false" />
+                <element signature="e#9052#9220#1" expanded="false" />
+                <element signature="e#9294#10598#0" expanded="false" />
+                <element signature="e#9294#9539#1" expanded="false" />
+                <element signature="e#10663#11169#0" expanded="false" />
+                <element signature="e#10663#10931#1" expanded="false" />
+                <element signature="e#11225#12747#0" expanded="false" />
+                <element signature="e#11225#11355#1" expanded="false" />
+                <element signature="e#12790#13674#0" expanded="false" />
+                <element signature="e#12790#12955#1" expanded="false" />
+                <element signature="e#13727#14006#1" expanded="false" />
+                <element signature="e#16875#17552#1" expanded="false" />
+                <element signature="e#17791#17887#1" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/Miniconda2/Lib/site-packages/enum/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -53,20 +71,20 @@
       <file leaf-file-name="puzzle_importer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-15.965517">
-              <caret line="138" column="65" selection-start-line="138" selection-start-column="65" selection-end-line="138" selection-end-column="65" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="353" column="37" selection-start-line="353" selection-start-column="37" selection-end-line="353" selection-end-column="37" />
               <folding>
-                <element signature="e#92#101#0" expanded="true" />
+                <element signature="e#92#103#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="random.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/Miniconda2/Lib/random.py">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/enum/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="287" column="0" selection-start-line="287" selection-start-column="0" selection-end-line="287" selection-end-column="0" />
+              <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -76,7 +94,7 @@
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+              <caret line="46" column="45" selection-start-line="46" selection-start-column="45" selection-end-line="46" selection-end-column="45" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -88,20 +106,10 @@
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="309" column="0" selection-start-line="309" selection-start-column="0" selection-end-line="309" selection-end-column="0" />
+              <caret line="158" column="0" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
               <folding>
-                <element signature="e#0#21#0" expanded="true" />
+                <element signature="e#0#13#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fromnumeric.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/Miniconda2/Lib/site-packages/numpy/core/fromnumeric.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="1818" column="0" selection-start-line="1818" selection-start-column="0" selection-end-line="1818" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -110,9 +118,10 @@
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
               <folding>
-                <element signature="e#0#58#0" expanded="true" />
+                <element signature="e#0#12#0" expanded="true" />
+                <marker date="1457790492199" expanded="true" signature="784:1060" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -143,19 +152,18 @@
         <option value="$PROJECT_DIR$/paikin_tal_solver/simple_puzzle_piece.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/paikan_tal_driver.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_solver.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1912" />
-    <option name="y" value="74" />
-    <option name="width" value="1936" />
-    <option name="height" value="1216" />
+    <option name="x" value="-7" />
+    <option name="width" value="1934" />
+    <option name="height" value="1047" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -173,7 +181,7 @@
         </expanded-state>
         <selected-state>
           <State>
-            <id>PyCompatibilityInspection</id>
+            <id>PyPep8Inspection</id>
           </State>
         </selected-state>
       </profile-state>
@@ -204,7 +212,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -243,11 +250,12 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="editor.preferences.appearance" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/zhammoud/Desktop/Courses/Thesis/paikin_tal_solver/paikin_tal_solver/inter_piece_distance.py" />
@@ -381,9 +389,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Miniconda2\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
@@ -410,19 +418,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1912" y="74" width="1936" height="1216" extended-state="6" />
+    <frame x="-7" y="0" width="1934" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24947916" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24921794" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32971996" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32870865" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32339656" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32337245" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -451,6 +459,14 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
@@ -459,22 +475,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py</url>
-          <line>211</line>
+          <line>417</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py</url>
-          <line>132</line>
+          <line>136</line>
           <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py</url>
-          <line>45</line>
-          <option name="timeStamp" value="54" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py</url>
-          <line>48</line>
-          <option name="timeStamp" value="60" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -487,17 +493,95 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="70" />
+      <option name="time" value="101" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="12" column="68" selection-start-line="12" selection-start-column="68" selection-end-line="12" selection-end-column="68" />
+          <folding>
+            <element signature="e#216#9011#0" expanded="false" />
+            <element signature="e#216#439#1" expanded="false" />
+            <element signature="e#543#1059#0" expanded="false" />
+            <element signature="e#1107#1308#0" expanded="false" />
+            <element signature="e#1107#1284#1" expanded="false" />
+            <element signature="e#1383#1666#0" expanded="false" />
+            <element signature="e#1383#1493#1" expanded="false" />
+            <element signature="e#1756#1925#0" expanded="false" />
+            <element signature="e#2000#2451#0" expanded="false" />
+            <element signature="e#2000#2240#1" expanded="false" />
+            <element signature="e#2504#2933#0" expanded="false" />
+            <element signature="e#2504#2878#1" expanded="false" />
+            <element signature="e#2977#3364#0" expanded="false" />
+            <element signature="e#2977#3318#1" expanded="false" />
+            <element signature="e#3437#4248#0" expanded="false" />
+            <element signature="e#3437#3847#1" expanded="false" />
+            <element signature="e#4332#9011#0" expanded="false" />
+            <element signature="e#4332#4587#1" expanded="false" />
+            <element signature="e#9052#9220#1" expanded="false" />
+            <element signature="e#9294#10598#0" expanded="false" />
+            <element signature="e#9294#9539#1" expanded="false" />
+            <element signature="e#10663#11169#0" expanded="false" />
+            <element signature="e#10663#10931#1" expanded="false" />
+            <element signature="e#11225#12747#0" expanded="false" />
+            <element signature="e#11225#11355#1" expanded="false" />
+            <element signature="e#12790#13674#0" expanded="false" />
+            <element signature="e#12790#12955#1" expanded="false" />
+            <element signature="e#13727#14006#1" expanded="false" />
+            <element signature="e#16875#17552#1" expanded="false" />
+            <element signature="e#17791#17887#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="350" column="53" selection-start-line="350" selection-start-column="53" selection-end-line="350" selection-end-column="53" />
+          <folding>
+            <element signature="e#92#103#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/enum/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="218" column="0" selection-start-line="218" selection-start-column="0" selection-end-line="218" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#92#101#0" expanded="true" />
+            <element signature="e#0#12#0" expanded="true" />
+            <marker date="1457790492199" expanded="true" signature="784:1060" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -507,7 +591,206 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
+            <element signature="e#216#9011#0" expanded="false" />
+            <element signature="e#216#439#1" expanded="false" />
+            <element signature="e#543#1059#0" expanded="false" />
+            <element signature="e#1107#1308#0" expanded="false" />
+            <element signature="e#1107#1284#1" expanded="false" />
+            <element signature="e#1383#1666#0" expanded="false" />
+            <element signature="e#1383#1493#1" expanded="false" />
+            <element signature="e#1756#1925#0" expanded="false" />
+            <element signature="e#2000#2451#0" expanded="false" />
+            <element signature="e#2000#2240#1" expanded="false" />
+            <element signature="e#2504#2933#0" expanded="false" />
+            <element signature="e#2504#2878#1" expanded="false" />
+            <element signature="e#2977#3364#0" expanded="false" />
+            <element signature="e#2977#3318#1" expanded="false" />
+            <element signature="e#3437#4248#0" expanded="false" />
+            <element signature="e#3437#3847#1" expanded="false" />
+            <element signature="e#4332#9011#0" expanded="false" />
+            <element signature="e#4332#4587#1" expanded="false" />
+            <element signature="e#9052#9220#1" expanded="false" />
+            <element signature="e#9294#10598#0" expanded="false" />
+            <element signature="e#9294#9539#1" expanded="false" />
+            <element signature="e#10663#11169#0" expanded="false" />
+            <element signature="e#10663#10931#1" expanded="false" />
+            <element signature="e#11225#12747#0" expanded="false" />
+            <element signature="e#11225#11355#1" expanded="false" />
+            <element signature="e#12790#13674#0" expanded="false" />
+            <element signature="e#12790#12955#1" expanded="false" />
+            <element signature="e#13727#14006#1" expanded="false" />
+            <element signature="e#16875#17552#1" expanded="false" />
+            <element signature="e#17791#17887#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="9" column="7" selection-start-line="9" selection-start-column="7" selection-end-line="9" selection-end-column="7" />
+          <folding>
+            <element signature="e#92#103#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="130" column="50" selection-start-line="130" selection-start-column="50" selection-end-line="130" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding>
             <element signature="e#0#12#0" expanded="true" />
+            <marker date="1457790492199" expanded="true" signature="784:1060" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#216#9011#0" expanded="false" />
+            <element signature="e#216#439#1" expanded="false" />
+            <element signature="e#543#1059#0" expanded="false" />
+            <element signature="e#1107#1308#0" expanded="false" />
+            <element signature="e#1107#1284#1" expanded="false" />
+            <element signature="e#1383#1666#0" expanded="false" />
+            <element signature="e#1383#1493#1" expanded="false" />
+            <element signature="e#1756#1925#0" expanded="false" />
+            <element signature="e#2000#2451#0" expanded="false" />
+            <element signature="e#2000#2240#1" expanded="false" />
+            <element signature="e#2504#2933#0" expanded="false" />
+            <element signature="e#2504#2878#1" expanded="false" />
+            <element signature="e#2977#3364#0" expanded="false" />
+            <element signature="e#2977#3318#1" expanded="false" />
+            <element signature="e#3437#4248#0" expanded="false" />
+            <element signature="e#3437#3847#1" expanded="false" />
+            <element signature="e#4332#9011#0" expanded="false" />
+            <element signature="e#4332#4587#1" expanded="false" />
+            <element signature="e#9052#9220#1" expanded="false" />
+            <element signature="e#9294#10598#0" expanded="false" />
+            <element signature="e#9294#9539#1" expanded="false" />
+            <element signature="e#10663#11169#0" expanded="false" />
+            <element signature="e#10663#10931#1" expanded="false" />
+            <element signature="e#11225#12747#0" expanded="false" />
+            <element signature="e#11225#11355#1" expanded="false" />
+            <element signature="e#12790#13674#0" expanded="false" />
+            <element signature="e#12790#12955#1" expanded="false" />
+            <element signature="e#13727#14006#1" expanded="false" />
+            <element signature="e#16875#17552#1" expanded="false" />
+            <element signature="e#17791#17887#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="138" column="65" selection-start-line="138" selection-start-column="65" selection-end-line="138" selection-end-column="65" />
+          <folding>
+            <element signature="e#92#103#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="309" column="0" selection-start-line="309" selection-start-column="0" selection-end-line="309" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+            <marker date="1457790492199" expanded="true" signature="784:1060" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#92#103#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#216#9011#0" expanded="false" />
+            <element signature="e#216#439#1" expanded="false" />
+            <element signature="e#543#1059#0" expanded="false" />
+            <element signature="e#1107#1308#0" expanded="false" />
+            <element signature="e#1107#1284#1" expanded="false" />
+            <element signature="e#1383#1666#0" expanded="false" />
+            <element signature="e#1383#1493#1" expanded="false" />
+            <element signature="e#1756#1925#0" expanded="false" />
+            <element signature="e#2000#2451#0" expanded="false" />
+            <element signature="e#2000#2240#1" expanded="false" />
+            <element signature="e#2504#2933#0" expanded="false" />
+            <element signature="e#2504#2878#1" expanded="false" />
+            <element signature="e#2977#3364#0" expanded="false" />
+            <element signature="e#2977#3318#1" expanded="false" />
+            <element signature="e#3437#4248#0" expanded="false" />
+            <element signature="e#3437#3847#1" expanded="false" />
+            <element signature="e#4332#9011#0" expanded="false" />
+            <element signature="e#4332#4587#1" expanded="false" />
+            <element signature="e#9052#9220#1" expanded="false" />
+            <element signature="e#9294#10598#0" expanded="false" />
+            <element signature="e#9294#9539#1" expanded="false" />
+            <element signature="e#10663#11169#0" expanded="false" />
+            <element signature="e#10663#10931#1" expanded="false" />
+            <element signature="e#11225#12747#0" expanded="false" />
+            <element signature="e#11225#11355#1" expanded="false" />
+            <element signature="e#12790#13674#0" expanded="false" />
+            <element signature="e#12790#12955#1" expanded="false" />
+            <element signature="e#13727#14006#1" expanded="false" />
+            <element signature="e#16875#17552#1" expanded="false" />
+            <element signature="e#17791#17887#1" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -526,7 +809,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.29691878">
           <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -534,7 +816,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -542,14 +823,21 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/numpy/lib/twodim_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="178" column="0" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Miniconda2/Lib/random.py">
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/enum/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="287" column="0" selection-start-line="287" selection-start-column="0" selection-end-line="287" selection-end-column="0" />
+          <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -557,27 +845,29 @@
     <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+          <caret line="46" column="45" selection-start-line="46" selection-start-column="45" selection-end-line="46" selection-end-column="45" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Miniconda2/Lib/site-packages/numpy/core/fromnumeric.py">
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="1818" column="0" selection-start-line="1818" selection-start-column="0" selection-end-line="1818" selection-end-column="0" />
-          <folding />
+          <caret line="353" column="37" selection-start-line="353" selection-start-column="37" selection-end-line="353" selection-end-column="37" />
+          <folding>
+            <element signature="e#92#103#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.965517">
-          <caret line="138" column="65" selection-start-line="138" selection-start-column="65" selection-end-line="138" selection-end-column="65" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="158" column="0" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
           <folding>
-            <element signature="e#92#101#0" expanded="true" />
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -585,37 +875,49 @@
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <caret line="31" column="34" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
           <folding>
-            <element signature="e#0#58#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Miniconda2/Lib/site-packages/enum/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="309" column="0" selection-start-line="309" selection-start-column="0" selection-end-line="309" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#12#0" expanded="true" />
+            <marker date="1457790492199" expanded="true" signature="784:1060" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33287102">
-          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6555944">
+          <caret line="392" column="0" selection-start-line="392" selection-start-column="0" selection-end-line="392" selection-end-column="0" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#216#9011#0" expanded="false" />
+            <element signature="e#216#439#1" expanded="false" />
+            <element signature="e#543#1059#0" expanded="false" />
+            <element signature="e#1107#1308#0" expanded="false" />
+            <element signature="e#1107#1284#1" expanded="false" />
+            <element signature="e#1383#1666#0" expanded="false" />
+            <element signature="e#1383#1493#1" expanded="false" />
+            <element signature="e#1756#1925#0" expanded="false" />
+            <element signature="e#2000#2451#0" expanded="false" />
+            <element signature="e#2000#2240#1" expanded="false" />
+            <element signature="e#2504#2933#0" expanded="false" />
+            <element signature="e#2504#2878#1" expanded="false" />
+            <element signature="e#2977#3364#0" expanded="false" />
+            <element signature="e#2977#3318#1" expanded="false" />
+            <element signature="e#3437#4248#0" expanded="false" />
+            <element signature="e#3437#3847#1" expanded="false" />
+            <element signature="e#4332#9011#0" expanded="false" />
+            <element signature="e#4332#4587#1" expanded="false" />
+            <element signature="e#9052#9220#1" expanded="false" />
+            <element signature="e#9294#10598#0" expanded="false" />
+            <element signature="e#9294#9539#1" expanded="false" />
+            <element signature="e#10663#11169#0" expanded="false" />
+            <element signature="e#10663#10931#1" expanded="false" />
+            <element signature="e#11225#12747#0" expanded="false" />
+            <element signature="e#11225#11355#1" expanded="false" />
+            <element signature="e#12790#13674#0" expanded="false" />
+            <element signature="e#12790#12955#1" expanded="false" />
+            <element signature="e#13727#14006#1" expanded="false" />
+            <element signature="e#16875#17552#1" expanded="false" />
+            <element signature="e#17791#17887#1" expanded="false" />
           </folding>
         </state>
       </provider>
