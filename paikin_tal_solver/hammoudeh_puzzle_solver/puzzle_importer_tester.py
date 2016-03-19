@@ -4,12 +4,15 @@ import math
 import numpy
 
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
 
 
 class PuzzleTester(unittest.TestCase):
     PIECE_WIDTH = 5
     NUMB_PUZZLE_PIECES = 9
+    NUMB_PIXEL_DIMENSIONS = 3
+
+    TEST_ARRAY_FIRST_PIXEL_VALUE = 0
 
     # Get the information on the test image
     TEST_IMAGE_FILENAME = ".\\test\\test.jpg"
@@ -65,7 +68,6 @@ class PuzzleTester(unittest.TestCase):
             piece._assign_to_original_location()
             assert(piece._orig_loc == piece.location)
 
-
     def test_puzzle_piece_maker(self):
         """
         Puzzle Piece Maker Checker
@@ -94,7 +96,77 @@ class PuzzleTester(unittest.TestCase):
         # Get the puzzle pieces
         pieces = puzzle.pieces
         # Get the first piece
-        first_piece = pieces[0]
+        first_piece = pieces[0]  # type: PuzzlePiece
+
+        # Test the Extraction of row pixel values
+        for row in range(0, PuzzleTester.PIECE_WIDTH):
+            first_dim_val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE + row * PuzzleTester.row_to_row_step_size()
+
+            # Test the extraction of pixel values.
+            test_arr = PuzzleTester.build_pixel_list(first_dim_val, True)
+            row_val = first_piece.get_row_pixels(row)
+            assert(numpy.array_equal(row_val, test_arr))  # Verify the two arrays are equal.
+
+            # Test the reversing
+            reverse_list = True
+            test_arr = PuzzleTester.build_pixel_list(first_dim_val, True, reverse_list)
+            row_val = first_piece.get_row_pixels(row, reverse_list)
+            assert(numpy.array_equal(row_val, test_arr))
+
+    @staticmethod
+    def build_pixel_list(start_value, is_row, reverse_list=False):
+        """
+        Pixel List Builder
+
+        Given a starting value for the first pixel in the first dimension, this function gets the pixel values
+        in an array similar to a call to "get_row_pixels" or "get_col_pixels" for a puzzle piece.
+
+        Args:
+            start_value (int): Value of the first (i.e. lowest valued) pixel's first dimension
+
+            is_row (bool): True if building a pixel list for a row and "False" if it is a column.  This is used to
+            determine the stepping factor from one pixel to the next.
+
+            reverse_list (bool): If "True", HIGHEST valued pixel dimension is returned in the first index of the list
+            and all subsequent pixel values are monotonically DECREASING.  If "False", the LOWEST valued pixel dimension
+            is returned in the first index of the list and all subsequent pixel values are monotonically increasing.
+
+        Returns ([int]): An array of individual values simulating a set of pixels
+        """
+
+        # Determine the pixel to pixel step size
+        if is_row:
+            pixel_offset = PuzzleTester.NUMB_PIXEL_DIMENSIONS
+        else:
+            pixel_offset = PuzzleTester.row_to_row_step_size()
+
+        # Build the list of pixel values
+        pixels = numpy.zeros((PuzzleTester.PIECE_WIDTH, PuzzleTester.NUMB_PIXEL_DIMENSIONS))
+        for i in range(0, PuzzleTester.PIECE_WIDTH):
+            pixel_start = start_value + i * pixel_offset
+            for j in range(0, PuzzleTester.NUMB_PIXEL_DIMENSIONS):
+                pixels[i,j] = pixel_start + j
+
+        # Return the result either reversed or not.
+        if reverse_list:
+            return pixels[::-1]
+        else:
+            return pixels
+
+    @staticmethod
+    def row_to_row_step_size():
+        """
+        Row to Row Step Size
+
+        For a given pixel's given dimension, this function returns the number of dimensions between this pixel and
+        the matching pixel exactly one row below.
+
+        It is essentially the number of dimensions multiplied by the width of the original image (in pixels).
+
+        Returns (int): Offset in dimensions.
+        """
+        step_size = PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.PIECE_WIDTH * math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES)
+        return int(step_size)
 
     @staticmethod
     def build_dummy_array():
@@ -106,11 +178,12 @@ class PuzzleTester(unittest.TestCase):
         # Define the puzzle side
         piece_width = PuzzleTester.PIECE_WIDTH
         numb_pieces = PuzzleTester.NUMB_PUZZLE_PIECES
+        numb_dim = PuzzleTester.NUMB_PIXEL_DIMENSIONS
 
         # Define the array
-        arr = numpy.zeros((piece_width * math.sqrt(numb_pieces), piece_width * math.sqrt(numb_pieces), 3))
+        arr = numpy.zeros((piece_width * math.sqrt(numb_pieces), piece_width * math.sqrt(numb_pieces), numb_dim))
         # populate the array
-        val = 0
+        val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE
         shape = arr.shape
         for row in range(0, shape[0]):
             for col in range(0, shape[1]):
