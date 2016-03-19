@@ -75,23 +75,8 @@ class PuzzleTester(unittest.TestCase):
         Checks that puzzle pieces are made as expected.  It also checks the get puzzle piece row/column values.
         """
 
-        # Create a puzzle whose image data will be overridden
-        puzzle = Puzzle(0, PuzzleTester.TEST_IMAGE_FILENAME)
-
-        # Build a dummy image for testing.
-        img = PuzzleTester.build_dummy_array()
-        img_shape = img.shape
-
-        # Overwrite the image parameters
-        puzzle._img = img
-        puzzle._img_LAB = img
-        puzzle._img_width = img_shape[1]
-        puzzle._img_height = img_shape[0]
-        puzzle._piece_width = PuzzleTester.PIECE_WIDTH
-        puzzle._grid_size = (math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES), math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES))
-
-        # Remake the puzzle pieces
-        puzzle.make_pieces()
+        # Build a known test puzzle.
+        puzzle = PuzzleTester.build_dummy_puzzle()
 
         # Get the puzzle pieces
         pieces = puzzle.pieces
@@ -130,16 +115,14 @@ class PuzzleTester(unittest.TestCase):
                 col_val = piece.get_column_pixels(col, reverse_list)
                 assert(numpy.array_equal(col_val, test_arr))
 
-
-
-        # Calculate the asymmetric distance for two neighboring pieces
+        # Calculate the asymmetric distance for two neighboring pieces on ADJACENT SIDES
         asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.right,
                                                               pieces[1], PuzzlePieceSide.left)
         assert(asym_dist == 0)
         asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[1], PuzzlePieceSide.left,
                                                               pieces[0], PuzzlePieceSide.right)
         assert(asym_dist == 0)
-        # Calculate the asymmetric distance for two neighboring pieces
+        # Calculate the asymmetric distance for two neighboring pieces on ADJACENT SIDES
         pieces_per_row = int(math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES))
         asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.bottom,
                                                               pieces[pieces_per_row], PuzzlePieceSide.top)
@@ -148,6 +131,30 @@ class PuzzleTester(unittest.TestCase):
                                                               pieces[0], PuzzlePieceSide.bottom)
         assert(asym_dist == 0)
 
+        # Calculate the asymmetric distance for pieces two spaces away
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.right,
+                                                              pieces[2], PuzzlePieceSide.left)
+        expected_dist = PuzzleTester.PIECE_WIDTH * PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.piece_to_piece_step_size()
+        assert(asym_dist == expected_dist)
+        # Calculate the asymmetric distance for pieces two spaces away
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[2], PuzzlePieceSide.left,
+                                                              pieces[0], PuzzlePieceSide.right)
+        expected_dist = PuzzleTester.PIECE_WIDTH * PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.piece_to_piece_step_size()
+        assert(asym_dist == expected_dist)
+
+        # Calculate the asymmetric distance for two neighboring pieces on non-adjacent
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.top,
+                                                              pieces[1], PuzzlePieceSide.top)
+        # Distance between first pixel in top row of piece to last pixel of piece j almost like to puzzle pieces
+        pixel_to_pixel_dist = -1 * ((2 * PuzzleTester.PIECE_WIDTH - 1) * PuzzleTester.NUMB_PIXEL_DIMENSIONS)
+        pixel_to_pixel_dist -= PuzzleTester.row_to_row_step_size()
+        # Calculate the expected distance
+        expected_dist = 0
+        for i in range(0, PuzzleTester.PIECE_WIDTH * PuzzleTester.NUMB_PIXEL_DIMENSIONS):
+            expected_dist += abs(pixel_to_pixel_dist)
+            if i % PuzzleTester.NUMB_PIXEL_DIMENSIONS == PuzzleTester.NUMB_PIXEL_DIMENSIONS - 1:
+                pixel_to_pixel_dist += 2 * PuzzleTester.NUMB_PIXEL_DIMENSIONS
+        assert(asym_dist == expected_dist)
 
     @staticmethod
     def build_pixel_list(start_value, is_row, reverse_list=False):
@@ -220,28 +227,48 @@ class PuzzleTester(unittest.TestCase):
 
 
     @staticmethod
-    def build_dummy_array():
+    def build_dummy_puzzle():
+        """
+        Dummy Puzzle Builder
+
+        Using an image on the disk, this function builds a dummy puzzle using a Numpy array that is manually
+        loaded with sequentially increasing pixel values.
+
+        Returns (Puzzle): A puzzle where each pixel dimension from left to right sequentially increases by
+        one.
         """
 
-        Returns:
+        # Create a puzzle whose image data will be overridden
+        puzzle = Puzzle(0, PuzzleTester.TEST_IMAGE_FILENAME)
 
-        """
         # Define the puzzle side
         piece_width = PuzzleTester.PIECE_WIDTH
         numb_pieces = PuzzleTester.NUMB_PUZZLE_PIECES
         numb_dim = PuzzleTester.NUMB_PIXEL_DIMENSIONS
 
         # Define the array
-        arr = numpy.zeros((piece_width * math.sqrt(numb_pieces), piece_width * math.sqrt(numb_pieces), numb_dim))
+        dummy_img = numpy.zeros((piece_width * math.sqrt(numb_pieces), piece_width * math.sqrt(numb_pieces), numb_dim))
         # populate the array
         val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE
-        shape = arr.shape
-        for row in range(0, shape[0]):
-            for col in range(0, shape[1]):
-                for dim in range(0, shape[2]):
-                    arr[row, col, dim] = val
+        img_shape = dummy_img.shape
+        for row in range(0, img_shape[0]):
+            for col in range(0, img_shape[1]):
+                for dim in range(0, img_shape[2]):
+                    dummy_img[row, col, dim] = val
                     val += 1
-        return arr
+
+        # Overwrite the image parameters
+        puzzle._img = dummy_img
+        puzzle._img_LAB = dummy_img
+        puzzle._img_width = img_shape[1]
+        puzzle._img_height = img_shape[0]
+        puzzle._piece_width = PuzzleTester.PIECE_WIDTH
+        puzzle._grid_size = (math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES), math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES))
+
+        # Remake the puzzle pieces
+        puzzle.make_pieces()
+
+        return puzzle
 
 if __name__ == '__main__':
     unittest.main()
