@@ -306,7 +306,7 @@ class PuzzlePiece(object):
         # Get the border and second to last ROW on the TOP side of piece i
         if piece_i_side == PuzzlePieceSide.top:
             i_border = piece_i.get_row_pixels(0)
-            i_second_to_last = 2 * i_border - piece_i.get_row_pixels(1)
+            i_second_to_last = piece_i.get_row_pixels(1)
 
         # Get the border and second to last COLUMN on the RIGHT side of piece i
         elif piece_i_side == PuzzlePieceSide.right:

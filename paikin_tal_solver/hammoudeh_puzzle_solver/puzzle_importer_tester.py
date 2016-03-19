@@ -4,7 +4,7 @@ import math
 import numpy
 
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide
 
 
 class PuzzleTester(unittest.TestCase):
@@ -95,38 +95,59 @@ class PuzzleTester(unittest.TestCase):
 
         # Get the puzzle pieces
         pieces = puzzle.pieces
-        # Get the first piece
-        first_piece = pieces[0]  # type: PuzzlePiece
+        for piece in pieces:
+            orig_loc = piece._orig_loc
+            upper_left_dim = orig_loc[0] * PuzzleTester.PIECE_WIDTH * PuzzleTester.row_to_row_step_size()
+            upper_left_dim += orig_loc[1] * PuzzleTester.piece_to_piece_step_size()
 
-        # Test the Extraction of row pixel values
-        for row in range(0, PuzzleTester.PIECE_WIDTH):
-            first_dim_val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE + row * PuzzleTester.row_to_row_step_size()
+            # Test the Extraction of row pixel values
+            for row in range(0, PuzzleTester.PIECE_WIDTH):
+                first_dim_val = upper_left_dim + row * PuzzleTester.row_to_row_step_size()
 
-            # Test the extraction of pixel values.
-            test_arr = PuzzleTester.build_pixel_list(first_dim_val, True)
-            row_val = first_piece.get_row_pixels(row)
-            assert(numpy.array_equal(row_val, test_arr))  # Verify the two arrays are equal.
+                # Test the extraction of pixel values.
+                test_arr = PuzzleTester.build_pixel_list(first_dim_val, True)
+                row_val = piece.get_row_pixels(row)
+                assert(numpy.array_equal(row_val, test_arr))  # Verify the two arrays are equal.
 
-            # Test the reversing
-            reverse_list = True
-            test_arr = PuzzleTester.build_pixel_list(first_dim_val, True, reverse_list)
-            row_val = first_piece.get_row_pixels(row, reverse_list)
-            assert(numpy.array_equal(row_val, test_arr))
+                # Test the reversing
+                reverse_list = True
+                test_arr = PuzzleTester.build_pixel_list(first_dim_val, True, reverse_list)
+                row_val = piece.get_row_pixels(row, reverse_list)
+                assert(numpy.array_equal(row_val, test_arr))
 
-        for col in range(0, PuzzleTester.PIECE_WIDTH):
-            first_dim_val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE + col * PuzzleTester.NUMB_PIXEL_DIMENSIONS
+            for col in range(0, PuzzleTester.PIECE_WIDTH):
+                first_dim_val = upper_left_dim + col * PuzzleTester.NUMB_PIXEL_DIMENSIONS
 
-            # Test the extraction of pixel values.
-            is_col = False
-            test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col)
-            col_val = first_piece.get_column_pixels(col)
-            assert(numpy.array_equal(col_val, test_arr))  # Verify the two arrays are equal.
+                # Test the extraction of pixel values.
+                is_col = False
+                test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col)
+                col_val = piece.get_column_pixels(col)
+                assert(numpy.array_equal(col_val, test_arr))  # Verify the two arrays are equal.
 
-            # Test the reversing
-            reverse_list = True
-            test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col, reverse_list)
-            col_val = first_piece.get_column_pixels(col, reverse_list)
-            assert(numpy.array_equal(col_val, test_arr))
+                # Test the reversing
+                reverse_list = True
+                test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col, reverse_list)
+                col_val = piece.get_column_pixels(col, reverse_list)
+                assert(numpy.array_equal(col_val, test_arr))
+
+
+
+        # Calculate the asymmetric distance for two neighboring pieces
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.right,
+                                                              pieces[1], PuzzlePieceSide.left)
+        assert(asym_dist == 0)
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[1], PuzzlePieceSide.left,
+                                                              pieces[0], PuzzlePieceSide.right)
+        assert(asym_dist == 0)
+        # Calculate the asymmetric distance for two neighboring pieces
+        pieces_per_row = int(math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES))
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.bottom,
+                                                              pieces[pieces_per_row], PuzzlePieceSide.top)
+        assert(asym_dist == 0)
+        asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[pieces_per_row], PuzzlePieceSide.top,
+                                                              pieces[0], PuzzlePieceSide.bottom)
+        assert(asym_dist == 0)
+
 
     @staticmethod
     def build_pixel_list(start_value, is_row, reverse_list=False):
@@ -160,7 +181,7 @@ class PuzzleTester(unittest.TestCase):
         for i in range(0, PuzzleTester.PIECE_WIDTH):
             pixel_start = start_value + i * pixel_offset
             for j in range(0, PuzzleTester.NUMB_PIXEL_DIMENSIONS):
-                pixels[i,j] = pixel_start + j
+                pixels[i, j] = pixel_start + j
 
         # Return the result either reversed or not.
         if reverse_list:
@@ -182,6 +203,21 @@ class PuzzleTester(unittest.TestCase):
         """
         step_size = PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.PIECE_WIDTH * math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES)
         return int(step_size)
+
+    @staticmethod
+    def piece_to_piece_step_size():
+        """
+        Piece to Piece Step Size
+
+        For a given pixel's given dimension, this function returns the number of dimensions between this pixel and
+        the matching pixel exactly one puzzle piece away.
+
+        It is essentially the number of dimensions multiplied by the width of a puzzle piece (in pixels).
+
+        Returns (int): Offset in dimensions.
+        """
+        return PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.PIECE_WIDTH
+
 
     @staticmethod
     def build_dummy_array():
