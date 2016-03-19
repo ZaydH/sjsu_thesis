@@ -10,6 +10,7 @@ from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide
 class PuzzleTester(unittest.TestCase):
     PIECE_WIDTH = 5
     NUMB_PUZZLE_PIECES = 9
+    GRID_SIZE = (int(math.sqrt(NUMB_PUZZLE_PIECES)), int(math.sqrt(NUMB_PUZZLE_PIECES)))
     NUMB_PIXEL_DIMENSIONS = 3
 
     TEST_ARRAY_FIRST_PIXEL_VALUE = 0

@@ -42,31 +42,64 @@ class PieceDistanceInformation(object):
         """
         return self._id
 
-    def asymmetric_compatibility(self, p_i_side, p_j, p_j_side):
+    def asymmetric_distance(self, p_i_side, p_j, p_j_side):
         """
+        Asymmetric Distance Accessor
+
+        Returns the asymmetric distance between p_i and p_j.
 
         Args:
-            p_i_side:
-            p_j:
-            p_j_side:
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i - implicit)
+            p_j (int): Secondary puzzle piece
+            p_j_side (PuzzlePieceSide):
 
-        Returns:
+        Returns (int): Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their
+        specified sides.
+        """
+        p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
+        return self._asymmetric_distances[p_i_side.value, p_j, p_j_side_val]
 
+    def asymmetric_compatibility(self, p_i_side, p_j, p_j_side):
+        """
+        Puzzle Piece Asymmetric Compatibility Accessor
+
+        Gets the asymmetric compatibility for a piece (p_i) to another piece p_j on their respective sides.
+
+        Args:
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
+            p_j (int): Secondary piece for the asymmetric distance.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
+
+        Returns: Asymmetric compatibility between the two pieces on their respective sides
         """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         return self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_val]
 
     def set_mutual_compatibility(self, p_i_side, p_j, p_j_side, compatibility):
+        """
+        Puzzle Piece Mutual Compatibility Setter
+
+        Sets the mutual compatibility for a piece (p_i) to another piece p_j on their respective sides.
+
+        Args:
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
+            p_j (int): Secondary piece for the asymmetric distance.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
+            compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.
+        """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         self._mutual_compatibilities[p_i_side.value, p_j, p_j_side_val] = compatibility
 
     def get_mutual_compatibility(self, p_i_side, p_j, p_j_side):
         """
+        Puzzle Piece Mutual Compatibility Accessor
+
+        Gets the mutual compatibility for a piece (p_i) to another piece p_j on their respective sides.
 
         Args:
-            p_i_side (PuzzlePieceSide):
-            p_j (int): Other puzzle piece
-            p_j_side (PuzzlePieceSide):
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
+            p_j (int): Secondary piece for the asymmetric distance.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
 
         Returns: Mutual compatibility between the two pieces on their respective sides
         """
@@ -207,6 +240,8 @@ class InterPieceDistance(object):
     and the starter puzzle pieces as defined by the Paikin and Tal paper.
     """
 
+    _PERFORM_ASSERT_CHECKS = True
+
     def __init__(self, pieces, distance_function, puzzle_type):
         """
         Stores the piece to piece distance
@@ -221,6 +256,7 @@ class InterPieceDistance(object):
         self._numb_pieces = len(pieces)
 
         # store the distance function used for calculations.
+        assert(distance_function is not None)
         self._distance_function = distance_function
 
         # Store the puzzle type
@@ -367,6 +403,85 @@ class InterPieceDistance(object):
         # See here for more information: http://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
         self._start_piece_ordering.sort(key=operator.itemgetter(1, 2))
 
+    def next_starting_piece(self, placed_pieces):
+        """
+        Next Starting Piece Accessor
+
+        Gets the puzzle piece that is the best candidate to use as the seed of a puzzle.
+
+        Args:
+            placed_pieces (Optional [bool]): An array indicating whether each puzzle piece (by index) has been
+            placed.
+
+        Returns (int): Index of the next piece to use for starting a board.
+        """
+        # If no pieces are placed, then use the first piece
+        if placed_pieces is None:
+            return self._start_piece_ordering[0](0)
+
+        # If some pieces are already placed, ensure that you do not use a placed piece as the
+        # next seed.
+        else:
+            i = 0
+            while placed_pieces[self._start_piece_ordering[i]](0):
+                i += 1
+            return self._start_piece_ordering[i](0)
+
+    def best_buddies(self, p_i, p_i_side):
+        """
+
+        Args:
+            p_i (int):
+            p_i_side  (PuzzlePieceSide):
+
+        Returns ([int]): List of best buddy piece id numbers
+        """
+        self._piece_distance_info[p_i].best_buddies(p_i_side)
+
+    def asymmetric_distance(self, p_i, p_i_side, p_j, p_j_side):
+        """
+        Asymmetric Distance Accessor
+
+        Returns the asymmetric distance for p_i's side (p_i_side) relative to p_j on its side p_j_side.
+
+        Args:
+            p_i (int): Primary piece for asymmetric distance
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
+            p_j (int): Secondary piece for the asymmetric distance.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
+
+        Returns (int): Asymmetric distance between puzzle pieces p_i and p_j.
+        """
+        # For a type 1 puzzles, ensure that the pu
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            self.assert_valid_type1_side(p_i_side, p_j_side)
+        return self._piece_distance_info[p_i].asymmetric_distance(p_i_side, p_j, p_j_side)
+
+    def mutual_compatibility(self, p_i, p_i_side, p_j, p_j_side):
+        """
+        Mutual Compatibility Accessor
+
+        Returns the mutual compatibility for p_i's side (p_i_side) relative to p_j on its side p_j_side.
+
+        Args:
+            p_i (int): Primary piece for asymmetric distance
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
+            p_j (int): Secondary piece for the asymmetric distance.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
+
+        Returns (int): Mutual compatibility between puzzle pieces p_i and p_j.
+        """
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            self.assert_valid_type1_side(p_i_side, p_j_side)
+
+        p_i_mutual_compatibility = self._piece_distance_info[p_i].mutual_compatibility(p_i_side, p_j, p_j_side)
+
+        # Verify for debug the mutual compatibility is symmetric.
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].mutual_compatibility(p_j_side, p_i, p_i_side))
+
+        return p_i_mutual_compatibility
+
     @staticmethod
     def get_valid_neighbor_sides(puzzle_type, p_i_side):
         """
@@ -392,15 +507,30 @@ class InterPieceDistance(object):
     @staticmethod
     def get_p_j_side_index(puzzle_type, p_j_side):
         """
+        Secondary Piece Side Index Lookup
 
         Args:
-            puzzle_type:
-            p_j_side:
+            puzzle_type (PuzzleType): Either type1 (no rotation) or type 2 (with rotation)
+            p_j_side (PuzzlePieceSide): Side for the secondary piece p_j.
 
-        Returns:
-
+        Returns: For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle
+        pieces on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined
+        in the PuzzlePieceSide enumerated type.
         """
         if puzzle_type == PuzzleType.type1:
             return 0
         else:
             return p_j_side.value
+
+    def assert_valid_type1_side(self, p_i_side, p_j_side):
+        """
+        Valid Side Checker
+
+        For type 1 puzzles, this function is used to verify that two puzzle piece sides are a valid pair.
+
+        Args:
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) where p_i will be placed.
+        """
+        if self._puzzle_type == PuzzleType.type1:
+            assert(p_i_side.complementary_side() == p_j_side)
