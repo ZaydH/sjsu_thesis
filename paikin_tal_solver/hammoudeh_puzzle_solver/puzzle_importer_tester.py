@@ -113,13 +113,28 @@ class PuzzleTester(unittest.TestCase):
             row_val = first_piece.get_row_pixels(row, reverse_list)
             assert(numpy.array_equal(row_val, test_arr))
 
+        for col in range(0, PuzzleTester.PIECE_WIDTH):
+            first_dim_val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE + col * PuzzleTester.NUMB_PIXEL_DIMENSIONS
+
+            # Test the extraction of pixel values.
+            is_col = False
+            test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col)
+            col_val = first_piece.get_column_pixels(col)
+            assert(numpy.array_equal(col_val, test_arr))  # Verify the two arrays are equal.
+
+            # Test the reversing
+            reverse_list = True
+            test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col, reverse_list)
+            col_val = first_piece.get_column_pixels(col, reverse_list)
+            assert(numpy.array_equal(col_val, test_arr))
+
     @staticmethod
     def build_pixel_list(start_value, is_row, reverse_list=False):
         """
         Pixel List Builder
 
         Given a starting value for the first pixel in the first dimension, this function gets the pixel values
-        in an array similar to a call to "get_row_pixels" or "get_col_pixels" for a puzzle piece.
+        in an array similar to a call to "get_row_pixels" or "get_column_pixels" for a puzzle piece.
 
         Args:
             start_value (int): Value of the first (i.e. lowest valued) pixel's first dimension
