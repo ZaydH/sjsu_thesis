@@ -311,11 +311,11 @@ class InterPieceDistance(object):
                         # Get the compatibility from p_i to p_j
                         p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
                         mutual_compat = self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j,
-                                                                                                p_j_side_index)
+                                                                                                p_j_side)
                         # Get the compatibility from p_j to p_i
                         p_i_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_i_side)
                         mutual_compat += self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i,
-                                                                                                 p_i_side_index)
+                                                                                                 p_i_side)
 
                         # Store the mutual compatibility for BOTH p_i and p_j
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
@@ -401,9 +401,9 @@ class InterPieceDistance(object):
 
         # Sort by number of best buddy neighbors (1) then by total compatibility if there is a tie (2)
         # See here for more information: http://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
-        self._start_piece_ordering.sort(key=operator.itemgetter(1, 2))
+        self._start_piece_ordering.sort(key=operator.itemgetter(1, 2), reverse=True)
 
-    def next_starting_piece(self, placed_pieces):
+    def next_starting_piece(self, placed_pieces=None):
         """
         Next Starting Piece Accessor
 
@@ -417,15 +417,15 @@ class InterPieceDistance(object):
         """
         # If no pieces are placed, then use the first piece
         if placed_pieces is None:
-            return self._start_piece_ordering[0](0)
+            return self._start_piece_ordering[0][0]
 
         # If some pieces are already placed, ensure that you do not use a placed piece as the
         # next seed.
         else:
             i = 0
-            while placed_pieces[self._start_piece_ordering[i]](0):
+            while placed_pieces[self._start_piece_ordering[i][0]]:
                 i += 1
-            return self._start_piece_ordering[i](0)
+            return self._start_piece_ordering[i][0]
 
     def best_buddies(self, p_i, p_i_side):
         """
@@ -436,7 +436,7 @@ class InterPieceDistance(object):
 
         Returns ([int]): List of best buddy piece id numbers
         """
-        self._piece_distance_info[p_i].best_buddies(p_i_side)
+        return self._piece_distance_info[p_i].best_buddies(p_i_side)
 
     def asymmetric_distance(self, p_i, p_i_side, p_j, p_j_side):
         """

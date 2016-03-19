@@ -7,18 +7,17 @@ from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 class PaikinTalTester(unittest.TestCase):
 
-    def distance_calculator(self):
-        pass
+    def test1(self):
         # Make a dummy puzzle
         puzzle = PuzzleTester.build_dummy_puzzle()
 
         # Get the distance info
         dist_info = InterPieceDistance(puzzle.pieces, PuzzlePiece.calculate_asymmetric_distance, PuzzleType.type2)
         # Verify the best buddy info for neighboring pieces
-        for i in range(0, puzzle.pieces):
+        for i in range(0, len(puzzle.pieces)):
             # Check not an end piece on the right side of the image
-            if i % PuzzleTester.GRID_SIZE[1] != PuzzleTester.GRID_SIZE[1] -1:
-                assert(dist_info.best_buddies(i, PuzzlePieceSide.right) == [(i + 1, PuzzlePieceSide.left)])
+            if i % PuzzleTester.GRID_SIZE[1] != PuzzleTester.GRID_SIZE[1] - 1:
+                assert(set(dist_info.best_buddies(i, PuzzlePieceSide.right)) == set([(i + 1, PuzzlePieceSide.left)]))
 
             # Check not an end piece on the top of the image
             if i >= PuzzleTester.GRID_SIZE[1]:
@@ -39,5 +38,5 @@ class PaikinTalTester(unittest.TestCase):
         assert(dist_info.next_starting_piece(seed_piece_mask) == 7)
 
 
-#if __name__ == '__main__':
-#     unittest.main()
+if __name__ == '__main__':
+    unittest.main()
