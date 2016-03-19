@@ -1,7 +1,6 @@
 import unittest
 
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
-from hammoudeh_puzzle_solver.puzzle_importer_tester import PuzzleTester
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleTester
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide, PuzzlePiece
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -9,6 +8,7 @@ from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 class PaikinTalTester(unittest.TestCase):
 
     def distance_calculator(self):
+        pass
         # Make a dummy puzzle
         puzzle = PuzzleTester.build_dummy_puzzle()
 
@@ -38,5 +38,6 @@ class PaikinTalTester(unittest.TestCase):
         seed_piece_mask[1] = seed_piece_mask[3] = seed_piece_mask[4] = seed_piece_mask[5] = False
         assert(dist_info.next_starting_piece(seed_piece_mask) == 7)
 
-if __name__ == '__main__':
-    unittest.main()
+
+#if __name__ == '__main__':
+#     unittest.main()
