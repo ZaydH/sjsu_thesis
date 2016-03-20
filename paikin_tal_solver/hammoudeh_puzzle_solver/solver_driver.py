@@ -1,5 +1,7 @@
-import numpy
+"""Main Puzzle Solver Driver
 
+.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
+"""
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.solver import PaikinTalSolver

@@ -1,3 +1,7 @@
+"""Jigsaw Puzzle and Puzzle Piece Unittest Module
+
+.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
+"""
 import random
 import unittest
 import math
@@ -284,6 +288,43 @@ class PuzzleImporterTester(unittest.TestCase):
                                                                        PuzzlePieceRotation.degree_270)
         assert placed_rotation == PuzzlePieceRotation.degree_180
 
+    def test_get_neighbor_locations_and_sides(self):
+
+        # Test with no rotation
+        test_loc = (10, 20)
+        test_rotation = PuzzlePieceRotation.degree_0
+        location_and_sides = PuzzlePiece._get_neighbor_locations_and_sides(test_loc, test_rotation)
+        assert location_and_sides[0] == ((test_loc[0] - 1, test_loc[1]), PuzzlePieceSide.top)
+        assert location_and_sides[1] == ((test_loc[0], test_loc[1] + 1), PuzzlePieceSide.right)
+        assert location_and_sides[2] == ((test_loc[0] + 1, test_loc[1]), PuzzlePieceSide.bottom)
+        assert location_and_sides[3] == ((test_loc[0], test_loc[1] - 1), PuzzlePieceSide.left)
+
+        # Test with 90 degrees of rotation
+        test_loc = (35, 44)
+        test_rotation = PuzzlePieceRotation.degree_90
+        location_and_sides = PuzzlePiece._get_neighbor_locations_and_sides(test_loc, test_rotation)
+        assert location_and_sides[0] == ((test_loc[0] - 1, test_loc[1]), PuzzlePieceSide.left)
+        assert location_and_sides[1] == ((test_loc[0], test_loc[1] + 1), PuzzlePieceSide.top)
+        assert location_and_sides[2] == ((test_loc[0] + 1, test_loc[1]), PuzzlePieceSide.right)
+        assert location_and_sides[3] == ((test_loc[0], test_loc[1] - 1), PuzzlePieceSide.bottom)
+
+        # Test with 180 degrees of rotation
+        test_loc = (66, -15)
+        test_rotation = PuzzlePieceRotation.degree_180
+        location_and_sides = PuzzlePiece._get_neighbor_locations_and_sides(test_loc, test_rotation)
+        assert location_and_sides[0] == ((test_loc[0] - 1, test_loc[1]), PuzzlePieceSide.bottom)
+        assert location_and_sides[1] == ((test_loc[0], test_loc[1] + 1), PuzzlePieceSide.left)
+        assert location_and_sides[2] == ((test_loc[0] + 1, test_loc[1]), PuzzlePieceSide.top)
+        assert location_and_sides[3] == ((test_loc[0], test_loc[1] - 1), PuzzlePieceSide.right)
+
+        # Test with 270 degrees of rotation
+        test_loc = (-56, 23)
+        test_rotation = PuzzlePieceRotation.degree_270
+        location_and_sides = PuzzlePiece._get_neighbor_locations_and_sides(test_loc, test_rotation)
+        assert location_and_sides[0] == ((test_loc[0] - 1, test_loc[1]), PuzzlePieceSide.right)
+        assert location_and_sides[1] == ((test_loc[0], test_loc[1] + 1), PuzzlePieceSide.bottom)
+        assert location_and_sides[2] == ((test_loc[0] + 1, test_loc[1]), PuzzlePieceSide.left)
+        assert location_and_sides[3] == ((test_loc[0], test_loc[1] - 1), PuzzlePieceSide.top)
 
 if __name__ == '__main__':
     unittest.main()

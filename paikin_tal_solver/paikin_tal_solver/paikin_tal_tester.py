@@ -1,3 +1,7 @@
+"""Unittest Module for the Paikin Tal Solver
+
+.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
+"""
 import unittest
 
 from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleTester

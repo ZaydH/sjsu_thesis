@@ -1,3 +1,7 @@
+"""Inter-Puzzle Piece Distance Object
+
+.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
+"""
 import numpy
 import sys
 
@@ -16,6 +20,15 @@ class PieceDistanceInformation(object):
     _PERFORM_ASSERT_CHECKS = True
 
     def __init__(self, id_numb, numb_pieces, puzzle_type):
+        """
+
+        Args:
+            id_numb (int):
+            numb_pieces (int): Number of pieces in the puzzle
+            puzzle_type (PuzzleType):
+
+        Returns (PieceDistanceInformation): Distance information object for a single puzzle piece.
+        """
         self._id = id_numb
         self._numb_pieces = numb_pieces
         self._puzzle_type = puzzle_type
@@ -249,12 +262,13 @@ class InterPieceDistance(object):
 
     def __init__(self, pieces, distance_function, puzzle_type):
         """
+        Inter-Puzzle Piece Distance Object Constructor
+
         Stores the piece to piece distance
 
         Args:
             pieces ([SimplePuzzlePiece]): List of all puzzle pieces in simple form.s
             distance_function: Function to calculate the distance between two pieces.
-
         """
 
         # Give each piece an identification number.
@@ -390,9 +404,9 @@ class InterPieceDistance(object):
                     continue
 
                 # TODO Change the code to support multiple best buddies and to pick the best one.
-                bestest_best_buddy = 0 # Out of all of the possible best buddies on this side, this is the best one
-                p_i_best_buddies.append(bb_and_compat[bestest_best_buddy][0]) # Get p_j
-                avg_compatibility += bb_and_compat[bestest_best_buddy][1]  # Get NEGATED mutual compatibility
+                bestest_best_buddy_index = 0  # Out of all of the possible best buddies on this side, this is the best one
+                p_i_best_buddies.append(bb_and_compat[bestest_best_buddy_index][0])  # Get p_j
+                avg_compatibility += bb_and_compat[bestest_best_buddy_index][1]  # Get NEGATED mutual compatibility
 
             # Store the best neighbors list as well as the average distance
             if len(p_i_best_buddies) > 0:
@@ -495,12 +509,13 @@ class InterPieceDistance(object):
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
             self.assert_valid_type1_side(p_i_side, p_j_side)
 
-        p_i_mutual_compatibility = self._piece_distance_info[p_i].mutual_compatibility(p_i_side, p_j, p_j_side)
+        p_i_mutual_compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
 
         # Verify for debug the mutual compatibility is symmetric.
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
-            assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].mutual_compatibility(p_j_side, p_i, p_i_side))
-
+            assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].get_mutual_compatibility(p_j_side,
+                                                                                                       p_i, p_i_side))
+        # Return the mutual compatibility
         return p_i_mutual_compatibility
 
     @staticmethod

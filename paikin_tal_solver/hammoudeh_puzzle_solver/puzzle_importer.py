@@ -1,4 +1,4 @@
-"""Jigsaw Puzzle Problem Object
+"""Jigsaw Puzzle Object
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """

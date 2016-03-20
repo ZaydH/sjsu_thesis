@@ -276,37 +276,56 @@ class PuzzlePiece(object):
         self._rotation = new_rotation
 
     def get_neighbor_locations_and_sides(self):
+        """
+        Neighbor Locations and Sides
+
+        Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of this
+        puzzle piece that corresponds to those locations so that it can be added to the open slot list.
+
+        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle
+        piece side.
+        """
 
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             assert self.location is not None
             assert self.rotation is not None
-        return PuzzlePiece._get_neighbor_locations_and_sides(self.location)
+
+        return PuzzlePiece._get_neighbor_locations_and_sides(self.location, self.rotation)
 
     @staticmethod
-    def _get_neighbor_locations_and_sides(piece_loc):
+    def _get_neighbor_locations_and_sides(piece_loc, piece_rotation):
         """
+        Neighbor Locations and Sides
+
+        Static method that given a piece location and rotation, it returns the four surrounding coordinates/location
+        and the puzzle piece side that aligns with it so that it can be added to the open slot list.
 
         Args:
             piece_loc ([int]):
+            piece_rotation (PuzzlePieceRotation):
 
-        Returns:
-
+        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle
+        piece side.
         """
         # Get the top location and respective side
         top_loc = (piece_loc[0] - 1, piece_loc[1])
-        location_piece_side_tuples = [(top_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+        # noinspection PyTypeChecker
+        location_piece_side_tuples = [(top_loc, PuzzlePiece._determine_unrotated_side(piece_rotation,
                                                                                       PuzzlePieceSide.top))]
         # Get the right location and respective side
         right_loc = (piece_loc[0], piece_loc[1] + 1)
-        location_piece_side_tuples.append((right_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
-                                                                                             PuzzlePieceSide.right)))
+        # noinspection PyTypeChecker
+        location_piece_side_tuples.append((right_loc, PuzzlePiece._determine_unrotated_side(piece_rotation,
+                                                                                            PuzzlePieceSide.right)))
         # Get the bottom location and its respective side
         bottom_loc = (piece_loc[0] + 1, piece_loc[1])
-        location_piece_side_tuples.append((bottom_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+        # noinspection PyTypeChecker
+        location_piece_side_tuples.append((bottom_loc, PuzzlePiece._determine_unrotated_side(piece_rotation,
                                                                                              PuzzlePieceSide.bottom)))
         # Get the right location and respective side
         left_loc = (piece_loc[0], piece_loc[1] - 1)
-        location_piece_side_tuples.append((left_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+        # noinspection PyTypeChecker
+        location_piece_side_tuples.append((left_loc, PuzzlePiece._determine_unrotated_side(piece_rotation,
                                                                                            PuzzlePieceSide.left)))
         # Return the location/piece side tuples
         return location_piece_side_tuples
@@ -485,13 +504,16 @@ class PuzzlePiece(object):
         unrotated_complement = neighbor_piece_side.complementary_side
 
         placed_rotation_val = int(neighbor_piece_rotation.value)
+        # noinspection PyUnresolvedReferences
         placed_rotation_val += 90 * (PuzzlePieceRotation.degree_360.value + (unrotated_complement.value
                                                                              - placed_piece_side.value))
         # Calculate the normalized rotation
+        # noinspection PyUnresolvedReferences
         placed_rotation_val %= PuzzlePieceRotation.degree_360.value
         # Check if a valid rotation value.
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             assert placed_rotation_val % 90 == 0
+        # noinspection PyUnresolvedReferences
         return PuzzlePieceRotation(placed_rotation_val % PuzzlePieceRotation.degree_360.value)
 
     @staticmethod
@@ -550,6 +572,3 @@ class PuzzlePiece(object):
             return PuzzlePieceSide.left
         else:
             return PuzzlePieceSide.right
-
-
-
