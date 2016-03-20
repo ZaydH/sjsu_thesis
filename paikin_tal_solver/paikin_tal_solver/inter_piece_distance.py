@@ -169,8 +169,10 @@ class PieceDistanceInformation(object):
                                                                                  PuzzlePieceSide.get_all_sides()[0]))
 
         # Build an empty array to store the piece to piece distances
-        self._asymmetric_distances = numpy.empty((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                  numb_possible_pairings))
+        self._asymmetric_distances = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
+                                                 numb_possible_pairings), numpy.uint32)
+        fill_value = 2 ** 31 - 1
+        self._asymmetric_distances.fill(fill_value)
 
         # Store the second best distances in an array
         self._second_best_distance = [sys.float_info.max for _ in range(0, PuzzlePieceSide.get_numb_sides())]
@@ -196,7 +198,7 @@ class PieceDistanceInformation(object):
                     dist = distance_function(pieces[self._id], p_i_side, pieces[p_j], p_j_side)
 
                     # Store the distance
-                    p_j_side_index = len(set_of_neighbor_sides) > 1 if p_j_side.value else 0
+                    p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
                     self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] = dist
 
                     # Update the second best distance if applicable

@@ -18,6 +18,8 @@ class PaikinTalTester(unittest.TestCase):
             # Check not an end piece on the right side of the image
             if i % PuzzleTester.GRID_SIZE[1] != PuzzleTester.GRID_SIZE[1] - 1:
                 assert(set(dist_info.best_buddies(i, PuzzlePieceSide.right)) == set([(i + 1, PuzzlePieceSide.left)]))
+                assert(0 == dist_info.asymmetric_distance(i, PuzzlePieceSide.right, i+1, PuzzlePieceSide.left)
+                       == dist_info.asymmetric_distance(i + 1, PuzzlePieceSide.left, i, PuzzlePieceSide.right))
 
             # Check not an end piece on the top of the image
             if i >= PuzzleTester.GRID_SIZE[1]:
