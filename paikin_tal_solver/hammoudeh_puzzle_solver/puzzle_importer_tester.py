@@ -4,7 +4,7 @@ import math
 import numpy
 
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide, PuzzlePieceRotation
 
 
 class PuzzleImporterTester(unittest.TestCase):
@@ -146,7 +146,7 @@ class PuzzleImporterTester(unittest.TestCase):
                 pixel_to_pixel_dist += 2 * PuzzleTester.NUMB_PIXEL_DIMENSIONS
         assert(asym_dist == expected_dist)
 
-    def test_piece_rotation_helper_functions(self):
+    def test_get_neighbor_piece_rotated_side(self):
 
         # Test calculation of the top side.
         assert PuzzlePiece.get_neighbor_piece_rotated_side((-1, 0), (0, 0)) == PuzzlePieceSide.top
@@ -164,9 +164,31 @@ class PuzzleImporterTester(unittest.TestCase):
         assert PuzzlePiece.get_neighbor_piece_rotated_side((0, 0), (0, -1)) == PuzzlePieceSide.right
         assert PuzzlePiece.get_neighbor_piece_rotated_side((6, 6), (6, 5)) == PuzzlePieceSide.right
 
+    def test_determine_unrotated_side(self):
 
+        # Find the unrotated side of a puzzle piece
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_0, PuzzlePieceSide.top) == PuzzlePieceSide.top
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_0, PuzzlePieceSide.right) == PuzzlePieceSide.right
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_0, PuzzlePieceSide.bottom) == PuzzlePieceSide.bottom
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_0, PuzzlePieceSide.left) == PuzzlePieceSide.left
 
+        # Find the puzzle piece side when the piece is rotated 90 degrees
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_90, PuzzlePieceSide.top) == PuzzlePieceSide.left
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_90, PuzzlePieceSide.right) == PuzzlePieceSide.top
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_90, PuzzlePieceSide.bottom) == PuzzlePieceSide.right
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_90, PuzzlePieceSide.left) == PuzzlePieceSide.bottom
 
+        # Find the puzzle piece side when the piece is rotated 180 degrees
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_180, PuzzlePieceSide.top) == PuzzlePieceSide.bottom
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_180, PuzzlePieceSide.right) == PuzzlePieceSide.left
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_180, PuzzlePieceSide.bottom) == PuzzlePieceSide.top
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_180, PuzzlePieceSide.left) == PuzzlePieceSide.right
+
+        # Find the puzzle piece side when the piece is rotated 270 degrees
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.top) == PuzzlePieceSide.right
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.right) == PuzzlePieceSide.bottom
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.bottom) == PuzzlePieceSide.left
+        assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.left) == PuzzlePieceSide.top
 
 
 if __name__ == '__main__':

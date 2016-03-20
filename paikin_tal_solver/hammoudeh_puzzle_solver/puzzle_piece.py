@@ -458,6 +458,8 @@ class PuzzlePiece(object):
         """
         Unrotated Side Determiner
 
+        Given a piece's rotation and the side of the piece (from the reference of the puzzle), find its actual
+        (i.e. unrotated) side.
 
         Args:
             piece_rotation (PuzzlePieceRotation): Specified rotation for a puzzle piece.
