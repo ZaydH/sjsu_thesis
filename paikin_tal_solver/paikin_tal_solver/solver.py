@@ -17,7 +17,7 @@ class BestBuddyPoolInfo(object):
 class PuzzleOpenSlot(object):
 
     def __init__(self, (row, column), piece_id, open_side):
-        self.coord = (row, column)
+        self.location = (row, column)
         self.piece_id = piece_id
         self.open_side = open_side
 
@@ -31,14 +31,22 @@ class PuzzleDimensions(object):
 
 class NextPieceToPlace(object):
 
-    def __init__(self, puzzle_id, best_piece_id, best_piece_side, neighbor_piece_id, neighbor_piece_side,
-                 compatilibilty, is_best_buddy):
+    def __init__(self, puzzle_id, open_slot_location, next_piece_id, next_piece_side,
+                 neighbor_piece_id, neighbor_piece_side, compatibility, is_best_buddy):
+        # Store the location of the open slot where the piece will be placed
         self.puzzle_id = puzzle_id
-        self.best_piece_id = best_piece_id
-        self.best_piece_side = best_piece_side
+        self.open_slot_location = open_slot_location
+
+        # Store the information on the next
+        self.next_piece_id = next_piece_id
+        self.next_piece_side = next_piece_side
+
+        # Store the information about the neighbor piece
         self.neighbor_piece_id = neighbor_piece_id
         self.neighbor_piece_side = neighbor_piece_side
-        self.mutual_compatibility = compatilibilty
+
+        # Store bookkeeping information
+        self.mutual_compatibility = compatibility
         self.is_best_buddy = is_best_buddy
 
 
@@ -50,10 +58,14 @@ class PaikinTalSolver(object):
     # stores the type of the puzzle to solve.
     DEFAULT_PUZZLE_TYPE = PuzzleType.type1
 
+    # Define the minimum mutual compatibility to spawn a new board
+    DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD = 0.5
+
     # Used to simplify debugging without affecting test time by enabling assertion checks
     _PERFORM_ASSERTION_CHECK = True
 
-    def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None):
+    def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
+                 new_board_mutual_compatibility=None):
         """
         Constructor for the Paikin and Tal solver.
 
@@ -62,11 +74,12 @@ class PaikinTalSolver(object):
             pieces ([PuzzlePiece])): List of puzzle pieces
             distance_function: Calculates the distance between two PuzzlePiece objects.
             puzzle_type (Optional PuzzleType): Type of Paikin Tal Puzzle
+            puzzle_type (Optional Float): Minimum mutual compatibility when new boards are spawned
         """
 
         # Store the number of pieces.  Shuffle for good measure.
         self._pieces = pieces
-        self._pieces_placed = [False] * len(pieces)
+        self._piece_placed = [False] * len(pieces)
         self._numb_unplaced_pieces = len(pieces)
 
         # Define the puzzle dimensions
@@ -81,6 +94,11 @@ class PaikinTalSolver(object):
 
         # Select the puzzle type.  If the user did not specify one, use the default.
         self._puzzle_type = puzzle_type if puzzle_type is not None else PaikinTalSolver.DEFAULT_PUZZLE_TYPE
+
+        if new_board_mutual_compatibility is not None:
+            self._new_board_mutual_compatibility = new_board_mutual_compatibility
+        else:
+            self._new_board_mutual_compatibility = PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD
 
         # Stores the best buddies which are prioritized for placement.
         self._best_buddies_pool = []
@@ -102,15 +120,19 @@ class PaikinTalSolver(object):
 
         # Place pieces until no pieces left to be placed.
         while self._numb_unplaced_pieces > 0:
-
             next_piece = self._find_next_piece()
 
-            # TODO Include support for multiple boards
-            if False:
-                self._spawn_new_board()
+            # TODO Remove special case when no next piece is selected
+            if next_piece is None:
+                return
 
-            # Place the next piece
-            self._place_normal_piece(next_piece)
+            # TODO Include support for multiple boards
+            if False and next_piece.mutual_compatibility < self._new_board_mutual_compatibility:
+                self._spawn_new_board()
+                # TODO make sure when a next piece is selected but not placed that nothing bad happens
+            else:
+                # Place the next piece
+                self._place_normal_piece(next_piece)
 
     def get_solved_puzzles(self):
         """
@@ -140,7 +162,56 @@ class PaikinTalSolver(object):
 
     def _place_normal_piece(self, next_piece_info):
         # TODO write place next piece
-        pass
+
+        puzzle_id = next_piece_info.puzzle_id
+
+        # Get the neighbor pieces id
+        next_piece_id = next_piece_info.next_piece_id
+        next_piece = self._pieces[next_piece_id]
+        next_piece_side = next_piece_info.next_piece_side
+
+        # Get the neighbor piece's id
+        neighbor_piece = self._pieces[next_piece_info.neighbor_piece_id]
+        neighbor_piece_side = next_piece_info.neighbor_piece_side
+
+        # Set the parameters of the placed piece
+        next_piece.set_placed_piece_rotation(next_piece_side, neighbor_piece_side, neighbor_piece.rotation)
+        next_piece.puzzle_id = puzzle_id
+        next_piece.location = next_piece_info.open_slot_location
+
+        # Update the data structures used for Paikin and Tal
+        self._piece_locations[puzzle_id][next_piece.location] = True
+        self._mark_piece_placed(next_piece.id_number)
+        self._remove_open_slot(puzzle_id, next_piece.location)
+        if next_piece_info.is_best_buddy:
+            self._remove_best_buddy_from_pool(next_piece.id_number)
+
+        self._add_best_buddies_to_pool(next_piece.id_number)
+        self._update_open_slots(next_piece)
+
+    def _remove_open_slot(self, puzzle_id, location):
+        i = 0
+        while i < len(self._open_locations[puzzle_id]):
+            open_slot_info = self._open_locations[puzzle_id][i]
+            # If this open slot has the same location, remove it.
+            # noinspection PyUnresolvedReferences
+            if open_slot_info.location == location:
+                del self._open_locations[puzzle_id][i]
+
+            # If not the same location then go to the next open slot
+            else:
+                i += 1
+
+    def _remove_best_buddy_from_pool(self, piece_id):
+        i = 0
+        while i < len(self._best_buddies_pool):
+            bb_info = self._best_buddies_pool[i]
+            # If this open slot has the same location, remove it.
+            if bb_info.piece_id == piece_id:
+                del self._best_buddies_pool[i]
+            # Not the same BB so go to the next one
+            else:
+                i += 1
 
     def _find_next_piece(self):
         # Prioritize placing from BB pool
@@ -148,7 +219,8 @@ class PaikinTalSolver(object):
             return self._get_next_piece_from_best_buddy()
         else:
             # TODO Determine what to do when BB pool is empty
-            assert False
+            #assert False
+            return None
 
     def _get_next_piece_from_best_buddy(self):
             best_piece = None
@@ -170,7 +242,10 @@ class PaikinTalSolver(object):
                                                                                             neighbor_piece_id, neighbor_side)
                             # Check if need to update the best_piece
                             if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
-                                best_piece = NextPieceToPlace(puzzle_id, next_piece_id, next_piece_side,
+                                open_slot_location = open_slot.location
+
+                                best_piece = NextPieceToPlace(puzzle_id, open_slot_location,
+                                                              next_piece_id, next_piece_side,
                                                               neighbor_piece_id, neighbor_side,
                                                               mutual_compat, is_best_buddy)
             # noinspection PyUnboundLocalVariable
@@ -207,31 +282,34 @@ class PaikinTalSolver(object):
         self._numb_puzzles += 1
 
         # Get the first piece for the puzzle
-        first_piece_id = self._inter_piece_distance.next_starting_piece(self._pieces_placed)
-        first_piece = self._pieces[first_piece_id]
-        self._mark_piece_placed(first_piece_id)
+        seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
+        seed = self._pieces[seed_piece_id]
+        self._mark_piece_placed(seed_piece_id)
 
         shape = (len(self._pieces), len(self._pieces))
         self._piece_locations.append(numpy.empty(shape, numpy.bool))
+        self._piece_locations[self._numb_puzzles - 1].fill(False)
 
         # Set the first piece's puzzle id
-        first_piece.puzzle_id = self._numb_puzzles - 1
+        seed.puzzle_id = self._numb_puzzles - 1
         board_center = (int(shape[0] / 2), int(shape[1]) / 2)
-        first_piece.location = board_center
-        first_piece.rotation = PuzzlePieceRotation.degree_0
-        self._piece_locations[first_piece.puzzle_id][board_center] = True  # Note that this piece has been placed
+        seed.location = board_center
+        seed.rotation = PuzzlePieceRotation.degree_0
+        self._piece_locations[seed.puzzle_id][board_center] = True  # Note that this piece has been placed
 
         # Add the placed piece's best buddies to the pool.
-        self._add_best_buddies_to_pool(first_piece_id)
-        self._update_open_slots(first_piece, first_piece_id)
+        self._add_best_buddies_to_pool(seed.id_number)
+        self._update_open_slots(seed)
 
-    def _update_open_slots(self, placed_piece, piece_id):
+    def _update_open_slots(self, placed_piece):
         """
 
         Args:
             placed_piece (PuzzlePiece):
-            piece_id (int):
         """
+        # Get the placed piece's ID number
+        piece_id = placed_piece.id_number
+
         # Get the puzzle ID number
         puzzle_id = placed_piece.puzzle_id
 
@@ -240,11 +318,11 @@ class PaikinTalSolver(object):
 
         # TODO Open slot checker should be made far more efficient
         for location_side in location_and_sides:
-                location = location_side[0]
-                piece_side = location_side[1]
-                if self._piece_locations[puzzle_id][location] != True:
-                    # noinspection PyTypeChecker
-                    self._open_locations[puzzle_id].append(PuzzleOpenSlot(location, piece_id, piece_side))
+            location = location_side[0]
+            piece_side = location_side[1]
+            if self._piece_locations[puzzle_id][location] != True:
+                # noinspection PyTypeChecker
+                self._open_locations[puzzle_id].append(PuzzleOpenSlot(location, piece_id, piece_side))
 
     def _mark_piece_placed(self, piece_id):
         """
@@ -255,7 +333,7 @@ class PaikinTalSolver(object):
         Args:
             piece_id (int): Identification number for the puzzle piece
         """
-        self._pieces_placed[piece_id] = True
+        self._piece_placed[piece_id] = True
         self._numb_unplaced_pieces -= 1
 
     def _add_best_buddies_to_pool(self, piece_id):
@@ -282,7 +360,7 @@ class PaikinTalSolver(object):
                 bb_pool_info = BestBuddyPoolInfo(bb[0])
 
                 # If the best buddy is already placed or in the pool, skip it.
-                if self._pieces_placed[bb[0]] or bb_pool_info in self._best_buddies_pool:
+                if self._piece_placed[bb[0]] or bb_pool_info in self._best_buddies_pool:
                     continue
 
                 # Add the best buddy to the pool

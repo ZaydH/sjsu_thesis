@@ -153,6 +153,17 @@ class Puzzle(object):
                 self._pieces.append(PuzzlePiece(self._id, location, piece_img))
 
     @property
+    def id_number(self):
+        """
+        Puzzle Identification Number
+
+        Gets the identification number for a puzzle.
+
+        Returns (int): Identification number for the puzzle
+        """
+        return self._id
+
+    @property
     def pieces(self):
         """
         Gets all of the pieces in this puzzle.
@@ -172,13 +183,14 @@ class Puzzle(object):
         return self._piece_width
 
     @staticmethod
-    def reconstruct_from_pieces(pieces, id_numb=-1):
+    def reconstruct_from_pieces(pieces, id_numb=-1, display_image=False):
         """
         Constructs a puzzle from a set of pieces.
 
         Args:
             pieces ([PuzzlePiece]): Set of puzzle pieces that comprise the puzzle.
             id_numb (Optional int): Identification number for the puzzle
+            display_image (Optional Boolean): Select whether to display the eimage at the end of reconstruction
 
         Returns (Puzzle):
         Puzzle constructed from the pieces.
@@ -214,6 +226,7 @@ class Puzzle(object):
 
         # Define the numpy array that will hold the reconstructed image.
         puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
+        # noinspection PyTypeChecker
         output_puzzle._img = Puzzle.create_solid_bgr_image(puzzle_array_size, ImageColor.black)
 
         # Insert the pieces into the puzzle
@@ -222,7 +235,8 @@ class Puzzle(object):
 
         # Convert the image to LAB format.
         output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
-        Puzzle.display_image(output_puzzle._img)
+        if display_image:
+            Puzzle.display_image(output_puzzle._img)
 
         return output_puzzle
 
@@ -401,20 +415,35 @@ class Puzzle(object):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-
     @staticmethod
-    def save_to_file(img, filename):
+    def _save_to_file(filename, img):
         """
+        Save Image to a File
+
+        Saves any numpy array to an image file.
 
         Args:
-            img: OpenCV image in the form of a Numpy array
             filename (str): Filename and path to save the OpenCV image.
-
+            img: OpenCV image in the form of a Numpy array
         """
         cv2.imwrite(filename, img)
 
+    def save_to_file(self, filename):
+        """
+        Save Puzzle to a File
+
+        Saves a puzzle to the specified file name.
+
+        Args:
+            filename (str): Filename and path to save the OpenCV image.
+        """
+        Puzzle._save_to_file(filename, self._img)
+
 
 class PuzzleTester(object):
+    """
+    Puzzle tester class used for debugging the solver.
+    """
 
     PIECE_WIDTH = 5
     NUMB_PUZZLE_PIECES = 9
@@ -497,7 +526,6 @@ class PuzzleTester(object):
         """
         return PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.PIECE_WIDTH
 
-
     @staticmethod
     def build_dummy_puzzle():
         """
@@ -539,8 +567,8 @@ class PuzzleTester(object):
 
         # Remake the puzzle pieces
         puzzle.make_pieces()
-
         return puzzle
+
 
 if __name__ == "__main__":
     myPuzzle = Puzzle(0, ".\images\muffins_300x200.jpg")
