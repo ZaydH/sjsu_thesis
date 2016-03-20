@@ -86,8 +86,10 @@ if __name__ == "__main__":
     # paikin_tal_driver(images)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images)
-    images = [".\\images\\two_faced_cat.jpg"]
-    paikin_tal_driver(images)
+    # images = [".\\images\\two_faced_cat.jpg"]
+    # paikin_tal_driver(images)
+    images = [".\\images\\20.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\boat_100x100.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\che_100x100.gif"]
