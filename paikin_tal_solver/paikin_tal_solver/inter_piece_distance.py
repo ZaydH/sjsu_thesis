@@ -257,6 +257,12 @@ class InterPieceDistance(object):
 
         """
 
+        # Give each piece an identification number.
+        id_numb = 0
+        for piece in pieces:
+            piece.id_number = id_numb
+            id_numb += 1
+
         # Store the number of pieces in the puzzle.
         self._numb_pieces = len(pieces)
 

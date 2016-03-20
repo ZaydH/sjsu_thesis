@@ -1,8 +1,23 @@
+"""
+Created by Zayd Hammoudeh (zayd.hammoudeh@sjsu.edu)
+"""
 import random
 
 from enum import Enum
 import numpy
 import cv2  # Open CV
+
+
+class Location(object):
+    """
+    Location Object
+
+    Used to represent any two dimensional location in matrix row/column notation.
+    """
+
+    def __init__(self, (row, column)):
+        self.row = row
+        self.column = column
 
 
 class PuzzlePieceRotation(Enum):
@@ -19,6 +34,7 @@ class PuzzlePieceRotation(Enum):
     degree_90 = 90    # 90 degree rotation
     degree_180 = 180  # 180 degree rotation
     degree_270 = 270  # 270 degree rotation
+    degree_360 = 360
 
     @staticmethod
     def all_rotations():
@@ -112,6 +128,8 @@ class PuzzlePiece(object):
 
     NUMB_LAB_COLORSPACE_DIMENSIONS = 3
 
+    _PERFORM_ASSERTION_CHECKS = True
+
     def __init__(self, puzzle_id, location, lab_img):
         """
         Puzzle Piece Constructor.
@@ -122,6 +140,9 @@ class PuzzlePiece(object):
             lab_img: Image data in the form of a numpy array.
 
         """
+
+        # Piece ID is left to the solver to set
+        self._piece_id = None
 
         self._orig_puzzle_id = puzzle_id
         self._assigned_puzzle_id = None
@@ -196,6 +217,29 @@ class PuzzlePiece(object):
         self._assigned_puzzle_id = new_puzzle_id
 
     @property
+    def id_number(self):
+        """
+        Puzzle Piece ID Getter
+
+        Gets the identification number for a puzzle piece.
+
+        Returns (int): Puzzle piece indentification number
+        """
+        return self._piece_id
+
+    @piece_id.setter
+    def id_number(self, new_piece_id):
+        """
+        Piece ID Setter
+
+        Sets the puzzle piece's identification number.
+
+        Args:
+            new_piece_id (int): Puzzle piece identification number
+        """
+        self._piece_id = new_piece_id
+
+    @property
     def lab_image(self):
         """
         Get's a puzzle piece's image in the LAB colorspace.
@@ -229,6 +273,12 @@ class PuzzlePiece(object):
             new_rotation (PuzzlePieceRotation): New rotation for the puzzle piece.
         """
         self._rotation = new_rotation
+
+    def get_neighbor_locations_and_sides(self):
+
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert self.location is not None
+            assert self.rotation is not None
 
     def bgr_image(self):
         """
@@ -364,3 +414,96 @@ class PuzzlePiece(object):
         # Return the sum of the absolute values.
         pixel_diff = numpy.absolute(pixel_diff)
         return numpy.sum(pixel_diff, dtype=numpy.int32)
+
+    def set_placed_piece_rotation(self, placed_side, neighbor_piece):
+        """
+
+        Args:
+            neighbor_piece (PuzzlePiece): Neighbor Puzzle Piece
+        """
+        # Perform some checking on the pieces
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            # Verify the pieces are in the same puzzle
+            assert self._assigned_puzzle_id == neighbor_piece.puzzle_id
+            # Verify the neighbor piece has a rotation setting
+            assert neighbor_piece.rotation is not None
+
+        # Calculate the placed piece's new rotation
+        self.rotation = PuzzlePiece._calculate_placed_piece_rotation(self.location, placed_side,
+                                                                     neighbor_piece.location, neighbor_piece.rotation)
+
+    @staticmethod
+    def _calculate_placed_piece_rotation(placed_piece_location, placed_piece_side,
+                                         neighbor_piece_location, neighbor_piece_rotation):
+
+        # Get the neighbor piece rotation
+        neighbor_rotated_side = PuzzlePiece.get_neighbor_piece_rotated_side(placed_piece_location,
+                                                                            neighbor_piece_location)
+        neighbor_unrotated_side = PuzzlePiece._determine_unrotated_side(neighbor_piece_rotation, neighbor_rotated_side)
+        unrotated_complement = neighbor_unrotated_side.complementary_side
+
+        placed_rotation_val = int(neighbor_piece_rotation.value)
+        placed_rotation_val += 90 * (PuzzlePieceRotation.degree_360.value + (unrotated_complement.value
+                                                                             - placed_piece_side.value))
+        # Calculate the normalized rotation
+        placed_rotation_val %= PuzzlePieceRotation.degree_360.value
+        # Check if a valid rotation value.
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert placed_rotation_val % 90 == 0
+        return PuzzlePieceRotation(placed_rotation_val % PuzzlePieceRotation.degree_360.value)
+
+    @staticmethod
+    def _determine_unrotated_side(piece_rotation, rotated_side):
+        """
+
+        Args:
+            piece_rotation (PuzzlePieceRotation):
+            rotated_side (PuzzlePieceSide):
+
+        Returns(PuzzlePieceSide): Actual side of the puzzle piece
+        """
+        rotated_side_val = rotated_side.value
+        # Get the number of 90 degree rotations
+        numb_90_degree_rotations = int(piece_rotation.value / 90)
+
+        # Get the unrotated side
+        unrotated_side = (rotated_side_val + (PuzzlePieceSide.get_numb_sides() - numb_90_degree_rotations))
+        unrotated_side %= PuzzlePieceSide.get_numb_sides()
+
+        # Return the actual side
+        return PuzzlePieceSide(unrotated_side)
+
+    @staticmethod
+    def get_neighbor_piece_rotated_side(placed_piece_loc, neighbor_piece_loc):
+        """
+
+        Args:
+            placed_piece_loc ([int]): Location of the newly placed piece
+            neighbor_piece_loc ([int): Location of the neighbor of the newly placed piece
+
+        Returns (PuzzlePieceSide): Side of the newly placed piece where the placed piece is now location.
+
+        Notes: This does not take into account any rotation of the neighbor piece.  That is why this function is
+        referred has "rotated side" in its name.
+        """
+        # Calculate the row and column distances
+        row_dist = abs(placed_piece_loc[0] - neighbor_piece_loc[0])
+        col_dist = abs(placed_piece_loc[1] - neighbor_piece_loc[1])
+
+        # Perform some checking on the pieces
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            # Verify the pieces are in the same puzzle
+            assert row_dist + col_dist == 1
+
+        # Determine the relative side of the placed piece
+        if row_dist == -1:
+            return PuzzlePieceSide.top
+        elif row_dist == 1:
+            return PuzzlePieceSide.bottom
+        elif col_dist == -1:
+            return PuzzlePieceSide.left
+        else:
+            return PuzzlePieceSide.right
+
+
+
