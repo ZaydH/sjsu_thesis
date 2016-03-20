@@ -216,8 +216,10 @@ class PieceDistanceInformation(object):
                         self._second_best_distance[p_i_side.value] = dist
 
         # Build an empty array to store the piece to piece distances
-        self._asymmetric_compatibilities = numpy.empty((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                       numb_possible_pairings))
+        self._asymmetric_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
+                                                       numb_possible_pairings), numpy.float32)
+        self._asymmetric_compatibilities.fill(float('inf'))
+
         # Calculate the asymmetric compatibility
         for p_j in range(0, self._numb_pieces):
             if self._id == p_j:  # Do not compare a piece to itself.
@@ -226,14 +228,16 @@ class PieceDistanceInformation(object):
                 set_of_neighbor_sides = InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side)
                 for p_j_side in set_of_neighbor_sides:
                     # Calculate the compatibility
-                    p_j_side_index = len(set_of_neighbor_sides) > 1 if p_j_side.value else 0
-                    compatibility = (1 - self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] /
-                                     self._second_best_distance[p_i_side.value])
-                    self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = compatibility
+                    p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
+                    asym_compatibility = (1 - 1.0 * self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] /
+                                          self._second_best_distance[p_i_side.value])
+                    self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
 
         # Build an empty array to store the piece to piece distances
-        self._mutual_compatibilities = numpy.empty((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                    numb_possible_pairings))
+        self._mutual_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
+                                                    numb_possible_pairings), numpy.float32)
+        fill_value = 2 ** 31 - 1
+        self._asymmetric_compatibilities.fill(float('inf'))
 
 
 class InterPieceDistance(object):
@@ -364,7 +368,10 @@ class InterPieceDistance(object):
                 # TODO Change the code to support multiple best buddies
                 for (p_j, p_j_side) in self._piece_distance_info[p_i].best_buddies(p_i_side):
                     compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
-                    side_best_dist[p_i_side_cnt] = (p_j, compatibility)
+
+                    # Use negative compatibility since we are using a reverse order sorting and this requires
+                    # doing things in ascending order which negation does for me here.
+                    side_best_dist[p_i_side_cnt] = (p_j, -compatibility)
                     break
 
             # Extract the info on the best neighbors
