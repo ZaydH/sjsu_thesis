@@ -58,7 +58,7 @@ class PaikinTalSolver(object):
 
         # Define the puzzle dimensions
         self._open_locations = [[]]
-        self._piece_locations = [[]]
+        self._piece_locations = []
 
         # Store the number of puzzles these collective set of pieces comprise.
         self._numb_puzzles = numb_puzzles
@@ -66,7 +66,7 @@ class PaikinTalSolver(object):
         # Store the function used to calculate piece to piece distances.
         self._distance_function = distance_function
 
-        # Select the puzzle type.
+        # Select the puzzle type.  If the user did not specify one, use the default.
         self._puzzle_type = puzzle_type if puzzle_type is not None else PaikinTalSolver.DEFAULT_PUZZLE_TYPE
 
         # Stores the best buddies which are prioritized for placement.
@@ -153,7 +153,6 @@ class PaikinTalSolver(object):
 
         # Increment the number of puzzles
         self._numb_puzzles += 1
-        self._puzzle_dimensions.append(PuzzleDimensions(self._numb_puzzles))
 
         # Get the first piece for the puzzle
         first_piece_id = self._inter_piece_distance.next_starting_piece(self._pieces_placed)
@@ -164,10 +163,11 @@ class PaikinTalSolver(object):
         self._piece_locations.append(numpy.empty(shape, numpy.bool))
 
         # Set the first piece's puzzle id
-        first_piece.puzzle_id = self._numb_puzzles
+        first_piece.puzzle_id = self._numb_puzzles - 1
         board_center = (int(shape[0] / 2), int(shape[1]) / 2)
         first_piece.location = board_center
         first_piece.rotation = PuzzlePieceRotation.degree_0
+        self._piece_locations[first_piece.puzzle_id][board_center] = True  # Note that this piece has been placed
 
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(first_piece_id)
@@ -188,10 +188,7 @@ class PaikinTalSolver(object):
 
         # TODO Open slot checker should be made far more efficient
         for location_side in location_and_sides:
-
                 self._open_locations[puzzle_id].append(PuzzleOpenSlot(location_side[0], piece_id, location_side[1]))
-
-
 
     def _mark_piece_placed(self, piece_id):
         """

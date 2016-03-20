@@ -521,7 +521,7 @@ class InterPieceDistance(object):
         Returns ([PuzzlePieceSide]): List of all valid sides for a neighboring puzzle piece.
         """
         if puzzle_type == PuzzleType.type1:
-            return [p_i_side.complementary_side()]
+            return [p_i_side.complementary_side]
         else:
             return PuzzlePieceSide.get_all_sides()
 
@@ -554,4 +554,4 @@ class InterPieceDistance(object):
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) where p_i will be placed.
         """
         if self._puzzle_type == PuzzleType.type1:
-            assert(p_i_side.complementary_side() == p_j_side)
+            assert(p_i_side.complementary_side == p_j_side)

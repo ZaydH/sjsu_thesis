@@ -280,6 +280,36 @@ class PuzzlePiece(object):
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             assert self.location is not None
             assert self.rotation is not None
+        return PuzzlePiece._get_neighbor_locations_and_sides(self.location)
+
+    @staticmethod
+    def _get_neighbor_locations_and_sides(piece_loc):
+        """
+
+        Args:
+            piece_loc ([int]):
+
+        Returns:
+
+        """
+        # Get the top location and respective side
+        top_loc = (piece_loc[0] - 1, piece_loc[1])
+        location_piece_side_tuples = [(top_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+                                                                                      PuzzlePieceSide.top))]
+        # Get the right location and respective side
+        right_loc = (piece_loc[0], piece_loc[1] + 1)
+        location_piece_side_tuples.append((right_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+                                                                                             PuzzlePieceSide.right)))
+        # Get the bottom location and its respective side
+        bottom_loc = (piece_loc[0] + 1, piece_loc[1])
+        location_piece_side_tuples.append((bottom_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+                                                                                             PuzzlePieceSide.bottom)))
+        # Get the right location and respective side
+        left_loc = (piece_loc[0], piece_loc[1] - 1)
+        location_piece_side_tuples.append((left_loc, PuzzlePiece._determine_unrotated_side(self.rotation,
+                                                                                           PuzzlePieceSide.left)))
+        # Return the location/piece side tuples
+        return location_piece_side_tuples
 
     def bgr_image(self):
         """
@@ -416,33 +446,43 @@ class PuzzlePiece(object):
         pixel_diff = numpy.absolute(pixel_diff)
         return numpy.sum(pixel_diff, dtype=numpy.int32)
 
-    def set_placed_piece_rotation(self, placed_side, neighbor_piece):
+    def set_placed_piece_rotation(self, placed_side, neighbor_piece_side, neighbor_piece_rotation):
         """
+        Placed Piece Rotation Setter
+
+        Given an already placed neighbor piece's adjacent side and rotation, this function sets the rotation
+        of some newly placed piece that is put adjacent to that neighbor piece.
 
         Args:
-            placed_side (PuzzlePieceSide): Side of the placed puzzle piece.
-            neighbor_piece (PuzzlePiece): Neighbor Puzzle Piece
-        """
-        # Perform some checking on the pieces
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
-            # Verify the pieces are in the same puzzle
-            assert self._assigned_puzzle_id == neighbor_piece.puzzle_id
-            # Verify the neighbor piece has a rotation setting
-            assert neighbor_piece.rotation is not None
+            placed_side (PuzzlePieceSide): Side of the placed puzzle piece that is adjacent to the neighbor piece
 
+            neighbor_piece_side (PuzzlePieceSide): Side of the neighbor piece that is adjacent to the newly
+            placed piece.
+
+            neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the already placed neighbor piece
+        """
         # Calculate the placed piece's new rotation
-        self.rotation = PuzzlePiece._calculate_placed_piece_rotation(self.location, placed_side,
-                                                                     neighbor_piece.location, neighbor_piece.rotation)
+        self.rotation = PuzzlePiece._calculate_placed_piece_rotation(placed_side, neighbor_piece_side,
+                                                                     neighbor_piece_rotation)
 
     @staticmethod
-    def _calculate_placed_piece_rotation(placed_piece_location, placed_piece_side,
-                                         neighbor_piece_location, neighbor_piece_rotation):
+    def _calculate_placed_piece_rotation(placed_piece_side, neighbor_piece_side, neighbor_piece_rotation):
+        """
+        Placed Piece Rotation Calculator
 
+        Given an already placed neighbor piece, this function determines the correct rotation for a newly placed
+        piece.
+
+        Args:
+            placed_piece_side (PuzzlePieceSide): Side of the placed puzzle piece adjacent to the existing piece
+            neighbor_piece_side (PuzzlePieceSide): Side of the neighbor of the placed piece that is touching
+            neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the neighbor piece
+
+        Returns (PuzzlePieceRotation): Rotation of the placed puzzle piece given the rotation and side
+        of the neighbor piece.
+        """
         # Get the neighbor piece rotation
-        neighbor_rotated_side = PuzzlePiece.get_neighbor_piece_rotated_side(placed_piece_location,
-                                                                            neighbor_piece_location)
-        neighbor_unrotated_side = PuzzlePiece._determine_unrotated_side(neighbor_piece_rotation, neighbor_rotated_side)
-        unrotated_complement = neighbor_unrotated_side.complementary_side
+        unrotated_complement = neighbor_piece_side.complementary_side
 
         placed_rotation_val = int(neighbor_piece_rotation.value)
         placed_rotation_val += 90 * (PuzzlePieceRotation.degree_360.value + (unrotated_complement.value
@@ -480,7 +520,7 @@ class PuzzlePiece(object):
         return PuzzlePieceSide(unrotated_side)
 
     @staticmethod
-    def get_neighbor_piece_rotated_side(placed_piece_loc, neighbor_piece_loc):
+    def _get_neighbor_piece_rotated_side(placed_piece_loc, neighbor_piece_loc):
         """
 
         Args:
