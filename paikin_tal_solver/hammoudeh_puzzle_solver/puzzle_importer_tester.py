@@ -146,6 +146,28 @@ class PuzzleImporterTester(unittest.TestCase):
                 pixel_to_pixel_dist += 2 * PuzzleTester.NUMB_PIXEL_DIMENSIONS
         assert(asym_dist == expected_dist)
 
+    def test_piece_rotation_helper_functions(self):
+
+        # Test calculation of the top side.
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((-1, 0), (0, 0)) == PuzzlePieceSide.top
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((10, 10), (11, 10)) == PuzzlePieceSide.top
+
+        # Test calculation of the bottom side.
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((0, 0), (-1, 0)) == PuzzlePieceSide.bottom
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((6, 6), (5, 6)) == PuzzlePieceSide.bottom
+
+        # Test calculation of the left side.
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((0, -1), (0, 0)) == PuzzlePieceSide.left
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((10, 10), (10, 11)) == PuzzlePieceSide.left
+
+        # Test calculation of the right side.
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((0, 0), (0, -1)) == PuzzlePieceSide.right
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((6, 6), (6, 5)) == PuzzlePieceSide.right
+
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

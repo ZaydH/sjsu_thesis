@@ -227,7 +227,7 @@ class PuzzlePiece(object):
         """
         return self._piece_id
 
-    @piece_id.setter
+    @id_number.setter
     def id_number(self, new_piece_id):
         """
         Piece ID Setter
@@ -419,6 +419,7 @@ class PuzzlePiece(object):
         """
 
         Args:
+            placed_side (PuzzlePieceSide): Side of the placed puzzle piece.
             neighbor_piece (PuzzlePiece): Neighbor Puzzle Piece
         """
         # Perform some checking on the pieces
@@ -455,10 +456,12 @@ class PuzzlePiece(object):
     @staticmethod
     def _determine_unrotated_side(piece_rotation, rotated_side):
         """
+        Unrotated Side Determiner
+
 
         Args:
-            piece_rotation (PuzzlePieceRotation):
-            rotated_side (PuzzlePieceSide):
+            piece_rotation (PuzzlePieceRotation): Specified rotation for a puzzle piece.
+            rotated_side (PuzzlePieceSide): From a Puzzle perspective, this is the exposed side
 
         Returns(PuzzlePieceSide): Actual side of the puzzle piece
         """
@@ -487,13 +490,13 @@ class PuzzlePiece(object):
         referred has "rotated side" in its name.
         """
         # Calculate the row and column distances
-        row_dist = abs(placed_piece_loc[0] - neighbor_piece_loc[0])
-        col_dist = abs(placed_piece_loc[1] - neighbor_piece_loc[1])
+        row_dist = placed_piece_loc[0] - neighbor_piece_loc[0]
+        col_dist = placed_piece_loc[1] - neighbor_piece_loc[1]
 
         # Perform some checking on the pieces
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             # Verify the pieces are in the same puzzle
-            assert row_dist + col_dist == 1
+            assert abs(row_dist) + abs(col_dist) == 1
 
         # Determine the relative side of the placed piece
         if row_dist == -1:
