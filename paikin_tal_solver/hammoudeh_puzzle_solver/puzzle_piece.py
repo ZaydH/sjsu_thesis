@@ -98,6 +98,7 @@ class PuzzlePieceSide(Enum):
         """
         return [PuzzlePieceSide.top, PuzzlePieceSide.right, PuzzlePieceSide.bottom, PuzzlePieceSide.left]
 
+    @property
     def complementary_side(self):
         """
         Determines and returns the complementary side of this implicit side parameter.  For example, if this side

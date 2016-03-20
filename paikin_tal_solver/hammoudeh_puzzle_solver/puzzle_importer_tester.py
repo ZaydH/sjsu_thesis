@@ -153,16 +153,16 @@ class PuzzleImporterTester(unittest.TestCase):
         assert PuzzlePiece.get_neighbor_piece_rotated_side((10, 10), (11, 10)) == PuzzlePieceSide.top
 
         # Test calculation of the bottom side.
-        assert PuzzlePiece.get_neighbor_piece_rotated_side((0, 0), (-1, 0)) == PuzzlePieceSide.bottom
-        assert PuzzlePiece.get_neighbor_piece_rotated_side((6, 6), (5, 6)) == PuzzlePieceSide.bottom
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((0, 4), (-1, 4)) == PuzzlePieceSide.bottom
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((6, 8), (5, 8)) == PuzzlePieceSide.bottom
 
         # Test calculation of the left side.
         assert PuzzlePiece.get_neighbor_piece_rotated_side((0, -1), (0, 0)) == PuzzlePieceSide.left
-        assert PuzzlePiece.get_neighbor_piece_rotated_side((10, 10), (10, 11)) == PuzzlePieceSide.left
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((20, 10), (20, 11)) == PuzzlePieceSide.left
 
         # Test calculation of the right side.
         assert PuzzlePiece.get_neighbor_piece_rotated_side((0, 0), (0, -1)) == PuzzlePieceSide.right
-        assert PuzzlePiece.get_neighbor_piece_rotated_side((6, 6), (6, 5)) == PuzzlePieceSide.right
+        assert PuzzlePiece.get_neighbor_piece_rotated_side((13, 6), (13, 5)) == PuzzlePieceSide.right
 
     def test_determine_unrotated_side(self):
 
@@ -189,6 +189,29 @@ class PuzzleImporterTester(unittest.TestCase):
         assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.right) == PuzzlePieceSide.bottom
         assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.bottom) == PuzzlePieceSide.left
         assert PuzzlePiece._determine_unrotated_side(PuzzlePieceRotation.degree_270, PuzzlePieceSide.left) == PuzzlePieceSide.top
+
+    def test_calculate_placed_piece_rotation_degree_0(self):
+
+        # Calculate for unrotated pieces placed in complementary locations (TOP)
+        placed_rotation = PuzzlePiece._calculate_placed_piece_rotation((7, 55), PuzzlePieceSide.top,
+                                                                       (6, 55), PuzzlePieceRotation.degree_0)
+        assert placed_rotation == PuzzlePieceRotation.degree_0
+
+        # Calculate for unrotated pieces placed in complementary locations (RIGHT)
+        placed_rotation = PuzzlePiece._calculate_placed_piece_rotation((14, 10), PuzzlePieceSide.right,
+                                                                       (14, 11), PuzzlePieceRotation.degree_0)
+        assert placed_rotation == PuzzlePieceRotation.degree_0
+
+        # Calculate for unrotated pieces placed in complementary locations (BOTTOM)
+        placed_rotation = PuzzlePiece._calculate_placed_piece_rotation((5, 7), PuzzlePieceSide.bottom,
+                                                                       (6, 7), PuzzlePieceRotation.degree_0)
+        assert placed_rotation == PuzzlePieceRotation.degree_0
+
+        # Calculate for unrotated pieces placed in complementary locations (LEFT)
+        placed_rotation = PuzzlePiece._calculate_placed_piece_rotation((18, 12), PuzzlePieceSide.left,
+                                                                       (18, 11), PuzzlePieceRotation.degree_0)
+        assert placed_rotation == PuzzlePieceRotation.degree_0
+
 
 
 if __name__ == '__main__':
