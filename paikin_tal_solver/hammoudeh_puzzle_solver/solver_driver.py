@@ -83,8 +83,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
 if __name__ == "__main__":
     # images = [".\\images\\muffins_300x200.jpg"]
-    #paikin_tal_driver(images)
-    images = [".\\images\\duck.bmp"]
+    # paikin_tal_driver(images)
+    # images = [".\\images\\duck.bmp"]
+    # paikin_tal_driver(images)
+    images = [".\\images\\two_faced_cat.jpg"]
     paikin_tal_driver(images)
     # images = [".\\images\\boat_100x100.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 25)
