@@ -48,7 +48,7 @@ class Puzzle(object):
     border_width = 3
     border_outer_stripe_width = 1
 
-    def __init__(self, id_number, image_filename=None):
+    def __init__(self, id_number, image_filename=None, piece_width=None):
         """Puzzle Constructor
 
         Constructor that will optionally load an image into the puzzle as well.
@@ -56,6 +56,7 @@ class Puzzle(object):
         Args:
             id_number (int): ID number for the image.  It is used for multiple image puzzles.
             image_filename (Optional str): File path of the image to load
+            piece_width (Optional int): Width of a puzzle piece in pixels
 
         Returns:
             Puzzle Object
@@ -68,7 +69,7 @@ class Puzzle(object):
 
         # Initialize the puzzle information.
         self._grid_size = None
-        self._piece_width = Puzzle.DEFAULT_PIECE_WIDTH
+        self._piece_width = piece_width if piece_width is not None else Puzzle.DEFAULT_PIECE_WIDTH
         self._img_width = None
         self._img_height = None
 

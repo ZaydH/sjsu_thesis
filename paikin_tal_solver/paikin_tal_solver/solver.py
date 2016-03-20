@@ -64,6 +64,8 @@ class PaikinTalSolver(object):
     # Used to simplify debugging without affecting test time by enabling assertion checks
     _PERFORM_ASSERTION_CHECK = True
 
+    _PRINT_PROGRESS_MESSAGES = True
+
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None):
         """
@@ -104,8 +106,14 @@ class PaikinTalSolver(object):
         self._best_buddies_pool = []
         self._numb_puzzles = 0
 
+        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
+            print "Starting to calculate inter-piece distances"
+
         # Calculate the inter-piece distances.
         self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function, self._puzzle_type)
+
+        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
+            print "Finished calculating inter-piece distances"
 
     def run(self):
         """
@@ -120,6 +128,10 @@ class PaikinTalSolver(object):
 
         # Place pieces until no pieces left to be placed.
         while self._numb_unplaced_pieces > 0:
+
+            if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
+                print str(self._numb_unplaced_pieces) + " remain to be placed."
+
             next_piece = self._find_next_piece()
 
             # TODO Remove special case when no next piece is selected
@@ -133,6 +145,9 @@ class PaikinTalSolver(object):
             else:
                 # Place the next piece
                 self._place_normal_piece(next_piece)
+
+        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
+            print "Placement complete.\n\n"
 
     def get_solved_puzzles(self):
         """

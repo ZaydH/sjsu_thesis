@@ -242,8 +242,15 @@ class PieceDistanceInformation(object):
                 for p_j_side in set_of_neighbor_sides:
                     # Calculate the compatibility
                     p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
+
+                    # Prevent divide by zero
+                    second_best_distance = self._second_best_distance[p_i_side.value]
+                    if second_best_distance == 0:
+                        second_best_distance = 0.00000000000000000000001
+
+                    # Calculate the asymmetric compatibility
                     asym_compatibility = (1 - 1.0 * self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] /
-                                          self._second_best_distance[p_i_side.value])
+                                          second_best_distance)
                     self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
 
         # Build an empty array to store the piece to piece distances
