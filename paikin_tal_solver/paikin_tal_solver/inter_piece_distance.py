@@ -236,8 +236,7 @@ class PieceDistanceInformation(object):
         # Build an empty array to store the piece to piece distances
         self._mutual_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
                                                     numb_possible_pairings), numpy.float32)
-        fill_value = 2 ** 31 - 1
-        self._asymmetric_compatibilities.fill(float('inf'))
+        self._mutual_compatibilities.fill(float('inf'))
 
 
 class InterPieceDistance(object):
@@ -313,13 +312,15 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
             for p_i_side in PuzzlePieceSide.get_all_sides():
                 for p_j in range(p_i + 1, self._numb_pieces):
+
+                    # No Need to check p_i == p_j since doing a diagonal calculation
+
+                    # Check all valid p_j sides depending on the puzzle type.
                     for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
                         # Get the compatibility from p_i to p_j
-                        p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
                         mutual_compat = self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j,
                                                                                                 p_j_side)
                         # Get the compatibility from p_j to p_i
-                        p_i_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_i_side)
                         mutual_compat += self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i,
                                                                                                  p_i_side)
 
@@ -357,37 +358,42 @@ class InterPieceDistance(object):
         all_best_buddy_info = []
         for p_i in range(0, self._numb_pieces):
 
-            side_best_dist = []
+            # Best buddies and compatibility storeage.
+            p_i_best_buddies_and_compat = []
 
             # Iterate through all sides of p_i
-            for p_i_side_cnt in range(0, len(PuzzlePieceSide.get_all_sides())):
-                p_i_side = PuzzlePieceSide.get_all_sides()[p_i_side_cnt]
-                # noinspection PyTypeChecker
-                side_best_dist.append(None)
+            for p_i_side in PuzzlePieceSide.get_all_sides():
+
+                p_i_best_buddies_and_compat.append([])
+
                 # Iterate through best buddies to pick the best one
-                # TODO Change the code to support multiple best buddies
                 for (p_j, p_j_side) in self._piece_distance_info[p_i].best_buddies(p_i_side):
                     compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
 
                     # Use negative compatibility since we are using a reverse order sorting and this requires
                     # doing things in ascending order which negation does for me here.
-                    side_best_dist[p_i_side_cnt] = (p_j, -compatibility)
-                    break
+                    p_i_best_buddies_and_compat[p_i_side.value].append((p_j, -compatibility))
 
             # Extract the info on the best neighbors
-            best_neighbor_list = []
-            avg_distance = 0
-            for side_info in side_best_dist:
-                if side_info is None:
+            p_i_best_buddies = []
+            avg_compatibility = 0
+            for bb_and_compat in p_i_best_buddies_and_compat:
+
+                # Check if no best buddies.  If so, exit.
+                if not bb_and_compat:
                     continue
-                best_neighbor_list.append(side_info[0])
-                avg_distance += side_info[1]
+
+                # TODO Change the code to support multiple best buddies and to pick the best one.
+                bestest_best_buddy = 0 # Out of all of the possible best buddies on this side, this is the best one
+                p_i_best_buddies.append(bb_and_compat[bestest_best_buddy][0]) # Get p_j
+                avg_compatibility += bb_and_compat[bestest_best_buddy][1]  # Get NEGATED mutual compatibility
+
             # Store the best neighbors list as well as the average distance
-            if len(best_neighbor_list) > 0:
-                avg_distance /= len(best_neighbor_list)
+            if len(p_i_best_buddies) > 0:
+                avg_compatibility /= len(p_i_best_buddies)
             else:
-                avg_distance = 0
-            all_best_buddy_info.append((best_neighbor_list, avg_distance))
+                avg_compatibility = 0
+            all_best_buddy_info.append((p_i_best_buddies, avg_compatibility))
 
         # Build the best neighbor information
         self._start_piece_ordering = []
@@ -400,10 +406,10 @@ class InterPieceDistance(object):
             total_compatibility = this_piece_bb_info[1]
 
             # Include the neighbors info
-            for best_buddy_id in this_piece_bb_info[0]:
-                bb_info = all_best_buddy_info[best_buddy_id]
-                numb_bb_neighbors += len(bb_info[0])
-                total_compatibility += bb_info[1]
+            p_i_best_buddy_ids = this_piece_bb_info[0]
+            for bb_id in p_i_best_buddy_ids:
+                numb_bb_neighbors += len(all_best_buddy_info[bb_id][0])
+                total_compatibility += all_best_buddy_info[bb_id][1]
 
             # Add this pieces information to the list of possible start pieces
             self._start_piece_ordering.append((p_i, numb_bb_neighbors, total_compatibility))
