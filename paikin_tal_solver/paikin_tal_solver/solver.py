@@ -193,8 +193,8 @@ class PaikinTalSolver(object):
             # TODO Include support for multiple boards
             if self._numb_puzzles < self._actual_numb_puzzles \
                     and next_piece.mutual_compatibility < PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD:
-                PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
-                return
+                # PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
+                # return
                 self._spawn_new_board()
                 # TODO make sure when a next piece is selected but not placed that nothing bad happens
             else:
