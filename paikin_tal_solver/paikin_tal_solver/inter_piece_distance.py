@@ -496,8 +496,8 @@ class InterPieceDistance(object):
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
 
-        # Clear the best buddy information for placed pieces
-        self._clear_placed_piece_best_buddy_information()
+        # # Clear the best buddy information for placed pieces
+        # self._clear_placed_piece_best_buddy_information()
 
         # Find the minimum and second best distance information for the placed pieces
         self._find_min_and_second_best_distances(is_piece_placed)
@@ -505,14 +505,14 @@ class InterPieceDistance(object):
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
         self._recalculate_asymmetric_compatibilities(is_piece_placed)
 
-        # Recalculate the mutual probabilities
-        self.calculate_mutual_compatibility(is_piece_placed)
-
-        # Find the updated best buddies
-        self.find_best_buddies(is_piece_placed)
-
-        # Find the starting pieces
-        self.find_start_piece_candidates(is_piece_placed)
+        # # Recalculate the mutual probabilities
+        # self.calculate_mutual_compatibility(is_piece_placed)
+        #
+        # # Find the updated best buddies
+        # self.find_best_buddies(is_piece_placed)
+        #
+        # # Find the starting pieces
+        # self.find_start_piece_candidates(is_piece_placed)
 
     def _find_min_and_second_best_distances(self, is_piece_placed):
         """
