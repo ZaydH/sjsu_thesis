@@ -51,6 +51,10 @@ class NextPieceToPlace(object):
         self.mutual_compatibility = compatibility
         self.is_best_buddy = is_best_buddy
 
+        # Store the information used to determine when to spawn a new board.
+        self._numb_avg_placed_unplaced_links = 0
+        self._total_placed_unplaced_compatibility_diff = 0
+
 
 class PickleHelper(object):
 
@@ -128,11 +132,11 @@ class PaikinTalSolver(object):
         self._numb_unplaced_pieces = len(pieces)
 
         # Define the puzzle dimensions
-        self._open_locations = [[]]
+        self._open_locations = []
         self._piece_locations = []
 
         # Store the number of puzzles these collective set of pieces comprise.
-        self._numb_puzzles = numb_puzzles
+        self._actual_numb_puzzles = numb_puzzles
 
         # Store the function used to calculate piece to piece distances.
         self._distance_function = distance_function
@@ -158,19 +162,20 @@ class PaikinTalSolver(object):
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
             print "Finished calculating inter-piece distances\n\n"
 
-        # Rlease the Interpiece distance to allow pickling.
+        # Release the Inter-piece distance function to allow pickling.
         self._distance_function = None
 
-    def run(self):
+    def run(self, skip_initial=False):
         """
         Runs the Paikin and Tal Solver.
         """
 
-        # Reset the best buddies pool as a precaution.
-        self._best_buddies_pool = []
+        if not skip_initial:
+            # Reset the best buddies pool as a precaution.
+            self._best_buddies_pool = []
 
-        # Place the initial seed piece
-        self._place_seed_piece()
+            # Place the initial seed piece
+            self._place_seed_piece()
 
         # Place pieces until no pieces left to be placed.
         while self._numb_unplaced_pieces > 0:
@@ -178,14 +183,18 @@ class PaikinTalSolver(object):
             if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
                 print str(self._numb_unplaced_pieces) + " remain to be placed."
 
+            # Get the next piece to place
             next_piece = self._find_next_piece()
 
-            # TODO Remove special case when no next piece is selected
-            if next_piece is None:
-                return
+            # # TODO Remove special case when no next piece is selected
+            # if next_piece is None:
+            #     return
 
             # TODO Include support for multiple boards
-            if False and next_piece.mutual_compatibility < self._new_board_mutual_compatibility:
+            if self._numb_puzzles < self._actual_numb_puzzles \
+                    and next_piece.mutual_compatibility < PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD:
+                PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
+                return
                 self._spawn_new_board()
                 # TODO make sure when a next piece is selected but not placed that nothing bad happens
             else:
@@ -204,7 +213,7 @@ class PaikinTalSolver(object):
         Returns ([[PuzzlePiece]]): Multiple puzzles each of which is a set of puzzle pieces.
         """
         # A puzzle is an array of puzzle pieces that can then be reconstructed.
-        solved_puzzles = [[]] * self._numb_puzzles
+        solved_puzzles = [[] for _ in range(self._actual_numb_puzzles)]
         unassigned_pieces = []
 
         # Iterate through each piece and assign it to the array of pieces
@@ -216,13 +225,20 @@ class PaikinTalSolver(object):
                 unassigned_pieces.append(piece)
             # If piece is assigned, then put with other pieces from its puzzle
             else:
-                solved_puzzles[puzzle_id - 1].append(piece)
+                solved_puzzles[puzzle_id].append(piece)
 
         # Returns the set of solved puzzles
         return solved_puzzles, unassigned_pieces
 
     def _place_normal_piece(self, next_piece_info):
-        # TODO write place next piece
+        """
+        Piece Placer
+
+        This method is used to place all pieces except a board seed piece.
+
+        Args:
+            next_piece_info (NextPieceToPlace):  Information on the next piece to place
+        """
 
         puzzle_id = next_piece_info.puzzle_id
 
@@ -275,11 +291,13 @@ class PaikinTalSolver(object):
                 i += 1
 
     def _find_next_piece(self):
-        # # Prioritize placing from BB pool
-        # if len(self._best_buddies_pool) > 0:
-        #     return self._get_next_piece_from_pool(True, self._best_buddies_pool)
-        # else:
+        # Prioritize placing from BB pool
+        if len(self._best_buddies_pool) > 0:
+            return self._get_next_piece_from_pool(True, self._best_buddies_pool)
+        else:
             # TODO Determine what to do when BB pool is empty
+            print "\n\nNeed to recalculate the compatibilities.  Number of pieces left: " \
+                  + str(self._numb_unplaced_pieces) + "\n\n"
             # Recalculate the interpiece distances
             self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(self._piece_placed)
 
@@ -299,6 +317,9 @@ class PaikinTalSolver(object):
                 # Get the piece id of the next piece to place
                 if is_best_buddy:
                     next_piece_id = pool_obj.piece_id
+                # When not best buddy, next piece ID is the pool object itself.
+                else:
+                    next_piece_id = pool_obj
 
                 # Iterate through each of the puzzles
                 for puzzle_id in range(0, self._numb_puzzles):
@@ -328,15 +349,16 @@ class PaikinTalSolver(object):
 
         This function handles spawning a new board including any associated data structure resetting.
         """
-        # Perform any cleanup needed.
-        assert False
+        # # Perform any cleanup needed.
+        # assert False
+
+        # Perform any post processing.
+        self._best_buddies_pool = []  # Clear the best buddies pool.
 
         # Place the next seed piece
         # noinspection PyUnreachableCode
         self._place_seed_piece()
 
-        # Perform any post processing.
-        assert False
 
     def _place_seed_piece(self):
         """
@@ -370,6 +392,9 @@ class PaikinTalSolver(object):
         seed.location = board_center
         seed.rotation = PuzzlePieceRotation.degree_0
         self._piece_locations[seed.puzzle_id][board_center] = True  # Note that this piece has been placed
+
+        # Add a new puzzle to the open locations tracker
+        self._open_locations.append([])
 
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(seed.id_number)
@@ -440,3 +465,13 @@ class PaikinTalSolver(object):
                 # Add the best buddy to the pool
                 self._best_buddies_pool.append(bb_pool_info)
 
+    @property
+    def puzzle_type(self):
+        """
+        Puzzle Type Accessor
+
+        Gets whether the puzzle is type 1 or type 2
+
+        Returns (PuzzleType): Type of the puzzle (either 1 or 2)
+        """
+        return self._puzzle_type

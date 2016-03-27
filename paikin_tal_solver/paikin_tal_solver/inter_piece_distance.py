@@ -479,6 +479,8 @@ class InterPieceDistance(object):
                         # Get the compatibility from p_j to p_i
                         mutual_compat += self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i,
                                                                                                  p_i_side)
+                        # Divide the mutual compatibility by 2.
+                        mutual_compat /= 2
 
                         # Store the mutual compatibility for BOTH p_i and p_j
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
@@ -526,6 +528,7 @@ class InterPieceDistance(object):
                 continue
 
             # Find the minimum and second best distance for each piece and side
+            # noinspection PyProtectedMember
             self._piece_distance_info[p_i]._find_min_and_second_best_distances(is_piece_placed)
 
     def _clear_placed_piece_best_buddy_information(self):
@@ -601,6 +604,7 @@ class InterPieceDistance(object):
 
             # Skip placed pieces
             if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                all_best_buddy_info.append(([], 0))
                 continue
 
             # Best buddies and compatibility storage.
@@ -617,7 +621,7 @@ class InterPieceDistance(object):
 
                     # Use negative compatibility since we are using a reverse order sorting and this requires
                     # doing things in ascending order which negation does for me here.
-                    p_i_best_buddies_and_compat[p_i_side.value].append((p_j, -compatibility))
+                    p_i_best_buddies_and_compat[p_i_side.value].append((p_j, compatibility))
 
             # Extract the info on the best neighbors
             p_i_best_buddies = []
@@ -741,10 +745,10 @@ class InterPieceDistance(object):
 
         p_i_mutual_compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
 
-        # Verify for debug the mutual compatibility is symmetric.
-        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
-            assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].get_mutual_compatibility(p_j_side,
-                                                                                                       p_i, p_i_side))
+        # # Verify for debug the mutual compatibility is symmetric.
+        # if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+        #     assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].get_mutual_compatibility(p_j_side,
+        #                                                                                                p_i, p_i_side))
         # Return the mutual compatibility
         return p_i_mutual_compatibility
 
