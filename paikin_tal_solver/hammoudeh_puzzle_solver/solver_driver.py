@@ -53,16 +53,19 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     local_puzzle_type = puzzle_type if puzzle_type is not None else DEFAULT_PUZZLE_TYPE
     paikin_tal_solver = PaikinTalSolver(numb_puzzles, combined_pieces,
                                         PuzzlePiece.calculate_asymmetric_distance, local_puzzle_type)
-    # Export the Paikin Tal Object.
-    PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver.pk")
-    paikin_tal_solver = PickleHelper.importer("paikan_tal_solver.pk")
-    #paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
-
-    # Run the solver
+    # # Export the Paikin Tal Object.
+    # PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver.pk")
+    # paikin_tal_solver = PickleHelper.importer("paikan_tal_solver.pk")
+    # #paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
+    #
+    # # Run the solver
     paikin_tal_solver.run()
 
-    #PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver_results.pk")
-   #paikin_tal_solver = PickleHelper.importer("paikan_tal_solver_results.pk")
+    # paikin_tal_solver = PickleHelper.importer("paikin_tal_board_spawn.pk")
+    # paikin_tal_solver.run(True)
+
+    # PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver_results.pk")
+    # paikin_tal_solver = PickleHelper.importer("paikan_tal_solver_results.pk")
 
     # Get the results
     (paikin_tal_results, _) = paikin_tal_solver.get_solved_puzzles()
