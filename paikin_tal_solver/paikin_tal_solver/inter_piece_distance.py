@@ -176,6 +176,16 @@ class PieceDistanceInformation(object):
         # noinspection PyTypeChecker
         self._best_buddies[p_i_side.value].append((p_j_id_numb, p_j_side))
 
+    def clear_best_buddy_information(self):
+        """
+        Best Buddy Information Clearer
+
+        Clears the best buddy candidates and best buddy list for a puzzle piece.
+        """
+        # Reset the piece's best buddy information
+        self._best_buddy_candidates = [[] for _ in PuzzlePieceSide.get_all_sides()]
+        self._best_buddies = [[] for _ in PuzzlePieceSide.get_all_sides()]
+
     def calculate_inter_piece_distances(self, pieces, distance_function):
         """
         Calculates the inter-piece distances between all pieces.
@@ -195,14 +205,12 @@ class PieceDistanceInformation(object):
         fill_value = 2 ** 31 - 1
         self._asymmetric_distances.fill(fill_value)
 
-        # Store the second best distances in an array
-        self._second_best_distance = [sys.float_info.max for _ in range(0, PuzzlePieceSide.get_numb_sides())]
-        # Use the second best distance to initialize a min best distance array.
-        # It should be slightly less in value than the second best distance (e.g. subtract 1
-        self._min_distance = [self._second_best_distance[i] - 1 for i in range(0, PuzzlePieceSide.get_numb_sides())]
+        # Reset the piece's important distance values.
+        self._reset_min_and_second_best_distances()
 
         # Calculates the piece to piece distances so we only need to do it once.
         for p_j in range(0, self._numb_pieces):
+
             if self._id == p_j:  # Do not compare a piece to itself.
                 continue
 
@@ -222,19 +230,97 @@ class PieceDistanceInformation(object):
                     p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
                     self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] = dist
 
-                    # Update the second best distance if applicable
-                    if dist < self._min_distance[p_i_side.value]:
-                        self._second_best_distance[p_i_side.value] = self._min_distance[p_i_side.value]
-                        self._min_distance[p_i_side.value] = dist
-                        self._best_buddy_candidates[p_i_side.value] = [(p_j, p_j_side)]
-                    # See if there is a tie for best buddy
-                    elif dist == self._min_distance[p_i_side.value]:
-                        # noinspection PyTypeChecker
-                        self._best_buddy_candidates[p_i_side.value].append((p_j, p_j_side))
-                        self._second_best_distance[p_i_side.value] = dist
-                    # If only the second best then update the second best distance
-                    elif dist < self._second_best_distance[p_i_side.value]:
-                        self._second_best_distance[p_i_side.value] = dist
+                    # Update the minimum and second best distances as appropriate
+                    self._update_min_and_second_best_distances_and_best_buddy_candidates(p_i_side,
+                                                                                         p_j,
+                                                                                         p_j_side)
+
+        # Calculate the Asymmetric Compatibilities
+        self.calculate_asymmetric_compatibility()
+
+    def _update_min_and_second_best_distances_and_best_buddy_candidates(self, p_i_side, p_j, p_j_side):
+        """
+
+        Args:
+            p_i_side (PuzzlePieceSide): Reference side of the implicit puzzle piece
+            p_j (int): Alternate piece identification number
+            p_j_side (PuzzlePieceSide): Reference side of the other piece
+        """
+
+        # Extract the distance between p_i and p_j on their sides
+        p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
+        dist = self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index]
+
+        # See if the minimum distance needs to be updated.
+        if dist < self._min_distance[p_i_side.value]:
+            self._second_best_distance[p_i_side.value] = self._min_distance[p_i_side.value]
+            self._min_distance[p_i_side.value] = dist
+            self._best_buddy_candidates[p_i_side.value] = [(p_j, p_j_side)]
+        # See if there is a tie for best buddy
+        elif dist == self._min_distance[p_i_side.value]:
+            # noinspection PyTypeChecker
+            self._best_buddy_candidates[p_i_side.value].append((p_j, p_j_side))
+            self._second_best_distance[p_i_side.value] = dist
+        # If only the second best then update the second best distance
+        elif dist < self._second_best_distance[p_i_side.value]:
+            self._second_best_distance[p_i_side.value] = dist
+
+    def _reset_min_and_second_best_distances(self):
+        """
+        Minimum and Second Best Distance Resetter
+
+        Resets the minimum and second best distances for an individual piece.
+        """
+        # Store the second best distances in an array
+        self._second_best_distance = [sys.float_info.max for _ in range(0, PuzzlePieceSide.get_numb_sides())]
+        # Use the second best distance to initialize a min best distance array.
+        # It should be slightly less in value than the second best distance (e.g. subtract 1
+        self._min_distance = [self._second_best_distance[i] - 1 for i in range(0, PuzzlePieceSide.get_numb_sides())]
+
+    def _find_min_and_second_best_distances(self, is_piece_placed):
+        """
+        Minimum and Second Best Distance Finder
+
+        Finds the minimum and second best distance for a piece with respect to already calculated distances.
+
+        Args:
+            is_piece_placed ([Bool]): List indicating whether each piece is placed
+        """
+
+        # Reset the piece's distance information.
+        self._reset_min_and_second_best_distances()
+
+        # Go through all the valid sides
+        for p_i_side in PuzzlePieceSide.get_all_sides():
+
+            # Go through all other valid pieces.
+            for p_j in range(0, self._numb_pieces):
+
+                # Do not compare a piece to itself or if it is already placed
+                if self._skip_piece(is_piece_placed, p_j):
+                    continue
+
+                # Check all valid p_j sides depending on the puzzle type.
+                for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
+
+                    # Update the first and second best pieces as appropriate
+                    self._update_min_and_second_best_distances_and_best_buddy_candidates(p_i_side,
+                                                                                         p_j,
+                                                                                         p_j_side)
+
+    def calculate_asymmetric_compatibility(self, is_piece_placed=None):
+        """
+        Asymmetric Compatibility Calculator
+
+        Calculates the asymmetric compatibility for this piece with respect to all other pieces.
+
+        Args:
+            is_piece_placed (Optional [Bool]): For each puzzle piece, True if the piece is placed and false otherwise.
+        """
+
+        # Based on the puzzle type, determine the number of possible piece to piece pairings.
+        numb_possible_pairings = len(InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type,
+                                                                                 PuzzlePieceSide.get_all_sides()[0]))
 
         # Build an empty array to store the piece to piece distances
         self._asymmetric_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
@@ -243,8 +329,11 @@ class PieceDistanceInformation(object):
 
         # Calculate the asymmetric compatibility
         for p_j in range(0, self._numb_pieces):
-            if self._id == p_j:  # Do not compare a piece to itself.
+
+            # Do not compare a piece to itself or if it is already placed
+            if self._skip_piece(is_piece_placed, p_j):
                 continue
+
             for p_i_side in PuzzlePieceSide.get_all_sides():
                 set_of_neighbor_sides = InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side)
                 for p_j_side in set_of_neighbor_sides:
@@ -267,6 +356,21 @@ class PieceDistanceInformation(object):
         self._mutual_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
                                                     numb_possible_pairings), numpy.float32)
         self._mutual_compatibilities.fill(float('inf'))
+
+    def _skip_piece(self, is_piece_placed, p_j=None):
+        """
+
+        Args:
+            is_piece_placed:
+            p_j (Optional int):
+
+        Returns: True if this piece should be skipped and False otherwise.
+        """
+        if (p_j is not None and self._id == p_j) or \
+                (is_piece_placed is not None and is_piece_placed[p_j]):  # Do not compare a piece to itself.
+                return True
+        else:
+            return False
 
 
 class InterPieceDistance(object):
@@ -324,6 +428,9 @@ class InterPieceDistance(object):
         # Find the set of valid starter pieces.
         self.find_start_piece_candidates()
 
+        # Clear the distance function for pickling purposes
+        self._distance_function = None
+
     def calculate_inter_piece_distances(self, pieces):
         """
         Inter-Piece Distance Calculator
@@ -340,17 +447,29 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
             self._piece_distance_info[p_i].calculate_inter_piece_distances(pieces, self._distance_function)
 
-    def calculate_mutual_compatibility(self):
+    def calculate_mutual_compatibility(self, is_piece_placed=None):
         """
         Mutual Compatibility Calculator
 
         Calculates the mutual compatibility as defined by Paikin and Tal.
+
+        Args:
+            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
         for p_i in range(0, self._numb_pieces):
+
+            # Skip placed pieces
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                continue
+
+            # Go through all the valid sides
             for p_i_side in PuzzlePieceSide.get_all_sides():
                 for p_j in range(p_i + 1, self._numb_pieces):
 
+                    # Skip placed pieces
                     # No Need to check p_i == p_j since doing a diagonal calculation
+                    if p_i == p_j or InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                        continue
 
                     # Check all valid p_j sides depending on the puzzle type.
                     for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
@@ -365,15 +484,97 @@ class InterPieceDistance(object):
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
 
-    def find_best_buddies(self):
+    def recalculate_all_compatibilities_and_best_buddy_info(self, is_piece_placed):
+        """
+        Comptability Recalculator
+
+        When no best buddy is in the pool, this function is called to recalculate the best buddies and compatibilities.
+
+        Args:
+            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
+        """
+
+        # Clear the best buddy information for placed pieces
+        self._clear_placed_piece_best_buddy_information()
+
+        # Find the minimum and second best distance information for the placed pieces
+        self._find_min_and_second_best_distances(is_piece_placed)
+
+        # Calculate the asymmetric compatibilities using the updated min and second best distances.
+        self._recalculate_asymmetric_compatibilities(is_piece_placed)
+
+        # Recalculate the mutual probabilities
+        self.calculate_mutual_compatibility(is_piece_placed)
+
+        # Find the updated best buddies
+        self.find_best_buddies(is_piece_placed)
+
+        # Find the starting pieces
+        self.find_start_piece_candidates(is_piece_placed)
+
+    def _find_min_and_second_best_distances(self, is_piece_placed):
+        """
+
+        Args:
+            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
+        """
+
+        for p_i in range(0, self._numb_pieces):
+
+            # Skip placed pieces
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                continue
+
+            # Find the minimum and second best distance for each piece and side
+            self._piece_distance_info[p_i]._find_min_and_second_best_distances(is_piece_placed)
+
+    def _clear_placed_piece_best_buddy_information(self):
+        """
+        Best Buddy Information Clearer
+
+        Clears the best buddy information for all placed pieces.
+        """
+        # Clears the best buddy information for placed pieces
+        for p_i in range(0, self._numb_pieces):
+            self._piece_distance_info[p_i].clear_best_buddy_information()
+
+    def _recalculate_asymmetric_compatibilities(self, is_piece_placed):
+        """
+        Asymmetric Compatibility Recalculator
+
+        Recalculate the ASYMMETRIC compatibilities of unplaced pieces after minimum and second best distances were
+        found.
+
+        Args:
+            is_piece_placed: (Optional [Bool]): List indicating whether each piece is placed
+        """
+        # Iterate through all pieces skipping placed ones.
+        for p_i in range(0, self._numb_pieces):
+            # Skip placed pieces
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                continue
+
+            # Recalculate the
+            self._piece_distance_info[p_i].calculate_asymmetric_compatibility(is_piece_placed)
+
+    def find_best_buddies(self, is_piece_placed=None):
         """
         Finds the best buddies for this set of distance calculations.
 
         The best buddies information is stored with the inter-piece distances.
+
+        Args:
+            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
 
         # Go through each piece to find its best buddies.
         for p_i in range(0, self._numb_pieces):
+
+            # Skip placed pieces
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                continue
+
+            # Find the best buddies of all sides.
             for p_i_side in PuzzlePieceSide.get_all_sides():  # Iterate through all the sides.
                 # Get p_i's best buddy candidates.
                 best_buddy_candidates = self._piece_distance_info[p_i].best_buddy_candidates(p_i_side)
@@ -383,19 +584,26 @@ class InterPieceDistance(object):
                     if (p_i, p_i_side) in piece_dist_info.best_buddy_candidates(p_j_side):
                         self._piece_distance_info[p_i].add_best_buddy(p_i_side, p_j, p_j_side)
 
-    def find_start_piece_candidates(self):
+    def find_start_piece_candidates(self, is_piece_placed=None):
         """
         Creates a list of starter puzzle pieces.  This is based off the criteria defined by Paikin and Tal
         where a piece must have 4 best buddies and its best buddies must have 4 best buddies.
 
         This list is sorted from best starter piece to worst.
+
+        Args:
+            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
 
         # Calculate each pieces best buddy count for each piece
         all_best_buddy_info = []
         for p_i in range(0, self._numb_pieces):
 
-            # Best buddies and compatibility storeage.
+            # Skip placed pieces
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                continue
+
+            # Best buddies and compatibility storage.
             p_i_best_buddies_and_compat = []
 
             # Iterate through all sides of p_i
@@ -435,6 +643,11 @@ class InterPieceDistance(object):
         # Build the best neighbor information
         self._start_piece_ordering = []
         for p_i in range(0, self._numb_pieces):
+
+            # Skip placed pieces
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                continue
+
             this_piece_bb_info = all_best_buddy_info[p_i]
 
             # Store the number of best buddy neighbors
@@ -587,3 +800,20 @@ class InterPieceDistance(object):
         """
         if self._puzzle_type == PuzzleType.type1:
             assert(p_i_side.complementary_side == p_j_side)
+
+    @staticmethod
+    def _skip_piece(p_i, is_piece_placed):
+        """
+        Piece Skip Checker
+
+        Checks whether a puzzle piece should be skipped based off whether it is placed.
+        Args:
+            p_i (int): Identification number of the puzzle piece
+            is_piece_placed ([Bool]):  List indicating whether each piece is placed
+
+        Returns: True if piece p_i should be skipped and False otherwise
+        """
+        if is_piece_placed is not None and is_piece_placed[p_i]:
+            return True
+        else:
+            return False

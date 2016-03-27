@@ -2,6 +2,8 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
+import pickle
+
 import numpy
 
 from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
@@ -48,6 +50,47 @@ class NextPieceToPlace(object):
         # Store bookkeeping information
         self.mutual_compatibility = compatibility
         self.is_best_buddy = is_best_buddy
+
+
+class PickleHelper(object):
+
+    @staticmethod
+    def importer(filename):
+        """Generic Pickling Importer Method
+
+        Helper method used to import any object from a Pickle file.
+
+        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
+        Pickling functions.
+
+        Args:
+            filename (str): Pickle Filename
+
+        Returns: The object serialized in the specified filename.
+
+        """
+        f = open(filename, 'r')
+        obj = pickle.load(f)
+        f.close()
+        return obj
+
+    @staticmethod
+    def exporter(obj, filename):
+        """Generic Pickling Exporter Method
+
+        Helper method used to export any object to a Pickle file.
+
+        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
+        Pickling functions.
+
+        Args:
+            obj:                Object to be exported to a specified Pickle file.
+            filename (str):     Name of the Pickle file.
+
+        """
+        f = open(filename, 'w')
+        pickle.dump(obj, f)
+        f.close()
 
 
 class PaikinTalSolver(object):
@@ -113,7 +156,10 @@ class PaikinTalSolver(object):
         self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function, self._puzzle_type)
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "Finished calculating inter-piece distances"
+            print "Finished calculating inter-piece distances\n\n"
+
+        # Rlease the Interpiece distance to allow pickling.
+        self._distance_function = None
 
     def run(self):
         """
@@ -229,20 +275,30 @@ class PaikinTalSolver(object):
                 i += 1
 
     def _find_next_piece(self):
-        # Prioritize placing from BB pool
-        if len(self._best_buddies_pool) > 0:
-            return self._get_next_piece_from_best_buddy()
-        else:
+        # # Prioritize placing from BB pool
+        # if len(self._best_buddies_pool) > 0:
+        #     return self._get_next_piece_from_pool(True, self._best_buddies_pool)
+        # else:
             # TODO Determine what to do when BB pool is empty
-            #assert False
-            return None
+            # Recalculate the interpiece distances
+            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(self._piece_placed)
 
-    def _get_next_piece_from_best_buddy(self):
+            # Get all unplaced pieces
+            unplaced_pieces = []
+            for p_i in range(0, len(self._pieces)):
+                # If the piece is not placed, then append to the list
+                if not self._piece_placed[p_i]:
+                    unplaced_pieces.append(p_i)
+            # Use the unplaced pieces to determine the best location.
+            return self._get_next_piece_from_pool(False, unplaced_pieces)
+
+    def _get_next_piece_from_pool(self, is_best_buddy, pool_of_placeable_pieces):
             best_piece = None
-            is_best_buddy = True
-            for bb_pool_obj in self._best_buddies_pool:
+            # Get the first object from the pool
+            for pool_obj in pool_of_placeable_pieces:
                 # Get the piece id of the next piece to place
-                next_piece_id = bb_pool_obj.piece_id
+                if is_best_buddy:
+                    next_piece_id = pool_obj.piece_id
 
                 # Iterate through each of the puzzles
                 for puzzle_id in range(0, self._numb_puzzles):
@@ -295,6 +351,9 @@ class PaikinTalSolver(object):
 
         # Increment the number of puzzles
         self._numb_puzzles += 1
+
+        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
+            print "Board #" + str(self._numb_puzzles) + " was created.\n"
 
         # Get the first piece for the puzzle
         seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
