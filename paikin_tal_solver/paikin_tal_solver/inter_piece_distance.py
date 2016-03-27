@@ -18,6 +18,7 @@ class PieceDistanceInformation(object):
     """
 
     _PERFORM_ASSERT_CHECKS = True
+    _ALLOW_MULTIPLE_BEST_BUDDIES = False
 
     def __init__(self, id_numb, numb_pieces, puzzle_type):
         """
@@ -132,7 +133,14 @@ class PieceDistanceInformation(object):
         Returns ([(int, int)]):
             Returns an array of the ID numbers and the respective side for the ID number for possible best buddies.
         """
-        return self._best_buddy_candidates[side.value]
+        if PieceDistanceInformation._ALLOW_MULTIPLE_BEST_BUDDIES:
+            return self._best_buddy_candidates[side.value]
+        else:
+            # If there are more than one best buddy candidate, there are none.
+            if len(self._best_buddy_candidates[side.value]) <= 1:
+                return self._best_buddy_candidates[side.value]
+            else:
+                return []
 
     def best_buddies(self, side):
         """
@@ -245,12 +253,14 @@ class PieceDistanceInformation(object):
 
                     # Prevent divide by zero
                     second_best_distance = self._second_best_distance[p_i_side.value]
-                    if second_best_distance == 0:
-                        second_best_distance = 0.00000000000000000000001
-
-                    # Calculate the asymmetric compatibility
-                    asym_compatibility = (1 - 1.0 * self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] /
-                                          second_best_distance)
+                    if self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] == 0:
+                        asym_compatibility = 1
+                    elif second_best_distance == 0:
+                        asym_compatibility = -sys.maxint
+                    else:
+                        # Calculate the asymmetric compatibility
+                        asym_compatibility = (1 - 1.0 * self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] /
+                                              second_best_distance)
                     self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
 
         # Build an empty array to store the piece to piece distances
