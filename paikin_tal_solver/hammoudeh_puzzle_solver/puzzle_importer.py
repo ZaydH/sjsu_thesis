@@ -145,8 +145,7 @@ class Puzzle(object):
         self._pieces = []  # Create an empty array to hold the puzzle pieces.
         for row in range(0, numb_rows):
             for col in range(0, numb_cols):
-                piece_upper_left = (puzzle_upper_left[0] + row * piece_size[0],
-                                    puzzle_upper_left[1] + col * piece_size[1])
+                piece_upper_left = (row * piece_size[0], col * piece_size[1])  # No longer consider upper left since board shrunk above
                 piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
 
                 # Create the puzzle piece and assign to the location.
