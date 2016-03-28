@@ -2,6 +2,8 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
+import copy
+import heapq
 import pickle
 
 import numpy
@@ -15,13 +17,57 @@ class BestBuddyPoolInfo(object):
 
     def __init__(self, piece_id):
         self.piece_id = piece_id
+        self._key = str(piece_id)
+
+    @property
+    def key(self):
+        """
+
+        Returns (int): Best Buddy Pool Info Key.
+        """
+        return self._key
+
+
+class BestBuddyHeapInfo(object):
+
+    def __init__(self, bb_id, bb_side, neighbor_id, neighbor_side,
+                 puzzle_id, location, mutual_compatibility):
+        self.bb_id = bb_id
+        self.bb_side = bb_side
+        self.neighbor_id = neighbor_id
+        self.neighbor_side = neighbor_side
+        self.puzzle_id = puzzle_id
+        self.location = location
+        self.mutual_compatibility = mutual_compatibility
+
+    def __cmp__(self, other):
+        """
+        Best Buddy Heap Comparison
+
+        Used to organize information in the best buddy info heap.
+
+        Args:
+            other:
+
+        Returns:
+
+        """
+        # Swapping to make a MAXIMUM heap
+        return cmp(other.mutual_compatibility, self.mutual_compatibility)
+
 
 class PuzzleOpenSlot(object):
 
-    def __init__(self, (row, column), piece_id, open_side):
+    def __init__(self, puzzle_id, (row, column), piece_id, open_side):
+        self.puzzle_id = puzzle_id
         self.location = (row, column)
         self.piece_id = piece_id
         self.open_side = open_side
+        self._key = str(puzzle_id) + "_" + str(row) + "_" + str(column) + str(open_side.value)
+
+    @property
+    def key(self):
+        return self._key
 
 
 class PuzzleDimensions(object):
@@ -30,6 +76,7 @@ class PuzzleDimensions(object):
         self.puzzle_id = puzzle_id
         self.top_left = (0, 0)
         self.bottom_right = (0, 0)
+
 
 class NextPieceToPlace(object):
 
@@ -132,7 +179,7 @@ class PaikinTalSolver(object):
         self._numb_unplaced_pieces = len(pieces)
 
         # Define the puzzle dimensions
-        self._open_locations = []
+        self._initialize_open_slots()
         self._piece_locations = []
 
         # Store the number of puzzles these collective set of pieces comprise.
@@ -150,7 +197,7 @@ class PaikinTalSolver(object):
             self._new_board_mutual_compatibility = PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD
 
         # Stores the best buddies which are prioritized for placement.
-        self._best_buddies_pool = []
+        self._initialize_best_buddy_pool_and_heap()
         self._numb_puzzles = 0
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
@@ -168,12 +215,13 @@ class PaikinTalSolver(object):
     def run(self, skip_initial=False):
         """
         Runs the Paikin and Tal Solver.
+
+        Args:
+            skip_initial (Optional bool): Used with Pickling.  Skips initial setup.
+
         """
 
         if not skip_initial:
-            # Reset the best buddies pool as a precaution.
-            self._best_buddies_pool = []
-
             # Place the initial seed piece
             self._place_seed_piece()
 
@@ -186,11 +234,6 @@ class PaikinTalSolver(object):
             # Get the next piece to place
             next_piece = self._find_next_piece()
 
-            # # TODO Remove special case when no next piece is selected
-            # if next_piece is None:
-            #     return
-
-            # TODO Include support for multiple boards
             if self._numb_puzzles < self._actual_numb_puzzles \
                     and next_piece.mutual_compatibility < PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD:
                 # PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
@@ -268,34 +311,62 @@ class PaikinTalSolver(object):
 
     def _remove_open_slot(self, puzzle_id, location):
         i = 0
-        while i < len(self._open_locations[puzzle_id]):
-            open_slot_info = self._open_locations[puzzle_id][i]
+        while i < len(self._open_locations):
+            open_slot_info = self._open_locations[i]
             # If this open slot has the same location, remove it.
             # noinspection PyUnresolvedReferences
-            if open_slot_info.location == location:
-                del self._open_locations[puzzle_id][i]
+            if open_slot_info.puzzle_id == puzzle_id and open_slot_info.location == location:
+                del self._open_locations[i]
 
             # If not the same location then go to the next open slot
             else:
                 i += 1
 
     def _remove_best_buddy_from_pool(self, piece_id):
-        i = 0
-        while i < len(self._best_buddies_pool):
-            bb_info = self._best_buddies_pool[i]
-            # If this open slot has the same location, remove it.
-            if bb_info.piece_id == piece_id:
-                del self._best_buddies_pool[i]
-            # Not the same BB so go to the next one
-            else:
-                i += 1
+        # i = 0
+        # while i < len(self._best_buddies_pool):
+        #     bb_info = self._best_buddies_pool[i]
+        #     # If this open slot has the same location, remove it.
+        #     if bb_info.piece_id == piece_id:
+        #         del self._best_buddies_pool[i]
+        #     # Not the same BB so go to the next one
+        #     else:
+        #         i += 1
+
+        # If the best buddy is in the pool then delete it.
+        bb_info = BestBuddyPoolInfo(piece_id)
+
+        # Verify the key is in the pool.
+        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+            assert bb_info.key in self._best_buddies_pool
+
+        # Delete the best buddy
+        del self._best_buddies_pool[bb_info.key]
 
     def _find_next_piece(self):
+
         # Prioritize placing from BB pool
         if len(self._best_buddies_pool) > 0:
-            return self._get_next_piece_from_pool(True, self._best_buddies_pool)
+            next_piece = None
+            # Keep popping from the heap until a valid next piece is found.
+            while next_piece is None:
+                if len(self._best_buddy_open_slot_heap) == 0:
+                    x = 1
+                heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
+                # Make sure the piece is not already placed
+                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id, heap_info.location):
+                    next_piece = NextPieceToPlace(heap_info.puzzle_id, heap_info.location,
+                                                  heap_info.bb_id, heap_info.bb_side,
+                                                  heap_info.neighbor_id, heap_info.neighbor_side,
+                                                  heap_info.mutual_compatibility, True)
+                elif self._piece_placed[heap_info.bb_id]:
+                    x = 1
+                else:
+                    x = 1
+
+            return next_piece
+
         else:
-            # TODO Determine what to do when BB pool is empty
             print "\n\nNeed to recalculate the compatibilities.  Number of pieces left: " \
                   + str(self._numb_unplaced_pieces) + "\n\n"
             # Recalculate the interpiece distances
@@ -309,6 +380,34 @@ class PaikinTalSolver(object):
                     unplaced_pieces.append(p_i)
             # Use the unplaced pieces to determine the best location.
             return self._get_next_piece_from_pool(False, unplaced_pieces)
+
+    def _is_slot_open(self, puzzle_id, location):
+        """
+        Open Slot Checker
+
+        Checks whether the specified location is open in the associated puzzle.
+
+        Args:
+            puzzle_id (int): Puzzle identification number
+            location ((int)): Tuple of the a locaiton of the puzzle which is row by column
+
+        Returns: True of the location in the specified puzzle is open and false otherwise.
+        """
+        return not self._piece_locations[puzzle_id][location]
+
+    def _initialize_best_buddy_pool_and_heap(self):
+        """
+        Best Buddy Heap and Pool Initializer
+
+        Initializes a best buddy heap and pool
+        """
+        self._best_buddies_pool = {}
+        # Clear the best buddy heap
+        self._best_buddy_open_slot_heap = []
+        # heapq.heapify()
+
+    def _initialize_open_slots(self):
+        self._open_locations = []
 
     def _get_next_piece_from_pool(self, is_best_buddy, pool_of_placeable_pieces):
             best_piece = None
@@ -324,7 +423,7 @@ class PaikinTalSolver(object):
                 # Iterate through each of the puzzles
                 for puzzle_id in range(0, self._numb_puzzles):
                     # For each piece check each open slot
-                    for open_slot in self._open_locations[puzzle_id]:
+                    for open_slot in self._open_locations:
                         neighbor_piece_id = open_slot.piece_id
                         neighbor_side = open_slot.open_side
 
@@ -349,16 +448,12 @@ class PaikinTalSolver(object):
 
         This function handles spawning a new board including any associated data structure resetting.
         """
-        # # Perform any cleanup needed.
-        # assert False
-
         # Perform any post processing.
-        self._best_buddies_pool = []  # Clear the best buddies pool.
+        self._initialize_best_buddy_pool_and_heap()
 
         # Place the next seed piece
         # noinspection PyUnreachableCode
         self._place_seed_piece()
-
 
     def _place_seed_piece(self):
         """
@@ -375,7 +470,7 @@ class PaikinTalSolver(object):
         self._numb_puzzles += 1
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "Board #" + str(self._numb_puzzles) + " was created.\n"
+            print "\n\nBoard #" + str(self._numb_puzzles) + " was created.\n\n"
 
         # Get the first piece for the puzzle
         seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
@@ -393,8 +488,8 @@ class PaikinTalSolver(object):
         seed.rotation = PuzzlePieceRotation.degree_0
         self._piece_locations[seed.puzzle_id][board_center] = True  # Note that this piece has been placed
 
-        # Add a new puzzle to the open locations tracker
-        self._open_locations.append([])
+        # # Add a new puzzle to the open locations tracker
+        # self._open_locations.append([])
 
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(seed.id_number)
@@ -419,9 +514,22 @@ class PaikinTalSolver(object):
         for location_side in location_and_sides:
             location = location_side[0]
             piece_side = location_side[1]
-            if self._piece_locations[puzzle_id][location] != True:
+            if self._is_slot_open(puzzle_id, location):
                 # noinspection PyTypeChecker
-                self._open_locations[puzzle_id].append(PuzzleOpenSlot(location, piece_id, piece_side))
+                self._open_locations.append(PuzzleOpenSlot(puzzle_id, location, piece_id, piece_side))
+
+                # For each Best Buddy already in the pool, add an object to the heap.
+                for bb_id in self._best_buddies_pool.values():
+
+                    # Go through all valid best_buddy sides
+                    valid_sides = InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, piece_side)
+                    for bb_side in valid_sides:
+                        mutual_compat = self._inter_piece_distance.mutual_compatibility(piece_id, piece_side,
+                                                                                        bb_id, bb_side)
+                        # Create a heap info object and push it onto the heap.
+                        heap_info = BestBuddyHeapInfo(bb_id, bb_side, piece_id, piece_side,
+                                                      puzzle_id, location, mutual_compat)
+                        heapq.heappush(self._best_buddy_open_slot_heap, heap_info)
 
     def _mark_piece_placed(self, piece_id):
         """
@@ -456,14 +564,34 @@ class PaikinTalSolver(object):
             for bb in best_buddies_for_side:
 
                 # Create a best buddy pool info object
-                bb_pool_info = BestBuddyPoolInfo(bb[0])
+                bb_id = bb[0]
+                bb_pool_info = BestBuddyPoolInfo(bb_id)
 
                 # If the best buddy is already placed or in the pool, skip it.
-                if self._piece_placed[bb[0]] or bb_pool_info in self._best_buddies_pool:
+                if self._piece_placed[bb_id] or bb_pool_info.key in self._best_buddies_pool:
                     continue
 
                 # Add the best buddy to the pool
-                self._best_buddies_pool.append(bb_pool_info)
+                self._best_buddies_pool[bb_pool_info.key] = bb_pool_info.piece_id
+
+                # Get the open slots
+                for open_slot_info in self._open_locations:
+
+                    # Depending on the puzzle type, only look at the valid sides.
+                    valid_sides = InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type,
+                                                                              open_slot_info.open_side)
+                    for bb_side in valid_sides:
+                        # Get the mutual compatibility
+                        mutual_compat = self._inter_piece_distance.mutual_compatibility(bb_id, bb_side,
+                                                                                        open_slot_info.piece_id,
+                                                                                        open_slot_info.open_side)
+                        # Build a heap info object.
+                        bb_heap_info = BestBuddyHeapInfo(bb_id, bb_side,
+                                                         open_slot_info.piece_id, open_slot_info.open_side,
+                                                         open_slot_info.puzzle_id, open_slot_info.location,
+                                                         mutual_compat)
+                        # Push the best buddy onto the heap
+                        heapq.heappush(self._best_buddy_open_slot_heap, bb_heap_info)
 
     @property
     def puzzle_type(self):
