@@ -14,7 +14,7 @@ DISPLAY_IMAGES = True
 DEFAULT_PUZZLE_TYPE = PuzzleType.type1
 DEFAULT_PUZZLE_PIECE_WIDTH = 25
 
-SKIP_SETUP = False
+SKIP_SETUP = True
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -92,8 +92,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
             # noinspection PyProtectedMember
             Puzzle.display_image(new_puzzle._img)
         # Store the reconstructed image
-        filename = ".\\solved\\reconstructed_type_" + str(paikin_tal_solver.puzzle_type.value) + "_puzzle_" + \
-                   format(str(puzzle_id), '04') + ".jpg"
+        filename = ".\\solved\\reconstructed_type_" + str(paikin_tal_solver.puzzle_type.value) + "_puzzle_" + ("%04d" % puzzle_id) + ".jpg"
         new_puzzle.save_to_file(filename)
 
         # Append the puzzle to the list
