@@ -77,7 +77,7 @@ class PuzzleOpenSlot(object):
         self.location = (row, column)
         self.piece_id = piece_id
         self.open_side = open_side
-        self._key = str(puzzle_id) + "_" + str(row) + "_" + str(column) + str(open_side.value)
+        self._key = str(puzzle_id) + "_" + str(row) + "_" + str(column) + "_" + str(open_side.value)
 
     @property
     def key(self):
@@ -479,6 +479,11 @@ class PaikinTalSolver(object):
             for puzzle_id in range(0, self._numb_puzzles):
                 # For each piece check each open slot
                 for open_slot in self._open_locations:
+
+                    # Ignore any invalid slots
+                    if not self._is_slot_open(open_slot.puzzle_id, open_slot.location):
+                        return False
+
                     neighbor_piece_id = open_slot.piece_id
                     neighbor_side = open_slot.open_side
 
