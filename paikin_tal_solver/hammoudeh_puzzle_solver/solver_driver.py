@@ -27,10 +27,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         piece_width (Optional int): Width of a puzzle piece in pixels.
     """
 
+    puzzles = []  # Stores all of the puzzles.
     if not SKIP_SETUP:
         local_puzzle_type = puzzle_type if puzzle_type is not None else DEFAULT_PUZZLE_TYPE
         numb_puzzles = len(image_files)  # Extract the number of puzzles
-        puzzles = []  # Stores all of the puzzles.
         combined_pieces = []  # Merge all the pieces together
         local_piece_width = piece_width if piece_width is not None else DEFAULT_PUZZLE_PIECE_WIDTH
         for i in range(0, numb_puzzles):
@@ -56,9 +56,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     if not SKIP_SETUP:
         # Create the Paikin Tal Solver
         paikin_tal_solver = PaikinTalSolver(numb_puzzles, combined_pieces,
-                                            PuzzlePiece.calculate_asymmetric_distance, local_puzzle_type)
-        # # Export the Paikin Tal Object.
-        #PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver.pk")
+                                            PuzzlePiece.calculate_asymmetric_distance, local_puzzle_type,
+                                            fixed_puzzle_dimensions=puzzles[0].grid_size)
+        # Export the Paikin Tal Object.
+        PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver.pk")
     else:
         paikin_tal_solver = PickleHelper.importer("paikan_tal_solver.pk")
     # paikin_tal_solver = PickleHelper.importer("Compatibility_calculate.pk")
@@ -103,9 +104,9 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # images = [".\\images\\two_faced_cat.jpg"]
+    images = [".\\images\\two_faced_cat.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
@@ -113,6 +114,6 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\boat_100x100.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 25)
-    images = [".\\images\\che_100x100.gif"]
-    paikin_tal_driver(images, PuzzleType.type1, 25)
+    # images = [".\\images\\che_100x100.gif"]
+    # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)

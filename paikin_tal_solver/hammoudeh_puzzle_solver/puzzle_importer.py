@@ -310,6 +310,10 @@ class Puzzle(object):
             # noinspection PyProtectedMember
             piece._assign_to_original_location()
 
+    @property
+    def grid_size(self):
+        return self._grid_size
+
     # noinspection PyUnusedLocal
     @staticmethod
     def create_solid_bgr_image(size, color):

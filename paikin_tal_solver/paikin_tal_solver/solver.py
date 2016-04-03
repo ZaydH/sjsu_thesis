@@ -89,10 +89,15 @@ class PuzzleOpenSlot(object):
 
 class PuzzleDimensions(object):
 
-    def __init__(self, puzzle_id):
+    def __init__(self, puzzle_id, starting_point):
         self.puzzle_id = puzzle_id
-        self.top_left = (0, 0)
-        self.bottom_right = (0, 0)
+        self.top_left = [starting_point[0], starting_point[1]]
+        self.bottom_right = [starting_point[0], starting_point[1]]
+        self.total_size = (1, 1)
+
+    def update_board_size(self):
+        self.total_size = (self.bottom_right[0] - self.top_left[0] + 1,
+                           self.bottom_right[1] - self.top_left[1] + 1)
 
 
 class NextPieceToPlace(object):
@@ -178,7 +183,7 @@ class PaikinTalSolver(object):
     _PRINT_PROGRESS_MESSAGES = True
 
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
-                 new_board_mutual_compatibility=None):
+                 new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
         """
         Constructor for the Paikin and Tal solver.
 
@@ -188,7 +193,13 @@ class PaikinTalSolver(object):
             distance_function: Calculates the distance between two PuzzlePiece objects.
             puzzle_type (Optional PuzzleType): Type of Paikin Tal Puzzle
             puzzle_type (Optional Float): Minimum mutual compatibility when new boards are spawned
+            fixed_puzzle_dimensions(Optional [int]): Size of the puzzle as a Tuple (number_rows, number_columns)
         """
+
+        if numb_puzzles < 0:
+            raise ValueError("At least a single puzzle is required.")
+        if numb_puzzles > 1 and fixed_puzzle_dimensions is not None:
+            raise ValueError("When specifying puzzle dimensions, only a single puzzle is allowed.")
 
         # Store the number of pieces.  Shuffle for good measure.
         self._pieces = pieces
@@ -204,6 +215,10 @@ class PaikinTalSolver(object):
 
         # Store the function used to calculate piece to piece distances.
         self._distance_function = distance_function
+
+        # Store the puzzle dimensions if any
+        self._actual_puzzle_dimensions = fixed_puzzle_dimensions
+        self._placed_puzzle_dimensions = []  # Store the dimensions of the puzzle
 
         # Select the puzzle type.  If the user did not specify one, use the default.
         self._puzzle_type = puzzle_type if puzzle_type is not None else PaikinTalSolver.DEFAULT_PUZZLE_TYPE
@@ -313,6 +328,9 @@ class PaikinTalSolver(object):
         next_piece.puzzle_id = puzzle_id
         next_piece.location = next_piece_info.open_slot_location
 
+        # Update the board dimensions
+        self._updated_puzzle_dimensions(next_piece.puzzle_id, next_piece.location)
+
         # Update the data structures used for Paikin and Tal
         self._piece_locations[puzzle_id][next_piece.location] = True
         self._mark_piece_placed(next_piece.id_number)
@@ -405,7 +423,25 @@ class PaikinTalSolver(object):
 
         Returns: True of the location in the specified puzzle is open and false otherwise.
         """
-        return not self._piece_locations[puzzle_id][location]
+        return not self._piece_locations[puzzle_id][location] and self._check_board_dimensions(puzzle_id, location)
+
+    def _check_board_dimensions(self, puzzle_id, location):
+
+        # If no puzzled dimensions, then slot is definitely open
+        actual_dimensions = self._actual_puzzle_dimensions
+        if actual_dimensions is None:
+            return True
+        else:
+            puzzle_dimensions = self._placed_puzzle_dimensions[puzzle_id]
+            for dim in xrange(0, len(actual_dimensions)):
+                # Check if too from from upper left
+                if location[dim] - puzzle_dimensions.top_left[dim] + 1 > actual_dimensions[dim]:
+                    return False
+                # Check if too from from upper left
+                if puzzle_dimensions.bottom_right[dim] - location[dim] + 1 > actual_dimensions[dim]:
+                    return False
+        # If puzzle dimensions are not too wide, then the location is open
+        return True
 
     def _initialize_best_buddy_pool_and_heap(self):
         """
@@ -512,6 +548,9 @@ class PaikinTalSolver(object):
         seed.location = board_center
         seed.rotation = PuzzlePieceRotation.degree_0
         self._piece_locations[seed.puzzle_id][board_center] = True  # Note that this piece has been placed
+        # Define new puzzle dimensions with the board center as the top left and bottom right
+        puzzleDimensions = PuzzleDimensions(seed.puzzle_id, board_center)
+        self._placed_puzzle_dimensions.append(puzzleDimensions)
 
         # # Add a new puzzle to the open locations tracker
         # self._open_locations.append([])
@@ -519,6 +558,34 @@ class PaikinTalSolver(object):
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(seed.id_number)
         self._update_open_slots(seed)
+
+    def _updated_puzzle_dimensions(self, puzzle_id, placed_piece_location):
+        """
+        Puzzle Dimensions Updater
+        Args:
+            puzzle_id (int): Identification number of the puzzle
+            placed_piece_location ([int]): Location of the newly placed piece.
+        """
+        board_dimensions = self._placed_puzzle_dimensions[puzzle_id]
+        # Make sure the dimensions are somewhat plausible.
+        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+            assert board_dimensions.top_left[0] <= board_dimensions.bottom_right[0] \
+                   and board_dimensions.top_left[1] <= board_dimensions.bottom_right[1]
+
+        # Store the puzzle dimensions.
+        dimensions_changed = False
+        for dim in range(0, len(board_dimensions.top_left)):
+            if board_dimensions.top_left[dim] > placed_piece_location[dim]:
+                board_dimensions.top_left[dim] = placed_piece_location[dim]
+                dimensions_changed = True
+            elif board_dimensions.bottom_right[dim] < placed_piece_location[dim]:
+                board_dimensions.bottom_right[dim] = placed_piece_location[dim]
+                dimensions_changed = True
+
+        # If the dimensions changed, the update the board size and store it back in the array
+        if dimensions_changed:
+            board_dimensions.update_board_size()
+            self._placed_puzzle_dimensions[puzzle_id] = board_dimensions
 
     def _update_open_slots(self, placed_piece):
         """
