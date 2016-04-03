@@ -14,7 +14,9 @@ from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 
 class BestBuddyPoolInfo(object):
-
+    """
+    Used to encapulate best buddy objects in the pool of pieces to be placed.
+    """
     def __init__(self, piece_id):
         self.piece_id = piece_id
         self._key = str(piece_id)
@@ -29,6 +31,13 @@ class BestBuddyPoolInfo(object):
 
 
 class BestBuddyHeapInfo(object):
+    """
+    A heap is used to store the best buddy matches.  This class is used to encapsulate all the requisite
+    data for the heap objects.
+
+    It must implement the "__cmp__" method for sorting with the heap.  Note that cmp is used to create a
+    maximum heap.
+    """
 
     def __init__(self, bb_id, bb_side, neighbor_id, neighbor_side,
                  puzzle_id, location, mutual_compatibility):
@@ -57,6 +66,11 @@ class BestBuddyHeapInfo(object):
 
 
 class PuzzleOpenSlot(object):
+    """
+    As pieces are placed in the puzzle, invariably open slots on the puzzle board will be opened or closed.
+
+    This data structure stores that information inside a Python dictionary.
+    """
 
     def __init__(self, puzzle_id, (row, column), piece_id, open_side):
         self.puzzle_id = puzzle_id
@@ -67,6 +81,9 @@ class PuzzleOpenSlot(object):
 
     @property
     def key(self):
+        """
+        Dictionary key for the an open slot in the dictionary.
+        """
         return self._key
 
 
@@ -218,9 +235,7 @@ class PaikinTalSolver(object):
 
         Args:
             skip_initial (Optional bool): Used with Pickling.  Skips initial setup.
-
         """
-
         if not skip_initial:
             # Place the initial seed piece
             self._place_seed_piece()
@@ -323,16 +338,14 @@ class PaikinTalSolver(object):
                 i += 1
 
     def _remove_best_buddy_from_pool(self, piece_id):
-        # i = 0
-        # while i < len(self._best_buddies_pool):
-        #     bb_info = self._best_buddies_pool[i]
-        #     # If this open slot has the same location, remove it.
-        #     if bb_info.piece_id == piece_id:
-        #         del self._best_buddies_pool[i]
-        #     # Not the same BB so go to the next one
-        #     else:
-        #         i += 1
+        """
+        Best Buddy Pool Remover
 
+        This function removes best buddies from the best buddy pool.
+
+        Args:
+            piece_id (int):  Identification number of best buddy to be removed.
+        """
         # If the best buddy is in the pool then delete it.
         bb_info = BestBuddyPoolInfo(piece_id)
 
@@ -350,8 +363,6 @@ class PaikinTalSolver(object):
             next_piece = None
             # Keep popping from the heap until a valid next piece is found.
             while next_piece is None:
-                if len(self._best_buddy_open_slot_heap) == 0:
-                    x = 1
                 heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
                 # Make sure the piece is not already placed
                 if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id, heap_info.location):
@@ -359,10 +370,6 @@ class PaikinTalSolver(object):
                                                   heap_info.bb_id, heap_info.bb_side,
                                                   heap_info.neighbor_id, heap_info.neighbor_side,
                                                   heap_info.mutual_compatibility, True)
-                elif self._piece_placed[heap_info.bb_id]:
-                    x = 1
-                else:
-                    x = 1
 
             return next_piece
 
@@ -410,35 +417,37 @@ class PaikinTalSolver(object):
         self._open_locations = []
 
     def _get_next_piece_from_pool(self, is_best_buddy, pool_of_placeable_pieces):
-            best_piece = None
-            # Get the first object from the pool
-            for pool_obj in pool_of_placeable_pieces:
-                # Get the piece id of the next piece to place
-                if is_best_buddy:
-                    next_piece_id = pool_obj.piece_id
-                # When not best buddy, next piece ID is the pool object itself.
-                else:
-                    next_piece_id = pool_obj
 
-                # Iterate through each of the puzzles
-                for puzzle_id in range(0, self._numb_puzzles):
-                    # For each piece check each open slot
-                    for open_slot in self._open_locations:
-                        neighbor_piece_id = open_slot.piece_id
-                        neighbor_side = open_slot.open_side
 
-                        # Check the set of valid sides for each slot.
-                        for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
-                            mutual_compat = self._inter_piece_distance.mutual_compatibility(next_piece_id, next_piece_side,
-                                                                                            neighbor_piece_id, neighbor_side)
-                            # Check if need to update the best_piece
-                            if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
-                                open_slot_location = open_slot.location
+        best_piece = None
+        # Get the first object from the pool
+        for pool_obj in pool_of_placeable_pieces:
+            # Get the piece id of the next piece to place
+            if is_best_buddy:
+                next_piece_id = pool_obj.piece_id
+            # When not best buddy, next piece ID is the pool object itself.
+            else:
+                next_piece_id = pool_obj
 
-                                best_piece = NextPieceToPlace(puzzle_id, open_slot_location,
-                                                              next_piece_id, next_piece_side,
-                                                              neighbor_piece_id, neighbor_side,
-                                                              mutual_compat, is_best_buddy)
+            # Iterate through each of the puzzles
+            for puzzle_id in range(0, self._numb_puzzles):
+                # For each piece check each open slot
+                for open_slot in self._open_locations:
+                    neighbor_piece_id = open_slot.piece_id
+                    neighbor_side = open_slot.open_side
+
+                    # Check the set of valid sides for each slot.
+                    for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
+                        mutual_compat = self._inter_piece_distance.mutual_compatibility(next_piece_id, next_piece_side,
+                                                                                        neighbor_piece_id, neighbor_side)
+                        # Check if need to update the best_piece
+                        if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
+                            open_slot_location = open_slot.location
+
+                            best_piece = NextPieceToPlace(puzzle_id, open_slot_location,
+                                                          next_piece_id, next_piece_side,
+                                                          neighbor_piece_id, neighbor_side,
+                                                          mutual_compat, is_best_buddy)
             # noinspection PyUnboundLocalVariable
             return best_piece
 
@@ -497,6 +506,14 @@ class PaikinTalSolver(object):
 
     def _update_open_slots(self, placed_piece):
         """
+        Open Slots Updater
+
+        When a piece is placed, this function is run and updates the open slots that may have been created
+        by that piece's placement.  For example, when the first piece in a puzzle is placed, this function, will
+        open up four new slots.
+
+        Whenever a new slot is opened, it must be compared against all best buddies in the pool and the pairing
+        of that open slot and the best buddy added to the heap.
 
         Args:
             placed_piece (PuzzlePiece):
