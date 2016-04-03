@@ -400,7 +400,8 @@ class PaikinTalSolver(object):
             for open_location in self._open_locations:
                 placed_and_open_pieces[open_location.piece_id] = False
             # Recalculate the interpiece distances
-            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(placed_and_open_pieces)
+            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(self._piece_placed,
+                                                                                           placed_and_open_pieces)
 
             # Get all unplaced pieces
             unplaced_pieces = []
@@ -483,7 +484,7 @@ class PaikinTalSolver(object):
                     # Ignore any invalid slots
                     if not self._is_slot_open(open_slot.puzzle_id, open_slot.location):
                         continue
-                    
+
                     neighbor_piece_id = open_slot.piece_id
                     neighbor_side = open_slot.open_side
 
