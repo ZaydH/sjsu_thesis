@@ -2,6 +2,7 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
+import copy
 import heapq
 import pickle
 
@@ -382,6 +383,15 @@ class PaikinTalSolver(object):
                 placed_and_open_pieces[open_location.piece_id] = False
             # Recalculate the interpiece distances
             self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(placed_and_open_pieces)
+
+            # Get all unplaced pieces
+            unplaced_pieces = []
+            for p_i in range(0, len(self._pieces)):
+                # If the piece is not placed, then append to the list
+                if not self._piece_placed[p_i]:
+                    unplaced_pieces.append(p_i)
+            # Use the unplaced pieces to determine the best location.
+            return self._get_next_piece_from_pool(unplaced_pieces)
 
     def _is_slot_open(self, puzzle_id, location):
         """
