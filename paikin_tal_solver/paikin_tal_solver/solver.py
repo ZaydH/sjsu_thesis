@@ -2,7 +2,6 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
-import copy
 import heapq
 import pickle
 
@@ -58,8 +57,8 @@ class BestBuddyHeapInfo(object):
         Args:
             other:
 
-        Returns:
-
+        Returns: Maximum heap so the piece with the higher mutual compatibility is given higher priority in the
+        priority queue.
         """
         # Swapping to make a MAXIMUM heap
         return cmp(other.mutual_compatibility, self.mutual_compatibility)
@@ -386,7 +385,7 @@ class PaikinTalSolver(object):
                 if not self._piece_placed[p_i]:
                     unplaced_pieces.append(p_i)
             # Use the unplaced pieces to determine the best location.
-            return self._get_next_piece_from_pool(False, unplaced_pieces)
+            return self._get_next_piece_from_pool(unplaced_pieces)
 
     def _is_slot_open(self, puzzle_id, location):
         """
@@ -413,15 +412,20 @@ class PaikinTalSolver(object):
         self._best_buddy_open_slot_heap = []
         # heapq.heapify()
 
-    def _initialize_open_slots(self):
-        self._open_locations = []
+    def _get_next_piece_from_pool(self, unplaced_pieces):
+        """
+        When the best buddy pool is empty, pick the best piece from the unplaced pieces as the next
+        piece to be placed.
 
-    def _get_next_piece_from_pool(self, is_best_buddy, pool_of_placeable_pieces):
+        Args:
+            unplaced_pieces ([BestBuddyPoolInfo]): Set of unplaced pieces
 
-
+        Returns (NextPieceToPlace): Information on the piece that was selected as the best to be placed.
+        """
+        is_best_buddy = False
         best_piece = None
         # Get the first object from the pool
-        for pool_obj in pool_of_placeable_pieces:
+        for pool_obj in unplaced_pieces:
             # Get the piece id of the next piece to place
             if is_best_buddy:
                 next_piece_id = pool_obj.piece_id
@@ -450,6 +454,12 @@ class PaikinTalSolver(object):
                                                           mutual_compat, is_best_buddy)
             # noinspection PyUnboundLocalVariable
             return best_piece
+
+    def _initialize_open_slots(self):
+        """
+        Initalizes the set of open locations.
+        """
+        self._open_locations = []
 
     def _spawn_new_board(self):
         """
