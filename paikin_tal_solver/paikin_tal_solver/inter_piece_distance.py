@@ -505,8 +505,8 @@ class InterPieceDistance(object):
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
         self._recalculate_asymmetric_compatibilities(is_piece_placed)
 
-        # # Recalculate the mutual probabilities
-        # self.calculate_mutual_compatibility(is_piece_placed)
+        # Recalculate the mutual probabilities
+        self.calculate_mutual_compatibility(is_piece_placed)
         #
         # # Find the updated best buddies
         # self.find_best_buddies(is_piece_placed)

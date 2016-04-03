@@ -14,7 +14,7 @@ DISPLAY_IMAGES = True
 DEFAULT_PUZZLE_TYPE = PuzzleType.type1
 DEFAULT_PUZZLE_PIECE_WIDTH = 25
 
-SKIP_SETUP = True
+SKIP_SETUP = False
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -58,7 +58,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         paikin_tal_solver = PaikinTalSolver(numb_puzzles, combined_pieces,
                                             PuzzlePiece.calculate_asymmetric_distance, local_puzzle_type)
         # # Export the Paikin Tal Object.
-        PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver.pk")
+        #PickleHelper.exporter(paikin_tal_solver, "paikan_tal_solver.pk")
     else:
         paikin_tal_solver = PickleHelper.importer("paikan_tal_solver.pk")
     # paikin_tal_solver = PickleHelper.importer("Compatibility_calculate.pk")
@@ -99,10 +99,13 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         output_puzzles.append(new_puzzle)
 
 if __name__ == "__main__":
-    images = [".\\images\\muffins_300x200.jpg"]
-    paikin_tal_driver(images, PuzzleType.type1, 25)
+    # images = [".\\images\\muffins_300x200.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type1, 25)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
+    # images = [".\\images\\two_faced_cat.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type1, 25)
+    # paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
@@ -110,6 +113,6 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\boat_100x100.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 25)
-    # images = [".\\images\\che_100x100.gif"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
+    images = [".\\images\\che_100x100.gif"]
+    paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
