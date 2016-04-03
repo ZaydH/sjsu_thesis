@@ -253,7 +253,6 @@ class PaikinTalSolver(object):
                 # PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
                 # return
                 self._spawn_new_board()
-                # TODO make sure when a next piece is selected but not placed that nothing bad happens
             else:
                 # Place the next piece
                 self._place_normal_piece(next_piece)
@@ -362,9 +361,11 @@ class PaikinTalSolver(object):
             next_piece = None
             # Keep popping from the heap until a valid next piece is found.
             while next_piece is None:
+                # Get the best next piece from the heap.
                 heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
-                # Make sure the piece is not already placed
-                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id, heap_info.location):
+                # Make sure the piece is not already placed and/or the slot not already filled.
+                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id,
+                                                                                  heap_info.location):
                     next_piece = NextPieceToPlace(heap_info.puzzle_id, heap_info.location,
                                                   heap_info.bb_id, heap_info.bb_side,
                                                   heap_info.neighbor_id, heap_info.neighbor_side,
@@ -375,17 +376,12 @@ class PaikinTalSolver(object):
         else:
             print "\n\nNeed to recalculate the compatibilities.  Number of pieces left: " \
                   + str(self._numb_unplaced_pieces) + "\n\n"
-            # Recalculate the interpiece distances
-            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(self._piece_placed)
 
-            # Get all unplaced pieces
-            unplaced_pieces = []
-            for p_i in range(0, len(self._pieces)):
-                # If the piece is not placed, then append to the list
-                if not self._piece_placed[p_i]:
-                    unplaced_pieces.append(p_i)
-            # Use the unplaced pieces to determine the best location.
-            return self._get_next_piece_from_pool(unplaced_pieces)
+            placed_and_open_pieces = copy.copy(self._piece_placed)
+            for open_location in self._open_locations:
+                placed_and_open_pieces[open_location.piece_id] = False
+            # Recalculate the interpiece distances
+            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(placed_and_open_pieces)
 
     def _is_slot_open(self, puzzle_id, location):
         """
