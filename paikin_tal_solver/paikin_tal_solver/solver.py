@@ -482,8 +482,8 @@ class PaikinTalSolver(object):
 
                     # Ignore any invalid slots
                     if not self._is_slot_open(open_slot.puzzle_id, open_slot.location):
-                        return False
-
+                        continue
+                    
                     neighbor_piece_id = open_slot.piece_id
                     neighbor_side = open_slot.open_side
 
