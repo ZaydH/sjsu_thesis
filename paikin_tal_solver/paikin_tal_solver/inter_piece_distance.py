@@ -272,19 +272,22 @@ class PieceDistanceInformation(object):
         Resets the minimum and second best distances for an individual piece.
         """
         # Store the second best distances in an array
-        self._second_best_distance = [sys.float_info.max for _ in range(0, PuzzlePieceSide.get_numb_sides())]
-        # Use the second best distance to initialize a min best distance array.
-        # It should be slightly less in value than the second best distance (e.g. subtract 1
-        self._min_distance = [self._second_best_distance[i] - 1 for i in range(0, PuzzlePieceSide.get_numb_sides())]
+        self._second_best_distance = [sys.maxint for _ in range(0, PuzzlePieceSide.get_numb_sides())]
 
-    def _find_min_and_second_best_distances(self, is_piece_placed):
+        # Use the second best distance to initialize a min best distance array.
+        # It should be slightly less in value than the second best distance (e.g. subtract 1) since the best
+        # distance is supposed to be the minimum.
+        self._min_distance = [sys.maxint - 1 for i in range(0, PuzzlePieceSide.get_numb_sides())]
+
+    def _find_min_and_second_best_distances(self, skip_piece):
         """
         Minimum and Second Best Distance Finder
 
         Finds the minimum and second best distance for a piece with respect to already calculated distances.
 
         Args:
-            is_piece_placed ([Bool]): List indicating whether each piece is placed
+            skip_piece ([Bool]): A list indicating whether each piece should be skipped.  If True, the piece should
+            be skipped.  If the piece should be checked, then the array should be false.
         """
 
         # Reset the piece's distance information.
@@ -297,7 +300,7 @@ class PieceDistanceInformation(object):
             for p_j in range(0, self._numb_pieces):
 
                 # Do not compare a piece to itself or if it is already placed
-                if self._skip_piece(is_piece_placed, p_j):
+                if self._skip_piece(skip_piece, p_j):
                     continue
 
                 # Check all valid p_j sides depending on the puzzle type.
@@ -359,17 +362,17 @@ class PieceDistanceInformation(object):
                                                     numb_possible_pairings), numpy.float32)
         self._mutual_compatibilities.fill(float('inf'))
 
-    def _skip_piece(self, is_piece_placed, p_j=None):
+    def _skip_piece(self, skip_piece, p_j=None):
         """
 
         Args:
-            is_piece_placed:
+            skip_piece (Optional [Bool]):
             p_j (Optional int):
 
         Returns: True if this piece should be skipped and False otherwise.
         """
         if (p_j is not None and self._id == p_j) or \
-                (is_piece_placed is not None and is_piece_placed[p_j]):  # Do not compare a piece to itself.
+                (skip_piece is not None and skip_piece[p_j]):  # Do not compare a piece to itself.
                 return True
         else:
             return False
