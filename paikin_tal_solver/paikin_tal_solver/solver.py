@@ -63,7 +63,7 @@ class PuzzleOpenSlot(object):
         self.location = (row, column)
         self.piece_id = piece_id
         self.open_side = open_side
-        self._key = str(puzzle_id) + "_" + str(row) + "_" + str(column) + str(open_side.value)
+        self._key = str(puzzle_id) + "_" + str(row) + "_" + str(column) + "_" + str(open_side.value)
 
     @property
     def key(self):
