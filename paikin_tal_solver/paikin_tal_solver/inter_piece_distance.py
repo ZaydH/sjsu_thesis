@@ -524,8 +524,8 @@ class InterPieceDistance(object):
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
 
-    def recalculate_all_compatibilities_and_best_buddy_info(self, is_piece_placed,
-                                                            is_piece_placed_with_no_open_neighbors):
+    def recalculate_remaining_piece_compatibilities(self, is_piece_placed,
+                                                    is_piece_placed_with_no_open_neighbors):
         """
         Comptability Recalculator
 
@@ -541,9 +541,6 @@ class InterPieceDistance(object):
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
             assert len(is_piece_placed) == len(is_piece_placed_with_no_open_neighbors)
 
-        # # Clear the best buddy information for placed pieces
-        # self._clear_placed_piece_best_buddy_information()
-
         # Find the minimum and second best distance information for the placed pieces
         pieces_with_changed_dist = self._find_min_and_second_best_distances(is_piece_placed,
                                                                             is_piece_placed)
@@ -553,12 +550,6 @@ class InterPieceDistance(object):
 
         # Recalculate the mutual probabilities
         self.calculate_mutual_compatibility(pieces_with_changed_dist)
-        #
-        # # Find the updated best buddies
-        # self.find_best_buddies(is_piece_placed)
-        #
-        # # Find the starting pieces
-        # self.find_start_piece_candidates(is_piece_placed)
 
     def _find_min_and_second_best_distances(self, is_piece_placed=None, is_piece_placed_with_no_open_neighbors=None):
         """

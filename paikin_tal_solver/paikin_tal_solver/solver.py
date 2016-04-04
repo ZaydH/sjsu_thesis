@@ -430,8 +430,8 @@ class PaikinTalSolver(object):
             for open_location in self._open_locations:
                 placed_and_open_pieces[open_location.piece_id] = False
             # Recalculate the interpiece distances
-            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(self._piece_placed,
-                                                                                           placed_and_open_pieces)
+            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(self._piece_placed,
+                                                                                   placed_and_open_pieces)
 
             # Get all unplaced pieces
             unplaced_pieces = []
