@@ -109,8 +109,9 @@ class Puzzle(object):
         # Make a LAB version of the image.
         self._img_LAB = cv2.cvtColor(self._img, cv2.COLOR_BGR2LAB)
 
-    def make_pieces(self):
-        """Puzzle Generator
+    def make_pieces(self, starting_id_numb=0):
+        """
+        Puzzle Generator
 
         Given a puzzle, this function turns the puzzle into a set of pieces.
 
@@ -118,8 +119,10 @@ class Puzzle(object):
         if the image size is not evenly divisible by the number of pieces specified
         as parameters to this function.
 
+        Args:
+            starting_id_numb (Optional int): Identification number of the first piece in the puzzle.  If it is not
+            specified it defaults to 0.
         """
-
         # Calculate the piece information.
         numb_cols = int(math.floor(self._img_width / self.piece_width))  # Floor in python returns a float
         numb_rows = int(math.floor(self._img_height / self.piece_width))  # Floor in python returns a float
@@ -141,6 +144,7 @@ class Puzzle(object):
         self._img_LAB = Puzzle.extract_subimage(self._img_LAB, puzzle_upper_left, (self._img_height, self._img_width))
 
         # Break the board into pieces.
+        piece_id = starting_id_numb
         piece_size = (self.piece_width, self.piece_width)
         self._pieces = []  # Create an empty array to hold the puzzle pieces.
         for row in range(0, numb_rows):
@@ -150,7 +154,10 @@ class Puzzle(object):
 
                 # Create the puzzle piece and assign to the location.
                 location = (row, col)
-                self._pieces.append(PuzzlePiece(self._id, location, piece_img))
+                self._pieces.append(PuzzlePiece(self._id, location, piece_img,
+                                                piece_id=piece_id, puzzle_grid_size=self._grid_size))
+                # Increment the piece identification number
+                piece_id += 1
 
     @property
     def id_number(self):
