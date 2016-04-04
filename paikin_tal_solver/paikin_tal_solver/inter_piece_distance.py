@@ -272,7 +272,7 @@ class PieceDistanceInformation(object):
         Resets the minimum and second best distances for an individual piece.
         """
         # Store the second best distances in an array
-        self._second_best_distance = [sys.float_info.max for _ in range(0, PuzzlePieceSide.get_numb_sides())]
+        self._second_best_distance = [sys.maxint for _ in range(0, PuzzlePieceSide.get_numb_sides())]
         # Use the second best distance to initialize a min best distance array.
         # It should be slightly less in value than the second best distance (e.g. subtract 1
         self._min_distance = [self._second_best_distance[i] - 1 for i in range(0, PuzzlePieceSide.get_numb_sides())]

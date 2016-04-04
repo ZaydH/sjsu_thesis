@@ -420,25 +420,23 @@ class PaikinTalSolver(object):
                 else:
                     next_piece_id = pool_obj
 
-                # Iterate through each of the puzzles
-                for puzzle_id in range(0, self._numb_puzzles):
-                    # For each piece check each open slot
-                    for open_slot in self._open_locations:
-                        neighbor_piece_id = open_slot.piece_id
-                        neighbor_side = open_slot.open_side
+                # For each piece check each open slot
+                for open_slot in self._open_locations:
+                    neighbor_piece_id = open_slot.piece_id
+                    neighbor_side = open_slot.open_side
 
-                        # Check the set of valid sides for each slot.
-                        for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
-                            mutual_compat = self._inter_piece_distance.mutual_compatibility(next_piece_id, next_piece_side,
-                                                                                            neighbor_piece_id, neighbor_side)
-                            # Check if need to update the best_piece
-                            if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
-                                open_slot_location = open_slot.location
+                    # Check the set of valid sides for each slot.
+                    for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
+                        mutual_compat = self._inter_piece_distance.mutual_compatibility(next_piece_id, next_piece_side,
+                                                                                        neighbor_piece_id, neighbor_side)
+                        # Check if need to update the best_piece
+                        if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
+                            open_slot_location = open_slot.location
 
-                                best_piece = NextPieceToPlace(puzzle_id, open_slot_location,
-                                                              next_piece_id, next_piece_side,
-                                                              neighbor_piece_id, neighbor_side,
-                                                              mutual_compat, is_best_buddy)
+                            best_piece = NextPieceToPlace(open_slot.puzzle_id, open_slot_location,
+                                                          next_piece_id, next_piece_side,
+                                                          neighbor_piece_id, neighbor_side,
+                                                          mutual_compat, is_best_buddy)
             # noinspection PyUnboundLocalVariable
             return best_piece
 
