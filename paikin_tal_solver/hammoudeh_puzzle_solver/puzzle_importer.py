@@ -48,7 +48,7 @@ class Puzzle(object):
     border_width = 3
     border_outer_stripe_width = 1
 
-    def __init__(self, id_number, image_filename=None, piece_width=None):
+    def __init__(self, id_number, image_filename=None, piece_width=None, starting_piece_id=0):
         """Puzzle Constructor
 
         Constructor that will optionally load an image into the puzzle as well.
@@ -57,10 +57,10 @@ class Puzzle(object):
             id_number (int): ID number for the image.  It is used for multiple image puzzles.
             image_filename (Optional str): File path of the image to load
             piece_width (Optional int): Width of a puzzle piece in pixels
-
-        Returns:
-            Puzzle Object
-
+            starting_piece_id (int): Identification number for the first piece in the puzzle.  If not specified,
+            it default to 0.
+        Returns (Puzzle):
+            Puzzle divided into pieces based off the source image and the specified parameters.
         """
         # Internal Pillow Image object.
         self._id = id_number
@@ -85,7 +85,7 @@ class Puzzle(object):
         self._load_puzzle_image()
 
         # Make image pieces.
-        self.make_pieces()
+        self.make_pieces(starting_piece_id)
 
     def _load_puzzle_image(self):
         """Puzzle Image Loader
