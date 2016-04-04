@@ -322,10 +322,12 @@ class PieceDistanceInformation(object):
         numb_possible_pairings = len(InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type,
                                                                                  PuzzlePieceSide.get_all_sides()[0]))
 
-        # Build an empty array to store the piece to piece distances
-        self._asymmetric_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                       numb_possible_pairings), numpy.float32)
-        self._asymmetric_compatibilities.fill(float('inf'))
+        # Regenerate the numpy array only if it has not already been generated
+        if self._asymmetric_compatibilities is None:
+            # Build an empty array to store the piece to piece distances
+            self._asymmetric_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
+                                                           numb_possible_pairings), numpy.float32)
+            self._asymmetric_compatibilities.fill(float('inf'))
 
         # Calculate the asymmetric compatibility
         for p_j in range(0, self._numb_pieces):
@@ -483,9 +485,9 @@ class InterPieceDistance(object):
         """
         for p_i in range(0, self._numb_pieces):
 
-            # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
-                continue
+            # # Skip placed pieces
+            # if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+            #     continue
 
             # Go through all the valid sides
             for p_i_side in PuzzlePieceSide.get_all_sides():
@@ -493,7 +495,8 @@ class InterPieceDistance(object):
 
                     # Skip placed pieces
                     # No Need to check p_i == p_j since doing a diagonal calculation
-                    if p_i == p_j or InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                    if p_i == p_j or (InterPieceDistance._skip_piece(p_i, is_piece_placed)
+                                      and InterPieceDistance._skip_piece(p_j, is_piece_placed)):
                         continue
 
                     # Check all valid p_j sides depending on the puzzle type.
@@ -596,7 +599,7 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
             self._piece_distance_info[p_i].clear_best_buddy_information()
 
-    def _recalculate_asymmetric_compatibilities(self, is_piece_placed):
+    def _recalculate_asymmetric_compatibilities(self, min_or_second_best_distance_unchanged):
         """
         Asymmetric Compatibility Recalculator
 
@@ -604,16 +607,16 @@ class InterPieceDistance(object):
         found.
 
         Args:
-            is_piece_placed: (Optional [Bool]): List indicating whether each piece is placed
+            min_or_second_best_distance_unchanged: (Optional [Bool]): List indicating whether each piece is placed
         """
         # Iterate through all pieces skipping placed ones.
         for p_i in range(0, self._numb_pieces):
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+            if InterPieceDistance._skip_piece(p_i, min_or_second_best_distance_unchanged):
                 continue
 
             # Recalculate the
-            self._piece_distance_info[p_i].calculate_asymmetric_compatibility(is_piece_placed)
+            self._piece_distance_info[p_i].calculate_asymmetric_compatibility(min_or_second_best_distance_unchanged)
 
     def find_best_buddies(self, is_piece_placed=None):
         """
