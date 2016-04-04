@@ -799,6 +799,26 @@ class InterPieceDistance(object):
             self.assert_valid_type1_side(p_i_side, p_j_side)
         return self._piece_distance_info[p_i].asymmetric_distance(p_i_side, p_j, p_j_side)
 
+    def asymmetric_compatibility(self, p_i, p_i_side, p_j, p_j_side):
+        """
+        Asymmetric Compatibility Accessor
+
+        Returns the asymmetric compatibility for p_i's side (p_i_side) relative to p_j on its side p_j_side.
+
+        Args:
+            p_i (int): Primary piece for asymmetric distance
+            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
+            p_j (int): Secondary piece for the asymmetric distance.
+            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
+
+        Returns (int): Asymmetric compatibility between puzzle pieces p_i and p_j.
+        """
+        # For a type 1 puzzles, ensure that the pu
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            self.assert_valid_type1_side(p_i_side, p_j_side)
+
+        return self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j, p_j_side)
+
     def mutual_compatibility(self, p_i, p_i_side, p_j, p_j_side):
         """
         Mutual Compatibility Accessor
