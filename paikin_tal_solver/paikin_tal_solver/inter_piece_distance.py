@@ -499,10 +499,6 @@ class InterPieceDistance(object):
         """
         for p_i in range(0, self._numb_pieces):
 
-            # # Skip placed pieces
-            # if InterPieceDistance._skip_piece(p_i, is_piece_placed):
-            #     continue
-
             # Go through all the valid sides
             for p_i_side in PuzzlePieceSide.get_all_sides():
                 for p_j in range(p_i + 1, self._numb_pieces):
@@ -550,7 +546,7 @@ class InterPieceDistance(object):
 
         # Find the minimum and second best distance information for the placed pieces
         pieces_with_changed_dist = self._find_min_and_second_best_distances(is_piece_placed,
-                                                                            is_piece_placed_with_no_open_neighbors)
+                                                                            is_piece_placed)
 
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
         self._recalculate_asymmetric_compatibilities(pieces_with_changed_dist, is_piece_placed_with_no_open_neighbors)
