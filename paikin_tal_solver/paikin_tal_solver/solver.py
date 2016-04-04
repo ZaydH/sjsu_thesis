@@ -350,27 +350,27 @@ class PaikinTalSolver(object):
             next_piece = None
             # Keep popping from the heap until a valid next piece is found.
             while next_piece is None:
-                if len(self._best_buddy_open_slot_heap) == 0:
-                    x = 1
+                # Get the best next piece from the heap.
                 heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
-                # Make sure the piece is not already placed
-                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id, heap_info.location):
+                # Make sure the piece is not already placed and/or the slot not already filled.
+                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id,
+                                                                                  heap_info.location):
                     next_piece = NextPieceToPlace(heap_info.puzzle_id, heap_info.location,
                                                   heap_info.bb_id, heap_info.bb_side,
                                                   heap_info.neighbor_id, heap_info.neighbor_side,
                                                   heap_info.mutual_compatibility, True)
-                elif self._piece_placed[heap_info.bb_id]:
-                    x = 1
-                else:
-                    x = 1
 
             return next_piece
 
         else:
             print "\n\nNeed to recalculate the compatibilities.  Number of pieces left: " \
                   + str(self._numb_unplaced_pieces) + "\n\n"
+
+            placed_and_open_pieces = copy.copy(self._piece_placed)
+            for open_location in self._open_locations:
+                placed_and_open_pieces[open_location.piece_id] = False
             # Recalculate the interpiece distances
-            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(self._piece_placed)
+            self._inter_piece_distance.recalculate_all_compatibilities_and_best_buddy_info(placed_and_open_pieces)
 
             # Get all unplaced pieces
             unplaced_pieces = []
