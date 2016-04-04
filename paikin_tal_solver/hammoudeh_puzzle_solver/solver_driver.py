@@ -15,7 +15,7 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type1
 DEFAULT_PUZZLE_PIECE_WIDTH = 25
 
 # When true, all asymmetric distances are recalculated.
-RECALCULATE_DISTANCES = False
+RECALCULATE_DISTANCES = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 
@@ -149,14 +149,13 @@ if __name__ == "__main__":
     # images = [".\\images\\two_faced_cat.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
-    # images = [".\\images\\20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
-    # images = [".\\images\\20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
+    # images = [".\\images\\mcgill_20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\7.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    images = [".\\images\\mcgill_20.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\mcgill_20.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\mcgill_03.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\bgu_805_08.jpg"]
@@ -170,3 +169,5 @@ if __name__ == "__main__":
     # images = [".\\images\\che_100x100.gif"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
+    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, 28)
