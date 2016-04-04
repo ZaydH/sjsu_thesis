@@ -372,6 +372,31 @@ class PieceDistanceInformation(object):
         else:
             return False
 
+    @property
+    def minimum_distance(self):
+        """
+        Minimum (Best) Distance Property
+
+        For this piece's inter-piece distance information, this function is used to access the MINIMUM (i.e. best)
+        distance between it and any other piece.
+
+        Returns(float):
+            Minimum (i.e. best) distance for this puzzle piece
+        """
+        return self._min_distance
+
+    @property
+    def second_best_distance(self):
+        """
+        Second Best Distance Property
+
+        For this piece's interpiece distance information, this property returns the second best distance.
+
+        Returns (float):
+            Second best distance for this puzzle piece
+        """
+        return self._second_best_distance
+
 
 class InterPieceDistance(object):
     """
@@ -486,34 +511,35 @@ class InterPieceDistance(object):
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
 
-    def recalculate_all_compatibilities_and_best_buddy_info(self, is_piece_placed, is_piece_placed_or_open):
+    def recalculate_all_compatibilities_and_best_buddy_info(self, is_piece_placed,
+                                                            is_piece_placed_with_no_open_neighbors):
         """
         Comptability Recalculator
 
         When no best buddy is in the pool, this function is called to recalculate the best buddies and compatibilities.
 
         Args:
-            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
+            is_piece_placed ([Bool]): List indicating whether each piece is placed
+
+            is_piece_placed_with_no_open_neighbors ([Bool]): Subset of the elements in the array "is_piece_placed."  It
+            is only those pieces that are placed AND have no open locations amongst their direct neighbors.
         """
 
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
-            assert len(is_piece_placed) == len(is_piece_placed_or_open)
+            assert len(is_piece_placed) == len(is_piece_placed_with_no_open_neighbors)
 
         # # Clear the best buddy information for placed pieces
         # self._clear_placed_piece_best_buddy_information()
 
         # Find the minimum and second best distance information for the placed pieces
-        self._find_min_and_second_best_distances(is_piece_placed)
-        # For the open locations reset their first and second best distances
-        # for i in xrange(0, len(is_piece_placed_or_open)):
-        #     if is_piece_placed_or_open[i] and not is_piece_placed[i]:
-        #         self._piece_distance_info[i]
+        pieces_with_changed_dist = self._find_min_and_second_best_distances(is_piece_placed,
+                                                                            is_piece_placed_with_no_open_neighbors)
 
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
-        self._recalculate_asymmetric_compatibilities(is_piece_placed)
+        self._recalculate_asymmetric_compatibilities(pieces_with_changed_dist)
 
         # Recalculate the mutual probabilities
-        self.calculate_mutual_compatibility(is_piece_placed_or_open)
+        self.calculate_mutual_compatibility(pieces_with_changed_dist)
         #
         # # Find the updated best buddies
         # self.find_best_buddies(is_piece_placed)
@@ -521,22 +547,44 @@ class InterPieceDistance(object):
         # # Find the starting pieces
         # self.find_start_piece_candidates(is_piece_placed)
 
-    def _find_min_and_second_best_distances(self, is_piece_placed):
+    def _find_min_and_second_best_distances(self, is_piece_placed=None, is_piece_placed_with_no_open_neighbors=None):
         """
 
         Args:
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
 
+        # Determine whether anything for this piece needs to be recalculated.
+        min_or_second_best_distance_unchanged = [True] * len(is_piece_placed_with_no_open_neighbors)
+
+        # Initialize the minimum distance to prevent warnings in PyCharm
+        prev_min_dist = None
+        prev_second_best_dist = None
+
+        # Iterate through all of the pieces
         for p_i in range(0, self._numb_pieces):
 
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+            if InterPieceDistance._skip_piece(p_i, is_piece_placed_with_no_open_neighbors):
                 continue
+
+            # If these change, it means asymmetric distance or mutual compatibility need to be recalculated
+            if is_piece_placed is not None:
+                prev_min_dist = self._piece_distance_info[p_i].minimum_distance
+                prev_second_best_dist = self._piece_distance_info[p_i].second_best_distance
 
             # Find the minimum and second best distance for each piece and side
             # noinspection PyProtectedMember
             self._piece_distance_info[p_i]._find_min_and_second_best_distances(is_piece_placed)
+
+            # Check if the distances changed
+            if is_piece_placed is not None and (prev_min_dist != self._piece_distance_info[p_i].minimum_distance
+                                                or prev_second_best_dist != self._piece_distance_info[p_i].second_best_distance):
+                min_or_second_best_distance_unchanged[p_i] = False
+
+        # Return those parts whose distance actually changed to speed up calculations.
+        if is_piece_placed is not None:
+            return min_or_second_best_distance_unchanged
 
     def _clear_placed_piece_best_buddy_information(self):
         """
@@ -813,18 +861,18 @@ class InterPieceDistance(object):
             assert(p_i_side.complementary_side == p_j_side)
 
     @staticmethod
-    def _skip_piece(p_i, is_piece_placed):
+    def _skip_piece(p_i, is_piece_placed_with_no_open_neighbors):
         """
         Piece Skip Checker
 
         Checks whether a puzzle piece should be skipped based off whether it is placed.
         Args:
             p_i (int): Identification number of the puzzle piece
-            is_piece_placed ([Bool]):  List indicating whether each piece is placed
+            is_piece_placed_with_no_open_neighbors ([Bool]):  List indicating whether each piece is placed
 
         Returns: True if piece p_i should be skipped and False otherwise
         """
-        if is_piece_placed is not None and is_piece_placed[p_i]:
+        if is_piece_placed_with_no_open_neighbors is not None and is_piece_placed_with_no_open_neighbors[p_i]:
             return True
         else:
             return False
