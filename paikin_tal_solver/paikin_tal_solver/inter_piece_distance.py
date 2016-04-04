@@ -233,7 +233,8 @@ class PieceDistanceInformation(object):
                     # Update the minimum and second best distances as appropriate
                     self._update_min_and_second_best_distances_and_best_buddy_candidates(p_i_side,
                                                                                          p_j,
-                                                                                         p_j_side)
+                                                                                         p_j_side,
+                                                                                         update_best_buddy_candidates=True)
 
         # Calculate the Asymmetric Compatibilities
         self.calculate_asymmetric_compatibility()
@@ -261,6 +262,7 @@ class PieceDistanceInformation(object):
                 self._best_buddy_candidates[p_i_side.value] = [(p_j, p_j_side)]
         # See if there is a tie for best buddy
         elif dist == self._min_distance[p_i_side.value]:
+            # TODO Decide later what to do about best buddy ties.
             self._second_best_distance[p_i_side.value] = dist
 
             if update_best_buddy_candidates:
@@ -551,7 +553,7 @@ class InterPieceDistance(object):
                                                                             is_piece_placed_with_no_open_neighbors)
 
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
-        self._recalculate_asymmetric_compatibilities(pieces_with_changed_dist)
+        self._recalculate_asymmetric_compatibilities(pieces_with_changed_dist, is_piece_placed_with_no_open_neighbors)
 
         # Recalculate the mutual probabilities
         self.calculate_mutual_compatibility(pieces_with_changed_dist)
@@ -611,7 +613,8 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
             self._piece_distance_info[p_i].clear_best_buddy_information()
 
-    def _recalculate_asymmetric_compatibilities(self, min_or_second_best_distance_unchanged):
+    def _recalculate_asymmetric_compatibilities(self, min_or_second_best_distance_unchanged,
+                                                is_piece_placed_with_no_open_neighbors):
         """
         Asymmetric Compatibility Recalculator
 
@@ -628,7 +631,7 @@ class InterPieceDistance(object):
                 continue
 
             # Recalculate the
-            self._piece_distance_info[p_i].calculate_asymmetric_compatibility(min_or_second_best_distance_unchanged)
+            self._piece_distance_info[p_i].calculate_asymmetric_compatibility(is_piece_placed_with_no_open_neighbors)
 
     def find_best_buddies(self, is_piece_placed=None):
         """
@@ -815,10 +818,10 @@ class InterPieceDistance(object):
 
         p_i_mutual_compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
 
-        # # Verify for debug the mutual compatibility is symmetric.
-        # if InterPieceDistance._PERFORM_ASSERT_CHECKS:
-        #     assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].get_mutual_compatibility(p_j_side,
-        #                                                                                                p_i, p_i_side))
+        # Verify for debug the mutual compatibility is symmetric.
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            assert(p_i_mutual_compatibility == self._piece_distance_info[p_j].get_mutual_compatibility(p_j_side,
+                                                                                                       p_i, p_i_side))
         # Return the mutual compatibility
         return p_i_mutual_compatibility
 
