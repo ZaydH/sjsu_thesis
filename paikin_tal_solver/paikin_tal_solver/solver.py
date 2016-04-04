@@ -88,6 +88,10 @@ class PuzzleOpenSlot(object):
 
 
 class PuzzleDimensions(object):
+    """
+    Stores the information regarding the puzzle dimensions including its top left and bottom right corners
+    as well as its total size.
+    """
 
     def __init__(self, puzzle_id, starting_point):
         self.puzzle_id = puzzle_id
@@ -95,12 +99,20 @@ class PuzzleDimensions(object):
         self.bottom_right = [starting_point[0], starting_point[1]]
         self.total_size = (1, 1)
 
-    def update_board_size(self):
+    def update_dimensions(self):
+        """
+        Puzzle Dimensions Updater
+
+        Updates the total dimensions of the puzzle.
+        """
         self.total_size = (self.bottom_right[0] - self.top_left[0] + 1,
                            self.bottom_right[1] - self.top_left[1] + 1)
 
 
 class NextPieceToPlace(object):
+    """
+    Contains all the information on the next piece in the puzzle to be placed.
+    """
 
     def __init__(self, puzzle_id, open_slot_location, next_piece_id, next_piece_side,
                  neighbor_piece_id, neighbor_piece_side, compatibility, is_best_buddy):
@@ -126,6 +138,10 @@ class NextPieceToPlace(object):
 
 
 class PickleHelper(object):
+    """
+    The Pickle Helper class is used to simplify the importing and exporting of objects via the Python Pickle
+    Library.
+    """
 
     @staticmethod
     def importer(filename):
@@ -378,6 +394,16 @@ class PaikinTalSolver(object):
         del self._best_buddies_pool[bb_info.key]
 
     def _find_next_piece(self):
+        """
+        Next Piece to Place Finder
+
+        If the best buddy pool (and accompanying heap) are not empty, then the next piece to place comes from
+        the best buddy pool.  If the pool is empty, the mutual compatibilities are recalculated and the piece
+        with the highest mutual compatibility with an open slot is selected.
+
+        Returns (NextPieceToPlace):
+            Information on the next piece to be placed.
+        """
 
         # Prioritize placing from BB pool
         if len(self._best_buddies_pool) > 0:
@@ -555,9 +581,10 @@ class PaikinTalSolver(object):
         seed.location = board_center
         seed.rotation = PuzzlePieceRotation.degree_0
         self._piece_locations[seed.puzzle_id][board_center] = True  # Note that this piece has been placed
+
         # Define new puzzle dimensions with the board center as the top left and bottom right
-        puzzleDimensions = PuzzleDimensions(seed.puzzle_id, board_center)
-        self._placed_puzzle_dimensions.append(puzzleDimensions)
+        puzzle_dimensions = PuzzleDimensions(seed.puzzle_id, board_center)
+        self._placed_puzzle_dimensions.append(puzzle_dimensions)
 
         # # Add a new puzzle to the open locations tracker
         # self._open_locations.append([])
@@ -576,8 +603,8 @@ class PaikinTalSolver(object):
         board_dimensions = self._placed_puzzle_dimensions[puzzle_id]
         # Make sure the dimensions are somewhat plausible.
         if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
-            assert board_dimensions.top_left[0] <= board_dimensions.bottom_right[0] \
-                   and board_dimensions.top_left[1] <= board_dimensions.bottom_right[1]
+            assert (board_dimensions.top_left[0] <= board_dimensions.bottom_right[0] and
+                    board_dimensions.top_left[1] <= board_dimensions.bottom_right[1])
 
         # Store the puzzle dimensions.
         dimensions_changed = False
@@ -591,7 +618,7 @@ class PaikinTalSolver(object):
 
         # If the dimensions changed, the update the board size and store it back in the array
         if dimensions_changed:
-            board_dimensions.update_board_size()
+            board_dimensions.update_dimensions()
             self._placed_puzzle_dimensions[puzzle_id] = board_dimensions
 
     def _update_open_slots(self, placed_piece):
