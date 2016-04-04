@@ -238,7 +238,8 @@ class PieceDistanceInformation(object):
         # Calculate the Asymmetric Compatibilities
         self.calculate_asymmetric_compatibility()
 
-    def _update_min_and_second_best_distances_and_best_buddy_candidates(self, p_i_side, p_j, p_j_side):
+    def _update_min_and_second_best_distances_and_best_buddy_candidates(self, p_i_side, p_j, p_j_side,
+                                                                        update_best_buddy_candidates):
         """
 
         Args:
@@ -255,12 +256,16 @@ class PieceDistanceInformation(object):
         if dist < self._min_distance[p_i_side.value]:
             self._second_best_distance[p_i_side.value] = self._min_distance[p_i_side.value]
             self._min_distance[p_i_side.value] = dist
-            self._best_buddy_candidates[p_i_side.value] = [(p_j, p_j_side)]
+
+            if update_best_buddy_candidates:
+                self._best_buddy_candidates[p_i_side.value] = [(p_j, p_j_side)]
         # See if there is a tie for best buddy
         elif dist == self._min_distance[p_i_side.value]:
-            # noinspection PyTypeChecker
-            self._best_buddy_candidates[p_i_side.value].append((p_j, p_j_side))
             self._second_best_distance[p_i_side.value] = dist
+
+            if update_best_buddy_candidates:
+                # noinspection PyTypeChecker
+                self._best_buddy_candidates[p_i_side.value].append((p_j, p_j_side))
         # If only the second best then update the second best distance
         elif dist < self._second_best_distance[p_i_side.value]:
             self._second_best_distance[p_i_side.value] = dist
@@ -293,6 +298,9 @@ class PieceDistanceInformation(object):
         # Reset the piece's distance information.
         self._reset_min_and_second_best_distances()
 
+        # Select whether to update the best buddy candidates
+        update_best_buddy_candidates = True if skip_piece is None else False
+
         # Go through all the valid sides
         for p_i_side in PuzzlePieceSide.get_all_sides():
 
@@ -309,7 +317,8 @@ class PieceDistanceInformation(object):
                     # Update the first and second best pieces as appropriate
                     self._update_min_and_second_best_distances_and_best_buddy_candidates(p_i_side,
                                                                                          p_j,
-                                                                                         p_j_side)
+                                                                                         p_j_side,
+                                                                                         update_best_buddy_candidates)
 
     def calculate_asymmetric_compatibility(self, is_piece_placed=None):
         """
