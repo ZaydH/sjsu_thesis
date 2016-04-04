@@ -261,6 +261,10 @@ class PaikinTalSolver(object):
             if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
                 print str(self._numb_unplaced_pieces) + " remain to be placed."
 
+            # if len(self._best_buddies_pool) == 0:
+            #     PickleHelper.exporter(self, "empty_best_buddy_pool.pk")
+            #     return
+
             # Get the next piece to place
             next_piece = self._find_next_piece()
 
@@ -476,30 +480,27 @@ class PaikinTalSolver(object):
             else:
                 next_piece_id = pool_obj
 
-            # Iterate through each of the puzzles
-            for puzzle_id in range(0, self._numb_puzzles):
-                # For each piece check each open slot
-                for open_slot in self._open_locations:
+            # For each piece check each open slot
+            for open_slot in self._open_locations:
 
-                    # Ignore any invalid slots
-                    if not self._is_slot_open(open_slot.puzzle_id, open_slot.location):
-                        continue
+                # Ignore any invalid slots
+                if not self._is_slot_open(open_slot.puzzle_id, open_slot.location):
+                    continue
 
-                    neighbor_piece_id = open_slot.piece_id
-                    neighbor_side = open_slot.open_side
+                # Get the information on the piece adjacent to the open slot
+                neighbor_piece_id = open_slot.piece_id
+                neighbor_side = open_slot.open_side
 
-                    # Check the set of valid sides for each slot.
-                    for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
-                        mutual_compat = self._inter_piece_distance.mutual_compatibility(next_piece_id, next_piece_side,
-                                                                                        neighbor_piece_id, neighbor_side)
-                        # Check if need to update the best_piece
-                        if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
-                            open_slot_location = open_slot.location
-
-                            best_piece = NextPieceToPlace(puzzle_id, open_slot_location,
-                                                          next_piece_id, next_piece_side,
-                                                          neighbor_piece_id, neighbor_side,
-                                                          mutual_compat, is_best_buddy)
+                # Check the set of valid sides for each slot.
+                for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
+                    mutual_compat = self._inter_piece_distance.mutual_compatibility(next_piece_id, next_piece_side,
+                                                                                    neighbor_piece_id, neighbor_side)
+                    # Check if need to update the best_piece
+                    if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
+                        best_piece = NextPieceToPlace(open_slot.puzzle_id, open_slot.location,
+                                                      next_piece_id, next_piece_side,
+                                                      neighbor_piece_id, neighbor_side,
+                                                      mutual_compat, is_best_buddy)
             # noinspection PyUnboundLocalVariable
             return best_piece
 
