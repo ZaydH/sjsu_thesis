@@ -284,7 +284,7 @@ class PieceDistanceInformation(object):
         # Use the second best distance to initialize a min best distance array.
         # It should be slightly less in value than the second best distance (e.g. subtract 1) since the best
         # distance is supposed to be the minimum.
-        self._min_distance = [sys.maxint - 1 for i in range(0, PuzzlePieceSide.get_numb_sides())]
+        self._min_distance = [sys.maxint - 1 for _ in range(0, PuzzlePieceSide.get_numb_sides())]
 
     def _find_min_and_second_best_distances(self, skip_piece):
         """
@@ -685,24 +685,26 @@ class InterPieceDistance(object):
 
             # Extract the info on the best neighbors
             p_i_best_buddies = []
-            avg_compatibility = 0
+            neighbor_compatibility = 0
             for bb_and_compat in p_i_best_buddies_and_compat:
 
-                # Check if no best buddies.  If so, exit.
+                # Check if no best buddies.  If so, go to the next.
                 if not bb_and_compat:
                     continue
 
                 # TODO Change the code to support multiple best buddies and to pick the best one.
                 bestest_best_buddy_index = 0  # Out of all of the possible best buddies on this side, this is the best one
                 p_i_best_buddies.append(bb_and_compat[bestest_best_buddy_index][0])  # Get p_j
-                avg_compatibility += bb_and_compat[bestest_best_buddy_index][1]  # Get NEGATED mutual compatibility
+                neighbor_compatibility += bb_and_compat[bestest_best_buddy_index][1]  # Get NEGATED mutual compatibility
+
+            # Calculate the average (Not needed since based off the sum and sort off number of best buddies
+            # if len(p_i_best_buddies) > 0:
+            #     neighbor_compatibility /= len(p_i_best_buddies)
+            # else:
+            #     neighbor_compatibility = 0
 
             # Store the best neighbors list as well as the average distance
-            if len(p_i_best_buddies) > 0:
-                avg_compatibility /= len(p_i_best_buddies)
-            else:
-                avg_compatibility = 0
-            all_best_buddy_info.append((p_i_best_buddies, avg_compatibility))
+            all_best_buddy_info.append((p_i_best_buddies, neighbor_compatibility))
 
         # Build the best neighbor information
         self._start_piece_ordering = []
