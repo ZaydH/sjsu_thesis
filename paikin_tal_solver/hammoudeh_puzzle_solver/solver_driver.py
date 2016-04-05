@@ -71,8 +71,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         # Export the Paikin Tal Object.
         PickleHelper.exporter(paikin_tal_solver, pickle_file_name)
     else:
+        print "Beginning import of pickle file: \"" + pickle_file_name + "\"\n\n"
         paikin_tal_solver = PickleHelper.importer(pickle_file_name)
-        paikin_tal_solver._actual_puzzle_dimensions = None
+        print "Pickle Import completed.\""
+        paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
 
     # Run the Solver
     paikin_tal_solver.run()
