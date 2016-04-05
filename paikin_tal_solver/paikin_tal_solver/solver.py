@@ -362,6 +362,16 @@ class PaikinTalSolver(object):
         self._update_open_slots(next_piece)
 
     def _remove_open_slot(self, puzzle_id, location):
+        """
+        Open Slot Remover
+
+        For a given puzzle identification number and location (row, column), the removes any locations in the
+        open slot list that has that puzzle ID and location.
+
+        Args:
+            puzzle_id (int): Puzzle identification number
+            location ([int]): Puzzle location (row, column)
+        """
         i = 0
         while i < len(self._open_locations):
             open_slot_info = self._open_locations[i]
@@ -527,8 +537,8 @@ class PaikinTalSolver(object):
                                                       next_piece_id, next_piece_side,
                                                       neighbor_piece_id, neighbor_side,
                                                       mutual_compat, is_best_buddy)
-            # noinspection PyUnboundLocalVariable
-            return best_piece
+        # noinspection PyUnboundLocalVariable
+        return best_piece
 
     def _initialize_open_slots(self):
         """
@@ -571,12 +581,15 @@ class PaikinTalSolver(object):
         seed = self._pieces[seed_piece_id]
         self._mark_piece_placed(seed_piece_id)
 
-        shape = (len(self._pieces), len(self._pieces))
-        self._piece_locations.append(numpy.empty(shape, numpy.bool))
-        self._piece_locations[self._numb_puzzles - 1].fill(False)
-
         # Set the first piece's puzzle id
         seed.puzzle_id = self._numb_puzzles - 1
+
+        # Initialize the piece locations list
+        shape = (len(self._pieces), len(self._pieces))
+        self._piece_locations.append(numpy.empty(shape, numpy.bool))
+        self._piece_locations[seed.puzzle_id].fill(False)
+
+        # Place the piece unrotated in the center of the board.
         board_center = (int(shape[0] / 2), int(shape[1]) / 2)
         seed.location = board_center
         seed.rotation = PuzzlePieceRotation.degree_0
@@ -586,9 +599,6 @@ class PaikinTalSolver(object):
         puzzle_dimensions = PuzzleDimensions(seed.puzzle_id, board_center)
         self._placed_puzzle_dimensions.append(puzzle_dimensions)
 
-        # # Add a new puzzle to the open locations tracker
-        # self._open_locations.append([])
-
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(seed.id_number)
         self._update_open_slots(seed)
@@ -596,6 +606,7 @@ class PaikinTalSolver(object):
     def _updated_puzzle_dimensions(self, puzzle_id, placed_piece_location):
         """
         Puzzle Dimensions Updater
+
         Args:
             puzzle_id (int): Identification number of the puzzle
             placed_piece_location ([int]): Location of the newly placed piece.
