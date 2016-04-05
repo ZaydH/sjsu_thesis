@@ -92,7 +92,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     output_puzzles = []
 
     ts = time.time()
-    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S')
+    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y.%m.%d_%H.%M.%S')
     for puzzle_pieces in paikin_tal_results:
         # Get the first piece of the puzzle and extract information on it.
         first_piece = puzzle_pieces[0]
@@ -149,9 +149,9 @@ def extract_image_filename_and_file_extension(image_filename_and_path):
 
 
 if __name__ == "__main__":
-    # images = [".\\images\\muffins_300x200.jpg"]
+    images = [".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # images = [".\\images\\cat_sleeping_boy.jpg"]
@@ -210,6 +210,6 @@ if __name__ == "__main__":
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4
     paikin_tal_driver(images, PuzzleType.type2, 28)
-    
+
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
