@@ -3,6 +3,8 @@
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
 import random
+import time
+import datetime
 
 # noinspection PyUnresolvedReferences
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester, PuzzleType
@@ -87,6 +89,8 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
     # Print the Paikin Tal Solver Results
     output_puzzles = []
+
+    ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S')
     for puzzle_pieces in paikin_tal_results:
         # Get the first piece of the puzzle and extract information on it.
