@@ -10,13 +10,16 @@ from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.solver import PaikinTalSolver, PickleHelper
 
 # Select whether to display the images after reconstruction
-DISPLAY_IMAGES = True
+DISPLAY_IMAGES = False
 DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
 RECALCULATE_DISTANCES = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
+
+# Defining a directory where pickle files are stored.
+PICKLE_DIRECTORY = ".\\pickle_files\\"
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -48,7 +51,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     random.shuffle(combined_pieces)
 
     # Extract the filename of the image(s)
-    pickle_file_name = "start"
+    pickle_file_name = PICKLE_DIRECTORY + "start"
     for i in range(0, len(image_files)):
         # Get the root of the filename (i.e. without path and file extension
         _, img_root_filename = extract_image_filename_and_file_extension(image_files[i])
@@ -73,6 +76,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     else:
         print "Beginning import of pickle file: \"" + pickle_file_name + "\"\n\n"
         paikin_tal_solver = PickleHelper.importer(pickle_file_name)
+        paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
         print "Pickle Import completed.\""
 
     # Run the Solver
@@ -83,6 +87,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
     # Print the Paikin Tal Solver Results
     output_puzzles = []
+    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S')
     for puzzle_pieces in paikin_tal_results:
         # Get the first piece of the puzzle and extract information on it.
         first_piece = puzzle_pieces[0]
@@ -100,10 +105,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         filename = ".\\solved\\reconstructed_type_" + str(paikin_tal_solver.puzzle_type.value) + "_"
         if len(image_files) == 1:
             img_extension, img_root_filename = extract_image_filename_and_file_extension(image_files[0])
-            filename += img_root_filename + "." + img_extension
+            filename += img_root_filename + "_" + timestamp + "." + img_extension
         # Give a generic name if more than one puzzle being solved
         else:
-            filename += "puzzle_" + ("%04d" % puzzle_id) + ".jpg"
+            filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + timestamp + ".jpg"
         new_puzzle.save_to_file(filename)
 
         # Append the puzzle to the list
@@ -163,14 +168,14 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\bgu_805_10.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    images = [".\\images\\3300_1.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\3300_1.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\boat_100x100.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\che_100x100.gif"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
-    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
