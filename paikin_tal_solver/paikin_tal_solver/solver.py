@@ -285,7 +285,7 @@ class PaikinTalSolver(object):
             next_piece = self._find_next_piece()
 
             if self._numb_puzzles < self._actual_numb_puzzles \
-                    and next_piece.mutual_compatibility < PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD:
+                    and next_piece.mutual_compatibility < self._new_board_mutual_compatibility:
                 # PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
                 # return
                 self._spawn_new_board()

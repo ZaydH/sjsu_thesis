@@ -725,7 +725,7 @@ class InterPieceDistance(object):
             p_i_best_buddy_ids = this_piece_bb_info[0]
             for bb_id in p_i_best_buddy_ids:
                 numb_bb_neighbors += len(all_best_buddy_info[bb_id][0])
-                total_compatibility += all_best_buddy_info[bb_id][1]
+                # total_compatibility += all_best_buddy_info[bb_id][1]
 
             # Add this pieces information to the list of possible start pieces
             self._start_piece_ordering.append((p_i, numb_bb_neighbors, total_compatibility))
