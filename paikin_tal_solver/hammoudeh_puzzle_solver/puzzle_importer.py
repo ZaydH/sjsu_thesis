@@ -113,7 +113,7 @@ class PuzzleResultsCollection(object):
                 print acc_name + " Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces, results.numb_pieces,
                                                                               100.0 * numb_missing_pieces / results.numb_pieces)
                 # Print a new line to separate the results
-                print "\n"
+                print ""
 
             print "\n\n\n"
 
