@@ -7,7 +7,7 @@ import time
 import datetime
 
 # noinspection PyUnresolvedReferences
-from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester, PuzzleType
+from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester, PuzzleType, PuzzleResultsCollection
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver, PickleHelper
@@ -86,13 +86,18 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     paikin_tal_solver.run()
 
     # Get the results
-    (paikin_tal_results, _) = paikin_tal_solver.get_solved_puzzles()
+    (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
     # Print the Paikin Tal Solver Results
     output_puzzles = []
 
+    # Create a time stamp for the results
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y.%m.%d_%H.%M.%S')
+
+    # Build the results information collection
+    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
+
     for puzzle_pieces in paikin_tal_results:
         # Get the first piece of the puzzle and extract information on it.
         first_piece = puzzle_pieces[0]

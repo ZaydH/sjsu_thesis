@@ -24,10 +24,75 @@ class PuzzleType(Enum):
 
 
 class ImageColor(Enum):
+    """
+    Used to create solid color images for base images and for image manipulation.
+    """
+    black = 1
+
+
+class DirectAccuracyType(Enum):
+    """
+    Defines the direct accuracy types.
+    """
+    Standard_Direct_Accuracy = 0
+    Modified_Direct_Accuracy = 0
+
+
+class PuzzleResultsCollection(object):
+    """
+    Stores all the puzzle results information in a single collection.
+    """
+
+    def __init__(self, pieces_partitioned_by_puzzle):
+        self._puzzle_results = []
+
+        # Iterate through all the puzzles
+        for set_of_pieces in pieces_partitioned_by_puzzle:
+            # Iterate through all the pieces
+            puzzle_exists = True
+            for i in range(0, len(self._puzzle_results)):
+                # Check if the puzzle ID matches this set of results information.
+                if piece.puzzle_id == self._puzzle_results[i].puzzle_id:
+                    puzzle_exists = True
+                    self._puzzle_results[i].numb_pieces += 1
+                    continue
+
+            # If the puzzle does not exist, then create a results information
+            if not puzzle_exists:
+                self._puzzle_results.append(PuzzleResultsInformation(piece.puzzle_id))
+                self._puzzle_results[i].numb_pieces += 1
+
+
+class PuzzleResultsInformation(object):
+
+    _PERFORM_ASSERT_CHECK = True
+
+    def __init__(self, puzzle_id):
+
+        # Store the number of pieces and the puzzle id
+        self.puzzle_id = puzzle_id
+
+        # Define the attributes for the standard accuracy.
+        self.standard_direct_accuracy = None
+        self.modified_direct_accuracy = None
+
+    def resolve_direct_accuracies(self, puzzle):
         """
-        Used to create solid color images for base images and for image manipulation.
+        Direct Accuracy Resolver
+
+        In the case of multiple puzzles, there will be multiple direct accuracies for each
+
+        Args:
+            puzzle (Puzzle): A solved puzzle
         """
-        black = 1
+
+        # Get the standard direct accuracy
+        standard_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id)
+
+        # Update the standard direct accuracy
+        if self.standard_direct_accuracy is None \
+                or self.standard_direct_accuracy.number_correct_placements < standard_direct_accuracy.number_correct_placements:
+                self.standard_direct_accuracy = standard_direct_accuracy
 
 
 class DirectAccuracyPuzzleResults(object):
@@ -41,6 +106,15 @@ class DirectAccuracyPuzzleResults(object):
         self._wrong_location = []
         self._wrong_rotation = []
         self._correct_placement = []
+
+    @property
+    def puzzle_id(self):
+        """
+        Direct Accuracy Puzzle ID Number Accessor
+
+        Returns (int): The puzzle ID associated with this set of puzzle results
+        """
+        return self._puzzle_id
 
     def add_wrong_location(self, piece):
         """
@@ -87,7 +161,7 @@ class DirectAccuracyPuzzleResults(object):
         self._correct_placement.append(piece)
 
     @property
-    def number_correct_placemment(self):
+    def number_correct_placemments(self):
         """
         Number of Pieces Placed Correctly Property
 
@@ -385,6 +459,7 @@ class Puzzle(object):
 
         accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id)
 
+        # Iterate through each piece and determine its accuracy results.
         for piece in self._pieces:
 
             # Ensure that the puzzle ID matches the requirement
@@ -402,6 +477,8 @@ class Puzzle(object):
             # Piece is correctly placed
             else:
                 accuracy_info.add_correct_placement(piece)
+
+        return accuracy_info
 
     def randomize_puzzle_piece_locations(self):
         """

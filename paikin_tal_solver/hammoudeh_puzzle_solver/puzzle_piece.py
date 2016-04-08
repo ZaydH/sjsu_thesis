@@ -655,9 +655,12 @@ class PuzzlePiece(object):
 
     def is_correctly_placed(self, puzzle_offset_upper_left_location):
         """
+        Piece Placement Checker
+
+        Checks whether the puzzle piece is correctly placed.
 
         Args:
-            puzzle_offset_upper_left_location ([int]):
+            puzzle_offset_upper_left_location (Tuple[int]): Modified location for the origin of the puzzle
 
         Returns (bool): True if the puzzle piece is in the correct location and False otherwise.
         """
