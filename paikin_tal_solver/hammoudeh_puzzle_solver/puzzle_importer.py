@@ -43,24 +43,40 @@ class PuzzleResultsCollection(object):
     Stores all the puzzle results information in a single collection.
     """
 
+    _PERFORM_ASSERT_CHECKS = True
+
     def __init__(self, pieces_partitioned_by_puzzle):
         self._puzzle_results = []
 
-        # Iterate through all the puzzles
-        for set_of_pieces in pieces_partitioned_by_puzzle:
-            # Iterate through all the pieces
-            puzzle_exists = True
-            for i in range(0, len(self._puzzle_results)):
-                # Check if the puzzle ID matches this set of results information.
-                if piece.puzzle_id == self._puzzle_results[i].puzzle_id:
-                    puzzle_exists = True
-                    self._puzzle_results[i].numb_pieces += 1
-                    continue
+        # Iterate through the pieces divided by puzzles and create results information for each
+        for i in xrange(0, len(pieces_partitioned_by_puzzle)):
+            self._puzzle_results.append(PuzzleResultsInformation(pieces_partitioned_by_puzzle[i][0].puzzle_id))
+            self._puzzle_results[i].numb_pieces = len(pieces_partitioned_by_puzzle[i])
 
-            # If the puzzle does not exist, then create a results information
-            if not puzzle_exists:
-                self._puzzle_results.append(PuzzleResultsInformation(piece.puzzle_id))
-                self._puzzle_results[i].numb_pieces += 1
+    @property
+    def results(self):
+        return self._puzzle_results
+
+    def print_results(self):
+
+        # Iterate through each puzzle and print that puzzle's results
+        for results in self._puzzle_results:
+
+            # Print the header line
+            print "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
+
+            # Print the standard accuracy information
+            acc_name = "Standard"
+            direct_acc = results.standard_direct_accuracy
+            print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements, results.numb_pieces,
+                                                                      100.0 * direct_acc.numb_correct_placements / results.numb_pieces)
+            print acc_name + " Numb Different Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle, results.numb_pieces,
+                                                                          100.0 * direct_acc.numb_different_puzzle / results.numb_pieces)
+            print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location, results.numb_pieces,
+                                                                        100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
+            print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation, results.numb_pieces,
+                                                                        100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
+            print "\n\n\n"
 
 
 class PuzzleResultsInformation(object):
@@ -71,6 +87,7 @@ class PuzzleResultsInformation(object):
 
         # Store the number of pieces and the puzzle id
         self.puzzle_id = puzzle_id
+        self.numb_pieces = -1
 
         # Define the attributes for the standard accuracy.
         self.standard_direct_accuracy = None
@@ -91,7 +108,7 @@ class PuzzleResultsInformation(object):
 
         # Update the standard direct accuracy
         if self.standard_direct_accuracy is None \
-                or self.standard_direct_accuracy.number_correct_placements < standard_direct_accuracy.number_correct_placements:
+                or self.standard_direct_accuracy.numb_correct_placements < standard_direct_accuracy.numb_different_puzzle:
                 self.standard_direct_accuracy = standard_direct_accuracy
 
 
@@ -102,7 +119,7 @@ class DirectAccuracyPuzzleResults(object):
 
     def __init__(self, puzzle_id):
         self._puzzle_id = puzzle_id
-        self._wrong_puzzle = []
+        self._different_puzzle = []
         self._wrong_location = []
         self._wrong_rotation = []
         self._correct_placement = []
@@ -127,16 +144,16 @@ class DirectAccuracyPuzzleResults(object):
         """
         self._wrong_location.append(piece)
 
-    def add_wrong_puzzle(self, piece):
+    def add_different_puzzle(self, piece):
         """
         Wrong Puzzle ID Tracker
 
-        Adds a piece that was assigned to the wrong puzzle ID number to the tracker.
+        Adds a piece that was assigned to a DIFFERENT PUZZLE ID number to the tracker.
 
         Args:
-            piece (PuzzlePiece): Puzzle Piece that was placed with the wrong PUZZLE IDENTIFICATION NUMBER
+            piece (PuzzlePiece): Puzzle Piece that was placed with the different PUZZLE IDENTIFICATION NUMBER
         """
-        self._wrong_puzzle.append(piece)
+        self._different_puzzle.append(piece)
 
     def add_wrong_rotation(self, piece):
         """
@@ -161,7 +178,7 @@ class DirectAccuracyPuzzleResults(object):
         self._correct_placement.append(piece)
 
     @property
-    def number_correct_placemments(self):
+    def numb_correct_placements(self):
         """
         Number of Pieces Placed Correctly Property
 
@@ -172,7 +189,7 @@ class DirectAccuracyPuzzleResults(object):
         return len(self._correct_placement)
 
     @property
-    def number_wrong_location(self):
+    def numb_wrong_location(self):
         """
         Number of Pieces Placed in the Wrong Location
 
@@ -183,7 +200,7 @@ class DirectAccuracyPuzzleResults(object):
         return len(self._wrong_location)
 
     @property
-    def number_wrong_rotation(self):
+    def numb_wrong_rotation(self):
         """
         Number of Pieces with the Wrong Rotation
 
@@ -194,7 +211,7 @@ class DirectAccuracyPuzzleResults(object):
         return len(self._wrong_rotation)
 
     @property
-    def number_wrong_puzzle(self):
+    def numb_different_puzzle(self):
         """
         Number of Pieces in the Wrong Puzzle
 
@@ -202,7 +219,7 @@ class DirectAccuracyPuzzleResults(object):
 
         Returns (int): Number of pieces placed in the wrong puzzle
         """
-        return len(self._wrong_puzzle)
+        return len(self._different_puzzle)
 
 
 class Puzzle(object):
@@ -405,6 +422,8 @@ class Puzzle(object):
         for piece in output_puzzle._pieces:
             loc = piece.location
             piece.location = (loc[0] - min_row, loc[1] - min_col)
+        output_puzzle.reset_upper_left_location()
+
 
         # Define the numpy array that will hold the reconstructed image.
         puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
@@ -421,6 +440,16 @@ class Puzzle(object):
             Puzzle.display_image(output_puzzle._img)
 
         return output_puzzle
+
+
+    def reset_upper_left_location(self):
+        """
+        Reset Upper Left Location
+
+        "Upper Left" refers to the coordinate of the upper-leftmost piece.  By running this function, you
+        update this reference point to (0, 0)
+        """
+        self._upper_left = (0, 0)
 
     def determine_standard_direct_accuracy(self, expected_puzzle_id):
         """
