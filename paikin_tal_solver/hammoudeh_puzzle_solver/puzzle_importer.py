@@ -90,6 +90,9 @@ class PuzzleResultsCollection(object):
                                                                           100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
             print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation, results.numb_pieces,
                                                                           100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
+            numb_missing_pieces = results.numb_pieces - direct_acc.total_numb_included_pieces
+            print acc_name + " Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces, results.numb_pieces,
+                                                                          100.0 * numb_missing_pieces / results.numb_pieces)
             print "\n\n\n"
 
 
@@ -237,6 +240,17 @@ class DirectAccuracyPuzzleResults(object):
         Returns (int): Number of pieces placed in the wrong puzzle
         """
         return len(self._different_puzzle)
+
+    @property
+    def total_numb_included_pieces(self):
+        """
+        Total Number of Pieces in Results Set
+
+        Returns (int): Total number of pieces included in this set of results.
+
+        """
+        return (self.numb_correct_placements + self.numb_different_puzzle + self.numb_wrong_location
+                + self.numb_wrong_rotation)
 
 
 class Puzzle(object):
