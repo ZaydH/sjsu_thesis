@@ -173,7 +173,7 @@ class PuzzleResultsInformation(object):
             explored_set.append(next_loc)
 
             # Check if there is a piece in the current location
-            if not math.isnan(placed_piece_matrix[next_loc]):
+            if placed_piece_matrix[next_loc] != -1:
                 possible_loc.append(next_loc)
                 found_dist = next_loc[0] + next_loc[1]
             else:
@@ -841,8 +841,7 @@ class Puzzle(object):
             assert self._upper_left == (0, 0)
 
         # Build a numpy array that is by default "None" for each cell.
-        placed_piece_matrix = numpy.empty(self._grid_size)
-        placed_piece_matrix.fill(None)
+        placed_piece_matrix = numpy.full(self._grid_size, -1, numpy.int32)
 
         # For each element in the array,
         for piece in self._pieces:
