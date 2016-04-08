@@ -280,12 +280,25 @@ class PuzzlePiece(object):
     @property
     def puzzle_id(self):
         """
+        Assigned Puzzle Identification Number
+
         Gets the location of the puzzle piece on the board.
 
         Returns (int): Assigned Puzzle ID number.
 
         """
         return self._assigned_puzzle_id
+
+    @property
+    def actual_puzzle_id(self):
+        """
+        Actual Puzzle Identification Number
+
+        Gets the actual (i.e. correct) puzzle identification number of the puzzle.
+
+        Returns (int): Actual (correct) puzzle identification number this piece originated from.
+        """
+        return self._orig_puzzle_id
 
     @puzzle_id.setter
     def puzzle_id(self, new_puzzle_id):

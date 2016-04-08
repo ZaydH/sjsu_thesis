@@ -99,7 +99,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
 
     # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
-    numb_solved_puzzles = len(pieces_partitioned_by_puzzle_id)
+    actual_numb_puzzles = len(results_information.results)
     for puzzle_pieces in pieces_partitioned_by_puzzle_id:
         # Get the first piece of the puzzle and extract information on it.
         first_piece = puzzle_pieces[0]
@@ -124,7 +124,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         new_puzzle.save_to_file(filename)
 
         # Update the puzzle results
-        for i in xrange(0, numb_solved_puzzles):
+        for i in xrange(0, actual_numb_puzzles):
             results_information.results[i].resolve_direct_accuracies(new_puzzle)
 
         # Append the puzzle to the list

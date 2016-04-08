@@ -48,10 +48,25 @@ class PuzzleResultsCollection(object):
     def __init__(self, pieces_partitioned_by_puzzle):
         self._puzzle_results = []
 
-        # Iterate through the pieces divided by puzzles and create results information for each
-        for i in xrange(0, len(pieces_partitioned_by_puzzle)):
-            self._puzzle_results.append(PuzzleResultsInformation(pieces_partitioned_by_puzzle[i][0].puzzle_id))
-            self._puzzle_results[i].numb_pieces = len(pieces_partitioned_by_puzzle[i])
+        # Iterate through all the solved puzzles
+        for set_of_pieces in pieces_partitioned_by_puzzle:
+            # Iterate through all of the pieces in the puzzle
+            for piece in set_of_pieces:
+
+                # Iterate through all the pieces
+                puzzle_exists = False
+                for i in range(0, len(self._puzzle_results)):
+                    # Check if the puzzle ID matches this set of results information.
+                    if piece.puzzle_id == self._puzzle_results[i].puzzle_id:
+                        puzzle_exists = True
+                        self._puzzle_results[i].numb_pieces += 1
+                        continue
+
+                # If the puzzle does not exist, then create a results information
+                if not puzzle_exists:
+                    self._puzzle_results.append(PuzzleResultsInformation(piece.puzzle_id))
+                    i = len(self._puzzle_results) - 1
+                    self._puzzle_results[i].numb_pieces = 1
 
     @property
     def results(self):
