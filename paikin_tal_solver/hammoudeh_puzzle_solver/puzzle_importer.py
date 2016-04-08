@@ -76,7 +76,6 @@ class PuzzleResultsCollection(object):
 
         # Iterate through each puzzle and print that puzzle's results
         for results in self._puzzle_results:
-
             # Print the header line
             print "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
 
@@ -84,17 +83,20 @@ class PuzzleResultsCollection(object):
             acc_name = "Standard"
             direct_acc = results.standard_direct_accuracy
             print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements, results.numb_pieces,
-                                                                      100.0 * direct_acc.numb_correct_placements / results.numb_pieces)
+                                                                        100.0 * direct_acc.numb_correct_placements / results.numb_pieces)
             print acc_name + " Numb Different Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle, results.numb_pieces,
-                                                                          100.0 * direct_acc.numb_different_puzzle / results.numb_pieces)
+                                                                            100.0 * direct_acc.numb_different_puzzle / results.numb_pieces)
             print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location, results.numb_pieces,
-                                                                        100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
+                                                                          100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
             print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation, results.numb_pieces,
-                                                                        100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
+                                                                          100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
             print "\n\n\n"
 
 
 class PuzzleResultsInformation(object):
+    """
+    Encapsulates all of the accuracy results information for a puzzle.
+    """
 
     _PERFORM_ASSERT_CHECK = True
 
@@ -123,7 +125,7 @@ class PuzzleResultsInformation(object):
 
         # Update the standard direct accuracy
         if self.standard_direct_accuracy is None \
-                or self.standard_direct_accuracy.numb_correct_placements < standard_direct_accuracy.numb_different_puzzle:
+                or self.standard_direct_accuracy.numb_correct_placements < standard_direct_accuracy.numb_correct_placements:
                 self.standard_direct_accuracy = standard_direct_accuracy
 
 
@@ -439,7 +441,6 @@ class Puzzle(object):
             piece.location = (loc[0] - min_row, loc[1] - min_col)
         output_puzzle.reset_upper_left_location()
 
-
         # Define the numpy array that will hold the reconstructed image.
         puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
         # noinspection PyTypeChecker
@@ -455,7 +456,6 @@ class Puzzle(object):
             Puzzle.display_image(output_puzzle._img)
 
         return output_puzzle
-
 
     def reset_upper_left_location(self):
         """
@@ -508,7 +508,7 @@ class Puzzle(object):
 
             # Ensure that the puzzle ID matches the requirement
             if piece.puzzle_id != expected_puzzle_id:
-                accuracy_info.add_wrong_puzzle(piece)
+                accuracy_info.add_different_puzzle(piece)
 
             # Ensure that the puzzle piece is in the correct location
             elif not piece.is_correctly_placed(offset_upper_left):
