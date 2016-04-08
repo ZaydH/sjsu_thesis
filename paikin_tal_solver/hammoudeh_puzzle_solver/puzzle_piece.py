@@ -681,7 +681,7 @@ class PuzzlePiece(object):
         # Verify all dimensions
         for i in xrange(0, len(self._orig_loc)):
             # If for the current dimension
-            if self._orig_loc[i] - self._assigned_loc[i] - puzzle_offset_upper_left_location[i] != 0:
+            if self._assigned_loc[i] - self._orig_loc[i] - puzzle_offset_upper_left_location[i] != 0:
                 return False
         # Mark as correctly placed
         return True

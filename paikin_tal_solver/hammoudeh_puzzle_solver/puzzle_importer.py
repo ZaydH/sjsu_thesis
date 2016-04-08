@@ -70,9 +70,19 @@ class PuzzleResultsCollection(object):
 
     @property
     def results(self):
+        """
+        Puzzle Results Accessor
+
+        Returns (PuzzleResultsInformation): Puzzle results information for a single puzzle.
+        """
         return self._puzzle_results
 
     def print_results(self):
+        """
+        Solver Accuracy Results Printer
+
+        Prints the accuracy results of a solver to the console.
+        """
 
         # Iterate through each puzzle and print that puzzle's results
         for results in self._puzzle_results:
@@ -80,19 +90,31 @@ class PuzzleResultsCollection(object):
             print "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
 
             # Print the standard accuracy information
-            acc_name = "Standard"
-            direct_acc = results.standard_direct_accuracy
-            print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements, results.numb_pieces,
-                                                                        100.0 * direct_acc.numb_correct_placements / results.numb_pieces)
-            print acc_name + " Numb Different Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle, results.numb_pieces,
-                                                                            100.0 * direct_acc.numb_different_puzzle / results.numb_pieces)
-            print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location, results.numb_pieces,
-                                                                          100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
-            print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation, results.numb_pieces,
-                                                                          100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
-            numb_missing_pieces = results.numb_pieces - direct_acc.total_numb_included_pieces
-            print acc_name + " Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces, results.numb_pieces,
-                                                                          100.0 * numb_missing_pieces / results.numb_pieces)
+            for i in xrange(0, 2):
+
+                # Select the type of direct accuracy to print.
+                if i == 0:
+                    acc_name = "Standard"
+                    direct_acc = results.standard_direct_accuracy
+                elif i == 1:
+                    acc_name = "Modified"
+                    direct_acc = results.modified_direct_accuracy
+
+                # Print the selected direct accuracy type
+                print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements, results.numb_pieces,
+                                                                            100.0 * direct_acc.numb_correct_placements / results.numb_pieces)
+                print acc_name + " Numb Different Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle, results.numb_pieces,
+                                                                                100.0 * direct_acc.numb_different_puzzle / results.numb_pieces)
+                print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location, results.numb_pieces,
+                                                                              100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
+                print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation, results.numb_pieces,
+                                                                              100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
+                numb_missing_pieces = results.numb_pieces - direct_acc.total_numb_included_pieces
+                print acc_name + " Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces, results.numb_pieces,
+                                                                              100.0 * numb_missing_pieces / results.numb_pieces)
+                # Print a new line to separate the results
+                print "\n"
+
             print "\n\n\n"
 
 
@@ -130,6 +152,50 @@ class PuzzleResultsInformation(object):
         if self.standard_direct_accuracy is None \
                 or self.standard_direct_accuracy.numb_correct_placements < standard_direct_accuracy.numb_correct_placements:
                 self.standard_direct_accuracy = standard_direct_accuracy
+
+        # Modified direct accuracy is a more complicated procedure so it runs separately
+        self._resolve_modified_direct_accuracy(puzzle)
+
+    def _resolve_modified_direct_accuracy(self, puzzle):
+
+        # Placed piece array
+        placed_piece_matrix = puzzle.build_placed_piece_matrix()
+
+        # Do a Breadth first search to define the possible candidates for modified direct method
+        frontier_set = [(0, 0)]
+        explored_set = []
+        found_dist = -1
+        possible_loc = []
+        # Continue searching until either
+        while not possible_loc or (frontier_set and frontier_set[0][0] + frontier_set[0][1] <= found_dist):
+            # Pop an element from the front of the list and add it to the explored set
+            next_loc = frontier_set.pop(0)
+            explored_set.append(next_loc)
+
+            # Check if there is a piece in the current location
+            if not math.isnan(placed_piece_matrix[next_loc]):
+                possible_loc.append(next_loc)
+                found_dist = next_loc[0] + next_loc[1]
+            else:
+                # Move one piece down
+                down_loc = (next_loc[0] + 1, next_loc[1])
+                # Only need to check first dimension since only one that changed
+                if down_loc[0] < puzzle.grid_size[0]:
+                    frontier_set.append(down_loc)
+
+                # Move one piece to the right
+                right_loc = (next_loc[0], next_loc[1] + 1)
+                # Only need to check second dimension since only one that changed
+                if right_loc[1] < puzzle.grid_size[1]:
+                    frontier_set.append(right_loc)
+
+        # For all upper left coordinate candidates, determine the modified direct accuracy.
+        for possible_upper_left in possible_loc:
+            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.puzzle_id, possible_upper_left)
+            # Update the standard direct accuracy
+            if self.modified_direct_accuracy is None \
+                    or self.modified_direct_accuracy.numb_correct_placements < modified_direct_accuracy.numb_correct_placements:
+                self.modified_direct_accuracy = modified_direct_accuracy
 
 
 class DirectAccuracyPuzzleResults(object):
@@ -482,7 +548,7 @@ class Puzzle(object):
 
     def determine_standard_direct_accuracy(self, expected_puzzle_id):
         """
-        Direct Accuracy Finder
+        Standard Direct Accuracy Finder
 
         Determines the accuracy of the placement using the standard direct accuracy method.
 
@@ -492,29 +558,28 @@ class Puzzle(object):
         Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement
 
         """
+        return self.determine_modified_direct_accuracy(expected_puzzle_id, (0, 0))
+
+    def determine_modified_direct_accuracy(self, expected_puzzle_id, upper_left):
+        """
+        Modified Direct Accuracy Finder
+
+        Determines the accuracy of the placement using the modified direct accuracy method where by the piece accuracy
+        is determined by something other than the exact upper-most left piece (i.e. location (0, 0)).
+
+        Args:
+            expected_puzzle_id (int): Expected puzzle identification number
+            upper_left(Tuple[int]): In the direct method, the upper-left most location is the origin.  In the
+            "Modified Direct Method", this can be a tuple in the format (row, column).
+
+        Returns (DirectAccuracyPuzzleResults): Information regarding the modified direct accuracy of the placement
+
+        """
         # Optionally perform the assertion checks
         if Puzzle._PERFORM_ASSERT_CHECKS:
             assert self._upper_left == (0, 0)  # Upper left should be normalized to zero.
 
         # Determine the accuracy assuming the upper left is in the normal location (i.e. (0,0))
-        return self._perform_direct_comparison_check(expected_puzzle_id)
-
-    def _perform_direct_comparison_check(self, expected_puzzle_id, offset_upper_left=(0, 0)):
-        """
-        Direct Comparison Accuracy Helper Function
-
-        This helper function is used to perform the placement accuracy comparison via either the standard or modified
-        direct accuracy approach.
-
-        Args:
-            expected_puzzle_id (int): Expected puzzle identification number
-            offset_upper_left (Optional Tuple[int]): Location that should be treated as the actual upper left
-            corner of the puzzle.  This is useful for doing the modified direct placement approach.
-
-        Returns (DirectAccuracyPuzzleResults): Information regarding the accuracy of the placement using
-        the direct or modified direct approaches.
-        """
-
         accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id)
 
         # Iterate through each piece and determine its accuracy results.
@@ -525,7 +590,7 @@ class Puzzle(object):
                 accuracy_info.add_different_puzzle(piece)
 
             # Ensure that the puzzle piece is in the correct location
-            elif not piece.is_correctly_placed(offset_upper_left):
+            elif not piece.is_correctly_placed(upper_left):
                 accuracy_info.add_wrong_location(piece)
 
             # Ensure that the rotation is set to 0
@@ -760,6 +825,31 @@ class Puzzle(object):
             filename (str): Filename and path to save the OpenCV image.
         """
         Puzzle._save_to_file(filename, self._img)
+
+    def build_placed_piece_matrix(self):
+        """
+        Placed Piece Matrix Builder
+
+        For a puzzle, this function builds a Numpy 2d matrix showing the location of each piece.  If a possible
+        puzzle piece location has no assigned piece, then the cell is filled with "None."
+
+        Returns (Numpy[int]): Location of each puzzle piece in the grid
+        """
+
+        # Check whether the upper location is (0, 0)
+        if Puzzle._PERFORM_ASSERT_CHECKS:
+            assert self._upper_left == (0, 0)
+
+        # Build a numpy array that is by default "None" for each cell.
+        placed_piece_matrix = numpy.empty(self._grid_size)
+        placed_piece_matrix.fill(None)
+
+        # For each element in the array,
+        for piece in self._pieces:
+            placed_piece_matrix[piece.location] = piece.id_number
+
+        # Return the built numpy array
+        return placed_piece_matrix
 
 
 class PuzzleTester(object):
