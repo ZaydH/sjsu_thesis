@@ -30,6 +30,107 @@ class ImageColor(Enum):
         black = 1
 
 
+class DirectAccuracyPuzzleResults(object):
+    """
+    Structure used for managing puzzle placement results.
+    """
+
+    def __init__(self, puzzle_id):
+        self._puzzle_id = puzzle_id
+        self._wrong_puzzle = []
+        self._wrong_location = []
+        self._wrong_rotation = []
+        self._correct_placement = []
+
+    def add_wrong_location(self, piece):
+        """
+        Wrong Piece Location Tracker
+
+        Adds a piece that was assigned to the wrong location number to the tracker.
+
+        Args:
+            piece (PuzzlePiece): Piece placed in the wrong LOCATION
+        """
+        self._wrong_location.append(piece)
+
+    def add_wrong_puzzle(self, piece):
+        """
+        Wrong Puzzle ID Tracker
+
+        Adds a piece that was assigned to the wrong puzzle ID number to the tracker.
+
+        Args:
+            piece (PuzzlePiece): Puzzle Piece that was placed with the wrong PUZZLE IDENTIFICATION NUMBER
+        """
+        self._wrong_puzzle.append(piece)
+
+    def add_wrong_rotation(self, piece):
+        """
+        Wrong Piece Rotation Tracker
+
+        Adds a piece that had the wrong rotation
+
+        Args:
+            piece (PuzzlePiece): Puzzle Piece that was placed with the wrong Rotation (i.e. not 0 degrees)
+        """
+        self._wrong_rotation.append(piece)
+
+    def add_correct_placement(self, piece):
+        """
+        Correctly Placed Piece Tracker
+
+        Adds a piece that has been placed correctly
+
+        Args:
+            piece (PuzzlePiece): Puzzle Piece that was placed CORRECTLY.
+        """
+        self._correct_placement.append(piece)
+
+    @property
+    def number_correct_placemment(self):
+        """
+        Number of Pieces Placed Correctly Property
+
+        Gets the number of pieces placed correctly.
+
+        Returns (int): Number of pieces correctly placed with the right puzzle ID, location, and rotation.
+        """
+        return len(self._correct_placement)
+
+    @property
+    def number_wrong_location(self):
+        """
+        Number of Pieces Placed in the Wrong Location
+
+        Gets the number of pieces placed in the wrong LOCATION.
+
+        Returns (int): Number of pieces placed in the wrong location.
+        """
+        return len(self._wrong_location)
+
+    @property
+    def number_wrong_rotation(self):
+        """
+        Number of Pieces with the Wrong Rotation
+
+        Gets the number of pieces placed with the wrong ROTATION.
+
+        Returns (int): Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)
+        """
+        return len(self._wrong_rotation)
+
+    @property
+    def number_wrong_puzzle(self):
+        """
+        Number of Pieces in the Wrong Puzzle
+
+        Gets the number of pieces placed in entirely the wrong puzzle.
+
+        Returns (int): Number of pieces placed in the wrong puzzle
+        """
+        return len(self._wrong_puzzle)
+
+
 class Puzzle(object):
     """
     Puzzle Object represents a single Jigsaw Puzzle.  It can import a puzzle from an image file and
@@ -40,6 +141,9 @@ class Puzzle(object):
 
     # DEFAULT_PIECE_WIDTH = 28  # Width of a puzzle in pixels
     DEFAULT_PIECE_WIDTH = 25  # Width of a puzzle in pixels
+
+    # Optionally perform assertion checks.
+    _PERFORM_ASSERT_CHECKS = True
 
     # Define the number of dimensions in the BGR space (i.e. blue, green, red)
     NUMBER_BGR_DIMENSIONS = 3
@@ -72,6 +176,9 @@ class Puzzle(object):
         self._piece_width = piece_width if piece_width is not None else Puzzle.DEFAULT_PIECE_WIDTH
         self._img_width = None
         self._img_height = None
+
+        # Define the upper left coordinate
+        self._upper_left = (0, 0)
 
         # No pieces for the puzzle yet.
         self._pieces = []
@@ -218,18 +325,12 @@ class Puzzle(object):
         output_puzzle._piece_width = first_piece.width
 
         # Find the min and max row and column.
-        (min_row, max_row, min_col, max_col) = output_puzzle.get_min_and_max_row_and_columns()
+        (min_row, max_row, min_col, max_col) = output_puzzle.get_min_and_max_row_and_columns(True)
 
-        # Normalize their locations based off all the pieces in the board.
+        # Normalize each piece's locations based off all the pieces in the board.
         for piece in output_puzzle._pieces:
             loc = piece.location
             piece.location = (loc[0] - min_row, loc[1] - min_col)
-
-        # Store the grid size
-        output_puzzle._grid_size = (max_row - min_row + 1, max_col - min_col + 1)
-        # Calculate the size of the image
-        output_puzzle._img_width = output_puzzle._grid_size[1] * output_puzzle.piece_width
-        output_puzzle._img_height = output_puzzle._grid_size[0] * output_puzzle.piece_width
 
         # Define the numpy array that will hold the reconstructed image.
         puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
@@ -246,6 +347,61 @@ class Puzzle(object):
             Puzzle.display_image(output_puzzle._img)
 
         return output_puzzle
+
+    def determine_standard_direct_accuracy(self, expected_puzzle_id):
+        """
+        Direct Accuracy Finder
+
+        Determines the accuracy of the placement using the standard direct accuracy method.
+
+        Args:
+            expected_puzzle_id (int): Expected puzzle identification number
+
+        Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement
+
+        """
+        # Optionally perform the assertion checks
+        if Puzzle._PERFORM_ASSERT_CHECKS:
+            assert self._upper_left == (0, 0)  # Upper left should be normalized to zero.
+
+        # Determine the accuracy assuming the upper left is in the normal location (i.e. (0,0))
+        return self._perform_direct_comparison_check(expected_puzzle_id)
+
+    def _perform_direct_comparison_check(self, expected_puzzle_id, offset_upper_left=(0, 0)):
+        """
+        Direct Comparison Accuracy Helper Function
+
+        This helper function is used to perform the placement accuracy comparison via either the standard or modified
+        direct accuracy approach.
+
+        Args:
+            expected_puzzle_id (int): Expected puzzle identification number
+            offset_upper_left (Optional Tuple[int]): Location that should be treated as the actual upper left
+            corner of the puzzle.  This is useful for doing the modified direct placement approach.
+
+        Returns (DirectAccuracyPuzzleResults): Information regarding the accuracy of the placement using
+        the direct or modified direct approaches.
+        """
+
+        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id)
+
+        for piece in self._pieces:
+
+            # Ensure that the puzzle ID matches the requirement
+            if piece.puzzle_id != expected_puzzle_id:
+                accuracy_info.add_wrong_puzzle(piece)
+
+            # Ensure that the puzzle piece is in the correct location
+            elif not piece.is_correctly_placed(offset_upper_left):
+                accuracy_info.add_wrong_location(piece)
+
+            # Ensure that the rotation is set to 0
+            elif piece.rotation != PuzzlePieceRotation.degree_0:
+                accuracy_info.add_wrong_rotation(piece)
+
+            # Piece is correctly placed
+            else:
+                accuracy_info.add_correct_placement(piece)
 
     def randomize_puzzle_piece_locations(self):
         """
@@ -275,12 +431,16 @@ class Puzzle(object):
         for piece in self._pieces:
             piece.rotation = PuzzlePieceRotation.random_rotation()
 
-    def get_min_and_max_row_and_columns(self):
+    def get_min_and_max_row_and_columns(self, update_board_dimension_information):
         """
         Min/Max Row and Column Finder
 
         For a given set of pieces, this function returns the minimum and maximum of the columns and rows
         across all of the pieces.
+
+        Args:
+            update_board_dimension_information (bool): Selectively update the board dimension information (e.g.
+            upper left location, grid_size, puzzle width, puzzle height, etc.).
 
         Returns ([int]):
         Tuple in the form: (min_row, max_row, min_column, max_column)
@@ -305,6 +465,14 @@ class Puzzle(object):
             elif max_col < temp_loc[1]:
                 max_col = temp_loc[1]
 
+        # If the user specified it, update the board dimension information
+        if update_board_dimension_information:
+            self._upper_left = (min_row, min_col)
+            self._grid_size = (max_row - min_row + 1, max_col - min_col + 1)
+            # Calculate the size of the image
+            self._img_width = self._grid_size[1] * self.piece_width
+            self._img_height = self._grid_size[0] * self.piece_width
+
         # Return the minimum and maximum row/column information
         return min_row, max_row, min_col, max_col
 
@@ -319,6 +487,14 @@ class Puzzle(object):
 
     @property
     def grid_size(self):
+        """
+        Puzzle Grid Size Property
+
+        Used to get the maximum dimensions of the puzzle in number of rows by number of columns.
+
+        Returns ([int)): Grid size of the puzzle as a tuple in the form (number_rows, number_columns)
+
+        """
         return self._grid_size
 
     # noinspection PyUnusedLocal

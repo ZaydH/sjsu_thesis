@@ -196,7 +196,11 @@ class PaikinTalSolver(object):
     # Used to simplify debugging without affecting test time by enabling assertion checks
     _PERFORM_ASSERTION_CHECK = True
 
+    # Prints progress messages while the puzzle is running
     _PRINT_PROGRESS_MESSAGES = True
+
+    # Select whether to clear the BB heap on completion
+    _CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
 
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
@@ -553,7 +557,8 @@ class PaikinTalSolver(object):
         This function handles spawning a new board including any associated data structure resetting.
         """
         # Perform any post processing.
-        self._initialize_best_buddy_pool_and_heap()
+        if PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN:
+            self._initialize_best_buddy_pool_and_heap()
 
         # Place the next seed piece
         # noinspection PyUnreachableCode

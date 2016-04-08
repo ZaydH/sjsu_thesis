@@ -420,7 +420,12 @@ class InterPieceDistance(object):
     and the starter puzzle pieces as defined by the Paikin and Tal paper.
     """
 
+    # If true, assertion checks are run.  Optional to increase algorithm stability and speedup runtime.
     _PERFORM_ASSERT_CHECKS = True
+
+    # These are used for picking the starting piece.
+    _USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
+    _NEIGHBOR_COMPATIBILITY_SCALAR = 4
 
     def __init__(self, pieces, distance_function, puzzle_type):
         """
@@ -719,13 +724,14 @@ class InterPieceDistance(object):
             # Store the number of best buddy neighbors
             # Multiply by the number of sides here to prioritize direct neighbors in the case of a tie.
             numb_bb_neighbors = PuzzlePieceSide.get_numb_sides() * len(this_piece_bb_info[0])
-            total_compatibility = this_piece_bb_info[1]
+            total_compatibility = InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR * this_piece_bb_info[1]
 
             # Include the neighbors info
             p_i_best_buddy_ids = this_piece_bb_info[0]
             for bb_id in p_i_best_buddy_ids:
                 numb_bb_neighbors += len(all_best_buddy_info[bb_id][0])
-                # total_compatibility += all_best_buddy_info[bb_id][1]
+                if not InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY:
+                    total_compatibility += all_best_buddy_info[bb_id][1]
 
             # Add this pieces information to the list of possible start pieces
             self._start_piece_ordering.append((p_i, numb_bb_neighbors, total_compatibility))
