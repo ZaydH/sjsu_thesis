@@ -148,7 +148,8 @@ class PuzzlePiece(object):
             raise ValueError("Using the puzzle grid size is not supported if piece id is \"None\".")
 
         # Piece ID is left to the solver to set
-        self._piece_id = piece_id
+        self._orig_piece_id = piece_id
+        self._assigned_piece_id = None
 
         self._orig_puzzle_id = puzzle_id
         self._assigned_puzzle_id = None
@@ -199,7 +200,7 @@ class PuzzlePiece(object):
         if self._orig_loc[0] == 0:
             neighbor_id = None
         else:
-            neighbor_id = self._piece_id - numb_cols
+            neighbor_id = self._orig_piece_id - numb_cols
         self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.top))
 
         # Check the right side
@@ -207,7 +208,7 @@ class PuzzlePiece(object):
         if self._orig_loc[1] + 1 == numb_cols:
             neighbor_id = None
         else:
-            neighbor_id = self._piece_id + 1
+            neighbor_id = self._orig_piece_id + 1
         self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.right))
 
         # Check the bottom side
@@ -215,7 +216,7 @@ class PuzzlePiece(object):
         if self._orig_loc[0] + 1 == numb_rows:
             neighbor_id = None
         else:
-            neighbor_id = self._piece_id + numb_cols
+            neighbor_id = self._orig_piece_id + numb_cols
         self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.bottom))
 
         # Check the right side
@@ -223,7 +224,7 @@ class PuzzlePiece(object):
         if self._orig_loc[1] == 0:
             neighbor_id = None
         else:
-            neighbor_id = self._piece_id - 1
+            neighbor_id = self._orig_piece_id - 1
         self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.left))
 
         # Convert the list to a tuple since it is immutable
@@ -314,6 +315,18 @@ class PuzzlePiece(object):
         self._assigned_puzzle_id = new_puzzle_id
 
     @property
+    def original_piece_id(self):
+        """
+        Original Piece ID Number
+
+        Gets the original piece identification number
+
+        Returns (int): Original identification number assigned to the piece at its creation.  Should be globally
+        unique.
+        """
+        return self._orig_piece_id
+
+    @property
     def id_number(self):
         """
         Puzzle Piece ID Getter
@@ -322,7 +335,11 @@ class PuzzlePiece(object):
 
         Returns (int): Puzzle piece indentification number
         """
-        return self._piece_id
+        # Check whether the assigned piece ID is not none
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert self._assigned_piece_id is not None
+        # Return the piece id number
+        return self._assigned_piece_id
 
     @id_number.setter
     def id_number(self, new_piece_id):
@@ -334,7 +351,7 @@ class PuzzlePiece(object):
         Args:
             new_piece_id (int): Puzzle piece identification number
         """
-        self._piece_id = new_piece_id
+        self._assigned_piece_id = new_piece_id
 
     @property
     def lab_image(self):

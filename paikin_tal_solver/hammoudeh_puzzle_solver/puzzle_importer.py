@@ -992,7 +992,7 @@ class Puzzle(object):
 
         # For each element in the array,
         for piece in self._pieces:
-            placed_piece_matrix[piece.location] = piece.id_number
+            placed_piece_matrix[piece.location] = piece.original_piece_id
             placed_piece_rotation[piece.location] = piece.rotation.value
 
         # Return the built numpy array
