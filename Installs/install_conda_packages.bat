@@ -18,6 +18,7 @@ call:conda_basic_install numpy
 call:conda_basic_install scikit-image
 call:conda_basic_install scipy
 call:conda_basic_install scikit-learn
+call:conda_basic_install pylint
 
 call:conda_install_from_conda_direct opencv3
 call:conda_install_from_conda_direct opencv
