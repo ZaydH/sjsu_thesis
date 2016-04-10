@@ -408,7 +408,5 @@ class PuzzleImporterTester(unittest.TestCase):
             assert results.modified_neighbor_accuracy.total_numb_included_pieces == numb_pieces
 
 
-
-
 if __name__ == '__main__':
     unittest.main()

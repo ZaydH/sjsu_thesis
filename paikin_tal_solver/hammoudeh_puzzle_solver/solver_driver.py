@@ -80,9 +80,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     else:
         print "Beginning import of pickle file: \"" + pickle_file_name + "\"\n\n"
         paikin_tal_solver = PickleHelper.importer(pickle_file_name)
-        # noinspection PyProtectedMember
-        paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
         print "Pickle Import completed.\""
+        # noinspection PyProtectedMember
+        # This recalculate of start piece is included since how start piece is selected is configurable.
+        paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
 
     # Run the Solver
     paikin_tal_solver.run()
@@ -123,7 +124,6 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
         # Append the puzzle to the list
         output_puzzles.append(new_puzzle)
-
 
     # Build the results information collection
     results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
@@ -169,14 +169,14 @@ if __name__ == "__main__":
     # images = [".\\images\\cat_sleeping_boy.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    images = [".\\images\\two_faced_cat.jpg"]
+    # images = [".\\images\\two_faced_cat.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
-    paikin_tal_driver(images, PuzzleType.type2, 25)
+    # paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\mcgill_20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    # images = [".\\images\\7.jpg", ".\\images\\mcgill_20.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    images = [".\\images\\7.jpg", ".\\images\\mcgill_20.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\mcgill_20.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\mcgill_03.jpg"]

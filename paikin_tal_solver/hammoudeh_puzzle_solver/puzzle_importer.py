@@ -188,6 +188,11 @@ class PuzzleResultsInformation(object):
         # Iterate through the set of pieces
         for piece in puzzle.pieces:
 
+            # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
+            if piece.actual_puzzle_id != self.puzzle_id:
+                neighbor_accuracy_info.wrong_neighbor_count += PuzzlePieceSide.get_numb_sides()
+                continue
+
             original_neighbor_id_and_sides = piece.original_neighbor_id_numbers_and_sides
             # Sort the sides of the neighbor location to match the original order.
             neighbor_location_and_sides = piece.get_neighbor_locations_and_sides()
