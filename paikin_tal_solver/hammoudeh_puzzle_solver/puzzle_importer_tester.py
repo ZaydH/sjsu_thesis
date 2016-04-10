@@ -11,6 +11,7 @@ from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide, PuzzlePieceRotation
 
 
+# noinspection PyMethodMayBeStatic
 class PuzzleImporterTester(unittest.TestCase):
 
     def test_puzzle_creation(self):
@@ -327,6 +328,9 @@ class PuzzleImporterTester(unittest.TestCase):
         assert location_and_sides[3] == ((test_loc[0], test_loc[1] - 1), PuzzlePieceSide.top)
 
     def test_neighbor_id_numbers(self):
+        """
+        Test the functionality where the module gets the neighbor identification numbers for different puzzle pieces
+        """
 
         # Build a known test puzzle.
         puzzle = PuzzleTester.build_dummy_puzzle()
@@ -335,11 +339,16 @@ class PuzzleImporterTester(unittest.TestCase):
         pieces = puzzle.pieces
 
         # Check the neighbor coordinates of the first piece
-        assert pieces[0].original_neighbor_id_numbers == (None, 1, 3, None)
-        assert pieces[1].original_neighbor_id_numbers == (None, 2, 4, 0)
-        assert pieces[2].original_neighbor_id_numbers == (None, None, 5, 1)
-        assert pieces[3].original_neighbor_id_numbers == (0, 4, 6, None)
-        assert pieces[8].original_neighbor_id_numbers == (5, None, None, 7)
+        assert pieces[0].original_neighbor_id_numbers_and_sides == ((None, PuzzlePieceSide.top), (1, PuzzlePieceSide.right),
+                                                                    (3, PuzzlePieceSide.bottom), (None, PuzzlePieceSide.left))
+        assert pieces[1].original_neighbor_id_numbers_and_sides == ((None, PuzzlePieceSide.top), (2, PuzzlePieceSide.right),
+                                                                    (4, PuzzlePieceSide.bottom), (0, PuzzlePieceSide.left))
+        assert pieces[2].original_neighbor_id_numbers_and_sides == ((None, PuzzlePieceSide.top), (None, PuzzlePieceSide.right),
+                                                                    (5, PuzzlePieceSide.bottom), (1, PuzzlePieceSide.left))
+        assert pieces[3].original_neighbor_id_numbers_and_sides == ((0, PuzzlePieceSide.top), (4, PuzzlePieceSide.right),
+                                                                    (6, PuzzlePieceSide.bottom), (None, PuzzlePieceSide.left))
+        assert pieces[8].original_neighbor_id_numbers_and_sides == ((5, PuzzlePieceSide.top), (None, PuzzlePieceSide.right),
+                                                                    (None, PuzzlePieceSide.bottom), (7, PuzzlePieceSide.left))
 
 if __name__ == '__main__':
     unittest.main()

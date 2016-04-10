@@ -200,7 +200,7 @@ class PuzzlePiece(object):
             neighbor_id = None
         else:
             neighbor_id = self._piece_id - numb_cols
-        self._actual_neighbor_ids.append(neighbor_id)
+        self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.top))
 
         # Check the right side
         # If in the last column, it has no right neighbor
@@ -208,7 +208,7 @@ class PuzzlePiece(object):
             neighbor_id = None
         else:
             neighbor_id = self._piece_id + 1
-        self._actual_neighbor_ids.append(neighbor_id)
+        self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.right))
 
         # Check the bottom side
         # If in the last column, it has no right neighbor
@@ -216,25 +216,28 @@ class PuzzlePiece(object):
             neighbor_id = None
         else:
             neighbor_id = self._piece_id + numb_cols
-        self._actual_neighbor_ids.append(neighbor_id)
+        self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.bottom))
 
         # Check the right side
-        # If in the last column, it has no right neighbor
+        # If in the last column, it has no left neighbor
         if self._orig_loc[1] == 0:
             neighbor_id = None
         else:
             neighbor_id = self._piece_id - 1
-        self._actual_neighbor_ids.append(neighbor_id)
+        self._actual_neighbor_ids.append((neighbor_id, PuzzlePieceSide.left))
 
         # Convert the list to a tuple since it is immutable
         self._actual_neighbor_ids = tuple(self._actual_neighbor_ids)
 
     @ property
-    def original_neighbor_id_numbers(self):
+    def original_neighbor_id_numbers_and_sides(self):
         """
         Neighbor Identification Number Property
 
         In a puzzle, each piece has up to four neighbors.  This function access that identification number information.
+
+        Returns ([int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side
+        of the original object.
 
         """
         # Verify that the array containing the neighbor id numbers is not none

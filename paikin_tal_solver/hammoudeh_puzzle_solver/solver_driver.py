@@ -9,6 +9,7 @@ import datetime
 # noinspection PyUnresolvedReferences
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester, PuzzleType, PuzzleResultsCollection
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece
+# noinspection PyUnresolvedReferences
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver, PickleHelper
 
@@ -79,6 +80,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     else:
         print "Beginning import of pickle file: \"" + pickle_file_name + "\"\n\n"
         paikin_tal_solver = PickleHelper.importer(pickle_file_name)
+        # noinspection PyProtectedMember
         paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
         print "Pickle Import completed.\""
 
@@ -126,6 +128,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         # Update the puzzle results
         for i in xrange(0, actual_numb_puzzles):
             results_information.results[i].resolve_direct_accuracies(new_puzzle)
+            results_information.results[i].resolve_neighbor_accuracies(new_puzzle)
 
         # Append the puzzle to the list
         output_puzzles.append(new_puzzle)
@@ -164,8 +167,8 @@ def extract_image_filename_and_file_extension(image_filename_and_path):
 
 if __name__ == "__main__":
     images = [".\\images\\muffins_300x200.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
-    paikin_tal_driver(images, PuzzleType.type2, 25)
+    paikin_tal_driver(images, PuzzleType.type1, 25)
+    # paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # images = [".\\images\\cat_sleeping_boy.jpg"]
