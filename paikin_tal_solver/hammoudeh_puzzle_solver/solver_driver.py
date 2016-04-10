@@ -19,7 +19,7 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-RECALCULATE_DISTANCES = False
+RECALCULATE_DISTANCES = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
@@ -72,9 +72,13 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
             puzzle_dimensions = puzzles[0].grid_size
 
         # Create the Paikin Tal Solver
+        print "Interpiece distance calculation started at: " + time.ctime()
+        start_time = time.time()
         paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
                                             PuzzlePiece.calculate_asymmetric_distance, local_puzzle_type,
                                             fixed_puzzle_dimensions=puzzle_dimensions)
+        elapsed_time = time.time() - start_time
+        print_elapsed_time(elapsed_time, "inter-piece distance calculation")
         # Export the Paikin Tal Object.
         PickleHelper.exporter(paikin_tal_solver, pickle_file_name)
     else:
@@ -86,7 +90,11 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
 
     # Run the Solver
+    print "Placer started at: " + time.ctime()
+    start_time = time.time()
     paikin_tal_solver.run()
+    elapsed_time = time.time() - start_time
+    print_elapsed_time(elapsed_time, "placement")
 
     # Get the results
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
@@ -158,6 +166,20 @@ def extract_image_filename_and_file_extension(image_filename_and_path):
 
     # Return the file extension and the root filename
     return file_extension, filename_stub
+
+
+def print_elapsed_time(elapsed_time, task_name):
+    """
+    Elapsed Time Printer
+
+    Prints the elapsed time for a task in nice formatting.
+
+    Args:
+        elapsed_time (int): Elapsed time in seconds
+        task_name (string): Name of the task that was performed
+
+    """
+    print "The task \"%s\" took %d min %d sec." % (task_name, elapsed_time // 60, elapsed_time % 60)
 
 
 if __name__ == "__main__":

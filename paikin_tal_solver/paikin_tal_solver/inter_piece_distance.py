@@ -20,6 +20,9 @@ class PieceDistanceInformation(object):
     _PERFORM_ASSERT_CHECKS = True
     _ALLOW_MULTIPLE_BEST_BUDDIES = False
 
+    _ENABLE_AVERAGE_CHECK_SPEED_UP = False
+    _MAXIMUM_AVERAGE_SEPARATION = 20
+
     def __init__(self, id_numb, numb_pieces, puzzle_type):
         """
 
@@ -223,8 +226,16 @@ class PieceDistanceInformation(object):
                 # Go through the set of x_j sides
                 for p_j_side in set_of_neighbor_sides:
 
-                    # Calculate the distance between the two pieces.
-                    dist = distance_function(pieces[self._id], p_i_side, pieces[p_j], p_j_side)
+                    # See if the calculation can be skipped.
+                    p_i_avg_color = pieces[self._id].border_average_color(p_i_side)
+                    p_j_avg_color = pieces[p_j].border_average_color(p_j_side)
+                    # If the pieces are too different, the calculations can be sped-
+                    if (PieceDistanceInformation._ENABLE_AVERAGE_CHECK_SPEED_UP
+                            and abs(p_i_avg_color - p_j_avg_color) >= PieceDistanceInformation._MAXIMUM_AVERAGE_SEPARATION):
+                        dist = sys.maxint
+                    else:
+                        # Calculate the distance between the two pieces.
+                        dist = distance_function(pieces[self._id], p_i_side, pieces[p_j], p_j_side)
 
                     # Store the distance
                     p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
@@ -356,16 +367,21 @@ class PieceDistanceInformation(object):
                     # Calculate the compatibility
                     p_j_side_index = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
 
-                    # Prevent divide by zero
+                    # Get the parameters need to either specially set or calculate asymmetric compatibility
+                    piece_to_piece_distance = self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index]
                     second_best_distance = self._second_best_distance[p_i_side.value]
-                    if self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] == 0:
+
+                    # Check if calculations can be skipped
+                    if self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] == sys.maxint:
+                        asym_compatibility = -sys.maxint
+                    # Prevent divide by zero
+                    elif piece_to_piece_distance == 0:
                         asym_compatibility = 1
                     elif second_best_distance == 0:
                         asym_compatibility = -sys.maxint
                     else:
                         # Calculate the asymmetric compatibility
-                        asym_compatibility = (1 - 1.0 * self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] /
-                                              second_best_distance)
+                        asym_compatibility = (1 - 1.0 * piece_to_piece_distance / second_best_distance)
                     self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
 
         # Build an empty array to store the piece to piece distances
@@ -516,14 +532,17 @@ class InterPieceDistance(object):
 
                     # Check all valid p_j sides depending on the puzzle type.
                     for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
-                        # Get the compatibility from p_i to p_j
-                        mutual_compat = self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j,
-                                                                                                p_j_side)
-                        # Get the compatibility from p_j to p_i
-                        mutual_compat += self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i,
-                                                                                                 p_i_side)
-                        # Divide the mutual compatibility by 2.
-                        mutual_compat /= 2
+
+                        p_i_to_p_j = self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j,
+                                                                                             p_j_side)
+                        p_j_to_p_i = self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i,
+                                                                                             p_i_side)
+                        # Check if the calculation can be skipped for speed-up
+                        if p_i_to_p_j == -sys.maxint or p_j_to_p_i == -sys.maxint:
+                            mutual_compat = -sys.maxint
+                        else:
+                            # Get the compatibility from p_i to p_j
+                            mutual_compat = (p_i_to_p_j + p_j_to_p_i) / 2
 
                         # Store the mutual compatibility for BOTH p_i and p_j
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)

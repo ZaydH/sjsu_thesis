@@ -172,6 +172,10 @@ class PuzzlePiece(object):
             raise ValueError("This image does not appear to be in the LAB colorspace as it does not have 3 dimensions")
         self._width = width
 
+        # Used to speed up piece to piece calculations
+        self._border_average_color = None
+        self._calculate_border_color_average()
+
         # Rotation gets set later.
         self._rotation = None
 
@@ -230,7 +234,38 @@ class PuzzlePiece(object):
         # Convert the list to a tuple since it is immutable
         self._actual_neighbor_ids = tuple(self._actual_neighbor_ids)
 
-    @ property
+    def _calculate_border_color_average(self):
+        """
+        Calculate the average color for each border to expedite calculations of puzzle piece side
+        """
+        # Top side border sum
+        # noinspection PyListCreation
+        border_color = [numpy.sum(self.get_row_pixels(0))]
+        # Right side
+        border_color.append(numpy.sum(self.get_column_pixels(self._width - 1)))
+        # Bottom side
+        border_color.append(numpy.sum(self.get_row_pixels(self._width - 1)))
+        # Left side
+        border_color.append(numpy.sum(self.get_column_pixels(0)))
+
+        # convert to average
+        for i in xrange(0, len(border_color)):
+            border_color[i] = 1.0 * border_color[i] / (self.width * PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS)
+
+        # Convert to a tuple
+        self._border_average_color = tuple(border_color)
+
+    def border_average_color(self, side):
+        """
+
+        Args:
+            side (PuzzlePiece):
+
+        Returns (float): Average pixel value for the puzzle piece border.
+        """
+        return self._border_average_color[side.value]
+
+    @property
     def original_neighbor_id_numbers_and_sides(self):
         """
         Neighbor Identification Number Property
