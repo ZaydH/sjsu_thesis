@@ -97,11 +97,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y.%m.%d_%H.%M.%S')
 
-    # Build the results information collection
-    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
-
     # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
-    actual_numb_puzzles = len(results_information.results)
     for puzzle_pieces in pieces_partitioned_by_puzzle_id:
         # Get the first piece of the puzzle and extract information on it.
         first_piece = puzzle_pieces[0]
@@ -125,15 +121,14 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
             filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + timestamp + ".jpg"
         new_puzzle.save_to_file(filename)
 
-        # Update the puzzle results
-        for i in xrange(0, actual_numb_puzzles):
-            results_information.results[i].resolve_direct_accuracies(new_puzzle)
-            results_information.results[i].resolve_neighbor_accuracies(new_puzzle)
-
         # Append the puzzle to the list
         output_puzzles.append(new_puzzle)
 
-    # Print the results information
+
+    # Build the results information collection
+    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
+    # Calculate and print the accuracy results
+    results_information.calculate_accuracies(output_puzzles)
     results_information.print_results()
 
 
@@ -166,17 +161,17 @@ def extract_image_filename_and_file_extension(image_filename_and_path):
 
 
 if __name__ == "__main__":
-    images = [".\\images\\muffins_300x200.jpg"]
-    paikin_tal_driver(images, PuzzleType.type1, 25)
+    # images = [".\\images\\muffins_300x200.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # images = [".\\images\\cat_sleeping_boy.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    # images = [".\\images\\two_faced_cat.jpg"]
+    images = [".\\images\\two_faced_cat.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = [".\\images\\mcgill_20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
     # paikin_tal_driver(images, PuzzleType.type2, 28)

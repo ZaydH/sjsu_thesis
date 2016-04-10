@@ -68,6 +68,24 @@ class PuzzleResultsCollection(object):
                     i = len(self._puzzle_results) - 1
                     self._puzzle_results[i].numb_pieces = 1
 
+    def calculate_accuracies(self, solved_puzzles):
+        """
+        Results Accuracy Calculator
+
+        Calculates the standard direct, modified direct, and modified neighbor accuracies for a set of solved
+        puzzles.
+
+        Args:
+            solved_puzzles (List[Puzzle]): A set of solved puzzles
+
+        """
+        # Iterate through each puzzle and
+        for puzzle in solved_puzzles:
+            # Update the puzzle results
+            for i in xrange(0, len(solved_puzzles)):
+                self._puzzle_results[i].resolve_direct_accuracies(puzzle)
+                self._puzzle_results[i].resolve_neighbor_accuracies(puzzle)
+
     @property
     def results(self):
         """
@@ -150,6 +168,16 @@ class PuzzleResultsInformation(object):
         self.modified_neighbor_accuracy = None
 
     def resolve_neighbor_accuracies(self, puzzle):
+        """
+        Neighbor Accuracy Resolved
+
+        This function is used to calculate the neighbor accuracy of a solved puzzle and compare it to
+        the results of previously calculated accuracies to select the best one.
+
+        Args:
+            puzzle (Puzzle): A solved Puzzle
+
+        """
 
         # Placed piece array
         placed_piece_matrix, rotation_matrix = puzzle.build_placed_piece_info()
@@ -159,8 +187,11 @@ class PuzzleResultsInformation(object):
 
         # Iterate through the set of pieces
         for piece in puzzle.pieces:
-            neighbor_location_and_sides = piece.get_neighbor_locations_and_sides()
+
             original_neighbor_id_and_sides = piece.original_neighbor_id_numbers_and_sides
+            # Sort the sides of the neighbor location to match the original order.
+            neighbor_location_and_sides = piece.get_neighbor_locations_and_sides()
+            neighbor_location_and_sides = sorted(neighbor_location_and_sides, key=lambda tup: tup[1].value)
 
             # Perform a check of the piece location information
             if PuzzleResultsInformation._PERFORM_ASSERT_CHECK:
