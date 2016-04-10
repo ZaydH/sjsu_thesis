@@ -2,12 +2,13 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
+import math
 import random
 import unittest
-import math
+
 import numpy
 
-from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester
+from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester, PuzzleResultsCollection
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide, PuzzlePieceRotation
 
 
@@ -349,6 +350,65 @@ class PuzzleImporterTester(unittest.TestCase):
                                                                     (6, PuzzlePieceSide.bottom), (None, PuzzlePieceSide.left))
         assert pieces[8].original_neighbor_id_numbers_and_sides == ((5, PuzzlePieceSide.top), (None, PuzzlePieceSide.right),
                                                                     (None, PuzzlePieceSide.bottom), (7, PuzzlePieceSide.left))
+
+    def test_accuracy_calculator(self):
+
+        # Build a known test puzzle.
+        dummy_puzzle = PuzzleTester.build_dummy_puzzle()
+        for piece in dummy_puzzle.pieces:
+            piece._assign_to_original_location()
+            piece.rotation = PuzzlePieceRotation.degree_0
+
+        # Test different conditons
+        for i in xrange(0, 2):
+
+            if i == 0:
+                # Set all piece rotation to the default
+                for piece in dummy_puzzle.pieces:
+                    piece.rotation = PuzzlePieceRotation.degree_0
+            elif i == 1:
+                dummy_puzzle.pieces[0].rotation = PuzzlePieceRotation.degree_90
+
+            # Build the results information collection
+            results_information = PuzzleResultsCollection([dummy_puzzle.pieces])
+            results_information.calculate_accuracies([dummy_puzzle])
+
+            # Verify the neighbor results
+            numb_pieces = len(dummy_puzzle.pieces)
+            results = results_information.results[0]
+
+            if i == 0:
+                assert results.standard_direct_accuracy.numb_correct_placements == numb_pieces
+                assert results.standard_direct_accuracy.numb_wrong_rotation == 0
+
+                assert results.modified_direct_accuracy.numb_correct_placements == numb_pieces
+                assert results.modified_direct_accuracy.numb_wrong_rotation == 0
+            elif i == 1:
+                assert results.standard_direct_accuracy.numb_correct_placements == numb_pieces - 1
+                assert results.standard_direct_accuracy.numb_wrong_rotation == 1
+
+                assert results.modified_direct_accuracy.numb_correct_placements == numb_pieces - 1
+                assert results.modified_direct_accuracy.numb_wrong_rotation == 1
+
+            assert results.standard_direct_accuracy.numb_different_puzzle == 0
+            assert results.standard_direct_accuracy.numb_wrong_location == 0
+            assert results.standard_direct_accuracy.total_numb_included_pieces == numb_pieces
+
+            assert results.modified_direct_accuracy.numb_wrong_location == 0
+            assert results.modified_direct_accuracy.total_numb_included_pieces == numb_pieces
+
+            # Check the neighbor accuracy
+            numb_sides = PuzzlePieceSide.get_numb_sides()
+            if i == 0:
+                assert results.modified_neighbor_accuracy.correct_neighbor_count == numb_sides * numb_pieces
+                assert results.modified_neighbor_accuracy.wrong_neighbor_count == 0
+            elif i == 1:
+                assert results.modified_neighbor_accuracy.correct_neighbor_count == numb_sides * numb_pieces - 5
+                assert results.modified_neighbor_accuracy.wrong_neighbor_count == 5
+            assert results.modified_neighbor_accuracy.total_numb_included_pieces == numb_pieces
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

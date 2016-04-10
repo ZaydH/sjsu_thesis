@@ -1137,7 +1137,9 @@ class PuzzleTester(object):
         numb_dim = PuzzleTester.NUMB_PIXEL_DIMENSIONS
 
         # Define the array
-        dummy_img = numpy.zeros((piece_width * math.sqrt(numb_pieces), piece_width * math.sqrt(numb_pieces), numb_dim))
+        dummy_img = numpy.zeros((int(round(piece_width * math.sqrt(numb_pieces))),
+                                 int(round(piece_width * math.sqrt(numb_pieces))),
+                                 numb_dim))
         # populate the array
         val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE
         img_shape = dummy_img.shape
