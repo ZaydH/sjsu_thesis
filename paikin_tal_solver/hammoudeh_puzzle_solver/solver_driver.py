@@ -19,7 +19,8 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-RECALCULATE_DISTANCES = True
+PERFORM_PLACEMENT = True
+RECALCULATE_DISTANCES = False
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
@@ -36,77 +37,41 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         piece_width (Optional int): Width of a puzzle piece in pixels.
     """
 
-    puzzles = []  # Stores all of the puzzles.
-    combined_pieces = []  # Merge all the pieces together
+    # Define the variables needed through the driver
+
     local_puzzle_type = puzzle_type if puzzle_type is not None else DEFAULT_PUZZLE_TYPE
     local_piece_width = piece_width if piece_width is not None else DEFAULT_PUZZLE_PIECE_WIDTH
-    if RECALCULATE_DISTANCES:
-        for i in range(0, len(image_files)):
-            # Define the identification number of the first piece
-            starting_piece_id = len(combined_pieces)
-
-            # Build the puzzle and add it to the list of puzzles
-            new_puzzle = Puzzle(i, image_files[i], local_piece_width, starting_piece_id)
-            puzzles.append(new_puzzle)
-
-            # Concatenate to the list of all pieces.
-            combined_pieces += puzzles[i].pieces
-    # For good measure, shuffle the pieces
-    random.shuffle(combined_pieces)
 
     # Extract the filename of the image(s)
-    pickle_file_name = PICKLE_DIRECTORY + "start"
+    pickle_root_filename = ""
     for i in range(0, len(image_files)):
         # Get the root of the filename (i.e. without path and file extension
         _, img_root_filename = extract_image_filename_and_file_extension(image_files[i])
 
         # Append the file name to the information
-        pickle_file_name += "_" + img_root_filename
-    pickle_file_name += "_type_" + str(local_puzzle_type.value) + ".pk"
+        pickle_root_filename += "_" + img_root_filename
+    pickle_root_filename += "_type_" + str(local_puzzle_type.value) + ".pk"
 
-    # Determine whether to calculate the interpiece distances or import via pickle
-    if RECALCULATE_DISTANCES:
-        # Select whether or not to use fixed puzzle dimensions
-        puzzle_dimensions = None
-        if USE_KNOWN_PUZZLE_DIMENSIONS and len(images) == 1:
-            puzzle_dimensions = puzzles[0].grid_size
+    # Build the filenames
+    pickle_placement_start_filename = PICKLE_DIRECTORY + "start" + pickle_root_filename
+    pickle_placement_complete_filename = PICKLE_DIRECTORY + "placed" + pickle_root_filename
 
-        # Create the Paikin Tal Solver
-        print "Interpiece distance calculation started at: " + time.ctime()
-        start_time = time.time()
-        paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
-                                            PuzzlePiece.calculate_asymmetric_distance, local_puzzle_type,
-                                            fixed_puzzle_dimensions=puzzle_dimensions)
-        elapsed_time = time.time() - start_time
-        print_elapsed_time(elapsed_time, "inter-piece distance calculation")
-        # Export the Paikin Tal Object.
-        PickleHelper.exporter(paikin_tal_solver, pickle_file_name)
+    # When skipping placement, simply import the solved results.
+    if PERFORM_PLACEMENT:
+        paikin_tal_solver = run_paikin_tal_solver(image_files, local_puzzle_type, local_piece_width,
+                                                  pickle_placement_start_filename, pickle_placement_complete_filename)
     else:
-        print "Beginning import of pickle file: \"" + pickle_file_name + "\"\n\n"
-        paikin_tal_solver = PickleHelper.importer(pickle_file_name)
-        print "Pickle Import completed.\""
-        # noinspection PyProtectedMember
-        # This recalculate of start piece is included since how start piece is selected is configurable.
-        paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
-
-    # Run the Solver
-    print "Placer started at: " + time.ctime()
-    start_time = time.time()
-    paikin_tal_solver.run()
-    elapsed_time = time.time() - start_time
-    print_elapsed_time(elapsed_time, "placement")
+        paikin_tal_solver = PickleHelper.importer(pickle_placement_complete_filename)
 
     # Get the results
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
-
-    # Print the Paikin Tal Solver Results
-    output_puzzles = []
 
     # Create a time stamp for the results
     ts = time.time()
     timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y.%m.%d_%H.%M.%S')
 
     # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
+    output_puzzles = []
     for puzzle_pieces in pieces_partitioned_by_puzzle_id:
         # Get the first piece of the puzzle and extract information on it.
         first_piece = puzzle_pieces[0]
@@ -138,6 +103,79 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     # Calculate and print the accuracy results
     results_information.calculate_accuracies(output_puzzles)
     results_information.print_results()
+
+
+def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placement_start_filename,
+                          pickle_placement_complete_filename):
+    """
+    Paikin & Tal Solver
+
+    This function takes a set of inputs and runs the Paikin and Tal solver.  It can be sped-up by importing
+    the calculations of distances from existing Pickle files.
+
+    Args:
+        image_files (List[String]): Path to the image files used to create the puzzles
+        puzzle_type (PuzzleType): Type of the puzzle to be solved
+        piece_width (int): Width/length of all puzzle pieces
+        pickle_placement_start_filename (String): Filename to export a pickle file after calculating all
+         interpiece distances and before starting placement.  If recalculating distances is disabled, then
+         this serves as the filename to import calculated distances from.
+        pickle_placement_complete_filename (String): Filename to e
+
+    Returns (PaikinTalSolver): Solved Paikin & Tal result.
+
+    """
+
+    puzzles = []  # Stores all of the puzzles.
+    combined_pieces = []  # Merge all the pieces together
+
+    # Optionally import the images from disk
+    if RECALCULATE_DISTANCES:
+        for i in range(0, len(image_files)):
+            # Define the identification number of the first piece
+            starting_piece_id = len(combined_pieces)
+
+            # Build the puzzle and add it to the list of puzzles
+            new_puzzle = Puzzle(i, image_files[i], piece_width, starting_piece_id)
+            puzzles.append(new_puzzle)
+
+            # Concatenate to the list of all pieces.
+            combined_pieces += puzzles[i].pieces
+
+        # Select whether or not to use fixed puzzle dimensions
+        puzzle_dimensions = None
+        if USE_KNOWN_PUZZLE_DIMENSIONS and len(images) == 1:
+            puzzle_dimensions = puzzles[0].grid_size
+
+        # Create the Paikin Tal Solver
+        print "Interpiece distance calculation started at: " + time.ctime()
+        start_time = time.time()
+        paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
+                                            PuzzlePiece.calculate_asymmetric_distance, puzzle_type,
+                                            fixed_puzzle_dimensions=puzzle_dimensions)
+        elapsed_time = time.time() - start_time
+        print_elapsed_time(elapsed_time, "inter-piece distance calculation")
+        # Export the Paikin Tal Object.
+        PickleHelper.exporter(paikin_tal_solver, pickle_placement_start_filename)
+    else:
+        print "Beginning import of pickle file: \"" + pickle_placement_start_filename + "\"\n\n"
+        paikin_tal_solver = PickleHelper.importer(pickle_placement_start_filename)
+        print "Pickle Import completed.\""
+        # noinspection PyProtectedMember
+        # This recalculate of start piece is included since how start piece is selected is configurable.
+        paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
+
+    # Run the Solver
+    print "Placer started at: " + time.ctime()
+    start_time = time.time()
+    paikin_tal_solver.run()
+    elapsed_time = time.time() - start_time
+    print_elapsed_time(elapsed_time, "placement")
+
+    # Export the completed solver results
+    PickleHelper.exporter(paikin_tal_solver, pickle_placement_complete_filename)
+
+    return paikin_tal_solver
 
 
 def extract_image_filename_and_file_extension(image_filename_and_path):
@@ -197,12 +235,12 @@ if __name__ == "__main__":
     # images = [".\\images\\mcgill_20.jpg", ".\\images\\two_faced_cat.jpg", ".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    images = [".\\images\\7.jpg", ".\\images\\mcgill_20.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\7.jpg", ".\\images\\mcgill_20.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\mcgill_20.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    # images = [".\\images\\mcgill_03.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    images = [".\\images\\mcgill_03.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\bgu_805_08.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\bgu_805_10.jpg"]
@@ -214,7 +252,7 @@ if __name__ == "__main__":
     # images = [".\\images\\che_100x100.gif"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
-
+    #
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
@@ -244,6 +282,6 @@ if __name__ == "__main__":
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-
+    #
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
