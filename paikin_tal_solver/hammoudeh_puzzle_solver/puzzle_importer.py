@@ -299,13 +299,13 @@ class PuzzleResultsInformation(object):
                 # Move one piece down
                 down_loc = (next_loc[0] + 1, next_loc[1])
                 # Only need to check first dimension since only one that changed
-                if down_loc[0] < puzzle.grid_size[0]:
+                if down_loc[0] < puzzle.grid_size[0] and down_loc not in explored_set and down_loc not in frontier_set:
                     frontier_set.append(down_loc)
 
                 # Move one piece to the right
                 right_loc = (next_loc[0], next_loc[1] + 1)
                 # Only need to check second dimension since only one that changed
-                if right_loc[1] < puzzle.grid_size[1]:
+                if right_loc[1] < puzzle.grid_size[1] and right_loc not in explored_set and right_loc not in frontier_set:
                     frontier_set.append(right_loc)
 
         # For all upper left coordinate candidates, determine the modified direct accuracy.

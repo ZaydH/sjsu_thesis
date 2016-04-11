@@ -14,7 +14,7 @@ from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver, PickleHelper
 
 # Select whether to display the images after reconstruction
-DISPLAY_IMAGES = False
+DISPLAY_IMAGES = True
 DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
@@ -61,7 +61,9 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         paikin_tal_solver = run_paikin_tal_solver(image_files, local_puzzle_type, local_piece_width,
                                                   pickle_placement_start_filename, pickle_placement_complete_filename)
     else:
+        print "Importing solved puzzle from pickle file: \"%s\"" % pickle_placement_complete_filename
         paikin_tal_solver = PickleHelper.importer(pickle_placement_complete_filename)
+        print "Pickle import of solved puzzle complete."
 
     # Get the results
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
