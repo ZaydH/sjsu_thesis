@@ -256,11 +256,11 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\bgu_805_10.jpg"]
     # paikin_tal_driver(images, PuzzleType.type2, 28)
-    images = [".\\images\\3300_1.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, 28)
-    images = [".\\images\\boat_100x100.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, 25)
-    images = [".\\images\\che_100x100.gif"]
+    # images = [".\\images\\3300_1.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\boat_100x100.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    images = [".\\images\\che_100x100.jpg"]
     paikin_tal_driver(images, PuzzleType.type1, 25)
     paikin_tal_driver(images, PuzzleType.type2, 25)
 
