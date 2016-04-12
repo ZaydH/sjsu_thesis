@@ -119,30 +119,44 @@ class PuzzleResultsCollection(object):
                     direct_acc = results.modified_direct_accuracy
 
                 # Print the selected direct accuracy type
+                solved_puzzle_piece_count = results.numb_pieces + direct_acc.numb_different_puzzle
                 print "Solved Puzzle ID #%d" % direct_acc.solved_puzzle_id
-                print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements, results.numb_pieces,
-                                                                            100.0 * direct_acc.numb_correct_placements / results.numb_pieces)
-                print acc_name + " Numb Different Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle, results.numb_pieces,
-                                                                                100.0 * direct_acc.numb_different_puzzle / results.numb_pieces)
-                print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location, results.numb_pieces,
-                                                                              100.0 * direct_acc.numb_wrong_location / results.numb_pieces)
-                print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation, results.numb_pieces,
-                                                                              100.0 * direct_acc.numb_wrong_rotation / results.numb_pieces)
-                numb_missing_pieces = results.numb_pieces - direct_acc.total_numb_included_pieces
-                print acc_name + " Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces, results.numb_pieces,
-                                                                              100.0 * numb_missing_pieces / results.numb_pieces)
+
+                print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements,
+                                                                            solved_puzzle_piece_count,
+                                                                            100.0 * direct_acc.numb_correct_placements / solved_puzzle_piece_count)
+                print acc_name + " Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle,
+                                                                                solved_puzzle_piece_count,
+                                                                                100.0 * direct_acc.numb_different_puzzle / solved_puzzle_piece_count)
+                print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location,
+                                                                              solved_puzzle_piece_count,
+                                                                              100.0 * direct_acc.numb_wrong_location / solved_puzzle_piece_count)
+                print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation,
+                                                                              results.numb_pieces,
+                                                                              100.0 * direct_acc.numb_wrong_rotation / solved_puzzle_piece_count)
+                numb_pieces_missing = results.numb_pieces - direct_acc.total_numb_included_pieces
+                print acc_name + " Numb Pieces Missing:\t%d/%d\t(%3.2f%%)" % (numb_pieces_missing,
+                                                                              results.numb_pieces,
+                                                                              100.0 * numb_pieces_missing / results.numb_pieces)
                 # Print a new line to separate the results
                 print ""
 
-            # Print the selected direct accuracy type
+            # Print the modified neighbor accuracy
             neighbor_acc = results.modified_neighbor_accuracy
-            numb_neighbors = PuzzlePieceSide.get_numb_sides() * results.numb_pieces
+            numb_pieces_in_puzzle = neighbor_acc.total_numb_included_pieces
+            numb_neighbors_in_puzzle = numb_pieces_in_puzzle * PuzzlePieceSide.get_numb_sides()
             print "Solved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
-            print "Neighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count, numb_neighbors,
-                                                              100.0 * neighbor_acc.correct_neighbor_count / numb_neighbors)
+            print "Neighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
+                                                              numb_neighbors_in_puzzle,
+                                                              100.0 * neighbor_acc.correct_neighbor_count / numb_neighbors_in_puzzle)
             numb_missing_pieces = results.numb_pieces - neighbor_acc.total_numb_included_pieces
-            print "Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces, results.numb_pieces,
-                                                                         100.0 * numb_missing_pieces / results.numb_pieces)
+            print "Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
+                                                              results.numb_pieces,
+                                                              100.0 * numb_missing_pieces / results.numb_pieces)
+            numb_from_wrong_puzzle = neighbor_acc.wrong_puzzle_id
+            print "Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
+                                                                numb_pieces_in_puzzle,
+                                                                100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
             # Print a new line to separate the results
             print ""
 
@@ -190,7 +204,7 @@ class PuzzleResultsInformation(object):
 
             # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
             if piece.actual_puzzle_id != self.puzzle_id:
-                neighbor_accuracy_info.wrong_neighbor_count += PuzzlePieceSide.get_numb_sides()
+                neighbor_accuracy_info.wrong_puzzle_id += 1
                 continue
 
             original_neighbor_id_and_sides = piece.original_neighbor_id_numbers_and_sides
@@ -233,10 +247,9 @@ class PuzzleResultsInformation(object):
                 else:
                     neighbor_accuracy_info.wrong_neighbor_count += 1
 
-        # Use the modified neighbor accuracy if no accuracy is stored or if the number of correct neighbors
-        # is greater than the previously stored value.
-        if self.modified_neighbor_accuracy is None \
-                or self.modified_neighbor_accuracy.correct_neighbor_count < neighbor_accuracy_info.correct_neighbor_count:
+        # Update the best accuracy should be updated.
+        if ModifiedNeighborAccuracy.check_if_update_neighbor_accuracy(self.modified_neighbor_accuracy,
+                                                                      neighbor_accuracy_info):
             self.modified_neighbor_accuracy = neighbor_accuracy_info
 
     def resolve_direct_accuracies(self, puzzle):
@@ -250,12 +263,12 @@ class PuzzleResultsInformation(object):
         """
 
         # Get the standard direct accuracy
-        standard_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, puzzle.id_number)
+        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, puzzle.id_number)
 
-        # Update the standard direct accuracy
-        if self.standard_direct_accuracy is None \
-                or self.standard_direct_accuracy.numb_correct_placements < standard_direct_accuracy.numb_correct_placements:
-                self.standard_direct_accuracy = standard_direct_accuracy
+        # Update the stored standard direct accuracy if applicable
+        if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.standard_direct_accuracy,
+                                                                       new_direct_accuracy):
+            self.standard_direct_accuracy = new_direct_accuracy
 
         # Modified direct accuracy is a more complicated procedure so it runs separately
         self._resolve_modified_direct_accuracy(puzzle)
@@ -313,8 +326,8 @@ class PuzzleResultsInformation(object):
             modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.puzzle_id, puzzle.id_number,
                                                                                  possible_upper_left)
             # Update the standard direct accuracy
-            if self.modified_direct_accuracy is None \
-                    or self.modified_direct_accuracy.numb_correct_placements < modified_direct_accuracy.numb_correct_placements:
+            if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.modified_direct_accuracy,
+                                                                           modified_direct_accuracy):
                 self.modified_direct_accuracy = modified_direct_accuracy
 
 
@@ -445,8 +458,47 @@ class DirectAccuracyPuzzleResults(object):
         Returns (int): Total number of pieces included in this set of results.
 
         """
-        return (self.numb_correct_placements + self.numb_different_puzzle + self.numb_wrong_location
-                + self.numb_wrong_rotation)
+        return self.numb_correct_placements + self.numb_wrong_location + self.numb_wrong_rotation
+
+    @staticmethod
+    def check_if_update_direct_accuracy(current_best_direct_accuracy, new_direct_accuracy):
+        """
+        Determines whether the current best direct accuracy should be replaced with a newly calculated direct
+        accuracy.
+
+        Args:
+            current_best_direct_accuracy (DirectAccuracyPuzzleResults): The best direct accuracy results
+            found so far.
+
+            new_direct_accuracy (DirectAccuracyPuzzleResults): The newly calculated best direct accuracy
+
+        Returns (bool):
+            True if the current best direct accuracy should be replaced with the new direct accuracy and False
+            otherwise.
+        """
+
+        # If no best direct accuracy found so far, then just return True
+        if current_best_direct_accuracy is None:
+            return True
+
+        # Get the information on the current best result
+        best_numb_correct = current_best_direct_accuracy.numb_correct_placements
+        best_numb_included_pieces = current_best_direct_accuracy.total_numb_included_pieces
+        best_numb_wrong_puzzle = current_best_direct_accuracy.numb_different_puzzle
+        best_accuracy = 1.0 * best_numb_correct / (best_numb_included_pieces + best_numb_wrong_puzzle)
+
+        # Get the information on the new direct accuracy result
+        new_numb_correct = new_direct_accuracy.numb_correct_placements
+        new_numb_included_pieces = new_direct_accuracy.total_numb_included_pieces
+        new_numb_wrong_puzzle = new_direct_accuracy.numb_different_puzzle
+        new_accuracy = 1.0 * new_numb_correct / (new_numb_included_pieces + new_numb_wrong_puzzle)
+
+        # Update the standard direct accuracy if applicable
+        if (best_accuracy < new_accuracy or
+                (best_accuracy == new_accuracy and new_numb_wrong_puzzle < best_numb_wrong_puzzle)):
+            return True
+        else:
+            return False
 
 
 class ModifiedNeighborAccuracy(object):
@@ -458,6 +510,7 @@ class ModifiedNeighborAccuracy(object):
         self._original_puzzle_id = original_puzzle_id
         self._solved_puzzle_id = solved_puzzle_id
         self._actual_number_of_pieces = number_of_pieces
+        self.wrong_puzzle_id = 0
         self.correct_neighbor_count = 0
         self.wrong_neighbor_count = 0
 
@@ -496,7 +549,49 @@ class ModifiedNeighborAccuracy(object):
 
         Returns (int): Number of pieces from the associated original image that are in the solved puzzle.
         """
-        return (self.correct_neighbor_count + self.wrong_neighbor_count) / PuzzlePieceSide.get_numb_sides()
+        return (self.correct_neighbor_count + self.wrong_neighbor_count) / PuzzlePieceSide.get_numb_sides() \
+               + self.wrong_puzzle_id
+
+    @staticmethod
+    def check_if_update_neighbor_accuracy(current_best_neighbor_accuracy, new_neighbor_accuracy):
+        """
+        Determines whether the current best direct accuracy should be replaced with a newly calculated direct
+        accuracy.
+
+        Args:
+            current_best_neighbor_accuracy (ModifiedNeighborAccuracy): The best direct accuracy results
+            found so far.
+
+            new_neighbor_accuracy (ModifiedNeighborAccuracy): The newly calculated best direct accuracy
+
+        Returns (bool):
+            True if accuracy should be updated and False otherwise.
+        """
+
+        # If no best neighbor accuracy found so far, then just return True
+        if current_best_neighbor_accuracy is None:
+            return True
+
+        # Get the information on the current best result
+        best_total_errors = current_best_neighbor_accuracy.wrong_neighbor_count + \
+                            current_best_neighbor_accuracy.wrong_puzzle_id * PuzzlePieceSide.get_numb_sides()
+        best_numb_correct = current_best_neighbor_accuracy.correct_neighbor_count
+        best_accuracy = 1.0 * best_numb_correct / best_total_errors
+        best_piece_count = current_best_neighbor_accuracy.total_numb_included_pieces
+
+        # Get the information on the new direct accuracy result
+        new_total_errors = new_neighbor_accuracy.wrong_neighbor_count + \
+                           new_neighbor_accuracy.total_numb_included_pieces * PuzzlePieceSide.get_numb_sides()
+        new_numb_correct = current_best_neighbor_accuracy.correct_neighbor_count
+        new_accuracy = 1.0 * new_numb_correct / new_total_errors
+        new_piece_count = current_best_neighbor_accuracy.total_numb_included_pieces
+
+        # Update the standard direct accuracy if applicable
+        if (best_accuracy < new_accuracy or
+                (best_accuracy == new_accuracy and new_piece_count < best_piece_count)):
+            return True
+        else:
+            return False
 
 
 class Puzzle(object):
