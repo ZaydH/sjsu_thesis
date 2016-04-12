@@ -177,12 +177,26 @@ class PuzzleResultsInformation(object):
 
         # Store the number of pieces and the puzzle id
         self.puzzle_id = puzzle_id
-        self.numb_pieces = -1
+        self._numb_pieces = -1
 
         # Define the attributes for the standard accuracy.
         self.standard_direct_accuracy = None
         self.modified_direct_accuracy = None
         self.modified_neighbor_accuracy = None
+
+    @property
+    def numb_pieces(self):
+        """
+        Gets the piece count for an implicit puzzle id
+
+        Returns (int): Number of pieces in original puzzle with this puzzle id
+
+        """
+        return self._numb_pieces
+
+    @numb_pieces.setter
+    def numb_pieces(self, value):
+        self._numb_pieces = value
 
     def resolve_neighbor_accuracies(self, puzzle):
         """
@@ -266,7 +280,8 @@ class PuzzleResultsInformation(object):
         """
 
         # Get the standard direct accuracy
-        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, puzzle.id_number)
+        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, puzzle.id_number,
+                                                                        self.numb_pieces)
 
         # Update the stored standard direct accuracy if applicable
         if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.standard_direct_accuracy,
@@ -327,7 +342,8 @@ class PuzzleResultsInformation(object):
         # For all upper left coordinate candidates, determine the modified direct accuracy.
         for possible_upper_left in explored_set:
             modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.puzzle_id, puzzle.id_number,
-                                                                                 possible_upper_left)
+                                                                                 possible_upper_left,
+                                                                                 self.numb_pieces)
             # Update the standard direct accuracy
             if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.modified_direct_accuracy,
                                                                            modified_direct_accuracy):
@@ -339,10 +355,11 @@ class DirectAccuracyPuzzleResults(object):
     Structure used for managing puzzle placement results.
     """
 
-    def __init__(self, original_puzzle_id, solved_puzzle_id):
+    def __init__(self, original_puzzle_id, solved_puzzle_id, numb_pieces_in_original_puzzle):
         self._orig_puzzle_id = original_puzzle_id
         self._solved_puzzle_id = solved_puzzle_id
         self._different_puzzle = []
+        self.numb_pieces_in_original_puzzle = numb_pieces_in_original_puzzle
         self._wrong_location = []
         self._wrong_rotation = []
         self._correct_placement = []
@@ -408,6 +425,17 @@ class DirectAccuracyPuzzleResults(object):
             piece (PuzzlePiece): Puzzle Piece that was placed CORRECTLY.
         """
         self._correct_placement.append(piece)
+
+    @property
+    def weighted_accuracy(self):
+        """
+        Calculates and returns the weighted accuracy score for this puzzle.
+
+        Returns (float): Weighted accuracy score for this puzzle solution
+
+        """
+        return 1.0 * self.numb_correct_placements / (self.numb_pieces_in_original_puzzle
+                                                     + self.numb_different_puzzle)
 
     @property
     def numb_correct_placements(self):
@@ -495,16 +523,12 @@ class DirectAccuracyPuzzleResults(object):
             return True
 
         # Get the information on the current best result
-        best_numb_correct = current_best_direct_accuracy.numb_correct_placements
-        best_numb_included_pieces = current_best_direct_accuracy.pieces_from_original_puzzle_in_solved_puzzle
         best_numb_wrong_puzzle = current_best_direct_accuracy.numb_different_puzzle
-        best_accuracy = 1.0 * best_numb_correct / (best_numb_included_pieces + best_numb_wrong_puzzle)
+        best_accuracy = current_best_direct_accuracy.weighted_accuracy
 
         # Get the information on the new direct accuracy result
-        new_numb_correct = new_direct_accuracy.numb_correct_placements
-        new_numb_included_pieces = new_direct_accuracy.pieces_from_original_puzzle_in_solved_puzzle
         new_numb_wrong_puzzle = new_direct_accuracy.numb_different_puzzle
-        new_accuracy = 1.0 * new_numb_correct / (new_numb_included_pieces + new_numb_wrong_puzzle)
+        new_accuracy = new_direct_accuracy.weighted_accuracy
 
         # Update the standard direct accuracy if applicable
         if (best_accuracy < new_accuracy or
@@ -834,7 +858,7 @@ class Puzzle(object):
         """
         self._upper_left = (0, 0)
 
-    def determine_standard_direct_accuracy(self, expected_puzzle_id, solved_puzzle_id):
+    def determine_standard_direct_accuracy(self, expected_puzzle_id, solved_puzzle_id, numb_pieces_in_original_puzzle):
         """
         Standard Direct Accuracy Finder
 
@@ -843,13 +867,16 @@ class Puzzle(object):
         Args:
             expected_puzzle_id (int): Expected puzzle identification number
             solved_puzzle_id (int): Identification number assigned to the solved puzzle.
+            numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle
 
         Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement
 
         """
-        return self.determine_modified_direct_accuracy(expected_puzzle_id, solved_puzzle_id, (0, 0))
+        return self.determine_modified_direct_accuracy(expected_puzzle_id, solved_puzzle_id, (0, 0),
+                                                       numb_pieces_in_original_puzzle)
 
-    def determine_modified_direct_accuracy(self, expected_puzzle_id, solved_puzzle_id, upper_left):
+    def determine_modified_direct_accuracy(self, expected_puzzle_id, solved_puzzle_id, upper_left,
+                                           numb_pieces_in_original_puzzle):
         """
         Modified Direct Accuracy Finder
 
@@ -861,6 +888,7 @@ class Puzzle(object):
             solved_puzzle_id (int): Solved puzzle identification number
             upper_left(Tuple[int]): In the direct method, the upper-left most location is the origin.  In the
             "Modified Direct Method", this can be a tuple in the format (row, column).
+            numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle
 
         Returns (DirectAccuracyPuzzleResults): Information regarding the modified direct accuracy of the placement
 
@@ -870,7 +898,8 @@ class Puzzle(object):
             assert self._upper_left == (0, 0)  # Upper left should be normalized to zero.
 
         # Determine the accuracy assuming the upper left is in the normal location (i.e. (0,0))
-        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id, solved_puzzle_id)
+        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id, solved_puzzle_id,
+                                                    numb_pieces_in_original_puzzle)
 
         # Iterate through each piece and determine its accuracy results.
         for piece in self._pieces:
