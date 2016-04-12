@@ -299,6 +299,9 @@ class PaikinTalSolver(object):
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
             print "Placement complete.\n\n"
+            # If no pieces left to place, clean the heap to reduce the size for pickling.
+            if self._numb_unplaced_pieces == 0:
+                self._initialize_best_buddy_pool_and_heap()
 
     def get_solved_puzzles(self):
         """
