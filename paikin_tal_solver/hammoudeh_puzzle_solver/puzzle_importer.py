@@ -64,9 +64,9 @@ class PuzzleResultsCollection(object):
 
                 # If the puzzle does not exist, then create a results information
                 if not puzzle_exists:
-                    self._puzzle_results.append(PuzzleResultsInformation(piece.puzzle_id))
-                    i = len(self._puzzle_results) - 1
-                    self._puzzle_results[i].numb_pieces = 1
+                    new_puzzle = PuzzleResultsInformation(piece.puzzle_id)
+                    new_puzzle.numb_pieces = 1
+                    self._puzzle_results.append(new_puzzle)
 
     def calculate_accuracies(self, solved_puzzles):
         """
@@ -177,7 +177,7 @@ class PuzzleResultsInformation(object):
 
         # Store the number of pieces and the puzzle id
         self.puzzle_id = puzzle_id
-        self._numb_pieces = -1
+        self._numb_pieces = 0
 
         # Define the attributes for the standard accuracy.
         self.standard_direct_accuracy = None
@@ -280,8 +280,7 @@ class PuzzleResultsInformation(object):
         """
 
         # Get the standard direct accuracy
-        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, puzzle.id_number,
-                                                                        self.numb_pieces)
+        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, self.numb_pieces)
 
         # Update the stored standard direct accuracy if applicable
         if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.standard_direct_accuracy,
@@ -858,7 +857,7 @@ class Puzzle(object):
         """
         self._upper_left = (0, 0)
 
-    def determine_standard_direct_accuracy(self, expected_puzzle_id, solved_puzzle_id, numb_pieces_in_original_puzzle):
+    def determine_standard_direct_accuracy(self, expected_puzzle_id, numb_pieces_in_original_puzzle):
         """
         Standard Direct Accuracy Finder
 
@@ -866,17 +865,14 @@ class Puzzle(object):
 
         Args:
             expected_puzzle_id (int): Expected puzzle identification number
-            solved_puzzle_id (int): Identification number assigned to the solved puzzle.
             numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle
 
         Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement
 
         """
-        return self.determine_modified_direct_accuracy(expected_puzzle_id, solved_puzzle_id, (0, 0),
-                                                       numb_pieces_in_original_puzzle)
+        return self.determine_modified_direct_accuracy(expected_puzzle_id, (0, 0), numb_pieces_in_original_puzzle)
 
-    def determine_modified_direct_accuracy(self, expected_puzzle_id, solved_puzzle_id, upper_left,
-                                           numb_pieces_in_original_puzzle):
+    def determine_modified_direct_accuracy(self, expected_puzzle_id, upper_left, numb_pieces_in_original_puzzle):
         """
         Modified Direct Accuracy Finder
 
@@ -885,7 +881,6 @@ class Puzzle(object):
 
         Args:
             expected_puzzle_id (int): Expected puzzle identification number
-            solved_puzzle_id (int): Solved puzzle identification number
             upper_left(Tuple[int]): In the direct method, the upper-left most location is the origin.  In the
             "Modified Direct Method", this can be a tuple in the format (row, column).
             numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle
@@ -898,8 +893,7 @@ class Puzzle(object):
             assert self._upper_left == (0, 0)  # Upper left should be normalized to zero.
 
         # Determine the accuracy assuming the upper left is in the normal location (i.e. (0,0))
-        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id, solved_puzzle_id,
-                                                    numb_pieces_in_original_puzzle)
+        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id, self.puzzle_id, numb_pieces_in_original_puzzle)
 
         # Iterate through each piece and determine its accuracy results.
         for piece in self._pieces:
