@@ -57,16 +57,19 @@ class PuzzleResultsCollection(object):
                 puzzle_exists = False
                 for i in range(0, len(self._puzzle_results)):
                     # Check if the puzzle ID matches this set of results information.
-                    if piece.puzzle_id == self._puzzle_results[i].puzzle_id:
+                    if piece.actual_puzzle_id == self._puzzle_results[i].puzzle_id:
                         puzzle_exists = True
                         self._puzzle_results[i].numb_pieces += 1
                         continue
 
                 # If the puzzle does not exist, then create a results information
                 if not puzzle_exists:
-                    new_puzzle = PuzzleResultsInformation(piece.puzzle_id)
+                    new_puzzle = PuzzleResultsInformation(piece.actual_puzzle_id)
                     new_puzzle.numb_pieces = 1
                     self._puzzle_results.append(new_puzzle)
+
+        # Sort by original puzzle id
+        self._puzzle_results = sorted(self._puzzle_results, key=lambda result: result.puzzle_id)
 
     def calculate_accuracies(self, solved_puzzles):
         """
@@ -79,10 +82,11 @@ class PuzzleResultsCollection(object):
             solved_puzzles (List[Puzzle]): A set of solved puzzles
 
         """
-        # Iterate through each puzzle and
-        for puzzle in solved_puzzles:
-            # Update the puzzle results
-            for i in xrange(0, len(solved_puzzles)):
+
+        # Go through all of the original puzzles
+        for i in xrange(0, len(self._puzzle_results)):
+            for puzzle in solved_puzzles:
+                # Update the puzzle results
                 self._puzzle_results[i].resolve_direct_accuracies(puzzle)
                 self._puzzle_results[i].resolve_neighbor_accuracies(puzzle)
 
@@ -122,7 +126,6 @@ class PuzzleResultsCollection(object):
                 numb_pieces_in_original_puzzle = results.numb_pieces
                 piece_count_weight = direct_acc.numb_different_puzzle + numb_pieces_in_original_puzzle
                 print "Solved Puzzle ID #%d" % direct_acc.solved_puzzle_id
-
                 print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements,
                                                                             piece_count_weight,
                                                                             100.0 * direct_acc.numb_correct_placements / piece_count_weight)
@@ -133,7 +136,7 @@ class PuzzleResultsCollection(object):
                                                                               piece_count_weight,
                                                                               100.0 * direct_acc.numb_wrong_location / piece_count_weight)
                 print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation,
-                                                                              results.numb_pieces,
+                                                                              piece_count_weight,
                                                                               100.0 * direct_acc.numb_wrong_rotation / piece_count_weight)
                 # Calculate the number of missing pieces
                 numb_pieces_missing = (numb_pieces_in_original_puzzle
@@ -145,18 +148,21 @@ class PuzzleResultsCollection(object):
                 print ""
 
             # Print the modified neighbor accuracy
+            numb_pieces_in_original_puzzle = results.numb_pieces
             neighbor_acc = results.modified_neighbor_accuracy
-            numb_pieces_in_puzzle = neighbor_acc.total_numb_included_pieces
-            numb_neighbors_in_puzzle = numb_pieces_in_puzzle * PuzzlePieceSide.get_numb_sides()
+            neighbor_count_weight = neighbor_acc.numb_pieces_in_original_puzzle + neighbor_acc.wrong_puzzle_id
+            neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
             print "Solved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
             print "Neighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
-                                                              numb_neighbors_in_puzzle,
-                                                              100.0 * neighbor_acc.correct_neighbor_count / numb_neighbors_in_puzzle)
-            numb_missing_pieces = results.numb_pieces - neighbor_acc.total_numb_included_pieces
+                                                              neighbor_count_weight,
+                                                              100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
+            numb_missing_pieces = numb_pieces_in_original_puzzle \
+                                  - neighbor_acc.numb_pieces_from_original_puzzle_in_solved_puzzle
             print "Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
                                                               results.numb_pieces,
                                                               100.0 * numb_missing_pieces / results.numb_pieces)
             numb_from_wrong_puzzle = neighbor_acc.wrong_puzzle_id
+            numb_pieces_in_puzzle = neighbor_acc.total_numb_pieces_in_solved_puzzle
             print "Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
                                                                 numb_pieces_in_puzzle,
                                                                 100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
@@ -340,7 +346,7 @@ class PuzzleResultsInformation(object):
 
         # For all upper left coordinate candidates, determine the modified direct accuracy.
         for possible_upper_left in explored_set:
-            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.puzzle_id, puzzle.id_number,
+            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.puzzle_id,
                                                                                  possible_upper_left,
                                                                                  self.numb_pieces)
             # Update the standard direct accuracy
@@ -481,11 +487,11 @@ class DirectAccuracyPuzzleResults(object):
         return len(self._different_puzzle)
 
     @property
-    def total_numb_included_pieces(self):
+    def total_numb_pieces_in_solved_puzzle(self):
         """
-        Total Number of Pieces in Results Set
+        Total Number of Pieces in the solved image
 
-        Returns (int): Total number of pieces included in this set of results.
+        Returns (int): Total number of pieces (both with expected puzzle id and wrong puzzle id(s))
 
         """
         return self.numb_pieces_from_original_puzzle_in_solved_puzzle + self.numb_different_puzzle
@@ -522,16 +528,16 @@ class DirectAccuracyPuzzleResults(object):
             return True
 
         # Get the information on the current best result
-        best_numb_wrong_puzzle = current_best_direct_accuracy.numb_different_puzzle
+        best_numb_included_pieces = current_best_direct_accuracy.numb_pieces_from_original_puzzle_in_solved_puzzle
         best_accuracy = current_best_direct_accuracy.weighted_accuracy
 
         # Get the information on the new direct accuracy result
-        new_numb_wrong_puzzle = new_direct_accuracy.numb_different_puzzle
+        new_numb_included_pieces = current_best_direct_accuracy.numb_pieces_from_original_puzzle_in_solved_puzzle
         new_accuracy = new_direct_accuracy.weighted_accuracy
 
         # Update the standard direct accuracy if applicable
         if (best_accuracy < new_accuracy or
-                (best_accuracy == new_accuracy and new_numb_wrong_puzzle < best_numb_wrong_puzzle)):
+                (best_accuracy == new_accuracy and best_numb_included_pieces < new_numb_included_pieces)):
             return True
         else:
             return False
@@ -576,17 +582,35 @@ class ModifiedNeighborAccuracy(object):
         return self._solved_puzzle_id
 
     @property
-    def total_numb_included_pieces(self):
+    def total_numb_pieces_in_solved_puzzle(self):
         """
         Number of Included Pieces
 
-        This function returns the number of puzzle pieces from the original image that were placed in the
-        solved image.
+        This function returns the number of puzzle pieces in the solved image.
 
-        Returns (int): Number of pieces from the associated original image that are in the solved puzzle.
+        Returns (int): Number of pieces in the solved
         """
-        return (self.correct_neighbor_count + self.wrong_neighbor_count) / PuzzlePieceSide.get_numb_sides() \
-               + self.wrong_puzzle_id
+        return self.numb_pieces_from_original_puzzle_in_solved_puzzle + self.wrong_puzzle_id
+
+    @property
+    def numb_pieces_in_original_puzzle(self):
+        """
+        Property to extract the number of pieces in the original (input) puzzle.
+
+        Returns (int): Piece count in the original, input puzzle
+
+        """
+        return self._actual_number_of_pieces
+
+    @property
+    def numb_pieces_from_original_puzzle_in_solved_puzzle(self):
+        """
+        Number of pieces from the original puzzle in the solved result
+
+        Returns (int): Only the number of included pieces
+
+        """
+        return (self.correct_neighbor_count + self.wrong_neighbor_count) / PuzzlePieceSide.get_numb_sides()
 
     @staticmethod
     def check_if_update_neighbor_accuracy(current_best_neighbor_accuracy, new_neighbor_accuracy):
@@ -609,25 +633,30 @@ class ModifiedNeighborAccuracy(object):
             return True
 
         # Get the information on the current best result
-        best_piece_count = current_best_neighbor_accuracy.total_numb_included_pieces
-        # best_total_errors = current_best_neighbor_accuracy.wrong_neighbor_count + \
-        #                     current_best_neighbor_accuracy.wrong_puzzle_id * PuzzlePieceSide.get_numb_sides()
         best_numb_correct = current_best_neighbor_accuracy.correct_neighbor_count
-        best_accuracy = 1.0 * best_numb_correct / (best_piece_count * PuzzlePieceSide.get_numb_sides())
+        best_accuracy = current_best_neighbor_accuracy.weighted_accuracy
 
         # Get the information on the new direct accuracy result
-        new_piece_count = new_neighbor_accuracy.total_numb_included_pieces
-        # new_total_errors = new_neighbor_accuracy.wrong_neighbor_count + \
-        #                    new_neighbor_accuracy.total_numb_included_pieces * PuzzlePieceSide.get_numb_sides()
         new_numb_correct = new_neighbor_accuracy.correct_neighbor_count
-        new_accuracy = 1.0 * new_numb_correct / (new_piece_count * PuzzlePieceSide.get_numb_sides())
+        new_accuracy = new_neighbor_accuracy.weighted_accuracy
 
         # Update the standard direct accuracy if applicable
         if (best_accuracy < new_accuracy or
-                (best_accuracy == new_accuracy and new_piece_count < best_piece_count)):
+                (best_accuracy == new_accuracy and best_numb_correct < new_numb_correct)):
             return True
         else:
             return False
+
+    @property
+    def weighted_accuracy(self):
+        """
+        Calculates and returns the weighted neighbor accuracy
+
+        Returns (float): Weighted neighbor accuracy.
+        """
+        accuracy = 1.0 * self.correct_neighbor_count / (self._actual_number_of_pieces + self.wrong_puzzle_id)
+        accuracy /= PuzzlePieceSide.get_numb_sides()
+        return accuracy
 
 
 class Puzzle(object):
@@ -893,7 +922,7 @@ class Puzzle(object):
             assert self._upper_left == (0, 0)  # Upper left should be normalized to zero.
 
         # Determine the accuracy assuming the upper left is in the normal location (i.e. (0,0))
-        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id, self.puzzle_id, numb_pieces_in_original_puzzle)
+        accuracy_info = DirectAccuracyPuzzleResults(expected_puzzle_id, self.id_number, numb_pieces_in_original_puzzle)
 
         # Iterate through each piece and determine its accuracy results.
         for piece in self._pieces:
