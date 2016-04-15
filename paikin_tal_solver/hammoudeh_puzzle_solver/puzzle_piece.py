@@ -131,6 +131,8 @@ class PuzzlePiece(object):
 
     _PERFORM_ASSERTION_CHECKS = True
 
+    _USE_STORED_PREDICTED_VALUE_SPEED_UP = True
+
     def __init__(self, puzzle_id, location, lab_img, piece_id=None, puzzle_grid_size=None):
         """
         Puzzle Piece Constructor.
@@ -174,6 +176,7 @@ class PuzzlePiece(object):
 
         # Used to speed up piece to piece calculations
         self._border_average_color = None
+        self._predicted_border_values = [None] * PuzzlePieceSide.get_numb_sides()
         self._calculate_border_color_average()
 
         # Rotation gets set later.
@@ -257,9 +260,12 @@ class PuzzlePiece(object):
 
     def border_average_color(self, side):
         """
+        Border Average Color Accessor
+
+        Gets the average color for a border piece.
 
         Args:
-            side (PuzzlePiece):
+            side (PuzzlePieceSide): Side of the puzzle piece whose average value will be returned.
 
         Returns (float): Average pixel value for the puzzle piece border.
         """
@@ -551,27 +557,28 @@ class PuzzlePiece(object):
             Distance between
         """
 
-        # Get the border and second to last ROW on the TOP side of piece i
-        if piece_i_side == PuzzlePieceSide.top:
-            i_border = piece_i.get_row_pixels(0)
-            i_second_to_last = piece_i.get_row_pixels(1)
+        if piece_i._border_average_color[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
+            # Get the border and second to last ROW on the TOP side of piece i
+            if piece_i_side == PuzzlePieceSide.top:
+                i_border = piece_i.get_row_pixels(0)
+                i_second_to_last = piece_i.get_row_pixels(1)
 
-        # Get the border and second to last COLUMN on the RIGHT side of piece i
-        elif piece_i_side == PuzzlePieceSide.right:
-            i_border = piece_i.get_column_pixels(piece_i.width - 1)
-            i_second_to_last = piece_i.get_column_pixels(piece_i.width - 2)
+            # Get the border and second to last COLUMN on the RIGHT side of piece i
+            elif piece_i_side == PuzzlePieceSide.right:
+                i_border = piece_i.get_column_pixels(piece_i.width - 1)
+                i_second_to_last = piece_i.get_column_pixels(piece_i.width - 2)
 
-        # Get the border and second to last ROW on the BOTTOM side of piece i
-        elif piece_i_side == PuzzlePieceSide.bottom:
-            i_border = piece_i.get_row_pixels(piece_i.width - 1)
-            i_second_to_last = piece_i.get_row_pixels(piece_i.width - 2)
+            # Get the border and second to last ROW on the BOTTOM side of piece i
+            elif piece_i_side == PuzzlePieceSide.bottom:
+                i_border = piece_i.get_row_pixels(piece_i.width - 1)
+                i_second_to_last = piece_i.get_row_pixels(piece_i.width - 2)
 
-        # Get the border and second to last COLUMN on the LEFT side of piece i
-        elif piece_i_side == PuzzlePieceSide.left:
-            i_border = piece_i.get_column_pixels(0)
-            i_second_to_last = piece_i.get_column_pixels(1)
-        else:
-            raise ValueError("Invalid edge for piece i")
+            # Get the border and second to last COLUMN on the LEFT side of piece i
+            elif piece_i_side == PuzzlePieceSide.left:
+                i_border = piece_i.get_column_pixels(0)
+                i_second_to_last = piece_i.get_column_pixels(1)
+            else:
+                raise ValueError("Invalid edge for piece i")
 
         # If rotation is allowed need to reverse pixel order in some cases.
         reverse = False  # By default do not reverse
@@ -604,8 +611,13 @@ class PuzzlePiece(object):
         else:
             raise ValueError("Invalid edge for piece i")
 
-        # Calculate the value of pixels on piece j's edge.
-        predicted_j = 2 * (i_border.astype(numpy.int16)) - i_second_to_last.astype(numpy.int16)
+        # If needed, recalculate the side value.
+        if piece_i._border_average_color[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
+            # Calculate the value of pixels on piece j's edge.
+            piece_i._border_average_color[piece_i_side.value] = 2 * (i_border.astype(numpy.int16)) - i_second_to_last.astype(numpy.int16)
+        # Get the predicated stored value
+        predicted_j = piece_i._border_average_color[piece_i_side.value]
+
         # noinspection PyUnresolvedReferences
         pixel_diff = predicted_j.astype(numpy.int16) - j_border.astype(numpy.int16)
 
