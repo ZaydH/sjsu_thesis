@@ -557,7 +557,7 @@ class PuzzlePiece(object):
             Distance between
         """
 
-        if piece_i._border_average_color[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
+        if piece_i._predicted_border_values[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
             # Get the border and second to last ROW on the TOP side of piece i
             if piece_i_side == PuzzlePieceSide.top:
                 i_border = piece_i.get_row_pixels(0)
@@ -612,11 +612,11 @@ class PuzzlePiece(object):
             raise ValueError("Invalid edge for piece i")
 
         # If needed, recalculate the side value.
-        if piece_i._border_average_color[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
+        if piece_i._predicted_border_values[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
             # Calculate the value of pixels on piece j's edge.
-            piece_i._border_average_color[piece_i_side.value] = 2 * (i_border.astype(numpy.int16)) - i_second_to_last.astype(numpy.int16)
+            piece_i._predicted_border_values[piece_i_side.value] = 2 * (i_border.astype(numpy.int16)) - i_second_to_last.astype(numpy.int16)
         # Get the predicated stored value
-        predicted_j = piece_i._border_average_color[piece_i_side.value]
+        predicted_j = piece_i._predicted_border_values[piece_i_side.value]
 
         # noinspection PyUnresolvedReferences
         pixel_diff = predicted_j.astype(numpy.int16) - j_border.astype(numpy.int16)
