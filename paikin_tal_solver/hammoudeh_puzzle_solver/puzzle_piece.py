@@ -429,6 +429,25 @@ class PuzzlePiece(object):
         """
         self._rotation = new_rotation
 
+    def side_adjacent_to_location(self, location):
+        """
+        Given an adjacent puzzle location, this function returns the side that is touching that adjacent location.
+
+        Args:
+            location (Tuple[int]): A puzzle piece location adjacent to this piece.
+
+        Returns (PuzzlePieceSide): Side of this piece that is touching the adjacent location
+
+        """
+        loc_and_side = self.get_neighbor_locations_and_sides()
+        for (loc, side) in loc_and_side:
+            if loc == location:
+                return side
+        raise ValueError("Specified Location: \"(%s,%s)\" is not adjacent this piece's location \"(%s, %s)\"" % (location[0],
+                                                                                                                 location[1],
+                                                                                                                 self.location[0],
+                                                                                                                 self.location[1]))
+
     def get_neighbor_locations_and_sides(self):
         """
         Neighbor Locations and Sides
@@ -557,6 +576,9 @@ class PuzzlePiece(object):
             Distance between
         """
 
+        # Get the border information for p_i if not precalculated
+        i_border = None
+        i_second_to_last = None
         if piece_i._predicted_border_values[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
             # Get the border and second to last ROW on the TOP side of piece i
             if piece_i_side == PuzzlePieceSide.top:
@@ -614,7 +636,8 @@ class PuzzlePiece(object):
         # If needed, recalculate the side value.
         if piece_i._predicted_border_values[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
             # Calculate the value of pixels on piece j's edge.
-            piece_i._predicted_border_values[piece_i_side.value] = 2 * (i_border.astype(numpy.int16)) - i_second_to_last.astype(numpy.int16)
+            piece_i._predicted_border_values[piece_i_side.value] = (2 * (i_border.astype(numpy.int32))
+                                                                    - i_second_to_last.astype(numpy.int32))
         # Get the predicated stored value
         predicted_j = piece_i._predicted_border_values[piece_i_side.value]
 

@@ -182,6 +182,113 @@ class PickleHelper(object):
         f.close()
 
 
+class BestBuddyAccuracy(object):
+
+    _PERFORM_ASSERT_CHECK = True
+
+    def __init__(self, puzzle_id):
+        self.puzzle_id = puzzle_id
+        self._open_best_buddies = {}
+        self._wrong_best_buddies = []
+        self._correct_best_buddies = []
+
+    def add_open_best_buddy(self, piece_id, side):
+        """
+
+            Args:
+                piece_id (int):
+                side (PuzzlePieceSide):
+        """
+        key = BestBuddyAccuracy._open_bb_key(piece_id, side)
+        self._open_best_buddies[key] = True
+
+    def delete_open_best_buddy(self, piece_id, side):
+        """
+
+            Args:
+                piece_id (int):
+                side (PuzzlePieceSide):
+        """
+        key = BestBuddyAccuracy._open_bb_key(piece_id, side)
+
+        # Verify the best buddy exists
+        if BestBuddyAccuracy._PERFORM_ASSERT_CHECK:
+            assert self._open_best_buddies[key]
+        del self._open_best_buddies[key]
+
+    def add_wrong_best_buddy(self, piece_id, side):
+        """
+
+            Args:
+                piece_id (int):
+                side (PuzzlePieceSide):
+        """
+        self._wrong_best_buddies.append((piece_id, side))
+
+    def add_correct_best_buddy(self, piece_id, side):
+        """
+
+        Args:
+            piece_id (int):
+            side (PuzzlePieceSide):
+        """
+        self._correct_best_buddies.append((piece_id, side))
+
+    @staticmethod
+    def _open_bb_key(piece_id, side):
+        """
+
+        Args:
+            piece_id (int):
+            side (PuzzlePieceSide):
+
+        Returns (string):
+
+        """
+        return str(piece_id) + "_" + str(side.value)
+
+    @property
+    def numb_open_best_buddies(self):
+        """
+
+        Returns (int):
+
+        """
+        return len(self._open_best_buddies)
+
+    @property
+    def numb_correct_best_buddies(self):
+        """
+
+        Returns (int):
+
+        """
+        return len(self._correct_best_buddies)
+
+    @property
+    def numb_wrong_best_buddies(self):
+        """
+
+        Returns (int):
+
+        """
+        return len(self._wrong_best_buddies)
+
+    def __unicode__(self):
+        """
+        Constructs the best buddy accuracy information as a string
+
+        Returns (string): Best Buddy accuracy as a string
+        """
+        return "Best Buddy Info Puzzle #%s\n" % self.puzzle_id \
+               + "Numb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
+               + "Numb Correct Best Buddies:\t%s\n" % self.numb_correct_best_buddies \
+               + "Numb Wrong Best Buddies:\t%s" % self.numb_wrong_best_buddies
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+
 class PaikinTalSolver(object):
     """
     Paikin & Tal Solver
@@ -201,6 +308,8 @@ class PaikinTalSolver(object):
 
     # Select whether to clear the BB heap on completion
     _CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
+
+    _UNPLACED_PIECE_ID = -1
 
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
@@ -235,6 +344,9 @@ class PaikinTalSolver(object):
 
         # Store the function used to calculate piece to piece distances.
         self._distance_function = distance_function
+
+        # Quantifies the number of best buddies that
+        self._best_buddy_accuracy = []
 
         # Store the puzzle dimensions if any
         self._actual_puzzle_dimensions = fixed_puzzle_dimensions
@@ -280,6 +392,8 @@ class PaikinTalSolver(object):
 
             if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
                 print str(self._numb_unplaced_pieces) + " remain to be placed."
+                for bb_acc in self._best_buddy_accuracy:
+                    print str(bb_acc) + "\n"
 
             # if len(self._best_buddies_pool) == 0:
             #     PickleHelper.exporter(self, "empty_best_buddy_pool.pk")
@@ -359,7 +473,9 @@ class PaikinTalSolver(object):
         self._updated_puzzle_dimensions(next_piece.puzzle_id, next_piece.location)
 
         # Update the data structures used for Paikin and Tal
-        self._piece_locations[puzzle_id][next_piece.location] = True
+        self._piece_locations[puzzle_id][next_piece.location] = next_piece.id_number
+        self._update_best_buddy_accuracy(puzzle_id, next_piece.id_number)
+
         self._mark_piece_placed(next_piece.id_number)
         self._remove_open_slot(puzzle_id, next_piece.location)
         if next_piece_info.is_best_buddy:
@@ -471,7 +587,8 @@ class PaikinTalSolver(object):
 
         Returns: True of the location in the specified puzzle is open and false otherwise.
         """
-        return not self._piece_locations[puzzle_id][location] and self._check_board_dimensions(puzzle_id, location)
+        return self._piece_locations[puzzle_id][location] == PaikinTalSolver._UNPLACED_PIECE_ID \
+               and self._check_board_dimensions(puzzle_id, location)
 
     def _check_board_dimensions(self, puzzle_id, location):
 
@@ -594,18 +711,22 @@ class PaikinTalSolver(object):
 
         # Initialize the piece locations list
         shape = (len(self._pieces), len(self._pieces))
-        self._piece_locations.append(numpy.empty(shape, numpy.bool))
-        self._piece_locations[seed.puzzle_id].fill(False)
+        self._piece_locations.append(numpy.zeros(shape, numpy.int32))
+        self._piece_locations[seed.puzzle_id].fill(PaikinTalSolver._UNPLACED_PIECE_ID)
 
         # Place the piece unrotated in the center of the board.
         board_center = (int(shape[0] / 2), int(shape[1]) / 2)
         seed.location = board_center
         seed.rotation = PuzzlePieceRotation.degree_0
-        self._piece_locations[seed.puzzle_id][board_center] = True  # Note that this piece has been placed
+        self._piece_locations[seed.puzzle_id][board_center] = seed.id_number  # Note that this piece has been placed
 
         # Define new puzzle dimensions with the board center as the top left and bottom right
         puzzle_dimensions = PuzzleDimensions(seed.puzzle_id, board_center)
         self._placed_puzzle_dimensions.append(puzzle_dimensions)
+
+        # Set the best buddy score to zero by default.
+        self._best_buddy_accuracy.append(BestBuddyAccuracy(seed.puzzle_id))
+        self._update_best_buddy_accuracy(seed.puzzle_id, seed.id_number)
 
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(seed.id_number)
@@ -639,6 +760,61 @@ class PaikinTalSolver(object):
         if dimensions_changed:
             board_dimensions.update_dimensions()
             self._placed_puzzle_dimensions[puzzle_id] = board_dimensions
+
+    def _update_best_buddy_accuracy(self, puzzle_id, placed_piece_id):
+        """
+
+        Args:
+            puzzle_id (int): Identification number for the SOLVED puzzle
+            placed_piece_id (int): Identification number of the placed piece
+        """
+
+        # Get the place piece's neighbors and the corresponding side the piece.
+        neighbor_loc_and_side = self._pieces[placed_piece_id].get_neighbor_locations_and_sides()
+
+        # Iterate through all neighbor locations and sides.
+        for (neighbor_loc, placed_side) in neighbor_loc_and_side:
+
+            # Get the neighbor and best buddy ids
+            neighbor_id = self._piece_locations[puzzle_id][neighbor_loc]
+            neighbor_side = None
+
+            # If the neighbor is blank, then analyze its BB info.
+            if neighbor_id != PaikinTalSolver._UNPLACED_PIECE_ID:
+                # TODO Make a function to get the neighbor's side
+                neighbor_side = self._pieces[neighbor_id].side_adjacent_to_location(self._pieces[placed_piece_id].location)
+                neighbor_best_buddy = self._inter_piece_distance.best_buddies(neighbor_id, neighbor_side)
+
+                # If it is none then skip.
+                if neighbor_best_buddy is not None:
+                    # Delete the best buddy from the open list since definitely has a piece next to it.
+                    self._best_buddy_accuracy[puzzle_id].delete_open_best_buddy(neighbor_id, neighbor_side)
+
+                    # Best Buddy is correct
+                    if (placed_piece_id, placed_side) in neighbor_best_buddy:
+                        self._best_buddy_accuracy[puzzle_id].add_correct_best_buddy(neighbor_id, neighbor_side)
+                        # Both must be best buddies so this is definitely a match
+                        self._best_buddy_accuracy[puzzle_id].add_correct_best_buddy(placed_piece_id, placed_side)
+                        continue
+                    # Neighbor best buddy is wrong.
+                    else:
+                        self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(neighbor_id, neighbor_side)
+
+            # Check this piece's info.
+            placed_piece_bb_info = self._inter_piece_distance.best_buddies(placed_piece_id, placed_side)
+
+            # If there is no best buddy info, then the flow can continue
+            if placed_piece_bb_info is None:
+                continue
+            # If the neighbor side is open and the piece has a best buddy
+            elif neighbor_id == PaikinTalSolver._UNPLACED_PIECE_ID:
+                self._best_buddy_accuracy[puzzle_id].add_open_best_buddy(placed_piece_id, placed_side)
+            elif (neighbor_id, neighbor_side) not in placed_piece_bb_info:
+                self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
+
+            # Never should reach here.  It implies the BB match but that there is disagreement
+            elif PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                assert False
 
     def _update_open_slots(self, placed_piece):
         """
