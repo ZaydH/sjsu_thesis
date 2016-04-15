@@ -619,7 +619,7 @@ class PuzzlePiece(object):
         predicted_j = piece_i._predicted_border_values[piece_i_side.value]
 
         # noinspection PyUnresolvedReferences
-        pixel_diff = predicted_j.astype(numpy.int16) - j_border.astype(numpy.int16)
+        pixel_diff = predicted_j.astype(numpy.int32) - j_border.astype(numpy.int32)
 
         # Return the sum of the absolute values.
         pixel_diff = numpy.absolute(pixel_diff)
