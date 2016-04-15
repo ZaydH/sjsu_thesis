@@ -372,13 +372,13 @@ class PieceDistanceInformation(object):
                     second_best_distance = self._second_best_distance[p_i_side.value]
 
                     # Check if calculations can be skipped
-                    if self._asymmetric_distances[p_i_side.value, p_j, p_j_side_index] == sys.maxint:
+                    if piece_to_piece_distance == sys.maxint:
+                        asym_compatibility = -sys.maxint
+                    elif second_best_distance == 0:
                         asym_compatibility = -sys.maxint
                     # Prevent divide by zero
                     elif piece_to_piece_distance == 0:
                         asym_compatibility = 1
-                    elif second_best_distance == 0:
-                        asym_compatibility = -sys.maxint
                     else:
                         # Calculate the asymmetric compatibility
                         asym_compatibility = (1 - 1.0 * piece_to_piece_distance / second_best_distance)
