@@ -382,6 +382,7 @@ class PaikinTalSolver(object):
             self._new_board_mutual_compatibility = PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD
 
         # Stores the best buddies which are prioritized for placement.
+        self._best_buddy_open_slot_heap = None  # Initialize here to prevent warnings in PyCharm
         self._initialize_best_buddy_pool_and_heap()
         self._numb_puzzles = 0
 
@@ -439,7 +440,7 @@ class PaikinTalSolver(object):
                 # Once all pieces have been placed verify that no best buddies remain unaccounted for.
                 if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                     for best_buddy_acc in self._best_buddy_accuracy:
-                        assert best_buddy_acc.numb_open_best_buddies == 0
+                       assert best_buddy_acc.numb_open_best_buddies == 0
 
             # Print final best buddy accuracy information
             self.print_best_buddy_accuracy_info()
@@ -635,19 +636,29 @@ class PaikinTalSolver(object):
         in particular when there are a lot of pieces.
         """
 
+        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
+            print "Cleaning best buddy heap..."
+
+        elements_deleted = 0  # Stores the number of elements in the heap removed
         new_bb_heap = []
         # Go through all the heap elements and if a slot is full or a best buddy was placed, remove
         # Do not add it to the new heap
         for bb_heap_info in self._best_buddy_open_slot_heap:
             if (not self._is_slot_open(bb_heap_info.puzzle_id, bb_heap_info.location)
-                or self._piece_placed[bb_heap_info.bb_id]):
+                    or self._piece_placed[bb_heap_info.bb_id]):
+                elements_deleted += 1
                 continue
             else:
-                new_bb_heap = bb_heap_info
+                new_bb_heap.append(bb_heap_info)
 
         # Turn the cleaned list into a heap and replace the existing heap
         heapq.heapify(new_bb_heap)
         self._best_buddy_open_slot_heap = new_bb_heap
+
+        # Print the number of elements deleted
+        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
+            total_numb_elements = elements_deleted + len(new_bb_heap)
+            print "%d out of %d elements removed in the heap cleanup.\n\n" % (elements_deleted, total_numb_elements)
 
 
     def _check_board_dimensions(self, puzzle_id, location):
