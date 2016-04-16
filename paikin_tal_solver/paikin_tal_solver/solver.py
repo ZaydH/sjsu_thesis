@@ -440,7 +440,7 @@ class PaikinTalSolver(object):
                 # Once all pieces have been placed verify that no best buddies remain unaccounted for.
                 if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                     for best_buddy_acc in self._best_buddy_accuracy:
-                       assert best_buddy_acc.numb_open_best_buddies == 0
+                        assert best_buddy_acc.numb_open_best_buddies == 0
 
             # Print final best buddy accuracy information
             self.print_best_buddy_accuracy_info()
@@ -660,7 +660,6 @@ class PaikinTalSolver(object):
             total_numb_elements = elements_deleted + len(new_bb_heap)
             print "%d out of %d elements removed in the heap cleanup.\n\n" % (elements_deleted, total_numb_elements)
 
-
     def _check_board_dimensions(self, puzzle_id, location):
 
         # If no puzzled dimensions, then slot is definitely open
@@ -842,12 +841,22 @@ class PaikinTalSolver(object):
         # Get the place piece's neighbors and the corresponding side the piece.
         neighbor_loc_and_side = self._pieces[placed_piece_id].get_neighbor_locations_and_sides()
 
+        if placed_piece_id == 1199:
+            x = 1
+        elif placed_piece_id == 1106:
+            y = 1
+
         # Iterate through all neighbor locations and sides.
         for (neighbor_loc, placed_side) in neighbor_loc_and_side:
 
             # Get the neighbor and best buddy ids
             neighbor_id = self._piece_locations[puzzle_id][neighbor_loc]
             neighbor_side = None
+
+            if neighbor_id == 1199:
+                x = 1
+            elif neighbor_id == 1106:
+                y = 1
 
             # If the placed piece has no neighbor, skip over this analysis
             if neighbor_id != PaikinTalSolver._UNPLACED_PIECE_ID:
@@ -880,23 +889,24 @@ class PaikinTalSolver(object):
                 continue
 
             # TODO This code only supports a single best buddy
-            placed_piece_bb_info = placed_piece_bb_info[0]
-            # If the neighbor side is open and the piece has a best buddy
-            if neighbor_id == PaikinTalSolver._UNPLACED_PIECE_ID:
+            (placed_piece_bb_id, placed_piece_bb_side) = placed_piece_bb_info[0]
 
-                # Check if the BB already placed.
-                if self._piece_placed[placed_piece_bb_info[0]]:
-                    # Delete the best buddy from the open list since definitely has a piece next to it.
-                    open_bb_puzzle_id = self._get_open_best_buddy_puzzle(placed_piece_bb_info[0], placed_piece_bb_info[1])
-                    if open_bb_puzzle_id is not None:
-                        self._best_buddy_accuracy[open_bb_puzzle_id].delete_open_best_buddy(placed_piece_bb_info[0],
-                                                                                            placed_piece_bb_info[1])
-                        self._best_buddy_accuracy[open_bb_puzzle_id].add_wrong_best_buddy(placed_piece_bb_info[0],
-                                                                                          placed_piece_bb_info[1])
-                    self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
-                # BB not placed so really open
-                else:
+            # Check if the BB already placed.
+            if self._piece_placed[placed_piece_bb_id]:
+                # Delete the best buddy from the open list since definitely has a piece next to it.
+                open_bb_puzzle_id = self._get_open_best_buddy_puzzle(placed_piece_bb_id, placed_piece_bb_side)
+                if open_bb_puzzle_id is not None:
+                    self._best_buddy_accuracy[open_bb_puzzle_id].delete_open_best_buddy(placed_piece_bb_id,
+                                                                                        placed_piece_bb_side)
+                    self._best_buddy_accuracy[open_bb_puzzle_id].add_wrong_best_buddy(placed_piece_bb_id,
+                                                                                      placed_piece_bb_side)
+                self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
+                continue
+            
+            # If the location next to the placed piece is open
+            if neighbor_id == PaikinTalSolver._UNPLACED_PIECE_ID:
                     self._best_buddy_accuracy[puzzle_id].add_open_best_buddy(placed_piece_id, placed_side)
+            #
             elif (neighbor_id, neighbor_side) not in placed_piece_bb_info:
                 self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
 
