@@ -409,8 +409,7 @@ class PaikinTalSolver(object):
 
             if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
                 print str(self._numb_unplaced_pieces) + " remain to be placed."
-                for bb_acc in self._best_buddy_accuracy:
-                    print str(bb_acc) + "\n"
+                self.print_best_buddy_accuracy_info()
 
             # if len(self._best_buddies_pool) == 0:
             #     PickleHelper.exporter(self, "empty_best_buddy_pool.pk")
@@ -433,6 +432,21 @@ class PaikinTalSolver(object):
             # If no pieces left to place, clean the heap to reduce the size for pickling.
             if self._numb_unplaced_pieces == 0:
                 self._initialize_best_buddy_pool_and_heap()
+
+                # Once all pieces have been placed verify that no best buddies remain unaccounted for.
+                if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                    for best_buddy_acc in self._best_buddy_accuracy:
+                        assert best_buddy_acc.numb_open_best_buddies == 0
+            
+            # Print final best buddy accuracy information
+            self.print_best_buddy_accuracy_info()
+
+    def print_best_buddy_accuracy_info(self):
+        """
+        Prints the best buddy accuracy information to the console.
+        """
+        for bb_acc in self._best_buddy_accuracy:
+            print str(bb_acc) + "\n"
 
     def get_solved_puzzles(self):
         """
@@ -796,9 +810,10 @@ class PaikinTalSolver(object):
             neighbor_id = self._piece_locations[puzzle_id][neighbor_loc]
             neighbor_side = None
 
-            # If the neighbor is blank, then analyze its BB info.
+            # If the placed piece has no neighbor, skip over this analysis
             if neighbor_id != PaikinTalSolver._UNPLACED_PIECE_ID:
-                # TODO Make a function to get the neighbor's side
+
+                # Get the side of the neighbor piece adjacent to the newly placed piece
                 neighbor_side = self._pieces[neighbor_id].side_adjacent_to_location(self._pieces[placed_piece_id].location)
                 neighbor_best_buddy = self._inter_piece_distance.best_buddies(neighbor_id, neighbor_side)
 
@@ -833,12 +848,12 @@ class PaikinTalSolver(object):
                 # Check if the BB already placed.
                 if self._piece_placed[placed_piece_bb_info[0]]:
                     # Delete the best buddy from the open list since definitely has a piece next to it.
-                    if self._best_buddy_accuracy[puzzle_id].exists_open_best_buddy(placed_piece_bb_info[0],
-                                                                                   placed_piece_bb_info[1]):
-                        self._best_buddy_accuracy[puzzle_id].delete_open_best_buddy(placed_piece_bb_info[0],
-                                                                                    placed_piece_bb_info[1])
-                        self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_bb_info[0],
-                                                                                  placed_piece_bb_info[1])
+                    open_bb_puzzle_id = self._get_open_best_buddy_puzzle(placed_piece_bb_info[0], placed_piece_bb_info[1])
+                    if open_bb_puzzle_id is not None:
+                        self._best_buddy_accuracy[open_bb_puzzle_id].delete_open_best_buddy(placed_piece_bb_info[0],
+                                                                                            placed_piece_bb_info[1])
+                        self._best_buddy_accuracy[open_bb_puzzle_id].add_wrong_best_buddy(placed_piece_bb_info[0],
+                                                                                          placed_piece_bb_info[1])
                     self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
                 # BB not placed so really open
                 else:
@@ -849,6 +864,12 @@ class PaikinTalSolver(object):
             # Never should reach here.  It implies the BB match but that there is disagreement
             elif PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                 assert False
+
+    def _get_open_best_buddy_puzzle(self, piece_id, side):
+        for i in xrange(0, len(self._best_buddy_accuracy)):
+            if self._best_buddy_accuracy[i].exists_open_best_buddy(piece_id, side):
+                return i
+        return None
 
     def _update_open_slots(self, placed_piece):
         """
