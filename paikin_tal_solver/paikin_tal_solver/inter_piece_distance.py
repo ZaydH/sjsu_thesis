@@ -509,6 +509,22 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
             self._piece_distance_info[p_i].calculate_inter_piece_distances(pieces, self._distance_function)
 
+    def get_total_best_buddy_count(self):
+        """
+        Get the total number of best buddies.
+
+        This function is mostly used for assert checking.
+
+        Returns (int): Total number of best buddies
+        """
+        bb_total_count = 0
+        # Iterate through all pieces
+        for piece_dist_info in self._piece_distance_info:
+            # iterate though the side of each piece.
+            for side in PuzzlePieceSide.get_all_sides():
+                bb_total_count += len(piece_dist_info.best_buddies(side))
+        return bb_total_count
+
     def calculate_mutual_compatibility(self, is_piece_placed=None):
         """
         Mutual Compatibility Calculator

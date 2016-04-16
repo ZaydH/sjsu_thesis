@@ -183,6 +183,9 @@ class PickleHelper(object):
 
 
 class BestBuddyAccuracy(object):
+    """
+    Store the best buddy accuracy information for a single puzzle
+    """
 
     _PERFORM_ASSERT_CHECK = True
 
@@ -194,20 +197,22 @@ class BestBuddyAccuracy(object):
 
     def add_open_best_buddy(self, piece_id, side):
         """
+        Adds an unpaired open best buddy to the list
 
-            Args:
-                piece_id (int):
-                side (PuzzlePieceSide):
+        Args:
+            piece_id (int): Piece identification number of the as of yet unpaired best buddy
+            side (PuzzlePieceSide): Side of the unpaired best buddy
         """
         key = BestBuddyAccuracy._open_bb_key(piece_id, side)
         self._open_best_buddies[key] = True
 
     def delete_open_best_buddy(self, piece_id, side):
         """
+        Adds an unpaired open best buddy to the list
 
-            Args:
-                piece_id (int):
-                side (PuzzlePieceSide):
+        Args:
+            piece_id (int): Piece identification number of the as of yet unpaired best buddy
+            side (PuzzlePieceSide): Side of the unpaired best buddy
         """
         key = BestBuddyAccuracy._open_bb_key(piece_id, side)
 
@@ -268,7 +273,7 @@ class BestBuddyAccuracy(object):
     def numb_open_best_buddies(self):
         """
 
-        Returns (int):
+        Returns (int): Total number of best buddies whose best buddies have not yet been placed.
 
         """
         return len(self._open_best_buddies)
@@ -276,8 +281,9 @@ class BestBuddyAccuracy(object):
     @property
     def numb_correct_best_buddies(self):
         """
+        Gets the number of correct best buddies who are next to their best buddy
 
-        Returns (int):
+        Returns (int): Total number of correct best buddies
 
         """
         return len(self._correct_best_buddies)
@@ -285,8 +291,9 @@ class BestBuddyAccuracy(object):
     @property
     def numb_wrong_best_buddies(self):
         """
+        Gets the number of correct best buddies who are NOT next to their best buddy
 
-        Returns (int):
+        Returns (int): Total number of WRONG best buddies
 
         """
         return len(self._wrong_best_buddies)
@@ -433,6 +440,9 @@ class PaikinTalSolver(object):
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
             print "Placement complete.\n\n"
+            # Print final best buddy accuracy information
+            self.print_best_buddy_accuracy_info()
+
             # If no pieces left to place, clean the heap to reduce the size for pickling.
             if self._numb_unplaced_pieces == 0:
                 self._initialize_best_buddy_pool_and_heap()
@@ -442,8 +452,7 @@ class PaikinTalSolver(object):
                     for best_buddy_acc in self._best_buddy_accuracy:
                         assert best_buddy_acc.numb_open_best_buddies == 0
 
-            # Print final best buddy accuracy information
-            self.print_best_buddy_accuracy_info()
+                    assert self._get_total_best_buddy_count() == self._inter_piece_distance.get_total_best_buddy_count()
 
     def print_best_buddy_accuracy_info(self):
         """
@@ -841,22 +850,12 @@ class PaikinTalSolver(object):
         # Get the place piece's neighbors and the corresponding side the piece.
         neighbor_loc_and_side = self._pieces[placed_piece_id].get_neighbor_locations_and_sides()
 
-        if placed_piece_id == 1199:
-            x = 1
-        elif placed_piece_id == 1106:
-            y = 1
-
         # Iterate through all neighbor locations and sides.
         for (neighbor_loc, placed_side) in neighbor_loc_and_side:
 
             # Get the neighbor and best buddy ids
             neighbor_id = self._piece_locations[puzzle_id][neighbor_loc]
             neighbor_side = None
-
-            if neighbor_id == 1199:
-                x = 1
-            elif neighbor_id == 1106:
-                y = 1
 
             # If the placed piece has no neighbor, skip over this analysis
             if neighbor_id != PaikinTalSolver._UNPLACED_PIECE_ID:
@@ -891,7 +890,7 @@ class PaikinTalSolver(object):
             # TODO This code only supports a single best buddy
             (placed_piece_bb_id, placed_piece_bb_side) = placed_piece_bb_info[0]
 
-            # Check if the BB already placed.
+            # Check if the BB already placed.  If it is, then the best buddies are not adjacent
             if self._piece_placed[placed_piece_bb_id]:
                 # Delete the best buddy from the open list since definitely has a piece next to it.
                 open_bb_puzzle_id = self._get_open_best_buddy_puzzle(placed_piece_bb_id, placed_piece_bb_side)
@@ -902,10 +901,10 @@ class PaikinTalSolver(object):
                                                                                       placed_piece_bb_side)
                 self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
                 continue
-            
+
             # If the location next to the placed piece is open
             if neighbor_id == PaikinTalSolver._UNPLACED_PIECE_ID:
-                    self._best_buddy_accuracy[puzzle_id].add_open_best_buddy(placed_piece_id, placed_side)
+                self._best_buddy_accuracy[puzzle_id].add_open_best_buddy(placed_piece_id, placed_side)
             #
             elif (neighbor_id, neighbor_side) not in placed_piece_bb_info:
                 self._best_buddy_accuracy[puzzle_id].add_wrong_best_buddy(placed_piece_id, placed_side)
@@ -915,10 +914,31 @@ class PaikinTalSolver(object):
                 assert False
 
     def _get_open_best_buddy_puzzle(self, piece_id, side):
+        """
+        Gets the puzzle id associated with the piece of interest.
+
+        Args:
+            piece_id (int): Identification number for a puzzle piece that is being checked for in the
+             open best buddy list.
+
+            side (PuzzlePieceSide): Side of the best buddy that is being checked for in the list
+
+        Returns (Optional int): If the best buddy piece_id/side combination exists, then this returns the puzzle_id
+        where that best buddy information is located.  Otherwise, it returns None.
+
+        """
         for i in xrange(0, len(self._best_buddy_accuracy)):
             if self._best_buddy_accuracy[i].exists_open_best_buddy(piece_id, side):
                 return i
         return None
+
+    def _get_total_best_buddy_count(self):
+        bb_count = 0
+        for best_buddy_acc in self._best_buddy_accuracy:
+            bb_count += best_buddy_acc.numb_open_best_buddies
+            bb_count += best_buddy_acc.numb_wrong_best_buddies
+            bb_count += best_buddy_acc.numb_correct_best_buddies
+        return bb_count
 
     def _update_open_slots(self, placed_piece):
         """
