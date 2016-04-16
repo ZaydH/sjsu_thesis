@@ -326,7 +326,11 @@ class PaikinTalSolver(object):
     # Select whether to clear the BB heap on completion
     _CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
 
+    # Used to refer to an unplaced piece in the numpy matrix showing the board placement
     _UNPLACED_PIECE_ID = -1
+
+    # Number of pieces to be placed between heap clean-ups
+    _CLEAN_HEAP_FREQUENCY = 100
 
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
@@ -412,7 +416,6 @@ class PaikinTalSolver(object):
                 self.print_best_buddy_accuracy_info()
 
             # if len(self._best_buddies_pool) == 0:
-            #     PickleHelper.exporter(self, "empty_best_buddy_pool.pk")
             #     return
 
             # Get the next piece to place
@@ -437,7 +440,7 @@ class PaikinTalSolver(object):
                 if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                     for best_buddy_acc in self._best_buddy_accuracy:
                         assert best_buddy_acc.numb_open_best_buddies == 0
-            
+
             # Print final best buddy accuracy information
             self.print_best_buddy_accuracy_info()
 
@@ -572,6 +575,11 @@ class PaikinTalSolver(object):
         # Prioritize placing from BB pool
         if len(self._best_buddies_pool) > 0:
             next_piece = None
+
+            # Clean the BB Heap
+            if self._numb_unplaced_pieces % PaikinTalSolver._CLEAN_HEAP_FREQUENCY == 0:
+                self._clean_best_buddy_heap()
+
             # Keep popping from the heap until a valid next piece is found.
             while next_piece is None:
                 # Get the best next piece from the heap.
@@ -621,6 +629,27 @@ class PaikinTalSolver(object):
         return self._piece_locations[puzzle_id][location] == PaikinTalSolver._UNPLACED_PIECE_ID \
                and self._check_board_dimensions(puzzle_id, location)
 
+    def _clean_best_buddy_heap(self):
+        """
+        Removes elements in teh BB heap that are no longer valid.  This can be used to speed up placement
+        in particular when there are a lot of pieces.
+        """
+
+        new_bb_heap = []
+        # Go through all the heap elements and if a slot is full or a best buddy was placed, remove
+        # Do not add it to the new heap
+        for bb_heap_info in self._best_buddy_open_slot_heap:
+            if (not self._is_slot_open(bb_heap_info.puzzle_id, bb_heap_info.location)
+                or self._piece_placed[bb_heap_info.bb_id]):
+                continue
+            else:
+                new_bb_heap = bb_heap_info
+
+        # Turn the cleaned list into a heap and replace the existing heap
+        heapq.heapify(new_bb_heap)
+        self._best_buddy_open_slot_heap = new_bb_heap
+
+
     def _check_board_dimensions(self, puzzle_id, location):
 
         # If no puzzled dimensions, then slot is definitely open
@@ -648,7 +677,6 @@ class PaikinTalSolver(object):
         self._best_buddies_pool = {}
         # Clear the best buddy heap
         self._best_buddy_open_slot_heap = []
-        # heapq.heapify()
 
     def _get_next_piece_from_pool(self, unplaced_pieces):
         """
