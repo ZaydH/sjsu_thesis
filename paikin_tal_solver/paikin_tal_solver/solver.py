@@ -356,7 +356,9 @@ class PaikinTalSolver(object):
     _UNPLACED_PIECE_ID = -1
 
     # Number of pieces to be placed between heap clean-ups
-    _CLEAN_HEAP_FREQUENCY = 100
+    _ENABLE_BEST_BUDDY_HEAP_HOUSEKEEPING = True
+    _MINIMUM_CLEAN_HEAP_SIZE = 1 * (10 ** 6)
+    _MINIMUM_CLEAN_HEAP_FREQUENCY = 100
 
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
@@ -411,6 +413,7 @@ class PaikinTalSolver(object):
         self._best_buddy_open_slot_heap = None  # Initialize here to prevent warnings in PyCharm
         self._initialize_best_buddy_pool_and_heap()
         self._numb_puzzles = 0
+        self._last_best_buddy_heap_housekeeping = None
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
             print "Starting to calculate inter-piece distances"
@@ -434,6 +437,8 @@ class PaikinTalSolver(object):
         if not skip_initial:
             # Place the initial seed piece
             self._place_seed_piece()
+            # Mark the last heap clear as now
+            self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
 
         # Place pieces until no pieces left to be placed.
         while self._numb_unplaced_pieces > 0:
@@ -608,7 +613,7 @@ class PaikinTalSolver(object):
             next_piece = None
 
             # Clean the BB Heap
-            if self._numb_unplaced_pieces % PaikinTalSolver._CLEAN_HEAP_FREQUENCY == 0:
+            if self._check_if_perform_best_buddy_heap_housecleaning():
                 self._clean_best_buddy_heap()
 
             # Keep popping from the heap until a valid next piece is found.
@@ -660,6 +665,21 @@ class PaikinTalSolver(object):
         return self._piece_locations[puzzle_id][location] == PaikinTalSolver._UNPLACED_PIECE_ID \
                and self._check_board_dimensions(puzzle_id, location)
 
+    def _check_if_perform_best_buddy_heap_housecleaning(self):
+        """
+        Determines whether best buddy heap housecleaning should be performed.
+
+        Returns (bool): True if BB heap house cleaning should not be performed and False otherwise.
+
+        """
+        if not PaikinTalSolver._ENABLE_BEST_BUDDY_HEAP_HOUSEKEEPING:
+            return False
+        if (len(self._best_buddy_open_slot_heap) >= PaikinTalSolver._MINIMUM_CLEAN_HEAP_SIZE
+                and self._last_best_buddy_heap_housekeeping - self._numb_unplaced_pieces >= PaikinTalSolver._MINIMUM_CLEAN_HEAP_FREQUENCY):
+            return True
+        else:
+            return False
+
     def _clean_best_buddy_heap(self):
         """
         Removes elements in teh BB heap that are no longer valid.  This can be used to speed up placement
@@ -680,6 +700,8 @@ class PaikinTalSolver(object):
                 continue
             else:
                 new_bb_heap.append(bb_heap_info)
+        # Mark when BB heap was last cleaned.
+        self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
 
         # Turn the cleaned list into a heap and replace the existing heap
         heapq.heapify(new_bb_heap)
@@ -717,6 +739,9 @@ class PaikinTalSolver(object):
         self._best_buddies_pool = {}
         # Clear the best buddy heap
         self._best_buddy_open_slot_heap = []
+
+        # Mark the last heap clear as now
+        self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
 
     def _get_next_piece_from_pool(self, unplaced_pieces):
         """
@@ -800,6 +825,9 @@ class PaikinTalSolver(object):
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
             print "\n\nBoard #" + str(self._numb_puzzles) + " was created.\n\n"
 
+        # Account for placed piece when calculating starting piece candidates.
+        if self._numb_puzzles > 1:
+            self._inter_piece_distance.find_start_piece_candidates(self._piece_placed)
         # Get the first piece for the puzzle
         seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
         seed = self._pieces[seed_piece_id]
@@ -807,6 +835,9 @@ class PaikinTalSolver(object):
 
         # Set the first piece's puzzle id
         seed.puzzle_id = self._numb_puzzles - 1
+
+        # Mark the last heap clear as now
+        self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
 
         # Initialize the piece locations list
         shape = (len(self._pieces), len(self._pieces))

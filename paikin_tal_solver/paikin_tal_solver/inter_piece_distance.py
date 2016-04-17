@@ -717,6 +717,10 @@ class InterPieceDistance(object):
 
                 # Iterate through best buddies to pick the best one
                 for (p_j, p_j_side) in self._piece_distance_info[p_i].best_buddies(p_i_side):
+
+                    if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                        continue
+
                     compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
 
                     # Use negative compatibility since we are using a reverse order sorting and this requires
