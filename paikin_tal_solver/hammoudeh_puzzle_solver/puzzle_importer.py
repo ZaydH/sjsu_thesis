@@ -363,6 +363,11 @@ class DirectAccuracyPuzzleResults(object):
     Structure used for managing puzzle placement results.
     """
 
+    COLOR_DIFFERENT_PUZZLE_ID = (255, 0, 0)  # Blue
+    COLOR_CORRECT_PLACEMENT = (0, 204, 0)  # Green
+    COLOR_WRONG_LOCATION = (0, 0, 255)  # Red
+    COLOR_WRONG_ROTATION = (51, 153, 255)  # Orange
+
     def __init__(self, original_puzzle_id, solved_puzzle_id, numb_pieces_in_original_puzzle):
         self._orig_puzzle_id = original_puzzle_id
         self._solved_puzzle_id = solved_puzzle_id

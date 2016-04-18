@@ -5,7 +5,7 @@ import random
 
 from enum import Enum
 import numpy
-import cv2  # Open CV
+import cv2  # OpenCV
 
 
 class Location(object):
@@ -173,6 +173,9 @@ class PuzzlePiece(object):
         if dim != PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS:
             raise ValueError("This image does not appear to be in the LAB colorspace as it does not have 3 dimensions")
         self._width = width
+        # For some debug images, we may want to see a solid image instead of the original image.
+        # This property stores that color.
+        self._solid_color = None
 
         # Used to speed up piece to piece calculations
         self._border_average_color = None
@@ -555,11 +558,18 @@ class PuzzlePiece(object):
             return self._img[:, col_numb, :]
 
     def _assign_to_original_location(self):
-        """Loopback Assigner
+        """Loopback Location Assigner
 
         Test Method Only.  Correctly assigns a piece to its original location.
         """
         self._assigned_loc = self._orig_loc
+
+    def _set_id_number_to_original_id(self):
+        """Loopback ID Number
+
+        Test Method Only.  Sets the assigned and original piece id number to the same value.
+        """
+        self._assigned_piece_id = self._orig_piece_id
 
     @staticmethod
     def calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):
@@ -755,6 +765,74 @@ class PuzzlePiece(object):
             return PuzzlePieceSide.left
         else:
             return PuzzlePieceSide.right
+
+    @staticmethod
+    def create_solid_image(bgr_color, width, height):
+        """
+        Create a solid image for displaying in output images.
+
+        Args:
+            bgr_color (Tuple[int]): Color  in BLUE, GREEEN, RED notation.  Each element for blue, green, or red
+              must be between 0 and 255 inclusive.
+            width (int): Width of the image in pixels.
+            height (int): Height of the image in number of pixels.
+
+        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)
+
+        """
+        # Create a black image
+        image = numpy.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
+        # Fill with the bgr color
+        image[:] = bgr_color
+        return image
+
+    @staticmethod
+    def create_side_polygon_image(bgr_color_by_side, width, height):
+        """
+        Create a solid image for displaying in output images.
+
+        Args:
+            bgr_color (Tuple[int]): Color  in BLUE, GREEEN, RED notation.  Each element for blue, green, or red
+              must be between 0 and 255 inclusive.
+            width (int): Width of the image in pixels.
+            height (int): Height of the image in number of pixels.
+
+        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)
+
+        """
+        # Verify each side is accounted for.
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert len(bgr_color_by_side) == PuzzlePieceSide.get_numb_sides()
+
+        # Define the center point of the image.
+        center_point = [height / 2, width / 2]
+
+        # Define the other four coordinates for the polygon.
+        top_left = [0, 0]
+        top_right = [width - 1, 0]
+        bottom_left = [0, height - 1]
+        bottom_right = [height - 1, width - 1]
+
+        # Create a black image
+        image = numpy.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
+        # For each side, fill with a polygon.
+        for (color, side) in bgr_color_by_side:
+
+            # Build the points in the polygon vector
+            if side == PuzzlePieceSide.top:
+                vector_points = [top_left, top_right]
+            elif side == PuzzlePieceSide.right:
+                vector_points = [top_right, bottom_right]
+            elif side == PuzzlePieceSide.bottom:
+                vector_points = [bottom_left, bottom_right]
+            else:
+                vector_points = [top_left, bottom_left]
+            vector_points.append(center_point)
+
+            # Build a polygon
+            polygon = numpy.array([vector_points], numpy.int32)
+            cv2.fillConvexPoly(image, polygon, color)
+        return image
 
     def is_correctly_placed(self, puzzle_offset_upper_left_location):
         """
