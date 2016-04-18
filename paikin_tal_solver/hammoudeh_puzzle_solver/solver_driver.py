@@ -27,6 +27,7 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
 PICKLE_DIRECTORY = ".\\pickle_files\\"
+SOLVED_DIRECTORY = ".\\solved\\"
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -48,8 +49,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     pickle_root_filename = ""
     for i in range(0, len(image_files)):
         # Get the root of the filename (i.e. without path and file extension
-        _, img_root_filename = extract_image_filename_and_file_extension(image_files[i])
-
+        img_root_filename = Puzzle.get_filename_without_extension(image_files[i])
         # Append the file name to the information
         pickle_root_filename += "_" + img_root_filename
     pickle_root_filename += "_type_" + str(local_puzzle_type.value) + ".pk"
@@ -71,8 +71,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
     # Create a time stamp for the results
-    ts = time.time()
-    timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y.%m.%d_%H.%M.%S')
+    timestamp = time.time()
 
     # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
     output_puzzles = []
@@ -90,13 +89,13 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
             Puzzle.display_image(new_puzzle._img)
 
         # Store the reconstructed image
-        filename = ".\\solved\\reconstructed_type_" + str(paikin_tal_solver.puzzle_type.value) + "_"
+        filename_descriptor = "reconstructed_type"
         if len(image_files) == 1:
-            img_extension, img_root_filename = extract_image_filename_and_file_extension(image_files[0])
-            filename += img_root_filename + "_" + timestamp + "." + img_extension
-        # Give a generic name if more than one puzzle being solved
+            filename = Puzzle.make_image_filename(filename_descriptor, SOLVED_DIRECTORY, paikin_tal_solver.puzzle_type,
+                                                  timestamp, orig_img_filename=image_files[0])
         else:
-            filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + timestamp + ".jpg"
+            filename = Puzzle.make_image_filename(filename_descriptor, SOLVED_DIRECTORY, paikin_tal_solver.puzzle_type,
+                                                  timestamp, puzzle_id=puzzle_id)
         new_puzzle.save_to_file(filename)
 
         # Append the puzzle to the list
@@ -184,34 +183,6 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
     print_elapsed_time(time.time() - start_time, "pickle completed solver export")
     print "Completed pickle export of the solved puzzle."
     return paikin_tal_solver
-
-
-def extract_image_filename_and_file_extension(image_filename_and_path):
-    """
-    Filename Root Extractor
-
-    Given a filename (with a file extension) and a directory, extract just the root of the filename.
-
-    Args:
-        image_filename_and_path (String): The path to an image as well as the filename.
-
-    Returns (String): The name of the file without any path information and with the file extension.
-    """
-    filename_stub = image_filename_and_path[::-1]  # Reverse the string
-
-    # Get the file extension
-    file_extension = filename_stub[:filename_stub.index(".")][::-1]
-    # Get everything after the before the file extension in the original (un-reversed) string
-    filename_stub = filename_stub[len(file_extension) + 1:]
-
-    # Get everything after the last slash in the original string
-    filename_stub = filename_stub[:filename_stub.index("\\")]
-
-    # Reverse the string again to get the right ordering
-    filename_stub = filename_stub[::-1]
-
-    # Return the file extension and the root filename
-    return file_extension, filename_stub
 
 
 def print_elapsed_time(elapsed_time, task_name):

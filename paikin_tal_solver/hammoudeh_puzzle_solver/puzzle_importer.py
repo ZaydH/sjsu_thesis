@@ -7,6 +7,7 @@ import os
 import math
 import random
 import pickle
+import datetime
 
 import numpy
 import cv2  # OpenCV
@@ -439,24 +440,58 @@ class PuzzleResultsInformation(object):
                 self.modified_direct_accuracy = modified_direct_accuracy
 
 
+class PieceDirectAccuracyResult(Enum):
+    """
+    Enumerated type used to represent the direct accuracy results for a single individual piece.  Each enumerated
+    value is a tuple representing the color of the puzzle piece in BGR format.
+    """
+    different_puzzle = (255, 0, 0)  # Blue
+    wrong_location = (0, 204, 0)  # Green
+    wrong_rotation = (0, 0, 255)  # Red
+    correct_placement = (51, 153, 255)  # Orange
+
+
 class DirectAccuracyPuzzleResults(object):
     """
     Structure used for managing puzzle placement results.
     """
 
-    COLOR_DIFFERENT_PUZZLE_ID = (255, 0, 0)  # Blue
-    COLOR_CORRECT_PLACEMENT = (0, 204, 0)  # Green
-    COLOR_WRONG_LOCATION = (0, 0, 255)  # Red
-    COLOR_WRONG_ROTATION = (51, 153, 255)  # Orange
+
 
     def __init__(self, original_puzzle_id, solved_puzzle_id, numb_pieces_in_original_puzzle):
         self._orig_puzzle_id = original_puzzle_id
         self._solved_puzzle_id = solved_puzzle_id
-        self._different_puzzle = []
+        self._different_puzzle = {}
         self.numb_pieces_in_original_puzzle = numb_pieces_in_original_puzzle
-        self._wrong_location = []
-        self._wrong_rotation = []
-        self._correct_placement = []
+        self._wrong_location = {}
+        self._wrong_rotation = {}
+        self._correct_placement = {}
+
+    def get_piece_result(self, piece_id):
+        """
+        Gets the direct accuracy results (e.g. wrong puzzle, wrong id, wrong rotation, etc.) for an individual
+        piece.
+
+        Args:
+            piece_id (int): Identification number of the piece
+
+        Returns (PieceDirectAccuracyResult, ): Direct accuracy result for an individual piece
+        """
+        key = str(piece_id)
+        if key in self._correct_placement:
+            return PieceDirectAccuracyResult.correct_placement
+
+        if key in self._wrong_rotation:
+            return PieceDirectAccuracyResult.wrong_rotation
+
+        if key in self._wrong_location:
+            return PieceDirectAccuracyResult.wrong_location
+
+        if key in self._different_puzzle:
+            return PieceDirectAccuracyResult.different_puzzle
+
+        # Piece does not exist in the results so raise an error
+        assert ValueError("Piece id: \"%d\" does not exist in this result set." % piece_id)
 
     @property
     def original_puzzle_id(self):
@@ -485,7 +520,7 @@ class DirectAccuracyPuzzleResults(object):
         Args:
             piece (PuzzlePiece): Piece placed in the wrong LOCATION
         """
-        self._wrong_location.append(piece)
+        self._wrong_location[str(piece.id_number)] = piece
 
     def add_different_puzzle(self, piece):
         """
@@ -496,7 +531,7 @@ class DirectAccuracyPuzzleResults(object):
         Args:
             piece (PuzzlePiece): Puzzle Piece that was placed with the different PUZZLE IDENTIFICATION NUMBER
         """
-        self._different_puzzle.append(piece)
+        self._different_puzzle[str(piece.id_number)] = piece
 
     def add_wrong_rotation(self, piece):
         """
@@ -507,7 +542,7 @@ class DirectAccuracyPuzzleResults(object):
         Args:
             piece (PuzzlePiece): Puzzle Piece that was placed with the wrong Rotation (i.e. not 0 degrees)
         """
-        self._wrong_rotation.append(piece)
+        self._wrong_rotation[str(piece.id_number)] = piece
 
     def add_correct_placement(self, piece):
         """
@@ -518,7 +553,7 @@ class DirectAccuracyPuzzleResults(object):
         Args:
             piece (PuzzlePiece): Puzzle Piece that was placed CORRECTLY.
         """
-        self._correct_placement.append(piece)
+        self._correct_placement[str(piece.id_number)] = piece
 
     @property
     def weighted_accuracy(self):
@@ -978,14 +1013,16 @@ class Puzzle(object):
         return self._piece_width
 
     @staticmethod
-    def reconstruct_from_pieces(pieces, id_numb=-1, display_image=False):
+    def reconstruct_from_pieces(pieces, id_numb=-1, display_image=False, use_results_coloring=False):
         """
         Constructs a puzzle from a set of pieces.
 
         Args:
             pieces ([PuzzlePiece]): Set of puzzle pieces that comprise the puzzle.
             id_numb (Optional int): Identification number for the puzzle
-            display_image (Optional Boolean): Select whether to display the image at the end of reconstruction
+            display_image (Optional bool): Select whether to display the image at the end of reconstruction
+            use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
+              image but what was stored based off the results.
 
         Returns (Puzzle):
         Puzzle constructed from the pieces.
@@ -1021,7 +1058,7 @@ class Puzzle(object):
 
         # Insert the pieces into the puzzle
         for piece in output_puzzle._pieces:
-            output_puzzle.insert_piece_into_image(piece)
+            output_puzzle.insert_piece_into_image(piece, use_results_coloring)
 
         # Convert the image to LAB format.
         output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
@@ -1125,6 +1162,19 @@ class Puzzle(object):
         """
         for piece in self._pieces:
             piece.rotation = PuzzlePieceRotation.random_rotation()
+
+    def set_piece_color_for_direct_accuracy(self, direct_acc_results):
+        """
+        Colorizes a piece based off the direct accuracy results.
+
+        Args:
+            direct_acc_results (DirectAccuracyPuzzleResults): Direct accuracy (either standard or modified) for
+            the solved image.
+
+        """
+        # Iterate through each puzzle piece and set its piece color
+        for piece in self._pieces:
+            piece.results_image_coloring = direct_acc_results.get_piece_result(piece.id_number)
 
     def get_min_and_max_row_and_columns(self, update_board_dimension_information):
         """
@@ -1234,25 +1284,108 @@ class Puzzle(object):
         # Return the sub image.
         return img[upper_left[0]:img_end[0], upper_left[1]:img_end[1], :]
 
-    def insert_piece_into_image(self, piece):
+    def insert_piece_into_image(self, piece, use_results_coloring=False):
         """
         Takes a puzzle piece and converts its image into BGR then adds it to the master image.
 
         Args:
             piece (PuzzlePiece): Puzzle piece to be inserted into the puzzle's image.
+            use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
+              image but what was stored based off the results.
         """
         piece_loc = piece.location
 
         # Define the upper left corner of the piece to insert
         upper_left = (piece_loc[0] * piece.width, piece_loc[1] * piece.width)
 
+        # Determine whether to use the image or something based off the results
+        if not use_results_coloring:
+            piece_img = self._img
+        else:
+            results_coloring = piece.results_image_coloring
+            # Verify the piece has actual results information.
+            if Puzzle._PERFORM_ASSERT_CHECKS:
+                assert results_coloring is not None
+            # If the item is not a list, it is solid coloring
+            if not isinstance(results_coloring, list):
+                piece_img = PuzzlePiece.create_solid_image(results_coloring, piece.width)
+            else:
+                piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width)
+
         # Select whether to display the image rotated
         piece_bgr = piece.bgr_image()
         if piece.rotation is None or piece.rotation == PuzzlePieceRotation.degree_0:
-            Puzzle.insert_subimage(self._img, upper_left, piece_bgr)
+            Puzzle.insert_subimage(piece_img, upper_left, piece_bgr)
         else:
             rotated_img = numpy.rot90(piece_bgr, piece.rotation.value / 90)
-            Puzzle.insert_subimage(self._img, upper_left, rotated_img)
+            Puzzle.insert_subimage(piece_img, upper_left, rotated_img)
+
+    @staticmethod
+    def get_file_extension(filename):
+        """
+        Get the file extension of an object.
+
+        Args:
+            filename (str): Filename of an object
+
+        Returns (str): File extension
+        """
+        import os
+        ext = str(os.path.basename(filename)).split('.', 1)[1]
+        return '.' + ext if ext else None
+
+    @staticmethod
+    def get_filename_without_extension(filename_and_path):
+        """
+        Get the file extension of an object.
+
+        Args:
+            filename_and_path (str): Filename of an object
+
+        Returns (str): File extension
+        """
+        return os.path.splitext(os.path.basename(filename_and_path))[0]
+
+    @staticmethod
+    def make_image_filename(image_descriptor, output_directory, puzzle_type, timestamp,
+                            orig_img_filename=None, puzzle_id=None):
+        """
+        Builds an image file name using a set of standard parameters.
+
+        Args:
+            image_descriptor (str): Descriptor of the output puzzle.
+            output_directory (str): Path where the file should be output
+            puzzle_type (PuzzleType): Type of the puzzle
+            timestamp (float): Timestamp to be associated with the file
+            orig_img_filename (Optional str): Path to the original file name
+            puzzle_id (Optional int): Identification number of the puzzle.
+
+        Returns (str): Filename with extension and path.
+        """
+        # Error check the input parameters
+        if orig_img_filename is None and puzzle_id is None:
+            assert ValueError("The image file name and puzzle id cannot both be None. "
+                              + "Exactly one must be specified.")
+        if orig_img_filename is not None and puzzle_id is not None:
+                assert ValueError("Either the image file name and puzzle id must be None. "
+                                  + "Both cannot be specified.")
+
+        # Store the reconstructed image
+        output_filename = output_directory + image_descriptor + "_" + str(puzzle_type.value) + "_"
+
+        # Convert the timestamp to a string.
+        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
+
+        # If a specific filename is specified, use that.
+        if orig_img_filename is not None:
+            img_extension = Puzzle.get_file_extension(orig_img_filename)
+            img_root_filename = Puzzle.get_filename_without_extension(orig_img_filename)
+            output_filename += img_root_filename + "_" + ts_str + "." + img_extension
+
+        # Give a generic name if more than one puzzle being solved
+        else:
+            output_filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + ts_str + ".jpg"
+        return output_filename
 
     @staticmethod
     def insert_subimage(master_img, upper_left, subimage):

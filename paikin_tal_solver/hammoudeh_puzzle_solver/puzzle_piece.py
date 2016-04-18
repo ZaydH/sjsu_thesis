@@ -175,7 +175,7 @@ class PuzzlePiece(object):
         self._width = width
         # For some debug images, we may want to see a solid image instead of the original image.
         # This property stores that color.
-        self._solid_color = None
+        self._results_image_coloring = None
 
         # Used to speed up piece to piece calculations
         self._border_average_color = None
@@ -450,6 +450,28 @@ class PuzzlePiece(object):
                                                                                                                  location[1],
                                                                                                                  self.location[0],
                                                                                                                  self.location[1]))
+
+    @property
+    def results_image_coloring(self):
+        """
+        Gets the results color image for the piece.
+
+        Returns(List): Either a single BGR integer list when a solid color is used.  If it is using polygon print,
+          then the return is a List[(List[int], PuzzlePieceSide)].
+
+        """
+        return self._results_image_coloring
+
+    @results_image_coloring.setter
+    def results_image_coloring(self, color):
+        """
+        Sets the image coloring when only a single color is needed.
+
+        Args:
+            color (List[int]): Color of the image in BGR format
+
+        """
+        self._results_image_coloring = color
 
     def get_neighbor_locations_and_sides(self):
         """
@@ -769,7 +791,7 @@ class PuzzlePiece(object):
             return PuzzlePieceSide.right
 
     @staticmethod
-    def create_solid_image(bgr_color, width, height):
+    def create_solid_image(bgr_color, width, height=None):
         """
         Create a solid image for displaying in output images.
 
@@ -777,11 +799,15 @@ class PuzzlePiece(object):
             bgr_color (Tuple[int]): Color  in BLUE, GREEN, RED notation.  Each element for blue, green, or red
               must be between 0 and 255 inclusive.
             width (int): Width of the image in pixels.
-            height (int): Height of the image in number of pixels.
+            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
+              is a square.
 
         Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)
 
         """
+        # Handle the case when no height is specified.
+        if height is None:
+            height = width
         # Create a black image
         image = numpy.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
         # Fill with the bgr color
@@ -789,7 +815,7 @@ class PuzzlePiece(object):
         return image
 
     @staticmethod
-    def create_side_polygon_image(bgr_color_by_side, width, height):
+    def create_side_polygon_image(bgr_color_by_side, width, height=None):
         """
         Create a solid image for displaying in output images.
 
@@ -797,11 +823,16 @@ class PuzzlePiece(object):
             bgr_color_by_side (Tuple[(Tuple[int], PuzzlePieceSide)]): Color in BLUE, GREEN, RED notation for each
               specified puzzle piece side.  Draws four triangles based off the
             width (int): Width of the image in pixels.
-            height (int): Height of the image in number of pixels.
+            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
+              is a square.
 
         Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)
 
         """
+        # Handle the case when no height is specified.
+        if height is None:
+            height = width
+
         # Verify each side is accounted for.
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             assert len(bgr_color_by_side) == PuzzlePieceSide.get_numb_sides()
