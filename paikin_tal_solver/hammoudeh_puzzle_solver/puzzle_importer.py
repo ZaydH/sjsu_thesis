@@ -225,11 +225,6 @@ class PuzzleResultsInformation(object):
         # Iterate through the set of pieces
         for piece in puzzle.pieces:
 
-            # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
-            if piece.actual_puzzle_id != self.puzzle_id:
-                neighbor_accuracy_info.wrong_puzzle_id += 1
-                continue
-
             original_neighbor_id_and_sides = piece.original_neighbor_id_numbers_and_sides
             # Sort the sides of the neighbor location to match the original order.
             neighbor_location_and_sides = piece.get_neighbor_locations_and_sides()
@@ -244,6 +239,12 @@ class PuzzleResultsInformation(object):
 
             # Iterate through all sides and check the
             for side_numb in xrange(0, len(neighbor_location_and_sides)):
+
+                # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
+                if piece.actual_puzzle_id != self.puzzle_id:
+                    # neighbor_accuracy_info.wrong_puzzle_id += 1
+                    neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side_numb)
+                    continue
 
                 # Extract the placed piece ID.  If a cell is empty or does not exist, mark it as None
                 neighbor_loc = neighbor_location_and_sides[side_numb][0]
@@ -264,11 +265,13 @@ class PuzzleResultsInformation(object):
                    and (original_neighbor_id_and_sides[side_numb][0] is None or
                         piece.rotation.value == rotation_matrix[neighbor_location_and_sides[side_numb][0]])):
 
-                    neighbor_accuracy_info.correct_neighbor_count += 1
+                    # neighbor_accuracy_info.correct_neighbor_count += 1
+                    neighbor_accuracy_info.add_correct_neighbor(piece.id_number, side_numb)
 
                 # Mark neighbor as incorrect
                 else:
-                    neighbor_accuracy_info.wrong_neighbor_count += 1
+                    # neighbor_accuracy_info.wrong_neighbor_count += 1
+                    neighbor_accuracy_info.add_wrong_neighbor(piece.id_number, side_numb)
 
         # Update the best accuracy should be updated.
         if ModifiedNeighborAccuracy.check_if_update_neighbor_accuracy(self.modified_neighbor_accuracy,
@@ -552,9 +555,73 @@ class ModifiedNeighborAccuracy(object):
         self._original_puzzle_id = original_puzzle_id
         self._solved_puzzle_id = solved_puzzle_id
         self._actual_number_of_pieces = number_of_pieces
-        self.wrong_puzzle_id = 0
-        self.correct_neighbor_count = 0
-        self.wrong_neighbor_count = 0
+
+        self._wrong_puzzle_id_list = []
+        self._correct_neighbors_list = []
+        self._wrong_neighbors_list = []
+
+    def add_wrong_puzzle_id(self, piece_id, side):
+        """
+        Stores information on piece assigned to the wrong puzzle ID.
+
+        Args:
+            piece_id (int): Identification number of the wrong puzzle piece
+            side (PuzzlePieceSide): Side of the puzzle piece with the wrong neighbor
+
+        """
+        self._wrong_puzzle_id_list.append((piece_id, side))
+
+    @property
+    def wrong_puzzle_id(self):
+        """
+        Gets the number of pieces assigned to the wrong puzzle
+
+        Returns (int): Number pieces in the wrong puzzle
+
+        """
+        return len(self._wrong_puzzle_id_list)
+
+    def add_correct_neighbor(self, piece_id, side):
+        """
+        Stores information on a CORRECT neighbor
+
+        Args:
+            piece_id (int): Identification number of the CORRECT puzzle piece
+            side (PuzzlePieceSide): Side of the puzzle piece with the CORRECT neighbor
+
+        """
+        self._correct_neighbors_list.append((piece_id, side))
+
+    @property
+    def correct_neighbor_count(self):
+        """
+        Gets the CORRECT neighbor count for this puzzle.
+
+        Returns (int): Number of CORRECT neighbors in the puzzle
+
+        """
+        return len(self._correct_neighbors_list)
+
+    def add_wrong_neighbor(self, piece_id, side):
+        """
+        Stores information on a wrong neighbor
+
+        Args:
+            piece_id (int): Identification number of the wrong puzzle piece
+            side (PuzzlePieceSide): Side of the puzzle piece with the wrong neighbor
+
+        """
+        self._wrong_neighbors_list.append((piece_id, side))
+
+    @property
+    def wrong_neighbor_count(self):
+        """
+        Gets the wrong neighbor count for this puzzle.
+
+        Returns (int): Number of wrong neighbors in the puzzle
+
+        """
+        return len(self._wrong_neighbors_list)
 
     @property
     def original_puzzle_id(self):

@@ -902,8 +902,6 @@ class PaikinTalSolver(object):
         # Get the place piece's neighbors and the corresponding side the piece.
         neighbor_loc_and_side = self._pieces[placed_piece_id].get_neighbor_locations_and_sides()
 
-        piece_128 = self._pieces[128]
-
         # Iterate through all neighbor locations and sides.
         for (neighbor_loc, placed_side) in neighbor_loc_and_side:
 
