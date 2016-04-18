@@ -127,11 +127,17 @@ class PuzzlePiece(object):
     what was determined by the solver.
     """
 
+	# Represents L-A-B dimensions in the LAB color space
     NUMB_LAB_COLORSPACE_DIMENSIONS = 3
 
     _PERFORM_ASSERTION_CHECKS = True
 
+	# Use predicted values for edge borders for speed up
     _USE_STORED_PREDICTED_VALUE_SPEED_UP = True
+
+	# When drawing the image results, optionally draw a border around the pieces to
+	# make piece differences more evident.
+    _ADD_RESULTS_IMAGE_BORDER = True
 
     def __init__(self, puzzle_id, location, lab_img, piece_id=None, puzzle_grid_size=None):
         """
@@ -812,6 +818,27 @@ class PuzzlePiece(object):
         image = numpy.zeros((height, width, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
         # Fill with the bgr color
         image[:] = bgr_color.value
+        # Optionally add a border around the pieces before returning
+        if PuzzlePiece._ADD_RESULTS_IMAGE_BORDER:
+            return PuzzlePiece.add_results_image_border(image)
+        else:
+            return image
+
+    @staticmethod
+    def add_results_image_border(image):
+        """
+        Optionally add an image border around the piece image.  This is primarily intended for use
+        with the solid results images.
+
+        Args:
+            image (Numpy[int]): Piece image with no border
+
+        Returns (Numpy[int]): Piece image with a border around the solid image.
+        """
+        WHITE_BORDER_THICKNESS = 2
+        WHITE_COLOR = (255, 255, 255)
+        (height, width, _) = image.shape
+        cv2.rectangle(image, (0, 0), (width, height), WHITE_COLOR, thickness=WHITE_BORDER_THICKNESS)
         return image
 
     @staticmethod
@@ -880,8 +907,11 @@ class PuzzlePiece(object):
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             assert len(sides_drawn) == PuzzlePieceSide.get_numb_sides()
 
-        # Return the drawn image
-        return image
+        # Optionally add a border around the pieces before returning
+        if PuzzlePiece._ADD_RESULTS_IMAGE_BORDER:
+            return PuzzlePiece.add_results_image_border(image)
+        else:
+            return image
 
     def is_correctly_placed(self, puzzle_offset_upper_left_location):
         """
