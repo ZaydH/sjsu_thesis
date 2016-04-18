@@ -27,7 +27,6 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
 PICKLE_DIRECTORY = ".\\pickle_files\\"
-SOLVED_DIRECTORY = ".\\solved\\"
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -91,11 +90,13 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         # Store the reconstructed image
         filename_descriptor = "reconstructed_type"
         if len(image_files) == 1:
-            filename = Puzzle.make_image_filename(filename_descriptor, SOLVED_DIRECTORY, paikin_tal_solver.puzzle_type,
-                                                  timestamp, orig_img_filename=image_files[0])
+            filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                  paikin_tal_solver.puzzle_type, timestamp,
+                                                  orig_img_filename=image_files[0])
         else:
-            filename = Puzzle.make_image_filename(filename_descriptor, SOLVED_DIRECTORY, paikin_tal_solver.puzzle_type,
-                                                  timestamp, puzzle_id=puzzle_id)
+            filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                  paikin_tal_solver.puzzle_type, timestamp,
+                                                  puzzle_id=puzzle_id)
         new_puzzle.save_to_file(filename)
 
         # Append the puzzle to the list
@@ -105,6 +106,9 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
     # Calculate and print the accuracy results
     results_information.calculate_accuracies(output_puzzles)
+    # Print the results as image files
+    results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
+    # Print the results to the console
     results_information.print_results()
 
 

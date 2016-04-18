@@ -181,6 +181,39 @@ class PuzzleResultsCollection(object):
         """
         return self._puzzle_results
 
+    def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
+
+        # Standard direct accuracy first then modified
+        for i in xrange(0, 2):
+            for puzzle_id in xrange(0, len(self._puzzle_results)):
+
+                # Get the individual results and puzzle
+                puzzle = solved_puzzles[puzzle_id]
+                results = self._puzzle_results[puzzle_id]
+
+                # Select the accraucy type
+                direct_acc = None
+                if i == 0:
+                    direct_acc = results.standard_direct_accuracy
+                    descriptor = "std_direct_acc"
+                elif i == 1:
+                    direct_acc = results.modified_direct_accuracy
+                    descriptor = "mod_direct_acc"
+                # Verify a direct accuracy was selected
+                assert direct_acc is not None
+
+                # Set the piece coloring using the selected accuracy type
+                puzzle.set_piece_color_for_direct_accuracy(direct_acc)
+
+                # Determine whether the puzzle id should be used in the filename
+                filename_puzzle_id = puzzle_id if orig_img_filename is None else None
+                output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+                                                             timestamp, orig_img_filename=orig_img_filename,
+                                                             puzzle_id=filename_puzzle_id)
+                # Stores the results to a file.
+                puzzle.build_puzzle_image(use_results_coloring=True)
+                puzzle.save_to_file(output_filename)
+
     def print_results(self):
         """
         Solver Accuracy Results Printer
@@ -446,17 +479,15 @@ class PieceDirectAccuracyResult(Enum):
     value is a tuple representing the color of the puzzle piece in BGR format.
     """
     different_puzzle = (255, 0, 0)  # Blue
-    wrong_location = (0, 204, 0)  # Green
-    wrong_rotation = (0, 0, 255)  # Red
-    correct_placement = (51, 153, 255)  # Orange
+    correct_placement = (0, 204, 0)  # Green
+    wrong_location = (0, 0, 255)  # Red
+    wrong_rotation = (51, 153, 255)  # Orange
 
 
 class DirectAccuracyPuzzleResults(object):
     """
     Structure used for managing puzzle placement results.
     """
-
-
 
     def __init__(self, original_puzzle_id, solved_puzzle_id, numb_pieces_in_original_puzzle):
         self._orig_puzzle_id = original_puzzle_id
@@ -855,6 +886,9 @@ class Puzzle(object):
 
     print_debug_messages = True
 
+    # Used to store the Puzzle result images.
+    OUTPUT_IMAGE_DIRECTORY = ".\\solved\\"
+
     # DEFAULT_PIECE_WIDTH = 28  # Width of a puzzle in pixels
     DEFAULT_PIECE_WIDTH = 25  # Width of a puzzle in pixels
 
@@ -1013,7 +1047,7 @@ class Puzzle(object):
         return self._piece_width
 
     @staticmethod
-    def reconstruct_from_pieces(pieces, id_numb=-1, display_image=False, use_results_coloring=False):
+    def reconstruct_from_pieces(pieces, id_numb=-1, display_image=False):
         """
         Constructs a puzzle from a set of pieces.
 
@@ -1051,14 +1085,8 @@ class Puzzle(object):
             piece.location = (loc[0] - min_row, loc[1] - min_col)
         output_puzzle.reset_upper_left_location()
 
-        # Define the numpy array that will hold the reconstructed image.
-        puzzle_array_size = (output_puzzle._img_height, output_puzzle._img_width)
-        # noinspection PyTypeChecker
-        output_puzzle._img = Puzzle.create_solid_bgr_image(puzzle_array_size, ImageColor.black)
-
-        # Insert the pieces into the puzzle
-        for piece in output_puzzle._pieces:
-            output_puzzle.insert_piece_into_image(piece, use_results_coloring)
+        # Construct the puzzle image.
+        output_puzzle.build_puzzle_image()
 
         # Convert the image to LAB format.
         output_puzzle._img_LAB = cv2.cvtColor(output_puzzle._img, cv2.COLOR_BGR2LAB)
@@ -1066,6 +1094,25 @@ class Puzzle(object):
             Puzzle.display_image(output_puzzle._img)
 
         return output_puzzle
+
+    def build_puzzle_image(self, use_results_coloring=False):
+        """
+        Makes a puzzle image.
+
+        Args:
+            use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
+              image but what was stored based off the results.
+
+        Returns (Puzzle): Puzzle constructed from the pieces.
+        """
+        # Define the numpy array that will hold the reconstructed image.
+        puzzle_array_size = (self._img_height, self._img_width)
+        # noinspection PyTypeChecker
+        self._img = Puzzle.create_solid_bgr_image(puzzle_array_size, ImageColor.black)
+
+        # Insert the pieces into the puzzle
+        for piece in self._pieces:
+            self.insert_piece_into_image(piece, use_results_coloring)
 
     def reset_upper_left_location(self):
         """
@@ -1299,8 +1346,11 @@ class Puzzle(object):
         upper_left = (piece_loc[0] * piece.width, piece_loc[1] * piece.width)
 
         # Determine whether to use the image or something based off the results
+        puzzle_img = self._img
+
+        # Get the piece's image
         if not use_results_coloring:
-            piece_img = self._img
+            piece_img = piece.bgr_image()
         else:
             results_coloring = piece.results_image_coloring
             # Verify the piece has actual results information.
@@ -1313,12 +1363,11 @@ class Puzzle(object):
                 piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width)
 
         # Select whether to display the image rotated
-        piece_bgr = piece.bgr_image()
         if piece.rotation is None or piece.rotation == PuzzlePieceRotation.degree_0:
-            Puzzle.insert_subimage(piece_img, upper_left, piece_bgr)
+            Puzzle.insert_subimage(puzzle_img, upper_left, piece_img)
         else:
-            rotated_img = numpy.rot90(piece_bgr, piece.rotation.value / 90)
-            Puzzle.insert_subimage(piece_img, upper_left, rotated_img)
+            rotated_img = numpy.rot90(piece_img, piece.rotation.value / 90)
+            Puzzle.insert_subimage(puzzle_img, upper_left, rotated_img)
 
     @staticmethod
     def get_file_extension(filename):

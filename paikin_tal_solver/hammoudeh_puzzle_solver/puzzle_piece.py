@@ -809,9 +809,9 @@ class PuzzlePiece(object):
         if height is None:
             height = width
         # Create a black image
-        image = numpy.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
+        image = numpy.zeros((height, width, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
         # Fill with the bgr color
-        image[:] = bgr_color
+        image[:] = bgr_color.value
         return image
 
     @staticmethod
