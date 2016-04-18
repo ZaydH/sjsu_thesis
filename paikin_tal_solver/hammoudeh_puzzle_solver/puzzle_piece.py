@@ -120,6 +120,14 @@ class PuzzlePieceSide(Enum):
             return PuzzlePieceSide.right
 
 
+class SolidColor(Enum):
+    """
+    Solid color in Blue, Green, Red (BGR) format.
+    """
+    black = (0, 0, 0)
+    white = (255, 255, 255)
+
+
 class PuzzlePiece(object):
     """
     Puzzle Piece Object.  It is a very simple object that stores the puzzle piece's pixel information in a
@@ -127,17 +135,18 @@ class PuzzlePiece(object):
     what was determined by the solver.
     """
 
-	# Represents L-A-B dimensions in the LAB color space
+    # Represents L-A-B dimensions in the LAB color space
     NUMB_LAB_COLORSPACE_DIMENSIONS = 3
 
     _PERFORM_ASSERTION_CHECKS = True
 
-	# Use predicted values for edge borders for speed up
+    # Use predicted values for edge borders for speed up
     _USE_STORED_PREDICTED_VALUE_SPEED_UP = True
 
-	# When drawing the image results, optionally draw a border around the pieces to
-	# make piece differences more evident.
+    # When drawing the image results, optionally draw a border around the pieces to
+    # make piece differences more evident.
     _ADD_RESULTS_IMAGE_BORDER = True
+    _WHITE_BORDER_THICKNESS = 2  # pixels
 
     def __init__(self, puzzle_id, location, lab_img, piece_id=None, puzzle_grid_size=None):
         """
@@ -478,6 +487,22 @@ class PuzzlePiece(object):
 
         """
         self._results_image_coloring = color
+
+    def reset_image_coloring_for_polygons(self):
+        """
+        Sets up the results image coloring for
+        """
+        self._results_image_coloring = []
+
+    def results_image_polygon_coloring(self, color, side):
+        """
+        Sets the image coloring when only a single color is needed.
+
+        Args:
+            color (List[int]): Color of the image in BGR format
+            side (PuzzlePieceSide): Side of the piece that will be assigned a color.
+        """
+        self._results_image_coloring[side.value] = color
 
     def get_neighbor_locations_and_sides(self):
         """
@@ -835,10 +860,9 @@ class PuzzlePiece(object):
 
         Returns (Numpy[int]): Piece image with a border around the solid image.
         """
-        WHITE_BORDER_THICKNESS = 2
-        WHITE_COLOR = (255, 255, 255)
         (height, width, _) = image.shape
-        cv2.rectangle(image, (0, 0), (width, height), WHITE_COLOR, thickness=WHITE_BORDER_THICKNESS)
+        cv2.rectangle(image, (0, 0), (width, height), SolidColor.white.value,
+                      thickness=PuzzlePiece._WHITE_BORDER_THICKNESS)
         return image
 
     @staticmethod

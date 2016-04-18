@@ -7,7 +7,8 @@ import heapq
 
 import numpy
 
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyAccuracy, \
+    BestBuddyResultsCollection
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -114,156 +115,6 @@ class NextPieceToPlace(object):
         self._total_placed_unplaced_compatibility_diff = 0
 
 
-class BestBuddyAccuracy(object):
-    """
-    Store the best buddy accuracy information for a single puzzle
-    """
-
-    _PERFORM_ASSERT_CHECK = True
-
-    def __init__(self, puzzle_id):
-        self.puzzle_id = puzzle_id
-        self._open_best_buddies = {}
-        self._wrong_best_buddies = {}
-        self._correct_best_buddies = []
-
-    def add_open_best_buddy(self, piece_id, side):
-        """
-        Adds an unpaired open best buddy to the list
-
-        Args:
-            piece_id (int): Piece identification number of the as of yet unpaired best buddy
-            side (PuzzlePieceSide): Side of the unpaired best buddy
-        """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
-        if not self.exists_open_best_buddy(piece_id, side):
-            self._open_best_buddies[key] = True
-
-    def delete_open_best_buddy(self, piece_id, side):
-        """
-        Adds an unpaired open best buddy to the list
-
-        Args:
-            piece_id (int): Piece identification number of the as of yet unpaired best buddy
-            side (PuzzlePieceSide): Side of the unpaired best buddy
-        """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
-
-        # Verify the best buddy exists
-        if self.exists_open_best_buddy(piece_id, side):
-            del self._open_best_buddies[key]
-
-    def exists_open_best_buddy(self, piece_id, side):
-        """
-        Checks if a pairing of a piece identification number and side exists in the pool of open best buddies.
-
-        Args:
-            piece_id (int): Piece identification number
-            side (PuzzlePieceSide): Possible neighbor side
-
-        Returns (bool): True if the key is in the dictionary and False otherwise.
-
-        """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
-        if key in self._open_best_buddies:
-            return True
-        else:
-            return False
-
-    def exists_wrong_best_buddy(self, piece_id, side):
-        """
-        Checks if a pairing of a piece identification number and side exists in the pool of WRONG best buddies.
-
-        Args:
-            piece_id (int): Piece identification number
-            side (PuzzlePieceSide): Possible neighbor side
-
-        Returns (bool): True if the key is in the dictionary and False otherwise.
-
-        """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
-        if key in self._wrong_best_buddies:
-            return True
-        else:
-            return False
-
-    def add_wrong_best_buddy(self, piece_id, side):
-        """
-
-            Args:
-                piece_id (int):
-                side (PuzzlePieceSide):
-        """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
-        if not self.exists_wrong_best_buddy(piece_id, side):
-            self._wrong_best_buddies[key] = True
-
-    def add_correct_best_buddy(self, piece_id, side):
-        """
-
-        Args:
-            piece_id (int):
-            side (PuzzlePieceSide):
-        """
-        self._correct_best_buddies.append((piece_id, side))
-
-    @staticmethod
-    def _bb_key(piece_id, side):
-        """
-
-        Args:
-            piece_id (int):
-            side (PuzzlePieceSide):
-
-        Returns (string):
-
-        """
-        return str(piece_id) + "_" + str(side.value)
-
-    @property
-    def numb_open_best_buddies(self):
-        """
-
-        Returns (int): Total number of best buddies whose best buddies have not yet been placed.
-
-        """
-        return len(self._open_best_buddies)
-
-    @property
-    def numb_correct_best_buddies(self):
-        """
-        Gets the number of correct best buddies who are next to their best buddy
-
-        Returns (int): Total number of correct best buddies
-
-        """
-        return len(self._correct_best_buddies)
-
-    @property
-    def numb_wrong_best_buddies(self):
-        """
-        Gets the number of correct best buddies who are NOT next to their best buddy
-
-        Returns (int): Total number of WRONG best buddies
-
-        """
-        return len(self._wrong_best_buddies)
-
-    def __unicode__(self):
-        """
-        Constructs the best buddy accuracy information as a string
-
-        Returns (string): Best Buddy accuracy as a string
-        """
-        return "Best Buddy Info Puzzle #%s\n" % self.puzzle_id \
-               + "Numb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
-               + "Numb Correct Best Buddies:\t%s\n" % self.numb_correct_best_buddies \
-               + "Numb Wrong Best Buddies:\t%s" % self.numb_wrong_best_buddies
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-
 class PaikinTalSolver(object):
     """
     Paikin & Tal Solver
@@ -327,7 +178,7 @@ class PaikinTalSolver(object):
         self._distance_function = distance_function
 
         # Quantifies the number of best buddies that
-        self._best_buddy_accuracy = []
+        self._best_buddy_accuracy = BestBuddyResultsCollection()
 
         # Store the puzzle dimensions if any
         self._actual_puzzle_dimensions = fixed_puzzle_dimensions
@@ -787,7 +638,7 @@ class PaikinTalSolver(object):
         self._placed_puzzle_dimensions.append(puzzle_dimensions)
 
         # Set the best buddy score to zero by default.
-        self._best_buddy_accuracy.append(BestBuddyAccuracy(seed.puzzle_id))
+        self._best_buddy_accuracy.create_best_buddy_accuracy_for_new_puzzle(seed.puzzle_id)
         self._update_best_buddy_accuracy(seed.puzzle_id, seed.id_number)
 
         # Add the placed piece's best buddies to the pool.

@@ -13,7 +13,7 @@ import numpy
 import cv2  # OpenCV
 from enum import Enum
 
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide
+from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
 
 
 class PickleHelper(object):
@@ -81,13 +81,6 @@ class PuzzleType(Enum):
 
     type1 = 1
     type2 = 2
-
-
-class ImageColor(Enum):
-    """
-    Used to create solid color images for base images and for image manipulation.
-    """
-    black = 1
 
 
 class PuzzleDimensions(object):
@@ -182,6 +175,16 @@ class PuzzleResultsCollection(object):
         return self._puzzle_results
 
     def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
+        """
+        Creates images showing the results of the image.
+
+        Args:
+            solved_puzzles (List[Puzzle]): A set of solved puzzles.
+            puzzle_type (PuzzleType): Type of the solved image
+            timestamp (float): Timestamp
+            orig_img_filename (str): Filename string.
+
+        """
 
         # Standard direct accuracy first then modified
         for i in xrange(0, 2):
@@ -191,8 +194,9 @@ class PuzzleResultsCollection(object):
                 puzzle = solved_puzzles[puzzle_id]
                 results = self._puzzle_results[puzzle_id]
 
-                # Select the accraucy type
+                # Select the accuracy type
                 direct_acc = None
+                descriptor = ""
                 if i == 0:
                     direct_acc = results.standard_direct_accuracy
                     descriptor = "std_direct_acc"
@@ -698,6 +702,237 @@ class DirectAccuracyPuzzleResults(object):
             return False
 
 
+class BestBuddyResultsCollection(object):
+    """
+    Stores the best buddy result accuracies in a single object.
+    """
+
+    def __init__(self):
+        self._best_buddy_accuracy = []
+
+    def create_best_buddy_accuracy_for_new_puzzle(self, puzzle_id):
+        """
+        Creates a best buddy accuracy for a new puzzle.
+
+        Args:
+            puzzle_id (int): Creates a new best buddy accuracy for a puzzle
+
+        """
+        new_bb_acc = BestBuddyAccuracy(puzzle_id)
+        self._best_buddy_accuracy.append(new_bb_acc)
+
+    @property
+    def best_buddy_accuracy(self):
+        """
+        Property to get access to all the best buddy information.
+
+        Returns (List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.
+
+        """
+        return self._best_buddy_accuracy
+
+    def __iter__(self):
+        """
+        Allows for the iteration over a set of best buddy objects.
+
+        Returns(List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.
+
+        """
+        for i in xrange(0, len(self._best_buddy_accuracy)):
+            yield self._best_buddy_accuracy[i]
+
+    def __getitem__(self, key):
+        """
+        Allows for the indexing of a Best buddy accuracy class
+
+        Args:
+            key (int): Puzzle id
+
+        Returns(List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.
+
+        """
+        return self._best_buddy_accuracy[key]
+
+
+class BestBuddyAccuracy(object):
+    """
+    Store the best buddy accuracy information for a single puzzle
+    """
+
+    _PERFORM_ASSERT_CHECK = True
+
+    def __init__(self, puzzle_id):
+        self.puzzle_id = puzzle_id
+        self._open_best_buddies = {}
+        self._wrong_best_buddies = {}
+        self._correct_best_buddies = {}
+
+    def add_open_best_buddy(self, piece_id, side):
+        """
+        Deletes an unpaired open best buddy from the list
+
+        Args:
+            piece_id (int): Piece identification number of the as of yet unpaired best buddy
+            side (PuzzlePieceSide): Side of the unpaired best buddy
+        """
+        BestBuddyAccuracy._add_best_buddy_to_dict(self._open_best_buddies, piece_id, side)
+
+    def delete_open_best_buddy(self, piece_id, side):
+        """
+        Adds an unpaired open best buddy to the list
+
+        Args:
+            piece_id (int): Piece identification number of the as of yet unpaired best buddy
+            side (PuzzlePieceSide): Side of the unpaired best buddy
+        """
+        if self.exists_open_best_buddy(piece_id, side):
+            key = BestBuddyAccuracy._bb_key(piece_id, side)
+            del self._open_best_buddies[key]
+
+    def exists_open_best_buddy(self, piece_id, side):
+        """
+        Checks if a pairing of a piece identification number and side exists in the pool of open best buddies.
+
+        Args:
+            piece_id (int): Piece identification number
+            side (PuzzlePieceSide): Possible neighbor side
+
+        Returns (bool): True if the key is in the dictionary and False otherwise.
+
+        """
+        return BestBuddyAccuracy._check_best_buddy_exist(self._open_best_buddies, piece_id, side)
+
+    def exists_wrong_best_buddy(self, piece_id, side):
+        """
+        Checks if a pairing of a piece identification number and side exists in the pool of WRONG best buddies.
+
+        Args:
+            piece_id (int): Piece identification number
+            side (PuzzlePieceSide): Possible neighbor side
+
+        Returns (bool): True if the key is in the dictionary and False otherwise.
+
+        """
+        return BestBuddyAccuracy._check_best_buddy_exist(self._wrong_best_buddies, piece_id, side)
+
+    def add_wrong_best_buddy(self, piece_id, side):
+        """
+
+            Args:
+                piece_id (int):
+                side (PuzzlePieceSide):
+        """
+        BestBuddyAccuracy._add_best_buddy_to_dict(self._wrong_best_buddies, piece_id, side)
+
+    def exists_correct_best_buddy(self, piece_id, side):
+        """
+        Checks if a pairing of a piece identification number and side exists in the pool of CORRECT best buddies.
+
+        Args:
+            piece_id (int): Piece identification number
+            side (PuzzlePieceSide): Possible neighbor side
+
+        Returns (bool): True if the key is in the dictionary and False otherwise.
+
+        """
+        return BestBuddyAccuracy._check_best_buddy_exist(self._correct_best_buddies, piece_id, side)
+
+    def add_correct_best_buddy(self, piece_id, side):
+        """
+        Side of the piece where the BB is being referred.
+
+        Args:
+            piece_id (int): Identification number ofr the piece of interest
+            side (PuzzlePieceSide): Puzzle piece side of reference for the correct best buddy
+        """
+        BestBuddyAccuracy._add_best_buddy_to_dict(self._correct_best_buddies, piece_id, side)
+
+    @staticmethod
+    def _add_best_buddy_to_dict(bb_dict, piece_id, side):
+        """
+        Adds a best buddy information to the specified best buddy dictionary.
+
+        Args:
+            bb_dict (dict): Dictionary containing best buddy information
+            piece_id (int): Identification number of the piece
+            side (PuzzlePieceSide): Side of the piece that is referred to for best buddy.
+        """
+        key = BestBuddyAccuracy._bb_key(piece_id, side)
+        bb_dict[key] = (piece_id, side)
+
+    @staticmethod
+    def _check_best_buddy_exist(bb_dict, piece_id, side):
+        """
+        Checks whether the piece and side exists in the specified best buddy dictionary.
+
+        Args:
+            bb_dict (dict): Best buddy information dictionary
+            piece_id (int): Identification number for the piece
+            side (PuzzlePieceSide): Side of the piece where the BB is being referred.
+
+        Returns (bool):
+        True if the pairing of piece_id and side exists in the BB dictionary.
+        """
+        key = BestBuddyAccuracy._bb_key(piece_id, side)
+        return key in bb_dict
+
+    @staticmethod
+    def _bb_key(piece_id, side):
+        """
+
+        Args:
+            piece_id (int):
+            side (PuzzlePieceSide):
+
+        Returns (string):
+
+        """
+        return str(piece_id) + "_" + str(side.value)
+
+    @property
+    def numb_open_best_buddies(self):
+        """
+
+        Returns (int): Total number of best buddies whose best buddies have not yet been placed.
+
+        """
+        return len(self._open_best_buddies)
+
+    @property
+    def numb_correct_best_buddies(self):
+        """
+        Gets the number of correct best buddies who are next to their best buddy
+
+        Returns (int): Total number of correct best buddies
+
+        """
+        return len(self._correct_best_buddies)
+
+    @property
+    def numb_wrong_best_buddies(self):
+        """
+        Gets the number of correct best buddies who are NOT next to their best buddy
+
+        Returns (int): Total number of WRONG best buddies
+
+        """
+        return len(self._wrong_best_buddies)
+
+    def __unicode__(self):
+        """
+        Constructs the best buddy accuracy information as a string
+
+        Returns (string): Best Buddy accuracy as a string
+        """
+        return "Best Buddy Info Puzzle #%s\n" % self.puzzle_id \
+               + "Numb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
+               + "Numb Correct Best Buddies:\t%s\n" % self.numb_correct_best_buddies \
+               + "Numb Wrong Best Buddies:\t%s" % self.numb_wrong_best_buddies
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+
 class ModifiedNeighborAccuracy(object):
     """
     Encapsulating structure for the modified neighbor based accuracy approach.
@@ -1055,11 +1290,8 @@ class Puzzle(object):
             pieces ([PuzzlePiece]): Set of puzzle pieces that comprise the puzzle.
             id_numb (Optional int): Identification number for the puzzle
             display_image (Optional bool): Select whether to display the image at the end of reconstruction
-            use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
-              image but what was stored based off the results.
 
-        Returns (Puzzle):
-        Puzzle constructed from the pieces.
+        Returns (Puzzle): Puzzle constructed from the pieces.
         """
 
         if len(pieces) == 0:
@@ -1105,10 +1337,8 @@ class Puzzle(object):
 
         Returns (Puzzle): Puzzle constructed from the pieces.
         """
-        # Define the numpy array that will hold the reconstructed image.
-        puzzle_array_size = (self._img_height, self._img_width)
         # noinspection PyTypeChecker
-        self._img = Puzzle.create_solid_bgr_image(puzzle_array_size, ImageColor.black)
+        self._img = PuzzlePiece.create_solid_image(SolidColor.black, self._img_width, self._img_height)
 
         # Insert the pieces into the puzzle
         for piece in self._pieces:
