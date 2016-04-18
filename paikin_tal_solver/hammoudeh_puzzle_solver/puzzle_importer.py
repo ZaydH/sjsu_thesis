@@ -194,6 +194,10 @@ class PuzzleResultsCollection(object):
                 puzzle = solved_puzzles[puzzle_id]
                 results = self._puzzle_results[puzzle_id]
 
+                # Ensure the identification numbers are the same.
+                if PuzzleResultsCollection._PERFORM_ASSERT_CHECKS:
+                    assert puzzle.id_number == results.puzzle_id
+
                 # Select the accuracy type
                 direct_acc = None
                 descriptor = ""
@@ -510,7 +514,7 @@ class DirectAccuracyPuzzleResults(object):
         Args:
             piece_id (int): Identification number of the piece
 
-        Returns (PieceDirectAccuracyResult, ): Direct accuracy result for an individual piece
+        Returns (PieceDirectAccuracyResult): Direct accuracy result for an individual piece
         """
         key = str(piece_id)
         if key in self._correct_placement:
@@ -526,7 +530,7 @@ class DirectAccuracyPuzzleResults(object):
             return PieceDirectAccuracyResult.different_puzzle
 
         # Piece does not exist in the results so raise an error
-        assert ValueError("Piece id: \"%d\" does not exist in this result set." % piece_id)
+        raise ValueError("Piece id: \"%d\" does not exist in this result set." % piece_id)
 
     @property
     def original_puzzle_id(self):
@@ -707,6 +711,8 @@ class BestBuddyResultsCollection(object):
     Stores the best buddy result accuracies in a single object.
     """
 
+    _PERFORM_ASSERT_CHECK = True
+
     def __init__(self):
         self._best_buddy_accuracy = []
 
@@ -752,6 +758,70 @@ class BestBuddyResultsCollection(object):
 
         """
         return self._best_buddy_accuracy[key]
+
+    def total_best_buddy_count(self):
+        """
+        Gets the total number of best buddies represented by this collection.
+
+        Returns (int): Total number of best buddies in the collection
+
+        """
+        bb_count = 0
+        for best_buddy_acc in self._best_buddy_accuracy:
+            bb_count += best_buddy_acc.numb_open_best_buddies
+            bb_count += best_buddy_acc.numb_wrong_best_buddies
+            bb_count += best_buddy_acc.numb_correct_best_buddies
+        return bb_count
+
+    def print_results(self):
+        """
+        Prints the best buddy accuracy information to the console.
+        """
+        print "Best Buddy Accuracy Information:"
+        for bb_acc in self._best_buddy_accuracy:
+            print str(bb_acc) + "\n"
+
+    def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
+
+        # Standard direct accuracy first then modified
+        for i in xrange(0, 2):
+            for puzzle_id in xrange(0, len(self._best_buddy_accuracy)):
+
+                # Get the individual results and puzzle
+                puzzle = solved_puzzles[puzzle_id]
+                bb_acc = self._best_buddy_accuracy[puzzle_id]
+
+                # Ensure that the puzzle ids match
+                if BestBuddyResultsCollection._PERFORM_ASSERT_CHECK:
+                    assert bb_acc.puzzle_id == puzzle.id_number
+
+                # Iterate each puzzle piece and set its color for each side
+                for piece in puzzle.pieces:
+                    piece.reset_image_coloring_for_polygons()
+                    for side in PuzzlePieceSide.get_all_sides():
+                        coloring = bb_acc.get_piece_side_result(piece.id_number, side)
+                        piece.results_image_polygon_coloring(side, coloring)
+
+                # Determine whether the puzzle id should be used in the filename
+                filename_puzzle_id = puzzle_id if orig_img_filename is None else None
+                descriptor = "best_buddy_acc"
+                output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+                                                             timestamp, orig_img_filename=orig_img_filename,
+                                                             puzzle_id=filename_puzzle_id)
+                # Stores the results to a file.
+                puzzle.build_puzzle_image(use_results_coloring=True)
+                puzzle.save_to_file(output_filename)
+
+
+class PieceSideBestBuddyAccuracyResult(Enum):
+    """
+    Enumerated type used to represent the direct accuracy results for a single individual piece.  Each enumerated
+    value is a tuple representing the color of the puzzle piece in BGR format.
+    """
+    wrong_best_buddy = (0, 0, 255)  # Red
+    correct_best_buddy = (0, 204, 0)  # Green
+    no_best_buddy = (255, 255, 255)  # White
+    open_best_buddy = (255, 0, 0)  # Blue
 
 
 class BestBuddyAccuracy(object):
@@ -846,6 +916,28 @@ class BestBuddyAccuracy(object):
             side (PuzzlePieceSide): Puzzle piece side of reference for the correct best buddy
         """
         BestBuddyAccuracy._add_best_buddy_to_dict(self._correct_best_buddies, piece_id, side)
+
+    def get_piece_side_result(self, piece_id, side):
+        """
+        Gets the best buddy result for the combination of puzzle piece and side.
+
+        Args:
+            piece_id (int): Identification number of the piece
+            side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest
+
+        Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result
+        """
+        if self.exists_wrong_best_buddy(piece_id, side):
+            return PieceSideBestBuddyAccuracyResult.wrong_best_buddy
+
+        if self.exists_correct_best_buddy(piece_id, side):
+            return PieceSideBestBuddyAccuracyResult.correct_best_buddy
+
+        if self.exists_open_best_buddy(piece_id, side):
+            return PieceSideBestBuddyAccuracyResult.open_best_buddy
+
+        # Piece does not have a best buddy
+        return PieceSideBestBuddyAccuracyResult.no_best_buddy
 
     @staticmethod
     def _add_best_buddy_to_dict(bb_dict, piece_id, side):
@@ -1643,11 +1735,10 @@ class Puzzle(object):
         """
         # Error check the input parameters
         if orig_img_filename is None and puzzle_id is None:
-            assert ValueError("The image file name and puzzle id cannot both be None. "
+            raise ValueError("The image file name and puzzle id cannot both be None. "
                               + "Exactly one must be specified.")
         if orig_img_filename is not None and puzzle_id is not None:
-                assert ValueError("Either the image file name and puzzle id must be None. "
-                                  + "Both cannot be specified.")
+            raise ValueError("Either the image file name and puzzle id must be None. Both cannot be specified.")
 
         # Store the reconstructed image
         output_filename = output_directory + image_descriptor + "_" + str(puzzle_type.value) + "_"

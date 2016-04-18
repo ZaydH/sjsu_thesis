@@ -119,6 +119,15 @@ class PuzzlePieceSide(Enum):
         if self == PuzzlePieceSide.left:
             return PuzzlePieceSide.right
 
+    @property
+    def side_name(self):
+        """
+        Gets the name of a puzzle piece side without the class name
+
+        Returns (str): name of the side as a string
+        """
+        return str(self).split(".")[1]
+
 
 class SolidColor(Enum):
     """
@@ -494,15 +503,15 @@ class PuzzlePiece(object):
         """
         self._results_image_coloring = []
 
-    def results_image_polygon_coloring(self, color, side):
+    def results_image_polygon_coloring(self, side, color):
         """
         Sets the image coloring when only a single color is needed.
 
         Args:
-            color (List[int]): Color of the image in BGR format
             side (PuzzlePieceSide): Side of the piece that will be assigned a color.
+            color (List[int]): Color of the image in BGR format
         """
-        self._results_image_coloring[side.value] = color
+        self._results_image_coloring.append((side, color.value))
 
     def get_neighbor_locations_and_sides(self):
         """
@@ -861,6 +870,7 @@ class PuzzlePiece(object):
         Returns (Numpy[int]): Piece image with a border around the solid image.
         """
         (height, width, _) = image.shape
+        # noinspection PyUnresolvedReferences
         cv2.rectangle(image, (0, 0), (width, height), SolidColor.white.value,
                       thickness=PuzzlePiece._WHITE_BORDER_THICKNESS)
         return image
@@ -903,7 +913,7 @@ class PuzzlePiece(object):
         # Create a black image
         image = numpy.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
         # For each side, fill with a polygon.
-        for (color, side) in bgr_color_by_side:
+        for (side, color) in bgr_color_by_side:
 
             # Build the points in the polygon vector
             if side == PuzzlePieceSide.top:

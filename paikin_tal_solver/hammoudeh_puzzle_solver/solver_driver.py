@@ -102,6 +102,11 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         # Append the puzzle to the list
         output_puzzles.append(new_puzzle)
 
+    # Print the best buddy accuracy information
+    paikin_tal_solver.best_buddy_accuracy.print_results()
+    paikin_tal_solver.best_buddy_accuracy.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type,
+                                                                timestamp)
+
     # Build the results information collection
     results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
     # Calculate and print the accuracy results

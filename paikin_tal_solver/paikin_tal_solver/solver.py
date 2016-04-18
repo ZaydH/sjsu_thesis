@@ -7,8 +7,7 @@ import heapq
 
 import numpy
 
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyAccuracy, \
-    BestBuddyResultsCollection
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -228,7 +227,7 @@ class PaikinTalSolver(object):
 
             if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
                 print str(self._numb_unplaced_pieces) + " remain to be placed."
-                self.print_best_buddy_accuracy_info()
+                self._best_buddy_accuracy.print_results()
 
             # if len(self._best_buddies_pool) == 0:
             #     return
@@ -247,28 +246,18 @@ class PaikinTalSolver(object):
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
             print "Placement complete.\n\n"
-            # Print final best buddy accuracy information
-            self.print_best_buddy_accuracy_info()
 
             # If no pieces left to place, clean the heap to reduce the size for pickling.
             if self._numb_unplaced_pieces == 0:
                 self._initialize_best_buddy_pool_and_heap()
-                self.print_best_buddy_accuracy_info()
+                self._best_buddy_accuracy.print_results()
                 total_numb_bb_in_dataset = self._inter_piece_distance.get_total_best_buddy_count()
                 print "Total number of Best Buddies: %d" % total_numb_bb_in_dataset
-
                 # Once all pieces have been placed verify that no best buddies remain unaccounted for.
                 if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                     for best_buddy_acc in self._best_buddy_accuracy:
                         assert best_buddy_acc.numb_open_best_buddies == 0
-                    assert self._get_total_best_buddy_count() == total_numb_bb_in_dataset
-
-    def print_best_buddy_accuracy_info(self):
-        """
-        Prints the best buddy accuracy information to the console.
-        """
-        for bb_acc in self._best_buddy_accuracy:
-            print str(bb_acc) + "\n"
+                    assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset
 
     def get_solved_puzzles(self):
         """
@@ -674,6 +663,15 @@ class PaikinTalSolver(object):
             board_dimensions.update_dimensions()
             self._placed_puzzle_dimensions[puzzle_id] = board_dimensions
 
+    @property
+    def best_buddy_accuracy(self):
+        """
+        Access all of the best buddy accuracy information associated with the puzzle.
+
+        Returns (List[BestBuddyAccuracy]): All the best buddy accuracy results in the puzzle.
+        """
+        return self._best_buddy_accuracy
+
     def _update_best_buddy_accuracy(self, puzzle_id, placed_piece_id):
         """
 
@@ -739,33 +737,6 @@ class PaikinTalSolver(object):
                 # If no neighbor and placed piece has a best buddy, add to the open list and move on.
                 elif is_neighbor_open:
                     self._best_buddy_accuracy[puzzle_id].add_open_best_buddy(placed_piece_id, placed_side)
-
-    def _get_open_best_buddy_puzzle(self, piece_id, side):
-        """
-        Gets the puzzle id associated with the piece of interest.
-
-        Args:
-            piece_id (int): Identification number for a puzzle piece that is being checked for in the
-             open best buddy list.
-
-            side (PuzzlePieceSide): Side of the best buddy that is being checked for in the list
-
-        Returns (Optional int): If the best buddy piece_id/side combination exists, then this returns the puzzle_id
-        where that best buddy information is located.  Otherwise, it returns None.
-
-        """
-        for i in xrange(0, len(self._best_buddy_accuracy)):
-            if self._best_buddy_accuracy[i].exists_open_best_buddy(piece_id, side):
-                return i
-        return None
-
-    def _get_total_best_buddy_count(self):
-        bb_count = 0
-        for best_buddy_acc in self._best_buddy_accuracy:
-            bb_count += best_buddy_acc.numb_open_best_buddies
-            bb_count += best_buddy_acc.numb_wrong_best_buddies
-            bb_count += best_buddy_acc.numb_correct_best_buddies
-        return bb_count
 
     def _update_open_slots(self, placed_piece):
         """
