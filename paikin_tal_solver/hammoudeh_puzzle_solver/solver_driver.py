@@ -89,10 +89,15 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
         # Store the reconstructed image
         filename_descriptor = "reconstructed_type"
-        orig_img_filename = image_files[0] if len(image_files) == 1 else None
+        if len(image_files) == 1:
+            orig_img_filename = image_files[0]
+            puzzle_id_filename = None
+        else:
+            orig_img_filename = None
+            puzzle_id_filename = puzzle_id
         filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                               paikin_tal_solver.puzzle_type, timestamp,
-                                              orig_img_filename=orig_img_filename)
+                                              orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
         new_puzzle.save_to_file(filename)
 
         # Append the puzzle to the list
