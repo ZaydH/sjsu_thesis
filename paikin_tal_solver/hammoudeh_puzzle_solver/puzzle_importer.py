@@ -1838,7 +1838,7 @@ class Puzzle(object):
             raise ValueError("Either the image file name and puzzle id must be None. Both cannot be specified.")
 
         # Store the reconstructed image
-        output_filename = output_directory + image_descriptor + "_" + str(puzzle_type.value) + "_"
+        output_filename = output_directory + image_descriptor + "_type" + str(puzzle_type.value) + "_"
 
         # Convert the timestamp to a string.
         ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
