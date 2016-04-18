@@ -9,7 +9,7 @@ import unittest
 import numpy
 
 from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleTester, PuzzleResultsCollection, \
-    DirectAccuracyPuzzleResults
+    PieceDirectAccuracyResult
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide, PuzzlePieceRotation
 
 
@@ -354,12 +354,13 @@ class PuzzleImporterTester(unittest.TestCase):
 
     def test_puzzle_polygon(self):
         # Define the color side pairing for the test
-        color_side = [(DirectAccuracyPuzzleResults.COLOR_DIFFERENT_PUZZLE_ID, PuzzlePieceSide.top),
-                      (DirectAccuracyPuzzleResults.COLOR_CORRECT_PLACEMENT, PuzzlePieceSide.right),
-                      (DirectAccuracyPuzzleResults.COLOR_WRONG_LOCATION, PuzzlePieceSide.bottom),
-                      (DirectAccuracyPuzzleResults.COLOR_WRONG_ROTATION, PuzzlePieceSide.left)]
-        PuzzlePiece.create_side_polygon_image(color_side, 25, 25)
-        # Puzzle.display_image()
+        color_side = [(PuzzlePieceSide.top, PieceDirectAccuracyResult.different_puzzle.value),
+                      (PuzzlePieceSide.right, PieceDirectAccuracyResult.correct_placement.value),
+                      (PuzzlePieceSide.bottom, PieceDirectAccuracyResult.wrong_location.value),
+                      (PuzzlePieceSide.left, PieceDirectAccuracyResult.wrong_rotation.value)]
+        # noinspection PyUnusedLocal
+        image = PuzzlePiece.create_side_polygon_image(color_side, 25, 25)
+        # Puzzle.display_image(image)
 
     def test_accuracy_calculator(self):
 

@@ -1688,7 +1688,9 @@ class Puzzle(object):
         if piece.rotation is None or piece.rotation == PuzzlePieceRotation.degree_0:
             Puzzle.insert_subimage(puzzle_img, upper_left, piece_img)
         else:
-            rotated_img = numpy.rot90(piece_img, piece.rotation.value / 90)
+            rotated_img = numpy.rot90(piece_img, (PuzzlePieceRotation.degree_360.value - piece.rotation.value) / 90)
+            # Puzzle.display_image(piece_img)
+            # Puzzle.display_image(rotated_img)
             Puzzle.insert_subimage(puzzle_img, upper_left, rotated_img)
 
     @staticmethod
