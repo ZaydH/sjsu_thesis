@@ -122,7 +122,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
         puzzle_type (PuzzleType): Type of the puzzle to be solved
         piece_width (int): Width/length of all puzzle pieces
         pickle_placement_start_filename (String): Filename to export a pickle file after calculating all
-         interpiece distances and before starting placement.  If recalculating distances is disabled, then
+         inter-piece distances and before starting placement.  If recalculating distances is disabled, then
          this serves as the filename to import calculated distances from.
         pickle_placement_complete_filename (String): Filename to e
 
@@ -152,7 +152,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
             puzzle_dimensions = puzzles[0].grid_size
 
         # Create the Paikin Tal Solver
-        print "Interpiece distance calculation started at: " + time.ctime()
+        print "Inter-piece distance calculation started at: " + time.ctime()
         start_time = time.time()
         paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
                                             PuzzlePiece.calculate_asymmetric_distance, puzzle_type,
@@ -201,7 +201,7 @@ def extract_image_filename_and_file_extension(image_filename_and_path):
 
     # Get the file extension
     file_extension = filename_stub[:filename_stub.index(".")][::-1]
-    # Get everything after the before the file extension in the original (unreversed) string
+    # Get everything after the before the file extension in the original (un-reversed) string
     filename_stub = filename_stub[len(file_extension) + 1:]
 
     # Get everything after the last slash in the original string

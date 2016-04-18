@@ -13,7 +13,7 @@ from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
 
 class PieceDistanceInformation(object):
     """
-    Stores all of the inter-piece distance information (e.g. asymmetric distance, asymetric compatibility,
+    Stores all of the inter-piece distance information (e.g. asymmetric distance, asymmetric compatibility,
     mutual compatibility, etc.) between a specific piece (based off the ID number) and all other pieces.
     """
 
@@ -422,7 +422,7 @@ class PieceDistanceInformation(object):
         """
         Second Best Distance Property
 
-        For this piece's interpiece distance information, this property returns the second best distance.
+        For this piece's inter-piece distance information, this property returns the second best distance.
 
         Returns (float):
             Second best distance for this puzzle piece
@@ -567,7 +567,7 @@ class InterPieceDistance(object):
     def recalculate_remaining_piece_compatibilities(self, is_piece_placed,
                                                     is_piece_placed_with_no_open_neighbors):
         """
-        Comptability Recalculator
+        Compatibility Recalculator
 
         When no best buddy is in the pool, this function is called to recalculate the best buddies and compatibilities.
 
@@ -884,7 +884,7 @@ class InterPieceDistance(object):
         """
         Valid Puzzle Piece Determiner
 
-        For a tuple of puzzle_type and puzzle piece side, this function determins the set of valid PuzzlePieceSide
+        For a tuple of puzzle_type and puzzle piece side, this function determines the set of valid PuzzlePieceSide
         for any neighboring piece.
 
         For example, if the puzzle is type 1, only complementary sides can be placed adjacent to one another.  In

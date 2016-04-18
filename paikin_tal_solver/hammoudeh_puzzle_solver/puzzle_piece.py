@@ -202,7 +202,7 @@ class PuzzlePiece(object):
         # Initialize actual neighbor id information
         self._actual_neighbor_ids = []
 
-        # Extract the information on the puzzle gride size
+        # Extract the information on the puzzle grid size
         (numb_rows, numb_cols) = puzzle_grid_size
 
         # Check the top location first
@@ -377,7 +377,7 @@ class PuzzlePiece(object):
 
         Gets the identification number for a puzzle piece.
 
-        Returns (int): Puzzle piece indentification number
+        Returns (int): Puzzle piece identification number
         """
         # Check whether the assigned piece ID is not none
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
@@ -558,14 +558,16 @@ class PuzzlePiece(object):
             return self._img[:, col_numb, :]
 
     def _assign_to_original_location(self):
-        """Loopback Location Assigner
+        """
+        Loopback Location Assigner
 
         Test Method Only.  Correctly assigns a piece to its original location.
         """
         self._assigned_loc = self._orig_loc
 
     def _set_id_number_to_original_id(self):
-        """Loopback ID Number
+        """
+        Loopback ID Number
 
         Test Method Only.  Sets the assigned and original piece id number to the same value.
         """
@@ -586,7 +588,7 @@ class PuzzlePiece(object):
             Distance between
         """
 
-        # Get the border information for p_i if not precalculated
+        # Get the border information for p_i if not pre-calculated
         i_border = None
         i_second_to_last = None
         if piece_i._predicted_border_values[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
@@ -834,7 +836,7 @@ class PuzzlePiece(object):
 
             # Add drawn sides to the assertion checks
             if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
-                # Ensure no side is drawn twices
+                # Ensure no side is drawn twice
                 assert side not in sides_drawn
                 # Add the side tot he list.
                 sides_drawn.append(side)

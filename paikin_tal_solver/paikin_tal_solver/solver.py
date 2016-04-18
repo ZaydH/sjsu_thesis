@@ -14,7 +14,7 @@ from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 class BestBuddyPoolInfo(object):
     """
-    Used to encapulate best buddy objects in the pool of pieces to be placed.
+    Used to encapsulate best buddy objects in the pool of pieces to be placed.
     """
     def __init__(self, piece_id):
         self.piece_id = piece_id
@@ -569,7 +569,7 @@ class PaikinTalSolver(object):
             placed_and_open_pieces = copy.copy(self._piece_placed)
             for open_location in self._open_locations:
                 placed_and_open_pieces[open_location.piece_id] = False
-            # Recalculate the interpiece distances
+            # Recalculate the inter-piece distances
             self._inter_piece_distance.recalculate_remaining_piece_compatibilities(self._piece_placed,
                                                                                    placed_and_open_pieces)
 
@@ -590,7 +590,7 @@ class PaikinTalSolver(object):
 
         Args:
             puzzle_id (int): Puzzle identification number
-            location ((int)): Tuple of the a locaiton of the puzzle which is row by column
+            location ((int)): Tuple of the a location of the puzzle which is row by column
 
         Returns: True of the location in the specified puzzle is open and false otherwise.
         """
@@ -722,7 +722,7 @@ class PaikinTalSolver(object):
 
     def _initialize_open_slots(self):
         """
-        Initalizes the set of open locations.
+        Initializes the set of open locations.
         """
         self._open_locations = []
 
