@@ -187,12 +187,13 @@ class PuzzleResultsCollection(object):
         """
 
         # Standard direct accuracy first then modified
-        for i in xrange(0, 2):
-            for puzzle_id in xrange(0, len(self._puzzle_results)):
+        for puzzle_id in xrange(0, len(self._puzzle_results)):
 
-                # Get the individual results and puzzle
-                puzzle = solved_puzzles[puzzle_id]
-                results = self._puzzle_results[puzzle_id]
+            # Get the individual results and puzzle
+            puzzle = solved_puzzles[puzzle_id]
+            results = self._puzzle_results[puzzle_id]
+
+            for i in xrange(0, 2):
 
                 # Ensure the identification numbers are the same.
                 if PuzzleResultsCollection._PERFORM_ASSERT_CHECKS:
@@ -221,6 +222,26 @@ class PuzzleResultsCollection(object):
                 # Stores the results to a file.
                 puzzle.build_puzzle_image(use_results_coloring=True)
                 puzzle.save_to_file(output_filename)
+
+            # Get the individual results and puzzle
+            neighbor_acc = results.modified_neighbor_accuracy
+
+            # Iterate each puzzle piece and set its color for each side
+            for piece in puzzle.pieces:
+                piece.reset_image_coloring_for_polygons()
+                for side in PuzzlePieceSide.get_all_sides():
+                    coloring = neighbor_acc.get_piece_side_result(piece.id_number, side)
+                    piece.results_image_polygon_coloring(side, coloring)
+
+            # Determine whether the puzzle id should be used in the filename
+            filename_puzzle_id = puzzle_id if orig_img_filename is None else None
+            descriptor = "neighbor_acc"
+            output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+                                                         timestamp, orig_img_filename=orig_img_filename,
+                                                         puzzle_id=filename_puzzle_id)
+            # Stores the results to a file.
+            puzzle.build_puzzle_image(use_results_coloring=True)
+            puzzle.save_to_file(output_filename)
 
     def print_results(self):
         """
@@ -363,10 +384,12 @@ class PuzzleResultsInformation(object):
             # Iterate through all sides and check the
             for side_numb in xrange(0, len(neighbor_location_and_sides)):
 
+                side = PuzzlePieceSide(side_numb)
+
                 # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
                 if piece.actual_puzzle_id != self.puzzle_id:
                     # neighbor_accuracy_info.wrong_puzzle_id += 1
-                    neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side_numb)
+                    neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side)
                     continue
 
                 # Extract the placed piece ID.  If a cell is empty or does not exist, mark it as None
@@ -389,12 +412,12 @@ class PuzzleResultsInformation(object):
                         piece.rotation.value == rotation_matrix[neighbor_location_and_sides[side_numb][0]])):
 
                     # neighbor_accuracy_info.correct_neighbor_count += 1
-                    neighbor_accuracy_info.add_correct_neighbor(piece.id_number, side_numb)
+                    neighbor_accuracy_info.add_correct_neighbor(piece.id_number, side)
 
                 # Mark neighbor as incorrect
                 else:
                     # neighbor_accuracy_info.wrong_neighbor_count += 1
-                    neighbor_accuracy_info.add_wrong_neighbor(piece.id_number, side_numb)
+                    neighbor_accuracy_info.add_wrong_neighbor(piece.id_number, side)
 
         # Update the best accuracy should be updated.
         if ModifiedNeighborAccuracy.check_if_update_neighbor_accuracy(self.modified_neighbor_accuracy,
@@ -711,7 +734,7 @@ class BestBuddyResultsCollection(object):
     Stores the best buddy result accuracies in a single object.
     """
 
-    _PERFORM_ASSERT_CHECK = True
+    _PERFORM_ASSERT_CHECKS = True
 
     def __init__(self):
         self._best_buddy_accuracy = []
@@ -782,35 +805,45 @@ class BestBuddyResultsCollection(object):
             print str(bb_acc) + "\n"
 
     def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
+        """
+        Converts the results information to a data visualization to see where there are right and wrong
+        best buddies.
 
-        # Standard direct accuracy first then modified
-        for i in xrange(0, 2):
-            for puzzle_id in xrange(0, len(self._best_buddy_accuracy)):
+        Args:
+            solved_puzzles (List[Puzzle]): List of puzzles.
+            puzzle_type (PuzzleType): Type of the solved puzzle.
+            timestamp (float): Timestamp as a floating point number.  Converted to a string by this function.
+            orig_img_filename (Optional str): Filename of the original image
 
-                # Get the individual results and puzzle
-                puzzle = solved_puzzles[puzzle_id]
-                bb_acc = self._best_buddy_accuracy[puzzle_id]
+        """
 
-                # Ensure that the puzzle ids match
-                if BestBuddyResultsCollection._PERFORM_ASSERT_CHECK:
-                    assert bb_acc.puzzle_id == puzzle.id_number
+        # Iterate through each possible and print its BB accuracy information.
+        for puzzle_id in xrange(0, len(self._best_buddy_accuracy)):
 
-                # Iterate each puzzle piece and set its color for each side
-                for piece in puzzle.pieces:
-                    piece.reset_image_coloring_for_polygons()
-                    for side in PuzzlePieceSide.get_all_sides():
-                        coloring = bb_acc.get_piece_side_result(piece.id_number, side)
-                        piece.results_image_polygon_coloring(side, coloring)
+            # Get the individual results and puzzle
+            puzzle = solved_puzzles[puzzle_id]
+            bb_acc = self._best_buddy_accuracy[puzzle_id]
 
-                # Determine whether the puzzle id should be used in the filename
-                filename_puzzle_id = puzzle_id if orig_img_filename is None else None
-                descriptor = "best_buddy_acc"
-                output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
-                                                             timestamp, orig_img_filename=orig_img_filename,
-                                                             puzzle_id=filename_puzzle_id)
-                # Stores the results to a file.
-                puzzle.build_puzzle_image(use_results_coloring=True)
-                puzzle.save_to_file(output_filename)
+            # Ensure that the puzzle ids match
+            if BestBuddyResultsCollection._PERFORM_ASSERT_CHECKS:
+                assert bb_acc.puzzle_id == puzzle.id_number
+
+            # Iterate each puzzle piece and set its color for each side
+            for piece in puzzle.pieces:
+                piece.reset_image_coloring_for_polygons()
+                for side in PuzzlePieceSide.get_all_sides():
+                    coloring = bb_acc.get_piece_side_result(piece.id_number, side)
+                    piece.results_image_polygon_coloring(side, coloring)
+
+            # Determine whether the puzzle id should be used in the filename
+            filename_puzzle_id = puzzle_id if orig_img_filename is None else None
+            descriptor = "best_buddy_acc"
+            output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+                                                         timestamp, orig_img_filename=orig_img_filename,
+                                                         puzzle_id=filename_puzzle_id)
+            # Stores the results to a file.
+            puzzle.build_puzzle_image(use_results_coloring=True)
+            puzzle.save_to_file(output_filename)
 
 
 class PieceSideBestBuddyAccuracyResult(Enum):
@@ -845,7 +878,7 @@ class BestBuddyAccuracy(object):
             piece_id (int): Piece identification number of the as of yet unpaired best buddy
             side (PuzzlePieceSide): Side of the unpaired best buddy
         """
-        BestBuddyAccuracy._add_best_buddy_to_dict(self._open_best_buddies, piece_id, side)
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._open_best_buddies, piece_id, side)
 
     def delete_open_best_buddy(self, piece_id, side):
         """
@@ -856,7 +889,7 @@ class BestBuddyAccuracy(object):
             side (PuzzlePieceSide): Side of the unpaired best buddy
         """
         if self.exists_open_best_buddy(piece_id, side):
-            key = BestBuddyAccuracy._bb_key(piece_id, side)
+            key = BestBuddyAccuracy.piece_side_tuple_key(piece_id, side)
             del self._open_best_buddies[key]
 
     def exists_open_best_buddy(self, piece_id, side):
@@ -870,7 +903,7 @@ class BestBuddyAccuracy(object):
         Returns (bool): True if the key is in the dictionary and False otherwise.
 
         """
-        return BestBuddyAccuracy._check_best_buddy_exist(self._open_best_buddies, piece_id, side)
+        return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._open_best_buddies, piece_id, side)
 
     def exists_wrong_best_buddy(self, piece_id, side):
         """
@@ -883,7 +916,7 @@ class BestBuddyAccuracy(object):
         Returns (bool): True if the key is in the dictionary and False otherwise.
 
         """
-        return BestBuddyAccuracy._check_best_buddy_exist(self._wrong_best_buddies, piece_id, side)
+        return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._wrong_best_buddies, piece_id, side)
 
     def add_wrong_best_buddy(self, piece_id, side):
         """
@@ -892,7 +925,7 @@ class BestBuddyAccuracy(object):
                 piece_id (int):
                 side (PuzzlePieceSide):
         """
-        BestBuddyAccuracy._add_best_buddy_to_dict(self._wrong_best_buddies, piece_id, side)
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._wrong_best_buddies, piece_id, side)
 
     def exists_correct_best_buddy(self, piece_id, side):
         """
@@ -905,7 +938,7 @@ class BestBuddyAccuracy(object):
         Returns (bool): True if the key is in the dictionary and False otherwise.
 
         """
-        return BestBuddyAccuracy._check_best_buddy_exist(self._correct_best_buddies, piece_id, side)
+        return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._correct_best_buddies, piece_id, side)
 
     def add_correct_best_buddy(self, piece_id, side):
         """
@@ -915,7 +948,7 @@ class BestBuddyAccuracy(object):
             piece_id (int): Identification number ofr the piece of interest
             side (PuzzlePieceSide): Puzzle piece side of reference for the correct best buddy
         """
-        BestBuddyAccuracy._add_best_buddy_to_dict(self._correct_best_buddies, piece_id, side)
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._correct_best_buddies, piece_id, side)
 
     def get_piece_side_result(self, piece_id, side):
         """
@@ -940,7 +973,7 @@ class BestBuddyAccuracy(object):
         return PieceSideBestBuddyAccuracyResult.no_best_buddy
 
     @staticmethod
-    def _add_best_buddy_to_dict(bb_dict, piece_id, side):
+    def add_piece_side_tuple_to_dict(bb_dict, piece_id, side):
         """
         Adds a best buddy information to the specified best buddy dictionary.
 
@@ -949,11 +982,11 @@ class BestBuddyAccuracy(object):
             piece_id (int): Identification number of the piece
             side (PuzzlePieceSide): Side of the piece that is referred to for best buddy.
         """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
+        key = BestBuddyAccuracy.piece_side_tuple_key(piece_id, side)
         bb_dict[key] = (piece_id, side)
 
     @staticmethod
-    def _check_best_buddy_exist(bb_dict, piece_id, side):
+    def check_if_piece_side_tuple_in_dict(bb_dict, piece_id, side):
         """
         Checks whether the piece and side exists in the specified best buddy dictionary.
 
@@ -965,11 +998,11 @@ class BestBuddyAccuracy(object):
         Returns (bool):
         True if the pairing of piece_id and side exists in the BB dictionary.
         """
-        key = BestBuddyAccuracy._bb_key(piece_id, side)
+        key = BestBuddyAccuracy.piece_side_tuple_key(piece_id, side)
         return key in bb_dict
 
     @staticmethod
-    def _bb_key(piece_id, side):
+    def piece_side_tuple_key(piece_id, side):
         """
 
         Args:
@@ -1025,6 +1058,12 @@ class BestBuddyAccuracy(object):
         return unicode(self).encode('utf-8')
 
 
+class PieceSideNeighborAccuracyResult(Enum):
+    correct_neighbor = (0, 204, 0)  # Green
+    wrong_neighbor = (0, 0, 255)  # Red
+    different_puzzle_id = (255, 0, 0)  # Blue
+
+
 class ModifiedNeighborAccuracy(object):
     """
     Encapsulating structure for the modified neighbor based accuracy approach.
@@ -1035,9 +1074,32 @@ class ModifiedNeighborAccuracy(object):
         self._solved_puzzle_id = solved_puzzle_id
         self._actual_number_of_pieces = number_of_pieces
 
-        self._wrong_puzzle_id_list = []
-        self._correct_neighbors_list = []
-        self._wrong_neighbors_list = []
+        self._wrong_puzzle_id = {}
+        self._correct_neighbors = {}
+        self._wrong_neighbors = {}
+
+    def get_piece_side_result(self, piece_id, side):
+        """
+        Gets the best buddy result for the combination of puzzle piece and side.
+
+        Args:
+            piece_id (int): Identification number of the piece
+            side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest
+
+        Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result
+        """
+        if self.exists_wrong_puzzle_id(piece_id, side):
+            return PieceSideNeighborAccuracyResult.different_puzzle_id
+
+        if self.exists_correct_neighbor(piece_id, side):
+            return PieceSideNeighborAccuracyResult.correct_neighbor
+
+        if self.exists_wrong_neighbor(piece_id, side):
+            return PieceSideNeighborAccuracyResult.wrong_neighbor
+
+        # Piece does not have a best buddy
+        raise ValueError("Pairing of piece id \"%s\" and side \"%s\" does not exist in this puzzle" % (piece_id,
+                                                                                                       side.side_name))
 
     def add_wrong_puzzle_id(self, piece_id, side):
         """
@@ -1048,7 +1110,18 @@ class ModifiedNeighborAccuracy(object):
             side (PuzzlePieceSide): Side of the puzzle piece with the wrong neighbor
 
         """
-        self._wrong_puzzle_id_list.append((piece_id, side))
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._wrong_puzzle_id, piece_id, side)
+
+    def exists_wrong_puzzle_id(self, piece_id, side):
+        """
+        Determines whether the pairing of the piece id and the side are in the WRONG PUZZLE ID list.
+
+        Args:
+            piece_id (int): Identification number of the wrong puzzle piece
+            side (PuzzlePieceSide): Side of the puzzle piece which is being checked for a WRONG PUZZLE ID
+
+        """
+        return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._wrong_puzzle_id, piece_id, side)
 
     @property
     def wrong_puzzle_id(self):
@@ -1058,7 +1131,7 @@ class ModifiedNeighborAccuracy(object):
         Returns (int): Number pieces in the wrong puzzle
 
         """
-        return len(self._wrong_puzzle_id_list)
+        return len(self._wrong_puzzle_id)
 
     def add_correct_neighbor(self, piece_id, side):
         """
@@ -1069,7 +1142,18 @@ class ModifiedNeighborAccuracy(object):
             side (PuzzlePieceSide): Side of the puzzle piece with the CORRECT neighbor
 
         """
-        self._correct_neighbors_list.append((piece_id, side))
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._correct_neighbors, piece_id, side)
+
+    def exists_correct_neighbor(self, piece_id, side):
+        """
+        Determines whether the pairing of the piece id and the side are in the CORRECT neighbors list.
+
+        Args:
+            piece_id (int): Identification number of the wrong puzzle piece
+            side (PuzzlePieceSide): Side of the puzzle piece which is being checked for a CORRECT neighbor
+
+        """
+        return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._correct_neighbors, piece_id, side)
 
     @property
     def correct_neighbor_count(self):
@@ -1079,7 +1163,7 @@ class ModifiedNeighborAccuracy(object):
         Returns (int): Number of CORRECT neighbors in the puzzle
 
         """
-        return len(self._correct_neighbors_list)
+        return len(self._correct_neighbors)
 
     def add_wrong_neighbor(self, piece_id, side):
         """
@@ -1090,7 +1174,18 @@ class ModifiedNeighborAccuracy(object):
             side (PuzzlePieceSide): Side of the puzzle piece with the wrong neighbor
 
         """
-        self._wrong_neighbors_list.append((piece_id, side))
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._wrong_neighbors, piece_id, side)
+
+    def exists_wrong_neighbor(self, piece_id, side):
+        """
+        Determines whether the pairing of the piece id and the side are in the WRONG neighbors list.
+
+        Args:
+            piece_id (int): Identification number of the wrong puzzle piece
+            side (PuzzlePieceSide): Side of the puzzle piece which is being checked for a WRONG neighbor
+
+        """
+        return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._wrong_neighbors, piece_id, side)
 
     @property
     def wrong_neighbor_count(self):
@@ -1100,7 +1195,7 @@ class ModifiedNeighborAccuracy(object):
         Returns (int): Number of wrong neighbors in the puzzle
 
         """
-        return len(self._wrong_neighbors_list)
+        return len(self._wrong_neighbors)
 
     @property
     def original_puzzle_id(self):
