@@ -941,6 +941,10 @@ class PuzzlePiece(object):
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
             assert len(sides_drawn) == PuzzlePieceSide.get_numb_sides()
 
+        # Draw an "X" to clearly demarcate the triangles
+        cv2.line(image, tuple(top_left), tuple(bottom_right), SolidColor.black.value, thickness=1)
+        cv2.line(image, tuple(top_right), tuple(bottom_left), SolidColor.black.value, thickness=1)
+
         # Optionally add a border around the pieces before returning
         if PuzzlePiece._ADD_RESULTS_IMAGE_BORDER:
             return PuzzlePiece.add_results_image_border(image)

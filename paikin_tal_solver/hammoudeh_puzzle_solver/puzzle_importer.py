@@ -1847,7 +1847,7 @@ class Puzzle(object):
         if orig_img_filename is not None:
             img_extension = Puzzle.get_file_extension(orig_img_filename)
             img_root_filename = Puzzle.get_filename_without_extension(orig_img_filename)
-            output_filename += img_root_filename + "_" + ts_str + "." + img_extension
+            output_filename += img_root_filename + "_" + ts_str + img_extension
 
         # Give a generic name if more than one puzzle being solved
         else:
