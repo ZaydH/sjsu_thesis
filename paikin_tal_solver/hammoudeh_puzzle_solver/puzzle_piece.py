@@ -772,7 +772,7 @@ class PuzzlePiece(object):
         Create a solid image for displaying in output images.
 
         Args:
-            bgr_color (Tuple[int]): Color  in BLUE, GREEEN, RED notation.  Each element for blue, green, or red
+            bgr_color (Tuple[int]): Color  in BLUE, GREEN, RED notation.  Each element for blue, green, or red
               must be between 0 and 255 inclusive.
             width (int): Width of the image in pixels.
             height (int): Height of the image in number of pixels.
@@ -792,8 +792,8 @@ class PuzzlePiece(object):
         Create a solid image for displaying in output images.
 
         Args:
-            bgr_color (Tuple[int]): Color  in BLUE, GREEEN, RED notation.  Each element for blue, green, or red
-              must be between 0 and 255 inclusive.
+            bgr_color_by_side (Tuple[(Tuple[int], PuzzlePieceSide)]): Color in BLUE, GREEN, RED notation for each
+              specified puzzle piece side.  Draws four triangles based off the
             width (int): Width of the image in pixels.
             height (int): Height of the image in number of pixels.
 
@@ -806,6 +806,9 @@ class PuzzlePiece(object):
 
         # Define the center point of the image.
         center_point = [height / 2, width / 2]
+
+        # Used for assertion checking.
+        sides_drawn = []
 
         # Define the other four coordinates for the polygon.
         top_left = [0, 0]
@@ -829,9 +832,22 @@ class PuzzlePiece(object):
                 vector_points = [top_left, bottom_left]
             vector_points.append(center_point)
 
+            # Add drawn sides to the assertion checks
+            if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+                # Ensure no side is drawn twices
+                assert side not in sides_drawn
+                # Add the side tot he list.
+                sides_drawn.append(side)
+
             # Build a polygon
             polygon = numpy.array([vector_points], numpy.int32)
             cv2.fillConvexPoly(image, polygon, color)
+
+        # Verify that all sides are drawn
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert len(sides_drawn) == PuzzlePieceSide.get_numb_sides()
+
+        # Return the drawn image
         return image
 
     def is_correctly_placed(self, puzzle_offset_upper_left_location):

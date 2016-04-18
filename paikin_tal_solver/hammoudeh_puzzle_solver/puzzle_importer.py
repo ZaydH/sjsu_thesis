@@ -6,12 +6,71 @@ import copy
 import os
 import math
 import random
+import pickle
 
 import numpy
 import cv2  # OpenCV
 from enum import Enum
 
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide
+
+
+class PickleHelper(object):
+    """
+    The Pickle Helper class is used to simplify the importing and exporting of objects via the Python Pickle
+    Library.
+    """
+
+    @staticmethod
+    def importer(filename):
+        """Generic Pickling Importer Method
+
+        Helper method used to import any object from a Pickle file.
+
+        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
+        Pickling functions.
+
+        Args:
+            filename (str): Pickle Filename
+
+        Returns: The object serialized in the specified filename.
+
+        """
+        # Check the file directory exists
+        file_directory = os.path.dirname(os.path.abspath(filename))
+        if not os.path.isdir(file_directory):
+            raise ValueError("The file directory: \"" + file_directory + "\" does not appear to exist.")
+
+        # import from the pickle file.
+        f = open(filename, 'r')
+        obj = pickle.load(f)
+        f.close()
+        return obj
+
+    @staticmethod
+    def exporter(obj, filename):
+        """Generic Pickling Exporter Method
+
+        Helper method used to export any object to a Pickle file.
+
+        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
+        Pickling functions.
+
+        Args:
+            obj:                Object to be exported to a specified Pickle file.
+            filename (str):     Name of the Pickle file.
+
+        """
+        # If the file directory does not exist create it.
+        file_directory = os.path.dirname(os.path.abspath(filename))
+        if not os.path.isdir(file_directory):
+            print "Creating pickle export directory \"%s\"." % file_directory
+            os.mkdir(file_directory)
+
+        # Dump pickle to the file.
+        f = open(filename, 'w')
+        pickle.dump(obj, f)
+        f.close()
 
 
 class PuzzleType(Enum):
@@ -28,6 +87,28 @@ class ImageColor(Enum):
     Used to create solid color images for base images and for image manipulation.
     """
     black = 1
+
+
+class PuzzleDimensions(object):
+    """
+    Stores the information regarding the puzzle dimensions including its top left and bottom right corners
+    as well as its total size.
+    """
+
+    def __init__(self, puzzle_id, starting_point):
+        self.puzzle_id = puzzle_id
+        self.top_left = [starting_point[0], starting_point[1]]
+        self.bottom_right = [starting_point[0], starting_point[1]]
+        self.total_size = (1, 1)
+
+    def update_dimensions(self):
+        """
+        Puzzle Dimensions Updater
+
+        Updates the total dimensions of the puzzle.
+        """
+        self.total_size = (self.bottom_right[0] - self.top_left[0] + 1,
+                           self.bottom_right[1] - self.top_left[1] + 1)
 
 
 class DirectAccuracyType(Enum):
@@ -1227,6 +1308,13 @@ class Puzzle(object):
             filename (str): Filename and path to save the OpenCV image.
             img: OpenCV image in the form of a Numpy array
         """
+        # If the file directory does not exist create it.
+        file_directory = os.path.dirname(os.path.abspath(filename))
+        if not os.path.isdir(file_directory):
+            print "Creating solved image directory: \"%s\"." % file_directory
+            os.mkdir(file_directory)
+
+        # Write the image to disk.
         cv2.imwrite(filename, img)
 
     def save_to_file(self, filename):

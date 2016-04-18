@@ -4,11 +4,10 @@
 """
 import copy
 import heapq
-import pickle
 
 import numpy
 
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -87,28 +86,6 @@ class PuzzleOpenSlot(object):
         return self._key
 
 
-class PuzzleDimensions(object):
-    """
-    Stores the information regarding the puzzle dimensions including its top left and bottom right corners
-    as well as its total size.
-    """
-
-    def __init__(self, puzzle_id, starting_point):
-        self.puzzle_id = puzzle_id
-        self.top_left = [starting_point[0], starting_point[1]]
-        self.bottom_right = [starting_point[0], starting_point[1]]
-        self.total_size = (1, 1)
-
-    def update_dimensions(self):
-        """
-        Puzzle Dimensions Updater
-
-        Updates the total dimensions of the puzzle.
-        """
-        self.total_size = (self.bottom_right[0] - self.top_left[0] + 1,
-                           self.bottom_right[1] - self.top_left[1] + 1)
-
-
 class NextPieceToPlace(object):
     """
     Contains all the information on the next piece in the puzzle to be placed.
@@ -135,51 +112,6 @@ class NextPieceToPlace(object):
         # Store the information used to determine when to spawn a new board.
         self._numb_avg_placed_unplaced_links = 0
         self._total_placed_unplaced_compatibility_diff = 0
-
-
-class PickleHelper(object):
-    """
-    The Pickle Helper class is used to simplify the importing and exporting of objects via the Python Pickle
-    Library.
-    """
-
-    @staticmethod
-    def importer(filename):
-        """Generic Pickling Importer Method
-
-        Helper method used to import any object from a Pickle file.
-
-        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
-        Pickling functions.
-
-        Args:
-            filename (str): Pickle Filename
-
-        Returns: The object serialized in the specified filename.
-
-        """
-        f = open(filename, 'r')
-        obj = pickle.load(f)
-        f.close()
-        return obj
-
-    @staticmethod
-    def exporter(obj, filename):
-        """Generic Pickling Exporter Method
-
-        Helper method used to export any object to a Pickle file.
-
-        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
-        Pickling functions.
-
-        Args:
-            obj:                Object to be exported to a specified Pickle file.
-            filename (str):     Name of the Pickle file.
-
-        """
-        f = open(filename, 'w')
-        pickle.dump(obj, f)
-        f.close()
 
 
 class BestBuddyAccuracy(object):
@@ -916,9 +848,6 @@ class PaikinTalSolver(object):
                 # TODO This code only supports a single best buddy
                 (placed_piece_bb_id, placed_piece_bb_side) = placed_piece_bb_info[0]
 
-            if (placed_piece_bb_info and placed_piece_bb_id == 128 and placed_piece_bb_side == PuzzlePieceSide.left):
-                x = 1
-
             # Handle the neighbor first.
             # Only be need to handle it if it is not empty.
             if not is_neighbor_open:
@@ -959,8 +888,6 @@ class PaikinTalSolver(object):
                 # If no neighbor and placed piece has a best buddy, add to the open list and move on.
                 elif is_neighbor_open:
                     self._best_buddy_accuracy[puzzle_id].add_open_best_buddy(placed_piece_id, placed_side)
-
-
 
     def _get_open_best_buddy_puzzle(self, piece_id, side):
         """
