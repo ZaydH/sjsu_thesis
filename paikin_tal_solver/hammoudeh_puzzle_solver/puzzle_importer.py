@@ -187,17 +187,12 @@ class PuzzleResultsCollection(object):
         """
 
         # Standard direct accuracy first then modified
-        for puzzle_id in xrange(0, len(self._puzzle_results)):
+        for original_puzzle_id in xrange(0, len(self._puzzle_results)):
 
             # Get the individual results and puzzle
-            puzzle = solved_puzzles[puzzle_id]
-            results = self._puzzle_results[puzzle_id]
+            results = self._puzzle_results[original_puzzle_id]
 
             for i in xrange(0, 2):
-
-                # Ensure the identification numbers are the same.
-                if PuzzleResultsCollection._PERFORM_ASSERT_CHECKS:
-                    assert puzzle.id_number == results.puzzle_id
 
                 # Select the accuracy type
                 direct_acc = None
@@ -211,37 +206,59 @@ class PuzzleResultsCollection(object):
                 # Verify a direct accuracy was selected
                 assert direct_acc is not None
 
+                # Get the solved puzzle that best matches this original image.
+                solved_puzzle = solved_puzzles[direct_acc.solved_puzzle_id]
+
+                # Verify the original puzzle id matches this set of direct accuracy
+                if PuzzleResultsCollection._PERFORM_ASSERT_CHECKS:
+                    assert direct_acc.original_puzzle_id == original_puzzle_id
+
                 # Set the piece coloring using the selected accuracy type
-                puzzle.set_piece_color_for_direct_accuracy(direct_acc)
+                solved_puzzle.set_piece_color_for_direct_accuracy(direct_acc)
 
                 # Determine whether the puzzle id should be used in the filename
-                filename_puzzle_id = puzzle_id if orig_img_filename is None else None
+                if orig_img_filename is None:
+                    solved_puzzle_id = solved_puzzle.id_number
+                    puzzle_id_filename_info = (original_puzzle_id, solved_puzzle_id)
+                else:
+                    puzzle_id_filename_info = None
                 output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                              timestamp, orig_img_filename=orig_img_filename,
-                                                             puzzle_id=filename_puzzle_id)
+                                                             puzzle_id=puzzle_id_filename_info)
                 # Stores the results to a file.
-                puzzle.build_puzzle_image(use_results_coloring=True)
-                puzzle.save_to_file(output_filename)
+                solved_puzzle.build_puzzle_image(use_results_coloring=True)
+                solved_puzzle.save_to_file(output_filename)
 
             # Get the individual results and puzzle
             neighbor_acc = results.modified_neighbor_accuracy
 
             # Iterate each puzzle piece and set its color for each side
-            for piece in puzzle.pieces:
+            solved_puzzle = solved_puzzles[neighbor_acc.solved_puzzle_id]
+
+            # Verify the original puzzle id matches this set of direct accuracy
+            if PuzzleResultsCollection._PERFORM_ASSERT_CHECKS:
+                assert neighbor_acc.original_puzzle_id == original_puzzle_id
+
+            # Go through and color each piece
+            for piece in solved_puzzle.pieces:
                 piece.reset_image_coloring_for_polygons()
                 for side in PuzzlePieceSide.get_all_sides():
                     coloring = neighbor_acc.get_piece_side_result(piece.id_number, side)
                     piece.results_image_polygon_coloring(side, coloring)
 
             # Determine whether the puzzle id should be used in the filename
-            filename_puzzle_id = puzzle_id if orig_img_filename is None else None
+            if orig_img_filename is None:
+                solved_puzzle_id = solved_puzzle.id_number
+                puzzle_id_filename_info = (original_puzzle_id, solved_puzzle_id)
+            else:
+                puzzle_id_filename_info = None
             descriptor = "neighbor_acc"
             output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                          timestamp, orig_img_filename=orig_img_filename,
-                                                         puzzle_id=filename_puzzle_id)
+                                                         puzzle_id=puzzle_id_filename_info)
             # Stores the results to a file.
-            puzzle.build_puzzle_image(use_results_coloring=True)
-            puzzle.save_to_file(output_filename)
+            solved_puzzle.build_puzzle_image(use_results_coloring=True)
+            solved_puzzle.save_to_file(output_filename)
 
     def print_results(self):
         """
@@ -260,16 +277,16 @@ class PuzzleResultsCollection(object):
 
                 # Select the type of direct accuracy to print.
                 if i == 0:
-                    acc_name = "Standard"
+                    acc_name = "\tStandard"
                     direct_acc = results.standard_direct_accuracy
                 elif i == 1:
-                    acc_name = "Modified"
+                    acc_name = "\tModified"
                     direct_acc = results.modified_direct_accuracy
 
                 # Print the selected direct accuracy type
                 numb_pieces_in_original_puzzle = results.numb_pieces
                 piece_count_weight = direct_acc.numb_different_puzzle + numb_pieces_in_original_puzzle
-                print "Solved Puzzle ID #%d" % direct_acc.solved_puzzle_id
+                print "\tSolved Puzzle ID #%d" % direct_acc.solved_puzzle_id
                 print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements,
                                                                             piece_count_weight,
                                                                             100.0 * direct_acc.numb_correct_placements / piece_count_weight)
@@ -296,20 +313,20 @@ class PuzzleResultsCollection(object):
             neighbor_acc = results.modified_neighbor_accuracy
             neighbor_count_weight = neighbor_acc.numb_pieces_in_original_puzzle + neighbor_acc.wrong_puzzle_id
             neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
-            print "Solved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
-            print "Neighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
-                                                              neighbor_count_weight,
-                                                              100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
+            print "\tSolved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
+            print "\tNeighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
+                                                                neighbor_count_weight,
+                                                                100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
             numb_missing_pieces = numb_pieces_in_original_puzzle \
                                   - neighbor_acc.numb_pieces_from_original_puzzle_in_solved_puzzle
-            print "Numb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
-                                                              results.numb_pieces,
-                                                              100.0 * numb_missing_pieces / results.numb_pieces)
+            print "\tNumb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
+                                                                results.numb_pieces,
+                                                                100.0 * numb_missing_pieces / results.numb_pieces)
             numb_from_wrong_puzzle = neighbor_acc.wrong_puzzle_id
             numb_pieces_in_puzzle = neighbor_acc.total_numb_pieces_in_solved_puzzle
-            print "Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
-                                                                numb_pieces_in_puzzle,
-                                                                100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
+            print "\tNumb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
+                                                                  numb_pieces_in_puzzle,
+                                                                  100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
             # Print a new line to separate the results
             print ""
 
@@ -1050,15 +1067,18 @@ class BestBuddyAccuracy(object):
         Returns (string): Best Buddy accuracy as a string
         """
         return "Best Buddy Info Puzzle #%s\n" % self.puzzle_id \
-               + "Numb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
-               + "Numb Correct Best Buddies:\t%s\n" % self.numb_correct_best_buddies \
-               + "Numb Wrong Best Buddies:\t%s" % self.numb_wrong_best_buddies
+               + "\tNumb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
+               + "\tNumb Correct Best Buddies:\t%s\n" % self.numb_correct_best_buddies \
+               + "\tNumb Wrong Best Buddies:\t%s" % self.numb_wrong_best_buddies
 
     def __str__(self):
         return unicode(self).encode('utf-8')
 
 
 class PieceSideNeighborAccuracyResult(Enum):
+    """
+    Defines the color for tuples of piece ids and sides according to the neighbor accuracy metric.
+    """
     correct_neighbor = (0, 204, 0)  # Green
     wrong_neighbor = (0, 0, 255)  # Red
     different_puzzle_id = (255, 0, 0)  # Blue
@@ -1851,7 +1871,11 @@ class Puzzle(object):
 
         # Give a generic name if more than one puzzle being solved
         else:
-            output_filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + ts_str + ".jpg"
+            if type(puzzle_id) != list and type(puzzle_id) != tuple:
+                output_filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + ts_str + ".jpg"
+            else:
+                output_filename += ("orig_puzzle_" + ("%04d" % puzzle_id[0]) + "_" "solved_puzzle_"
+                                    + ("%04d" % puzzle_id[1]) + "_"+ ts_str + ".jpg")
         return output_filename
 
     @staticmethod
