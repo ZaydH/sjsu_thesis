@@ -44,10 +44,10 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     local_piece_width = piece_width if piece_width is not None else DEFAULT_PUZZLE_PIECE_WIDTH
 
     # Print the names of the images being solved:
-    print "Names of the Image Files:"
+    print "\n\nNames of the Image Files:"
     for img_file in image_files:
         print "\t%s" % Puzzle.get_filename_without_extension(img_file)
-    print "\n\n"
+    print "\n"
 
     # Extract the filename of the image(s)
     pickle_root_filename = ""
@@ -110,21 +110,19 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
     # Determine the image filename
     orig_img_filename = image_files[0] if len(image_files) == 1 else None
-
     # Print the best buddy accuracy information
     paikin_tal_solver.best_buddy_accuracy.print_results()
     paikin_tal_solver.best_buddy_accuracy.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type,
                                                                 timestamp, orig_img_filename=orig_img_filename)
 
     # Build the results information collection
-    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id)
+    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id, image_files)
     # Calculate and print the accuracy results
     results_information.calculate_accuracies(output_puzzles)
     # Print the results to the console
     results_information.print_results()
     # Print the results as image files
-    results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp,
-                                              orig_img_filename=orig_img_filename)
+    results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
 
 
 def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placement_start_filename,

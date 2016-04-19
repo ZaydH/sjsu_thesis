@@ -120,7 +120,7 @@ class PuzzleResultsCollection(object):
 
     _PERFORM_ASSERT_CHECKS = True
 
-    def __init__(self, pieces_partitioned_by_puzzle):
+    def __init__(self, pieces_partitioned_by_puzzle, image_filepaths):
         self._puzzle_results = []
 
         # Iterate through all the solved puzzles
@@ -139,7 +139,8 @@ class PuzzleResultsCollection(object):
 
                 # If the puzzle does not exist, then create a results information
                 if not puzzle_exists:
-                    new_puzzle = PuzzleResultsInformation(piece.actual_puzzle_id)
+                    new_puzzle = PuzzleResultsInformation(piece.actual_puzzle_id,
+                                                          image_filepaths[piece.actual_puzzle_id])
                     new_puzzle.numb_pieces = 1
                     self._puzzle_results.append(new_puzzle)
 
@@ -174,7 +175,7 @@ class PuzzleResultsCollection(object):
         """
         return self._puzzle_results
 
-    def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
+    def output_results_images(self, solved_puzzles, puzzle_type, timestamp):
         """
         Creates images showing the results of the image.
 
@@ -182,7 +183,6 @@ class PuzzleResultsCollection(object):
             solved_puzzles (List[Puzzle]): A set of solved puzzles.
             puzzle_type (PuzzleType): Type of the solved image
             timestamp (float): Timestamp
-            orig_img_filename (str): Filename string.
 
         """
 
@@ -217,14 +217,10 @@ class PuzzleResultsCollection(object):
                 solved_puzzle.set_piece_color_for_direct_accuracy(direct_acc)
 
                 # Determine whether the puzzle id should be used in the filename
-                if orig_img_filename is None:
-                    solved_puzzle_id = solved_puzzle.id_number
-                    puzzle_id_filename_info = (original_puzzle_id, solved_puzzle_id)
-                else:
-                    puzzle_id_filename_info = None
+                solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
                 output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
-                                                             timestamp, orig_img_filename=orig_img_filename,
-                                                             puzzle_id=puzzle_id_filename_info)
+                                                             timestamp, orig_img_filename=results.original_filename,
+                                                             puzzle_id=solved_puzzle_id)
                 # Stores the results to a file.
                 solved_puzzle.build_puzzle_image(use_results_coloring=True)
                 solved_puzzle.save_to_file(output_filename)
@@ -246,16 +242,13 @@ class PuzzleResultsCollection(object):
                     coloring = neighbor_acc.get_piece_side_result(piece.id_number, side)
                     piece.results_image_polygon_coloring(side, coloring)
 
-            # Determine whether the puzzle id should be used in the filename
-            if orig_img_filename is None:
-                solved_puzzle_id = solved_puzzle.id_number
-                puzzle_id_filename_info = (original_puzzle_id, solved_puzzle_id)
-            else:
-                puzzle_id_filename_info = None
+            # Define the output filename
             descriptor = "neighbor_acc"
+            solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
             output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
-                                                         timestamp, orig_img_filename=orig_img_filename,
-                                                         puzzle_id=puzzle_id_filename_info)
+                                                         timestamp, orig_img_filename=results.original_filename,
+                                                         puzzle_id=solved_puzzle_id)
+
             # Stores the results to a file.
             solved_puzzle.build_puzzle_image(use_results_coloring=True)
             solved_puzzle.save_to_file(output_filename)
@@ -270,6 +263,7 @@ class PuzzleResultsCollection(object):
         # Iterate through each puzzle and print that puzzle's results
         for results in self._puzzle_results:
             # Print the header line
+            print "Original Filename: %s" % results.original_filename
             print "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
 
             # Print the standard accuracy information
@@ -340,11 +334,12 @@ class PuzzleResultsInformation(object):
 
     _PERFORM_ASSERT_CHECK = True
 
-    def __init__(self, puzzle_id):
+    def __init__(self, puzzle_id, original_filename):
 
         # Store the number of pieces and the puzzle id
         self.puzzle_id = puzzle_id
         self._numb_pieces = 0
+        self._original_filename = original_filename
 
         # Define the attributes for the standard accuracy.
         self.standard_direct_accuracy = None
@@ -519,6 +514,16 @@ class PuzzleResultsInformation(object):
             if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.modified_direct_accuracy,
                                                                            modified_direct_accuracy):
                 self.modified_direct_accuracy = modified_direct_accuracy
+
+    @property
+    def original_filename(self):
+        """
+        Property for accessing an image's filename.
+
+        Returns (str): Original filename of the input image
+
+        """
+        return self._original_filename
 
 
 class PieceDirectAccuracyResult(Enum):
@@ -1066,7 +1071,7 @@ class BestBuddyAccuracy(object):
 
         Returns (string): Best Buddy accuracy as a string
         """
-        return "Best Buddy Info Puzzle #%s\n" % self.puzzle_id \
+        return "Best Buddy Info for Solved Puzzle #%s\n" % self.puzzle_id \
                + "\tNumb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
                + "\tNumb Correct Best Buddies:\t%s\n" % self.numb_correct_best_buddies \
                + "\tNumb Wrong Best Buddies:\t%s" % self.numb_wrong_best_buddies
@@ -1850,32 +1855,29 @@ class Puzzle(object):
 
         Returns (str): Filename with extension and path.
         """
-        # Error check the input parameters
-        if orig_img_filename is None and puzzle_id is None:
-            raise ValueError("The image file name and puzzle id cannot both be None. "
-                              + "Exactly one must be specified.")
-        if orig_img_filename is not None and puzzle_id is not None:
-            raise ValueError("Either the image file name and puzzle id must be None. Both cannot be specified.")
 
         # Store the reconstructed image
-        output_filename = output_directory + image_descriptor + "_type" + str(puzzle_type.value) + "_"
-
-        # Convert the timestamp to a string.
-        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
+        output_filename = output_directory + image_descriptor + "_type" + str(puzzle_type.value)
 
         # If a specific filename is specified, use that.
+        img_extension = None
         if orig_img_filename is not None:
             img_extension = Puzzle.get_file_extension(orig_img_filename)
             img_root_filename = Puzzle.get_filename_without_extension(orig_img_filename)
-            output_filename += img_root_filename + "_" + ts_str + img_extension
+            output_filename += "_" + img_root_filename
 
-        # Give a generic name if more than one puzzle being solved
+        if puzzle_id is not None:
+            output_filename += "_" + "solved_puzzle_" + ("%04d" % puzzle_id)
+
+        # Convert the timestamp to a string.
+        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
+        # Add timestamp and file extension
+        output_filename += "_" + ts_str
+        if img_extension is not None:
+            output_filename += img_extension
         else:
-            if type(puzzle_id) != list and type(puzzle_id) != tuple:
-                output_filename += "puzzle_" + ("%04d" % puzzle_id) + "_" + ts_str + ".jpg"
-            else:
-                output_filename += ("orig_puzzle_" + ("%04d" % puzzle_id[0]) + "_" "solved_puzzle_"
-                                    + ("%04d" % puzzle_id[1]) + "_"+ ts_str + ".jpg")
+            output_filename += ".jpg"
+
         return output_filename
 
     @staticmethod
