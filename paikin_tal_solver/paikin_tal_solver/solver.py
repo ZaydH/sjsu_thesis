@@ -198,13 +198,13 @@ class PaikinTalSolver(object):
         self._last_best_buddy_heap_housekeeping = None
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "Starting to calculate inter-piece distances"
+            print "\tStarting to calculate inter-piece distances"
 
         # Calculate the inter-piece distances.
         self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function, self._puzzle_type)
 
         if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "Finished calculating inter-piece distances\n\n"
+            print "\tFinished calculating inter-piece distances"
 
         # Release the Inter-piece distance function to allow pickling.
         self._distance_function = None
@@ -403,8 +403,8 @@ class PaikinTalSolver(object):
             return next_piece
 
         else:
-            print "\n\nNeed to recalculate the compatibilities.  Number of pieces left: " \
-                  + str(self._numb_unplaced_pieces) + "\n\n"
+            print "Need to recalculate the compatibilities.  Number of pieces left: " \
+                  + str(self._numb_unplaced_pieces) + "\n"
 
             placed_and_open_pieces = copy.copy(self._piece_placed)
             for open_location in self._open_locations:
