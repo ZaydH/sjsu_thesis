@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="347c6f18-024b-4c50-be46-e2779712015b" name="Default" comment="Adding best buddy accuracy metric.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/best_buddy_placer.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/best_buddy_placer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/solver.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
@@ -20,8 +19,8 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Puzzle_Importer_Tester.coverage" NAME="Puzzle Importer Tester Coverage Results" MODIFIED="1460945977701" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Solver.coverage" NAME="Paikin Tal Solver Coverage Results" MODIFIED="1460946156864" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Puzzle_Importer_Tester.coverage" NAME="Puzzle Importer Tester Coverage Results" MODIFIED="1460963552122" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Solver.coverage" NAME="Paikin Tal Solver Coverage Results" MODIFIED="1461067140339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -35,8 +34,8 @@
       <file leaf-file-name="inter_piece_distance.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="713" column="60" selection-start-line="713" selection-start-column="60" selection-end-line="713" selection-end-column="60" />
+            <state relative-caret-position="325">
+              <caret line="734" column="66" selection-start-line="734" selection-start-column="62" selection-end-line="734" selection-end-column="66" />
               <folding>
                 <element signature="e#98#110#0" expanded="true" />
               </folding>
@@ -44,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="solver.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="solver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="3" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
+            <state relative-caret-position="291">
+              <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
               <folding>
                 <element signature="e#95#106#0" expanded="true" />
               </folding>
@@ -56,37 +55,43 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="best_buddy_placer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/paikin_tal_solver/best_buddy_placer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="64" column="32" selection-start-line="64" selection-start-column="32" selection-end-line="64" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="paikin_tal_tester.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="solver_helper_classes.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="595">
+              <caret line="35" column="7" selection-start-line="35" selection-start-column="7" selection-end-line="35" selection-end-column="7" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="puzzle_piece.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="14263">
-              <caret line="839" column="40" selection-start-line="839" selection-start-column="40" selection-end-line="839" selection-end-column="40" />
+            <state relative-caret-position="16252">
+              <caret line="960" column="64" selection-start-line="960" selection-start-column="62" selection-end-line="960" selection-end-column="64" />
               <folding>
                 <element signature="e#60#73#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="puzzle_importer_tester.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="607">
-              <caret line="417" column="35" selection-start-line="417" selection-start-column="35" selection-end-line="417" selection-end-column="35" />
-              <folding>
-                <element signature="e#110#121#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="solver_driver.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="66" column="37" selection-start-line="66" selection-start-column="37" selection-end-line="66" selection-end-column="37" />
-              <folding>
-                <element signature="e#127#140#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -95,11 +100,21 @@
       <file leaf-file-name="puzzle_importer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3003">
-              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+            <state relative-caret-position="31620">
+              <caret line="1860" column="0" selection-start-line="1860" selection-start-column="0" selection-end-line="1860" selection-end-column="0" />
               <folding>
                 <element signature="e#84#95#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="solver_driver.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1700">
+              <caret line="102" column="45" selection-start-line="102" selection-start-column="26" selection-end-line="102" selection-end-column="45" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -109,8 +124,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Python Unit Test" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -142,10 +157,13 @@
         <option value="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" />
-        <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" />
+        <option value="$PROJECT_DIR$/paikin_tal_solver/test/best_buddy_placed.py" />
+        <option value="$PROJECT_DIR$/paikin_tal_solver/best_buddy_placer.py" />
+        <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py" />
       </list>
     </option>
   </component>
@@ -208,6 +226,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -257,7 +276,6 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -581,31 +599,17 @@
       <option name="project" value="LOCAL" />
       <updated>1460725528230</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fixing error in the last commit around specifying filename puzzle_id or image name.">
+      <created>1460971226689</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1460971226689</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.09 at 22h 08m 08s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 17h 57m 40s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 17h 58m 17s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 17h 58m 24s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 17h 58m 59s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 19h 03m 46s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 19h 06m 04s.xml">
-      <configuration name="Puzzle Importer Tester" configurationId="tests" />
-    </history-entry>
     <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 19h 06m 56s.xml">
       <configuration name="Puzzle Importer Tester" configurationId="tests" />
     </history-entry>
@@ -615,30 +619,51 @@
     <history-entry file="Puzzle_Importer_Tester - 2016.04.17 at 19h 19m 38s.xml">
       <configuration name="Puzzle Importer Tester" configurationId="tests" />
     </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 02m 14s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 02m 29s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 03m 14s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 04m 22s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 08m 02s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 08m 21s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Puzzle_Importer_Tester - 2016.04.18 at 00h 12m 33s.xml">
+      <configuration name="Puzzle Importer Tester" configurationId="tests" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24947916" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21770833" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32875264" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32875264" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32135308" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32875264" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32875264" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32135308" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -656,15 +681,12 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="Adding best buddy accuracy metric." />
     <MESSAGE value="Fixing bugs in the best buddy accuracy calculator where it was not always marking the open slots as closed/wrong." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing bugs in the best buddy accuracy calculator where it was not always marking the open slots as closed/wrong." />
+    <MESSAGE value="Fixing error in the last commit around specifying filename puzzle_id or image name." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing error in the last commit around specifying filename puzzle_id or image name." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py</url>
-          <line>1276</line>
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py</url>
           <line>43</line>
@@ -681,29 +703,14 @@
           <option name="timeStamp" value="150" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py</url>
-          <line>246</line>
-          <option name="timeStamp" value="255" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py</url>
-          <line>89</line>
+          <line>92</line>
           <option name="timeStamp" value="256" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/paikin_tal_solver/solver.py</url>
-          <line>409</line>
-          <option name="timeStamp" value="270" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/paikin_tal_solver/solver.py</url>
-          <line>916</line>
-          <option name="timeStamp" value="271" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py</url>
-          <line>525</line>
-          <option name="timeStamp" value="273" />
+          <url>file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py</url>
+          <line>220</line>
+          <option name="timeStamp" value="303" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -716,63 +723,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="280" />
+      <option name="time" value="305" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="405" column="12" selection-start-line="405" selection-start-column="8" selection-end-line="405" selection-end-column="12" />
-          <folding>
-            <element signature="e#98#110#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
-          <folding>
-            <element signature="e#84#95#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="342" column="39" selection-start-line="342" selection-start-column="39" selection-end-line="342" selection-end-column="39" />
-          <folding>
-            <element signature="e#60#73#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="140" column="94" selection-start-line="140" selection-start-column="94" selection-end-line="140" selection-end-column="94" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="1801" column="0" selection-start-line="1801" selection-start-column="0" selection-end-line="1801" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Miniconda2/Lib/unittest/case.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1057,21 +1012,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Miniconda2/Lib/pickle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="753" column="0" selection-start-line="753" selection-start-column="0" selection-end-line="753" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/enum/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1087,30 +1027,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+    <entry file="file://$USER_HOME$/.PyCharm2016.1/system/python_stubs/2133826791/time.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="713" column="60" selection-start-line="713" selection-start-column="60" selection-end-line="713" selection-end-column="60" />
-          <folding>
-            <element signature="e#98#110#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="202">
+          <caret line="149" column="4" selection-start-line="149" selection-start-column="4" selection-end-line="149" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2016.1/system/python_stubs/2133826791/datetime.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/pickle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="1383" column="0" selection-start-line="1383" selection-start-column="0" selection-end-line="1383" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="607">
-          <caret line="417" column="35" selection-start-line="417" selection-start-column="35" selection-end-line="417" selection-end-column="35" />
-          <folding>
-            <element signature="e#110#121#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-2805">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2016.1/system/python_stubs/2133826791/__builtin__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="2174" column="8" selection-start-line="2174" selection-start-column="8" selection-end-line="2174" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14263">
-          <caret line="839" column="40" selection-start-line="839" selection-start-column="40" selection-end-line="839" selection-end-column="40" />
+        <state relative-caret-position="16252">
+          <caret line="960" column="64" selection-start-line="960" selection-start-column="62" selection-end-line="960" selection-end-column="64" />
           <folding>
             <element signature="e#60#73#0" expanded="true" />
           </folding>
@@ -1119,31 +1075,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="66" column="37" selection-start-line="66" selection-start-column="37" selection-end-line="66" selection-end-column="37" />
-          <folding>
-            <element signature="e#127#140#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1700">
+          <caret line="102" column="45" selection-start-line="102" selection-start-column="26" selection-end-line="102" selection-end-column="45" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3003">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+        <state relative-caret-position="31620">
+          <caret line="1860" column="0" selection-start-line="1860" selection-start-column="0" selection-end-line="1860" selection-end-column="0" />
           <folding>
             <element signature="e#84#95#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/test/best_buddy_placed.py" />
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="734" column="66" selection-start-line="734" selection-start-column="62" selection-end-line="734" selection-end-column="66" />
+          <folding>
+            <element signature="e#98#110#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/best_buddy_placer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="64" column="32" selection-start-line="64" selection-start-column="32" selection-end-line="64" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="3" selection-start-line="3" selection-start-column="3" selection-end-line="3" selection-end-column="3" />
+        <state relative-caret-position="291">
+          <caret line="86" column="0" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
           <folding>
             <element signature="e#95#106#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="35" column="7" selection-start-line="35" selection-start-column="7" selection-end-line="35" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>

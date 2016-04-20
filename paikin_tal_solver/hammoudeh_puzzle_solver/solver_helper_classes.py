@@ -4,6 +4,33 @@ used by the solver.
 """
 
 
+class NextPieceToPlace(object):
+    """
+    Contains all the information on the next piece in the puzzle to be placed.
+    """
+
+    def __init__(self, puzzle_id, open_slot_location, next_piece_id, next_piece_side,
+                 neighbor_piece_id, neighbor_piece_side, compatibility, is_best_buddy):
+        # Store the location of the open slot where the piece will be placed
+        self.puzzle_id = puzzle_id
+        self.open_slot_location = open_slot_location
+
+        # Store the information on the next
+        self.next_piece_id = next_piece_id
+        self.next_piece_side = next_piece_side
+
+        # Store the information about the neighbor piece
+        self.neighbor_piece_id = neighbor_piece_id
+        self.neighbor_piece_side = neighbor_piece_side
+
+        # Store bookkeeping information
+        self.mutual_compatibility = compatibility
+        self.is_best_buddy = is_best_buddy
+
+        # Store the information used to determine when to spawn a new board.
+        self._numb_avg_placed_unplaced_links = 0
+        self._total_placed_unplaced_compatibility_diff = 0
+
 
 class PuzzleLocation(object):
     """
