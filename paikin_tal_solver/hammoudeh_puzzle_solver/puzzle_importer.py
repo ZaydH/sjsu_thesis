@@ -1980,6 +1980,38 @@ class Puzzle(object):
         # Return the built numpy array
         return placed_piece_matrix, placed_piece_rotation
 
+    @staticmethod
+    def get_side_of_primary_adjacent_to_other_piece(primary_piece_location, other_piece_location):
+        """
+        Given two adjacent pieces (i.e. a primary piece and an other piece), return the side of the primary
+        piece that is adjacent (i.e. touching) the other piece.
+
+        Args:
+            primary_piece_location (PuzzleLocation): Location of the primary piece
+            other_piece_location (PuzzleLocation): Location of the other piece
+
+        Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.
+        """
+
+        diff_row = primary_piece_location.location[0] - other_piece_location.location[0]
+        diff_col = primary_piece_location.location[1] - other_piece_location.location[1]
+
+        # Verify the locations are actually adjacent
+        # noinspection PyProtectedMember
+        if Puzzle._PERFORM_ASSERT_CHECKS:
+            assert primary_piece_location.puzzle_id == other_piece_location.puzzle_id
+            # Verify the locations are exactly one space away
+            assert abs(diff_row) + abs(diff_col) == 1
+
+        if diff_row == 1:
+            return PuzzlePieceSide.left
+        if diff_row == -1:
+            return PuzzlePieceSide.right
+        if diff_col == 1:
+            return PuzzlePieceSide.top
+        if diff_col == -1:
+            return PuzzlePieceSide.bottom
+
 
 class PuzzleTester(object):
     """

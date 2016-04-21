@@ -517,7 +517,7 @@ class PuzzlePiece(object):
         """
         Neighbor Locations and Sides
 
-        Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of this
+        Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
         puzzle piece that corresponds to those locations so that it can be added to the open slot list.
 
         Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle

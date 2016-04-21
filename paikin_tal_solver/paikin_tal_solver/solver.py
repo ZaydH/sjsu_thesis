@@ -8,9 +8,9 @@ import heapq
 import numpy
 
 from hammoudeh_puzzle_solver.best_buddy_placer import BestBuddyPlacerCollection
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection
+from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
-from hammoudeh_puzzle_solver.solver_helper_classes import NextPieceToPlace, PuzzleLocation
+from hammoudeh_puzzle_solver.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 
@@ -308,6 +308,7 @@ class PaikinTalSolver(object):
 
         self._add_best_buddies_to_pool(next_piece.id_number)
         self._update_open_slots(next_piece)
+        self._update_best_buddy_collection_neighbor_slots(next_piece.id_number)
 
     def _remove_open_slot(self, slot_to_remove):
         """
@@ -636,6 +637,70 @@ class PaikinTalSolver(object):
         # Add the placed piece's best buddies to the pool.
         self._add_best_buddies_to_pool(seed.id_number)
         self._update_open_slots(seed)
+        self._update_best_buddy_collection_neighbor_slots(seed.id_number)
+
+    def _update_best_buddy_collection_neighbor_slots(self, placed_piece_id):
+        """
+        Updates the information on the open slots in the best buddy placer data structures.
+
+        Args:
+            placed_piece_id (int): Identification number of the placed piece.
+
+        """
+
+        # Get the information on the placed piece.
+        placed_piece = self._pieces[placed_piece_id]
+        placed_piece_location = PuzzleLocation(placed_piece.puzzle_id, placed_piece.location[0],
+                                               placed_piece.location[1])
+
+        # Get the open slots
+        neighbor_location_and_side = placed_piece.get_neighbor_locations_and_sides()
+
+        # Iterate through the pairings of sides and location
+        for i in xrange(0, len(neighbor_location_and_side)):
+            # Build a puzzle location object
+            (location, side) = neighbor_location_and_side[i]
+            neighbor_location = PuzzleLocation(placed_piece.puzzle_id, location[0], location[1])
+            # Check if the slot is open
+            if self._is_slot_open(neighbor_location):
+                # Store the neighbor side
+                neighbor_side = Puzzle.get_side_of_primary_adjacent_to_other_piece(neighbor_location,
+                                                                                   placed_piece_location)
+                # Update the neighbor location information
+                placed_piece_and_side = NeighborSidePair(placed_piece_id, side)
+                self._best_buddy_placer.update_open_slot(neighbor_location, neighbor_side, placed_piece_and_side)
+
+    @staticmethod
+    def get_side_of_primary_adjacent_to_other_piece(primary_piece_location, other_piece_location):
+        """
+        Given two adjacent pieces (i.e. a primary piece and an other piece), return the side of the primary
+        piece that is adjacent (i.e. touching) the other piece.
+
+        Args:
+            primary_piece_location (PuzzleLocation): Location of the primary piece
+            other_piece_location (PuzzleLocation): Location of the other piece
+
+        Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.
+        """
+
+        diff_row = primary_piece_location.location[0] - other_piece_location.location[0]
+        diff_col = primary_piece_location.location[1] - other_piece_location.location[1]
+
+        # Verify the locations are actually adjacent
+        # noinspection PyProtectedMember
+        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+            assert primary_piece_location.puzzle_id == other_piece_location.puzzle_id
+            # Verify the locations are exactly one space away
+            assert abs(diff_row) + abs(diff_col) == 1
+
+        if diff_row == 1:
+            return PuzzlePieceSide.left
+        if diff_row == -1:
+            return PuzzlePieceSide.right
+        if diff_col == 1:
+            return PuzzlePieceSide.top
+        if diff_col == -1:
+            return PuzzlePieceSide.bottom
 
     def _updated_puzzle_dimensions(self, placed_piece_location):
         """

@@ -11,7 +11,7 @@ class BestBuddyPlacerCollection(object):
         # Store the location of the open locations
         self._open_locations = {}
         # Depending on the number of best buddies, you are placed in a different tier of dictionary
-        self._multiside_open_slots_lists = [{}] * PuzzlePieceSide.get_numb_sides()
+        self._multiside_open_slots_lists = [{} for _ in xrange(0, PuzzlePieceSide.get_numb_sides())]
 
     def update_open_slot(self, puzzle_location, side, neighbor_side_info):
         """
@@ -35,7 +35,7 @@ class BestBuddyPlacerCollection(object):
 
         # Get the open slot and update the specified side
         # noinspection PyTypeChecker
-        open_slot = self._multiside_open_slots_lists[numb_neighbors][location_key]
+        open_slot = self._multiside_open_slots_lists[numb_neighbors - 1][location_key]
         open_slot.update_side_neighbor_info(side, neighbor_side_info)
         # Update the containers storing the open slot information
         self._put_slot_into_dictionaries(open_slot)
@@ -51,7 +51,7 @@ class BestBuddyPlacerCollection(object):
         """
         loc_key = open_slot.location.key
         self._open_locations[loc_key] = open_slot.numb_neighbors
-        self._multiside_open_slots_lists[open_slot.numb_neighbors][loc_key] = open_slot
+        self._multiside_open_slots_lists[open_slot.numb_neighbors - 1][loc_key] = open_slot
 
     def _add_open_slot(self, puzzle_location, adjacent_side, neighbor_side_info):
         """
@@ -87,7 +87,7 @@ class BestBuddyPlacerCollection(object):
 
         # Delete the piece from the diction
         del self._open_locations[piece_location.key]
-        del self._multiside_open_slots_lists[piece_location.key]
+        del self._multiside_open_slots_lists[numb_neighbors - 1][piece_location.key]
 
 
 class MultisidePuzzleOpenSlot(object):
