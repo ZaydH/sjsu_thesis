@@ -7,8 +7,10 @@ import heapq
 
 import numpy
 
+from hammoudeh_puzzle_solver.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
+from hammoudeh_puzzle_solver.solver_helper_classes import NextPieceToPlace, PuzzleLocation
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 
@@ -39,12 +41,11 @@ class BestBuddyHeapInfo(object):
     """
 
     def __init__(self, bb_id, bb_side, neighbor_id, neighbor_side,
-                 puzzle_id, location, mutual_compatibility):
+                 location, mutual_compatibility):
         self.bb_id = bb_id
         self.bb_side = bb_side
         self.neighbor_id = neighbor_id
         self.neighbor_side = neighbor_side
-        self.puzzle_id = puzzle_id
         self.location = location
         self.mutual_compatibility = mutual_compatibility
 
@@ -71,12 +72,15 @@ class PuzzleOpenSlot(object):
     This data structure stores that information inside a Python dictionary.
     """
 
-    def __init__(self, puzzle_id, (row, column), piece_id, open_side):
-        self.puzzle_id = puzzle_id
-        self.location = (row, column)
+    def __init__(self, location, piece_id, open_side):
+        self.location = location
         self.piece_id = piece_id
         self.open_side = open_side
-        self._key = str(puzzle_id) + "_" + str(row) + "_" + str(column) + "_" + str(open_side.value)
+
+        # Get the information on the row and column
+        row = location.row
+        column = location.column
+        self._key = str(location.puzzle_id) + "_" + str(row) + "_" + str(column) + "_" + str(open_side.value)
 
     @property
     def key(self):
@@ -114,6 +118,9 @@ class PaikinTalSolver(object):
     _MINIMUM_CLEAN_HEAP_SIZE = 1 * (10 ** 6)
     _MINIMUM_CLEAN_HEAP_FREQUENCY = 100
 
+    # Select whether to use the best_buddy_placer
+    _USE_BEST_BUDDY_PLACER = False
+
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
         """
@@ -150,6 +157,9 @@ class PaikinTalSolver(object):
 
         # Quantifies the number of best buddies that
         self._best_buddy_accuracy = BestBuddyResultsCollection()
+
+        # Stores the best buddy placer information
+        self._best_buddy_placer = BestBuddyPlacerCollection()
 
         # Store the puzzle dimensions if any
         self._actual_puzzle_dimensions = fixed_puzzle_dimensions
@@ -267,7 +277,7 @@ class PaikinTalSolver(object):
             next_piece_info (NextPieceToPlace):  Information on the next piece to place
         """
 
-        puzzle_id = next_piece_info.puzzle_id
+        puzzle_id = next_piece_info.open_slot_location.puzzle_id
 
         # Get the neighbor pieces id
         next_piece_id = next_piece_info.next_piece_id
@@ -281,24 +291,25 @@ class PaikinTalSolver(object):
         # Set the parameters of the placed piece
         next_piece.set_placed_piece_rotation(next_piece_side, neighbor_piece_side, neighbor_piece.rotation)
         next_piece.puzzle_id = puzzle_id
-        next_piece.location = next_piece_info.open_slot_location
+        next_piece.location = next_piece_info.open_slot_location.location
 
         # Update the board dimensions
-        self._updated_puzzle_dimensions(next_piece.puzzle_id, next_piece.location)
+        self._updated_puzzle_dimensions(next_piece_info.open_slot_location)
 
         # Update the data structures used for Paikin and Tal
         self._piece_locations[puzzle_id][next_piece.location] = next_piece.id_number
         self._update_best_buddy_accuracy(puzzle_id, next_piece.id_number)
 
         self._mark_piece_placed(next_piece.id_number)
-        self._remove_open_slot(puzzle_id, next_piece.location)
+
+        self._remove_open_slot(next_piece_info.open_slot_location)
         if next_piece_info.is_best_buddy:
             self._remove_best_buddy_from_pool(next_piece.id_number)
 
         self._add_best_buddies_to_pool(next_piece.id_number)
         self._update_open_slots(next_piece)
 
-    def _remove_open_slot(self, puzzle_id, location):
+    def _remove_open_slot(self, slot_to_remove):
         """
         Open Slot Remover
 
@@ -306,20 +317,29 @@ class PaikinTalSolver(object):
         open slot list that has that puzzle ID and location.
 
         Args:
-            puzzle_id (int): Puzzle identification number
-            location ([int]): Puzzle location (row, column)
+            slot_to_remove (PuzzleLocation): Location in a puzzle to remove.
         """
+
+        puzzle_id = slot_to_remove.puzzle_id
+        loc_to_remove = slot_to_remove.location
+
         i = 0
         while i < len(self._open_locations):
             open_slot_info = self._open_locations[i]
+            open_slot_puzzle_id = open_slot_info.location.puzzle_id
+            open_slot_loc = open_slot_info.location.location
             # If this open slot has the same location, remove it.
             # noinspection PyUnresolvedReferences
-            if open_slot_info.puzzle_id == puzzle_id and open_slot_info.location == location:
+            if open_slot_puzzle_id == puzzle_id and open_slot_loc == loc_to_remove:
                 del self._open_locations[i]
 
             # If not the same location then go to the next open slot
             else:
                 i += 1
+
+        # Remove the open slot from the best buddy placer
+        if PaikinTalSolver._USE_BEST_BUDDY_PLACER:
+            self._best_buddy_placer.remove_open_slot(slot_to_remove)
 
     def _remove_best_buddy_from_pool(self, piece_id):
         """
@@ -365,9 +385,8 @@ class PaikinTalSolver(object):
                 # Get the best next piece from the heap.
                 heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
                 # Make sure the piece is not already placed and/or the slot not already filled.
-                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.puzzle_id,
-                                                                                  heap_info.location):
-                    next_piece = NextPieceToPlace(heap_info.puzzle_id, heap_info.location,
+                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.location):
+                    next_piece = NextPieceToPlace(heap_info.location,
                                                   heap_info.bb_id, heap_info.bb_side,
                                                   heap_info.neighbor_id, heap_info.neighbor_side,
                                                   heap_info.mutual_compatibility, True)
@@ -394,20 +413,19 @@ class PaikinTalSolver(object):
             # Use the unplaced pieces to determine the best location.
             return self._get_next_piece_from_pool(unplaced_pieces)
 
-    def _is_slot_open(self, puzzle_id, location):
+    def _is_slot_open(self, slot_location):
         """
         Open Slot Checker
 
         Checks whether the specified location is open in the associated puzzle.
 
         Args:
-            puzzle_id (int): Puzzle identification number
-            location ((int)): Tuple of the a location of the puzzle which is row by column
+            slot_location (PuzzleLocation): Unique location in the puzzle
 
         Returns: True of the location in the specified puzzle is open and false otherwise.
         """
-        return self._piece_locations[puzzle_id][location] == PaikinTalSolver._UNPLACED_PIECE_ID \
-               and self._check_board_dimensions(puzzle_id, location)
+        return self._piece_locations[slot_location.puzzle_id][slot_location.location] == PaikinTalSolver._UNPLACED_PIECE_ID \
+               and self._check_board_dimensions(slot_location)
 
     def _check_if_perform_best_buddy_heap_housecleaning(self):
         """
@@ -438,7 +456,7 @@ class PaikinTalSolver(object):
         # Go through all the heap elements and if a slot is full or a best buddy was placed, remove
         # Do not add it to the new heap
         for bb_heap_info in self._best_buddy_open_slot_heap:
-            if (not self._is_slot_open(bb_heap_info.puzzle_id, bb_heap_info.location)
+            if (not self._is_slot_open(bb_heap_info.location)
                     or self._piece_placed[bb_heap_info.bb_id]):
                 elements_deleted += 1
                 continue
@@ -456,7 +474,20 @@ class PaikinTalSolver(object):
             total_numb_elements = elements_deleted + len(new_bb_heap)
             print "%d out of %d elements removed in the heap cleanup.\n\n" % (elements_deleted, total_numb_elements)
 
-    def _check_board_dimensions(self, puzzle_id, location):
+    def _check_board_dimensions(self, puzzle_location):
+        """
+        Checks if the location is an illegal location based off an optional set of puzzle dimensions.
+
+        Args:
+            puzzle_location (PuzzleLocation): Unique location in the puzzles
+
+        Returns (bool): True if not an illegal based off the board location, False otherwise.
+
+        """
+
+        # Get the specific location information
+        puzzle_id = puzzle_location.puzzle_id
+        location = puzzle_location.location
 
         # If no puzzled dimensions, then slot is definitely open
         actual_dimensions = self._actual_puzzle_dimensions
@@ -465,10 +496,10 @@ class PaikinTalSolver(object):
         else:
             puzzle_dimensions = self._placed_puzzle_dimensions[puzzle_id]
             for dim in xrange(0, len(actual_dimensions)):
-                # Check if too from from upper left
+                # Check if too far from from upper left
                 if location[dim] - puzzle_dimensions.top_left[dim] + 1 > actual_dimensions[dim]:
                     return False
-                # Check if too from from upper left
+                # Check if too far from from bottom right
                 if puzzle_dimensions.bottom_right[dim] - location[dim] + 1 > actual_dimensions[dim]:
                     return False
         # If puzzle dimensions are not too wide, then the location is open
@@ -512,7 +543,7 @@ class PaikinTalSolver(object):
             for open_slot in self._open_locations:
 
                 # Ignore any invalid slots
-                if not self._is_slot_open(open_slot.puzzle_id, open_slot.location):
+                if not self._is_slot_open(open_slot.location):
                     continue
 
                 # Get the information on the piece adjacent to the open slot
@@ -525,7 +556,7 @@ class PaikinTalSolver(object):
                                                                                     neighbor_piece_id, neighbor_side)
                     # Check if need to update the best_piece
                     if best_piece is None or mutual_compat > best_piece.mutual_compatibility:
-                        best_piece = NextPieceToPlace(open_slot.puzzle_id, open_slot.location,
+                        best_piece = NextPieceToPlace(open_slot.location,
                                                       next_piece_id, next_piece_side,
                                                       neighbor_piece_id, neighbor_side,
                                                       mutual_compat, is_best_buddy)
@@ -606,14 +637,17 @@ class PaikinTalSolver(object):
         self._add_best_buddies_to_pool(seed.id_number)
         self._update_open_slots(seed)
 
-    def _updated_puzzle_dimensions(self, puzzle_id, placed_piece_location):
+    def _updated_puzzle_dimensions(self, placed_piece_location):
         """
         Puzzle Dimensions Updater
 
         Args:
-            puzzle_id (int): Identification number of the puzzle
-            placed_piece_location ([int]): Location of the newly placed piece.
+            placed_piece_location (PuzzleLocation): Location of the newly placed piece.
         """
+        # Get the specifics of the placed piece
+        puzzle_id = placed_piece_location.puzzle_id
+        location = placed_piece_location.location
+
         board_dimensions = self._placed_puzzle_dimensions[puzzle_id]
         # Make sure the dimensions are somewhat plausible.
         if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
@@ -623,11 +657,11 @@ class PaikinTalSolver(object):
         # Store the puzzle dimensions.
         dimensions_changed = False
         for dim in range(0, len(board_dimensions.top_left)):
-            if board_dimensions.top_left[dim] > placed_piece_location[dim]:
-                board_dimensions.top_left[dim] = placed_piece_location[dim]
+            if board_dimensions.top_left[dim] > location[dim]:
+                board_dimensions.top_left[dim] = location[dim]
                 dimensions_changed = True
-            elif board_dimensions.bottom_right[dim] < placed_piece_location[dim]:
-                board_dimensions.bottom_right[dim] = placed_piece_location[dim]
+            elif board_dimensions.bottom_right[dim] < location[dim]:
+                board_dimensions.bottom_right[dim] = location[dim]
                 dimensions_changed = True
 
         # If the dimensions changed, the update the board size and store it back in the array
@@ -737,9 +771,11 @@ class PaikinTalSolver(object):
         for location_side in location_and_sides:
             location = location_side[0]
             piece_side = location_side[1]
-            if self._is_slot_open(puzzle_id, location):
+
+            open_slot_loc = PuzzleLocation(puzzle_id, location[0], location[1])
+            if self._is_slot_open(open_slot_loc):
                 # noinspection PyTypeChecker
-                self._open_locations.append(PuzzleOpenSlot(puzzle_id, location, piece_id, piece_side))
+                self._open_locations.append(PuzzleOpenSlot(open_slot_loc, piece_id, piece_side))
 
                 # For each Best Buddy already in the pool, add an object to the heap.
                 for bb_id in self._best_buddies_pool.values():
@@ -750,8 +786,9 @@ class PaikinTalSolver(object):
                         mutual_compat = self._inter_piece_distance.mutual_compatibility(piece_id, piece_side,
                                                                                         bb_id, bb_side)
                         # Create a heap info object and push it onto the heap.
+                        bb_location = PuzzleLocation(puzzle_id, location[0], location[1])
                         heap_info = BestBuddyHeapInfo(bb_id, bb_side, piece_id, piece_side,
-                                                      puzzle_id, location, mutual_compat)
+                                                      bb_location, mutual_compat)
                         heapq.heappush(self._best_buddy_open_slot_heap, heap_info)
 
     def _mark_piece_placed(self, piece_id):
@@ -811,8 +848,7 @@ class PaikinTalSolver(object):
                         # Build a heap info object.
                         bb_heap_info = BestBuddyHeapInfo(bb_id, bb_side,
                                                          open_slot_info.piece_id, open_slot_info.open_side,
-                                                         open_slot_info.puzzle_id, open_slot_info.location,
-                                                         mutual_compat)
+                                                         open_slot_info.location, mutual_compat)
                         # Push the best buddy onto the heap
                         heapq.heappush(self._best_buddy_open_slot_heap, bb_heap_info)
 

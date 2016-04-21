@@ -9,10 +9,9 @@ class NextPieceToPlace(object):
     Contains all the information on the next piece in the puzzle to be placed.
     """
 
-    def __init__(self, puzzle_id, open_slot_location, next_piece_id, next_piece_side,
+    def __init__(self, open_slot_location, next_piece_id, next_piece_side,
                  neighbor_piece_id, neighbor_piece_side, compatibility, is_best_buddy):
         # Store the location of the open slot where the piece will be placed
-        self.puzzle_id = puzzle_id
         self.open_slot_location = open_slot_location
 
         # Store the information on the next
