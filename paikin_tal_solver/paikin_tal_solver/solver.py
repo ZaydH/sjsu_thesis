@@ -439,10 +439,11 @@ class PaikinTalSolver(object):
                 return next_piece_to_place
 
             # Get the open slots associated with the neighbor count
-            open_slots_with_neighbor_count = self._best_buddy_placer.get_open_slot_dictionary(numb_neighbors).values()
+            open_slot_dict = self._best_buddy_placer.get_open_slot_dictionary(numb_neighbors)
             # If no open slots with this neighbor count, go to next count
-            if len(open_slots_with_neighbor_count) == 0:
+            if open_slot_dict is None or len(open_slot_dict) == 0:
                 continue
+            open_slots_with_neighbor_count = open_slot_dict.values()
 
             # Iterate through all pieces in the best buddy pool
             for bb_id in self._best_buddies_pool.values():
@@ -473,8 +474,6 @@ class PaikinTalSolver(object):
 
         # Get the information about the piece
         best_buddy_piece = self._pieces[bb_id]
-
-        numb_sides = PuzzlePieceSide.get_numb_sides()
 
         # Get all the best buddies of the piece
         all_best_buddies = self._inter_piece_distance.all_best_buddies(bb_id)
@@ -524,7 +523,7 @@ class PaikinTalSolver(object):
                                                                                      neighbor_piece_id, neighbor_side)
 
                 # Ensure the number of best buddies does not exceed the number of neighbors
-                if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                if PaikinTalSolver._PERFORM_ASSERTION_CHECK and numb_best_buddies > numb_neighbor_sides:
                     assert numb_best_buddies <= numb_neighbor_sides
 
                 # Normalize the mutual compatibility

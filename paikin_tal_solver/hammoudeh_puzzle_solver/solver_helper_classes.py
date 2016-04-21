@@ -33,7 +33,7 @@ class NextPieceToPlace(object):
         # If not a best buddy, then cannot have a number of best buddies
         if not is_best_buddy and numb_best_buddies is not None:
             raise ValueError("The next piece to place was marked as not a best buddy but a best buddy count was specified.")
-        self.numb_best_buddies = 0
+        self.numb_best_buddies = numb_best_buddies
 
     def __gt__(self, other):
         """
