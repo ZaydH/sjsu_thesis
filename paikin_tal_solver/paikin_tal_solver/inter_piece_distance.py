@@ -825,6 +825,18 @@ class InterPieceDistance(object):
         """
         return self._piece_distance_info[p_i].best_buddies(p_i_side)
 
+    def all_best_buddies(self, p_i):
+        """
+        Gets an array of all best buddies information as a list for a specified puzzle piece.
+
+        Args:
+            p_i (int): Piece identification number
+
+        Returns (List[(int, PuzzlePieceSide)]): Best buddy information for the specified piece.
+
+        """
+        return self._piece_distance_info[p_i].all_best_buddies()
+
     def asymmetric_distance(self, p_i, p_i_side, p_j, p_j_side):
         """
         Asymmetric Distance Accessor

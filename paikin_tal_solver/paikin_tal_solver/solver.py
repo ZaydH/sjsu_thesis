@@ -384,7 +384,7 @@ class PaikinTalSolver(object):
             # Use Best Buddy Placer By Default
             if PaikinTalSolver._USE_BEST_BUDDY_PLACER:
 
-                next_piece = self._best_buddy_placer.select_next_piece_to_place(self._best_buddies_pool)
+                next_piece = self._select_piece_using_best_buddies()
 
             # Use Standard Paikin Tal Placer Always or if no best buddy found
             if not PaikinTalSolver._USE_BEST_BUDDY_PLACER or next_piece is None:
@@ -421,8 +421,14 @@ class PaikinTalSolver(object):
             # Use the unplaced pieces to determine the best location.
             return self._get_next_piece_from_pool(unplaced_pieces)
 
-
     def _select_piece_using_best_buddies(self):
+        """
+        Places a piece using the best buddy placing technique.
+
+        Returns (NextPieceToPlace): If a next piece is found, then it returns the information on the best piece to
+        place and None otherwise.
+
+        """
 
         # Select the next piece to place
         next_piece_to_place = None
@@ -441,8 +447,9 @@ class PaikinTalSolver(object):
             # Iterate through all pieces in the best buddy pool
             for bb_info in self._best_buddies_pool:
 
-                #
-                candidate_next_piece = self._get_best_location_for_best_buddy(bb_info, open_slots_with_neighbor_count)
+                # Get the best matching open slot for this piece.
+                candidate_next_piece = self._get_best_location_for_best_buddy(bb_info, open_slots_with_neighbor_count,
+                                                                              numb_neighbors)
 
                 # Check if the next piece should be updated.
                 if ((next_piece_to_place is None and candidate_next_piece.numb_best_buddies > 0)
@@ -468,7 +475,7 @@ class PaikinTalSolver(object):
         numb_sides = PuzzlePieceSide.get_numb_sides()
 
         # Get all the best buddies of the piece
-        all_best_buddies = self._inter_piece_distance[bb_info.piece_id].all_best_buddies()
+        all_best_buddies = self._inter_piece_distance.all_best_buddies(bb_info.piece_id)
 
         # Initialize the next piece to place
         next_piece_to_place = None
@@ -477,7 +484,7 @@ class PaikinTalSolver(object):
         for rotation in PuzzlePieceRotation.all_rotations():
 
             # Iterate through each open slot for the given neighbor count
-            for multisite_open_slot in neighbor_count_open_slots:
+            for multiside_open_slot in neighbor_count_open_slots:
 
                 # Store number of best buddies
                 numb_best_buddies = 0
@@ -486,7 +493,7 @@ class PaikinTalSolver(object):
                 # Check each side of the piece
                 for side in PuzzlePieceSide.get_all_sides():
                     # Check if the neighbor exists.  If not, then skip.
-                    neighbor_side_pair = multisite_open_slot.get_neighbor_info(side)
+                    neighbor_side_pair = multiside_open_slot.get_neighbor_info(side)
                     if neighbor_side_pair is None:
                         continue
 
@@ -517,7 +524,7 @@ class PaikinTalSolver(object):
                 # Normalize the mutual compatibility
                 mutual_compat /= numb_neighbor_sides
                 # noinspection PyUnboundLocalVariable
-                candidate_next_piece = NextPieceToPlace(multisite_open_slot.location, best_buddy_piece.id_number,
+                candidate_next_piece = NextPieceToPlace(multiside_open_slot.location, best_buddy_piece.id_number,
                                                         adjusted_side, neighbor_piece_id, neighbor_side,
                                                         mutual_compat, True, numb_best_buddies=numb_best_buddies)
                 # If this candidate piece is better than the next piece, then update the next piece
@@ -529,7 +536,6 @@ class PaikinTalSolver(object):
 
         # Return the piece to place
         return next_piece_to_place
-
 
     def _is_slot_open(self, slot_location):
         """
