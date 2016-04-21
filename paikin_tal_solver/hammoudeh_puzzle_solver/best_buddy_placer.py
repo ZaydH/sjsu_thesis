@@ -2,6 +2,7 @@
 This contains classes that will be used by the best buddy placer technique developed by Zayd Hammoudeh
 as an extension of Paikin and Tal's solver.
 """
+
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
 
 
@@ -11,7 +12,7 @@ class BestBuddyPlacerCollection(object):
         # Store the location of the open locations
         self._open_locations = {}
         # Depending on the number of best buddies, you are placed in a different tier of dictionary
-        self._multiside_open_slots_lists = [{} for _ in xrange(0, PuzzlePieceSide.get_numb_sides())]
+        self._multiside_open_slots_lists = [None for _ in xrange(0, PuzzlePieceSide.get_numb_sides())]
 
     def update_open_slot(self, puzzle_location, side, neighbor_side_info):
         """
@@ -63,7 +64,12 @@ class BestBuddyPlacerCollection(object):
         """
         loc_key = open_slot.location.key
         self._open_locations[loc_key] = open_slot.numb_neighbors
-        self._multiside_open_slots_lists[open_slot.numb_neighbors - 1][loc_key] = open_slot
+        if self._multiside_open_slots_lists[open_slot.numb_neighbors - 1] is not None:
+            slot_dictionary = self._multiside_open_slots_lists[open_slot.numb_neighbors - 1]
+            slot_dictionary[loc_key] = open_slot
+        else:
+            slot_dictionary = {loc_key: open_slot}
+            self._multiside_open_slots_lists[open_slot.numb_neighbors - 1] = slot_dictionary
 
     def _add_open_slot(self, puzzle_location, adjacent_side, neighbor_side_info):
         """
