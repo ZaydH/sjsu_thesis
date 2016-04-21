@@ -381,16 +381,23 @@ class PaikinTalSolver(object):
             if self._check_if_perform_best_buddy_heap_housecleaning():
                 self._clean_best_buddy_heap()
 
-            # Keep popping from the heap until a valid next piece is found.
-            while next_piece is None:
-                # Get the best next piece from the heap.
-                heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
-                # Make sure the piece is not already placed and/or the slot not already filled.
-                if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.location):
-                    next_piece = NextPieceToPlace(heap_info.location,
-                                                  heap_info.bb_id, heap_info.bb_side,
-                                                  heap_info.neighbor_id, heap_info.neighbor_side,
-                                                  heap_info.mutual_compatibility, True)
+            # Use Best Buddy Placer By Default
+            if PaikinTalSolver._USE_BEST_BUDDY_PLACER:
+
+                next_piece = self._best_buddy_placer.select_next_piece_to_place(self._best_buddies_pool)
+
+            # Use Standard Paikin Tal Placer Always or if no best buddy found
+            if not PaikinTalSolver._USE_BEST_BUDDY_PLACER or next_piece is None:
+                # Keep popping from the heap until a valid next piece is found.
+                while next_piece is None:
+                    # Get the best next piece from the heap.
+                    heap_info = heapq.heappop(self._best_buddy_open_slot_heap)
+                    # Make sure the piece is not already placed and/or the slot not already filled.
+                    if not self._piece_placed[heap_info.bb_id] and self._is_slot_open(heap_info.location):
+                        next_piece = NextPieceToPlace(heap_info.location,
+                                                      heap_info.bb_id, heap_info.bb_side,
+                                                      heap_info.neighbor_id, heap_info.neighbor_side,
+                                                      heap_info.mutual_compatibility, True)
 
             return next_piece
 
@@ -413,6 +420,116 @@ class PaikinTalSolver(object):
                     unplaced_pieces.append(p_i)
             # Use the unplaced pieces to determine the best location.
             return self._get_next_piece_from_pool(unplaced_pieces)
+
+
+    def _select_piece_using_best_buddies(self):
+
+        # Select the next piece to place
+        next_piece_to_place = None
+        for numb_neighbors in xrange(PuzzlePieceSide.get_numb_sides(), 0):
+
+            # If the piece already has more best buddies than is available for the remaining pieces, then return
+            if next_piece_to_place is not None and next_piece_to_place.numb_best_buddies > numb_neighbors:
+                return next_piece_to_place
+
+            # Get the open slots associated with the neighbor count
+            open_slots_with_neighbor_count = self._best_buddy_placer.get_open_slot_dictionary(numb_neighbors).values()
+            # If no open slots with this neighbor count, go to next count
+            if open_slots_with_neighbor_count is None:
+                continue
+
+            # Iterate through all pieces in the best buddy pool
+            for bb_info in self._best_buddies_pool:
+
+                #
+                candidate_next_piece = self._get_best_location_for_best_buddy(bb_info, open_slots_with_neighbor_count)
+
+                # Check if the next piece should be updated.
+                if ((next_piece_to_place is None and candidate_next_piece.numb_best_buddies > 0)
+                        or (next_piece_to_place is not None and candidate_next_piece > next_piece_to_place)):
+                    next_piece_to_place = candidate_next_piece
+
+        return next_piece_to_place
+
+    def _get_best_location_for_best_buddy(self, bb_info, neighbor_count_open_slots, numb_neighbor_sides):
+        """
+
+        Args:
+            bb_info (BestBuddyPoolInfo): Information on a best buddy in the pool
+            neighbor_count_open_slots (List[MultisidePuzzleOpenSlot]): Open slot information
+            numb_neighbor_sides (int): Number of sides with a neighbor
+
+        Returns (NextPieceToPlace): Information on a possible candidate for next piece to place
+        """
+
+        # Get the information about the piece
+        best_buddy_piece = self._pieces[bb_info.piece_id]
+
+        numb_sides = PuzzlePieceSide.get_numb_sides()
+
+        # Get all the best buddies of the piece
+        all_best_buddies = self._inter_piece_distance[bb_info.piece_id].all_best_buddies()
+
+        # Initialize the next piece to place
+        next_piece_to_place = None
+
+        # Iterate through all possible rotations
+        for rotation in PuzzlePieceRotation.all_rotations():
+
+            # Iterate through each open slot for the given neighbor count
+            for multisite_open_slot in neighbor_count_open_slots:
+
+                # Store number of best buddies
+                numb_best_buddies = 0
+                mutual_compat = 0
+
+                # Check each side of the piece
+                for side in PuzzlePieceSide.get_all_sides():
+                    # Check if the neighbor exists.  If not, then skip.
+                    neighbor_side_pair = multisite_open_slot.get_neighbor_info(side)
+                    if neighbor_side_pair is None:
+                        continue
+
+                    # Get the information on the neighbor
+                    neighbor_piece_id = neighbor_side_pair.id_number
+                    neighbor_side = neighbor_side_pair.side
+
+                    # Check if the best buddy is right
+                    bb_test_candidate = (neighbor_side_pair.id_number, neighbor_side_pair.side)
+                    if bb_test_candidate in all_best_buddies[side.value]:
+                        numb_best_buddies += 1
+                    else:
+                        numb_best_buddies -= 1
+
+                    # Calculate an adjusted side
+                    adjusted_side_val = (side.value + rotation.value / PuzzlePieceRotation.degree_90.value)
+                    adjusted_side_val %= PuzzlePieceSide.get_all_sides()
+                    adjusted_side = PuzzlePieceSide(adjusted_side_val)
+
+                    # Update the mutual compatibility
+                    mutual_compat += self._inter_piece_distance.mutual_compatibility(best_buddy_piece.id_number, adjusted_side,
+                                                                                     neighbor_piece_id, neighbor_side)
+
+                # Ensure the number of best buddies does not exceed the number of neighbors
+                if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                    assert numb_best_buddies <= numb_neighbor_sides
+
+                # Normalize the mutual compatibility
+                mutual_compat /= numb_neighbor_sides
+                # noinspection PyUnboundLocalVariable
+                candidate_next_piece = NextPieceToPlace(multisite_open_slot.location, best_buddy_piece.id_number,
+                                                        adjusted_side, neighbor_piece_id, neighbor_side,
+                                                        mutual_compat, True, numb_best_buddies=numb_best_buddies)
+                # If this candidate piece is better than the next piece, then update the next piece
+                if next_piece_to_place is None or next_piece_to_place < candidate_next_piece:
+                    next_piece_to_place = candidate_next_piece
+
+            # Rotate the best buddies
+            all_best_buddies = all_best_buddies[numb_sides - 1] + all_best_buddies[:numb_sides - 1]
+
+        # Return the piece to place
+        return next_piece_to_place
+
 
     def _is_slot_open(self, slot_location):
         """

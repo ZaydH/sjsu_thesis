@@ -40,6 +40,18 @@ class BestBuddyPlacerCollection(object):
         # Update the containers storing the open slot information
         self._put_slot_into_dictionaries(open_slot)
 
+    def get_open_slot_dictionary(self, numb_neighbors):
+        """
+        Gets all the open slots with the specified number of neighbors.
+
+        Args:
+            numb_neighbors (int): Number of neighbors adjacent to the set of open slots
+
+        Returns (dict): Dictionary containing the open slots in the puzzles with the specified number of neighbors.
+
+        """
+        return self._multiside_open_slots_lists[numb_neighbors - 1]
+
     def _put_slot_into_dictionaries(self, open_slot):
         """
         Puts an open slot into the dictionaries storing the slot information.
@@ -87,6 +99,7 @@ class BestBuddyPlacerCollection(object):
 
         # Delete the piece from the diction
         del self._open_locations[piece_location.key]
+        # noinspection PyTypeChecker
         del self._multiside_open_slots_lists[numb_neighbors - 1][piece_location.key]
 
 
@@ -119,6 +132,19 @@ class MultisidePuzzleOpenSlot(object):
         # Update the neighbor list and increment the number of neighbors.
         self._neighbor_side_list[side.value] = neighbor_side_info
         self._numb_neighbors += 1
+
+    def get_neighbor_info(self, open_slot_side):
+        """
+        Gets the neighbor identification number of a neighboring piece.
+
+        Args:
+            open_slot_side (PuzzlePieceSide): Side of the open slot
+
+        Returns (NeighborSidePair): If the piece has a neighbor on the specified side, it returns a NeighborSidePair
+        containing the neighbor id and the neighbor's side.
+
+        """
+        return self._neighbor_side_list[open_slot_side.value]
 
     @property
     def location(self):

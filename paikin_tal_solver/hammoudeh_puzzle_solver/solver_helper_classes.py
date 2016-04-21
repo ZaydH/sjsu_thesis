@@ -10,7 +10,7 @@ class NextPieceToPlace(object):
     """
 
     def __init__(self, open_slot_location, next_piece_id, next_piece_side,
-                 neighbor_piece_id, neighbor_piece_side, compatibility, is_best_buddy):
+                 neighbor_piece_id, neighbor_piece_side, compatibility, is_best_buddy, numb_best_buddies=None):
         # Store the location of the open slot where the piece will be placed
         self.open_slot_location = open_slot_location
 
@@ -29,6 +29,39 @@ class NextPieceToPlace(object):
         # Store the information used to determine when to spawn a new board.
         self._numb_avg_placed_unplaced_links = 0
         self._total_placed_unplaced_compatibility_diff = 0
+
+        # If not a best buddy, then cannot have a number of best buddies
+        if not is_best_buddy and numb_best_buddies is not None:
+            raise ValueError("The next piece to place was marked as not a best buddy but a best buddy count was specified.")
+        self.numb_best_buddies = 0
+
+    def __gt__(self, other):
+        """
+        Checks if the implicit piece should be prioritized over the specified piece.
+
+        Args:
+            other (NextPieceToPlace): Another next piece location to consider.
+
+        Returns (bool): True if the implicit piece is a better next piece to place and
+
+        """
+        # If the implicit piece is None and the other is not, then the other is better
+        if self.numb_best_buddies is None and other.numb_best_buddies is not None:
+            return False
+        # Opposite of above case.  Here the implicit piece has best buddies while the other does not
+        elif self.numb_best_buddies is not None and other.numb_best_buddies is None:
+            return True
+        # If number best buddies equal or both None
+        elif self.numb_best_buddies == other.numb_best_buddies:
+            if self.mutual_compatibility > other.mutual_compatibility:
+                return True
+            else:
+                return False
+        # Finally rely on just the best buddy counts.
+        if self.numb_best_buddies > other.numb_best_buddies:
+            return True
+        else:
+            return False
 
 
 class PuzzleLocation(object):

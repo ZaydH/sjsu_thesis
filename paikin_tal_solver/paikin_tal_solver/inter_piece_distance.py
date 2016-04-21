@@ -159,6 +159,17 @@ class PieceDistanceInformation(object):
         """
         return self._best_buddies[side.value]
 
+    def all_best_buddies(self):
+        """
+        Best Buddy Accessor
+
+        Gets all the best buddies of a piece
+
+        Returns (List[int]): List of best buddy pieces
+        """
+        return self._best_buddies
+
+
     def add_best_buddy(self, p_i_side, p_j_id_numb, p_j_side):
         """
         Best Buddy Puzzle Piece Adder
