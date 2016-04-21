@@ -14,6 +14,9 @@ from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceSide, P
 
 
 # noinspection PyMethodMayBeStatic
+from hammoudeh_puzzle_solver.solver_helper_classes import PuzzleLocation
+
+
 class PuzzleImporterTester(unittest.TestCase):
 
     def test_puzzle_creation(self):
@@ -382,7 +385,7 @@ class PuzzleImporterTester(unittest.TestCase):
                 dummy_puzzle.pieces[0].rotation = PuzzlePieceRotation.degree_90
 
             # Build the results information collection
-            results_information = PuzzleResultsCollection([dummy_puzzle.pieces])
+            results_information = PuzzleResultsCollection([dummy_puzzle.pieces], ".\\dummy.jpg")
             results_information.calculate_accuracies([dummy_puzzle])
 
             # Verify the neighbor results
@@ -419,6 +422,26 @@ class PuzzleImporterTester(unittest.TestCase):
                 assert results.modified_neighbor_accuracy.wrong_neighbor_count == 5
             assert results.modified_neighbor_accuracy.total_numb_pieces_in_solved_puzzle == numb_pieces
 
+    def test_side_of_primary_adjacent_to_other_piece(self):
+        # Check bottom
+        primary = PuzzleLocation(1, 47, 48)
+        other = PuzzleLocation(1, 48, 48)
+        assert PuzzlePieceSide.bottom == Puzzle.get_side_of_primary_adjacent_to_other_piece(primary, other)
+
+        # Check bottom
+        primary = PuzzleLocation(1, 48, 48)
+        other = PuzzleLocation(1, 47, 48)
+        assert PuzzlePieceSide.top == Puzzle.get_side_of_primary_adjacent_to_other_piece(primary, other)
+
+        # Check right
+        primary = PuzzleLocation(1, 48, 47)
+        other = PuzzleLocation(1, 48, 48)
+        assert PuzzlePieceSide.right == Puzzle.get_side_of_primary_adjacent_to_other_piece(primary, other)
+
+        # Check left
+        primary = PuzzleLocation(1, 48, 49)
+        other = PuzzleLocation(1, 48, 48)
+        assert PuzzlePieceSide.left == Puzzle.get_side_of_primary_adjacent_to_other_piece(primary, other)
 
 if __name__ == '__main__':
     unittest.main()

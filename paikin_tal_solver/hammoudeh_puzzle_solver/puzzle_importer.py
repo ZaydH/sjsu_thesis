@@ -2003,14 +2003,15 @@ class Puzzle(object):
             # Verify the locations are exactly one space away
             assert abs(diff_row) + abs(diff_col) == 1
 
+        # Determine the side of the adjacent piece.
         if diff_row == 1:
-            return PuzzlePieceSide.left
-        if diff_row == -1:
-            return PuzzlePieceSide.right
-        if diff_col == 1:
             return PuzzlePieceSide.top
-        if diff_col == -1:
+        if diff_row == -1:
             return PuzzlePieceSide.bottom
+        if diff_col == 1:
+            return PuzzlePieceSide.left
+        if diff_col == -1:
+            return PuzzlePieceSide.right
 
 
 class PuzzleTester(object):

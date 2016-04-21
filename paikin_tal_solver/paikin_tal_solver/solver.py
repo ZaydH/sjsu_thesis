@@ -432,7 +432,7 @@ class PaikinTalSolver(object):
 
         # Select the next piece to place
         next_piece_to_place = None
-        for numb_neighbors in xrange(PuzzlePieceSide.get_numb_sides(), 0):
+        for numb_neighbors in xrange(PuzzlePieceSide.get_numb_sides(), 0, -1):
 
             # If the piece already has more best buddies than is available for the remaining pieces, then return
             if next_piece_to_place is not None and next_piece_to_place.numb_best_buddies > numb_neighbors:
@@ -441,14 +441,14 @@ class PaikinTalSolver(object):
             # Get the open slots associated with the neighbor count
             open_slots_with_neighbor_count = self._best_buddy_placer.get_open_slot_dictionary(numb_neighbors).values()
             # If no open slots with this neighbor count, go to next count
-            if open_slots_with_neighbor_count is None:
+            if len(open_slots_with_neighbor_count) == 0:
                 continue
 
             # Iterate through all pieces in the best buddy pool
-            for bb_info in self._best_buddies_pool:
+            for bb_id in self._best_buddies_pool.values():
 
                 # Get the best matching open slot for this piece.
-                candidate_next_piece = self._get_best_location_for_best_buddy(bb_info, open_slots_with_neighbor_count,
+                candidate_next_piece = self._get_best_location_for_best_buddy(bb_id, open_slots_with_neighbor_count,
                                                                               numb_neighbors)
 
                 # Check if the next piece should be updated.
@@ -458,11 +458,13 @@ class PaikinTalSolver(object):
 
         return next_piece_to_place
 
-    def _get_best_location_for_best_buddy(self, bb_info, neighbor_count_open_slots, numb_neighbor_sides):
+    def _get_best_location_for_best_buddy(self, bb_id, neighbor_count_open_slots, numb_neighbor_sides):
         """
+        For a given best buddy piece id and a list of open slots for a given number of neighbors, this function
+        returns the best open slot for that best buddy.
 
         Args:
-            bb_info (BestBuddyPoolInfo): Information on a best buddy in the pool
+            bb_id (int): Information on a best buddy in the pool
             neighbor_count_open_slots (List[MultisidePuzzleOpenSlot]): Open slot information
             numb_neighbor_sides (int): Number of sides with a neighbor
 
@@ -470,18 +472,22 @@ class PaikinTalSolver(object):
         """
 
         # Get the information about the piece
-        best_buddy_piece = self._pieces[bb_info.piece_id]
+        best_buddy_piece = self._pieces[bb_id]
 
         numb_sides = PuzzlePieceSide.get_numb_sides()
 
         # Get all the best buddies of the piece
-        all_best_buddies = self._inter_piece_distance.all_best_buddies(bb_info.piece_id)
+        all_best_buddies = self._inter_piece_distance.all_best_buddies(bb_id)
 
         # Initialize the next piece to place
         next_piece_to_place = None
 
         # Iterate through all possible rotations
-        for rotation in PuzzlePieceRotation.all_rotations():
+        if self._puzzle_type == PuzzleType.type1:
+            valid_rotations = [PuzzlePieceRotation.degree_0]
+        else:
+            valid_rotations = PuzzlePieceRotation.all_rotations()
+        for rotation in valid_rotations:
 
             # Iterate through each open slot for the given neighbor count
             for multiside_open_slot in neighbor_count_open_slots:
@@ -501,17 +507,17 @@ class PaikinTalSolver(object):
                     neighbor_piece_id = neighbor_side_pair.id_number
                     neighbor_side = neighbor_side_pair.side
 
+                    # Calculate an adjusted side
+                    adjusted_side_val = (side.value + rotation.value / PuzzlePieceRotation.degree_90.value)
+                    adjusted_side_val %= PuzzlePieceSide.get_numb_sides()
+                    adjusted_side = PuzzlePieceSide(adjusted_side_val)
+
                     # Check if the best buddy is right
                     bb_test_candidate = (neighbor_side_pair.id_number, neighbor_side_pair.side)
-                    if bb_test_candidate in all_best_buddies[side.value]:
+                    if bb_test_candidate in all_best_buddies[adjusted_side.value]:
                         numb_best_buddies += 1
                     else:
                         numb_best_buddies -= 1
-
-                    # Calculate an adjusted side
-                    adjusted_side_val = (side.value + rotation.value / PuzzlePieceRotation.degree_90.value)
-                    adjusted_side_val %= PuzzlePieceSide.get_all_sides()
-                    adjusted_side = PuzzlePieceSide(adjusted_side_val)
 
                     # Update the mutual compatibility
                     mutual_compat += self._inter_piece_distance.mutual_compatibility(best_buddy_piece.id_number, adjusted_side,
@@ -532,7 +538,11 @@ class PaikinTalSolver(object):
                     next_piece_to_place = candidate_next_piece
 
             # Rotate the best buddies
-            all_best_buddies = all_best_buddies[numb_sides - 1] + all_best_buddies[:numb_sides - 1]
+            temp_all_bb = [[] for _ in xrange(0, PuzzlePieceSide.get_numb_sides())]
+            for i in xrange(0, PuzzlePieceSide.get_numb_sides()):
+                index = (i + 1) % PuzzlePieceSide.get_numb_sides()
+                temp_all_bb[index] = all_best_buddies[i]
+            all_best_buddies = temp_all_bb
 
         # Return the piece to place
         return next_piece_to_place
