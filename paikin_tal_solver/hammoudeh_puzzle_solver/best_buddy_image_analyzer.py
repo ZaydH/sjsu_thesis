@@ -170,7 +170,8 @@ class ImageBestBuddyStatistics(object):
 
         # Total number of best buddies
         print "\tTotal Number of Best Buddies:\t%d" % self.total_number_of_best_buddies
-        print "\tBest Buddy Accuracy\t%1.2f%%" % (100 * self.accuracy)
+        print "\tTotal Best Buddy Accuracy:\t\t%1.2f%%" % (100 * self.total_accuracy)
+        print "\tInterior Best Buddy Accuracy:\t%1.2f%%" % (100 * self.interior_accuracy)
         print ""
         print "\tNumber of Wrong Interior Best Buddies:\t%d" % self._numb_wrong_interior_bb
         print "\tNumber of Wrong Exterior Best Buddies:\t%d" % self._numb_wrong_exterior_bb
@@ -182,19 +183,29 @@ class ImageBestBuddyStatistics(object):
 
         Returns (int): Best buddy count
         """
-        return self._numb_wrong_exterior_bb + self._numb_wrong_interior_bb
+        return self._numb_wrong_exterior_bb + self._total_numb_interior_bb
 
     @property
-    def accuracy(self):
+    def total_accuracy(self):
         """
-        Gets the accuracy of the best buddy placer.  It is defined as:
+        Gets the best buddy accuracy across the entire image  It is defined as:
 
-        :math:`accuracy = (numb_wrong_interior_bb + numb_wrong_exterior_bb)/(total_numb_best_buddy)`
+        :math:`accuracy = 1 - (numb_wrong_interior_bb + numb_wrong_exterior_bb)/(total_numb_best_buddy)`
 
         Returns (float): Best buddy accuracy
         """
-        accuracy = 1.0 * (self._numb_wrong_interior_bb + self._numb_wrong_exterior_bb)
-        return accuracy / self.total_number_of_best_buddies
+        return 1 - 1.0 * (self._numb_wrong_interior_bb + self._numb_wrong_exterior_bb) / self.total_number_of_best_buddies
+
+    @property
+    def interior_accuracy(self):
+        """
+        Gets the best buddy accuracy considering only interior best buddies.  It is defined as:
+
+        :math:`interior_accuracy = 1 - (numb_wrong_interior_bb)/(total_numb_interior_best_buddy)`
+
+        Returns (float): Best buddy accuracy
+        """
+        return 1 - 1.0 * self._numb_wrong_interior_bb / self._total_numb_interior_bb
 
 
 if __name__ == '__main__':
