@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hammoudeh_puzzle_solver.best_buddy_image_analyzer &mdash; Hammoudeh Puzzle Solver 0.01 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Hammoudeh Puzzle Solver 0.01 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Hammoudeh Puzzle Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.01
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Project Packages</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Hammoudeh Puzzle Solver</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hammoudeh_puzzle_solver.best_buddy_image_analyzer</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hammoudeh_puzzle_solver.best_buddy_image_analyzer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_importer</span> <span class="kn">import</span> <span class="n">Puzzle</span><span class="p">,</span> <span class="n">PuzzleType</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePiece</span><span class="p">,</span> <span class="n">PuzzlePieceRotation</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePieceSide</span>
+<span class="kn">from</span> <span class="nn">paikin_tal_solver.inter_piece_distance</span> <span class="kn">import</span> <span class="n">InterPieceDistance</span>
+
+
+<div class="viewcode-block" id="ImageBestBuddyStatistics"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics">[docs]</a><span class="k">class</span> <span class="nc">ImageBestBuddyStatistics</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class used to get the best buddy accuracy statistics for any image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_filepath</span><span class="p">,</span> <span class="n">piece_width</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">):</span>
+
+        <span class="c1"># Store the information about the input image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filename_root</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_filename_without_extension</span><span class="p">(</span><span class="n">image_filepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_extension</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_file_extension</span><span class="p">(</span><span class="n">image_filepath</span><span class="p">)</span>
+        <span class="c1"># File extension should not include the period</span>
+        <span class="k">assert</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_extension</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">puzzle_type</span> <span class="o">=</span> <span class="n">puzzle_type</span>
+
+        <span class="c1"># Consider both interior and exterior best buddies.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_exterior_bb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_numb_interior_bb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Build a puzzle</span>
+        <span class="n">temp_puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image_filepath</span><span class="p">,</span> <span class="n">piece_width</span><span class="p">)</span>
+
+        <span class="c1"># Get the piece IDs</span>
+        <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">assign_all_piece_id_numbers_to_original_id</span><span class="p">()</span>
+        <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">assign_all_pieces_to_original_location</span><span class="p">()</span>
+        <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">assign_all_pieces_to_same_rotation</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the inter-piece distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="p">(</span><span class="n">temp_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">)</span>
+
+        <span class="c1"># Get the link between number of test buddies and accuracy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_best_buddies_versus_accuracy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                               <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                               <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                                              <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
+        <span class="c1"># Store the location of each piece</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">build_placed_piece_info</span><span class="p">()</span>
+
+        <span class="c1"># Clear the inter-piece distance in case this will be pickled.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filename_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the file name of the original image used without file extension of path information.</span>
+
+<span class="sd">        Returns (str): Filename of the original image with the file extension and file path removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename_root</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">file_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the file extension (e.g.</span>
+
+<span class="sd">        Returns (str): File extension of the original image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename_root</span>
+
+<div class="viewcode-block" id="ImageBestBuddyStatistics.analyze_piece_best_buddy_info"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.analyze_piece_best_buddy_info">[docs]</a>    <span class="k">def</span> <span class="nf">analyze_piece_best_buddy_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Analyze the best buddy information for a single piece.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            piece (PuzzlePiece): Puzzle piece whose best buddy info will be analyzed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get the neighbor location and sides</span>
+        <span class="n">neighbor_loc_and_sides</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_neighbor_locations_and_sides</span><span class="p">()</span>
+        <span class="n">original_neighbor_id_and_side</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span><span class="p">()</span>
+
+        <span class="c1"># Initialize the counters for the piece on the total number of best best buddies and how many are wrong</span>
+        <span class="n">numb_piece_bb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">numb_wrong_interior_bb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">numb_wrong_exterior_bb</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Iterate through all sides</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">neighbor_loc_and_sides</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+
+            <span class="c1"># Get the neighbor location</span>
+            <span class="p">(</span><span class="n">neighbor_loc</span><span class="p">,</span> <span class="n">piece_side</span><span class="p">)</span> <span class="o">=</span> <span class="n">neighbor_loc_and_sides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">(</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">neighbor_side</span><span class="p">)</span> <span class="o">=</span> <span class="n">original_neighbor_id_and_side</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="c1"># Assert neighbor and piece side are complementary</span>
+            <span class="k">assert</span> <span class="n">piece_side</span><span class="o">.</span><span class="n">complementary_side</span> <span class="o">==</span> <span class="n">neighbor_side</span>
+
+            <span class="c1"># Get the best buddy information for the piece.</span>
+            <span class="n">bb_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span><span class="o">.</span><span class="n">best_buddies</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">id_number</span><span class="p">,</span> <span class="n">piece_side</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bb_info</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># Increment the best buddy count</span>
+            <span class="n">numb_piece_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Check if there is a neighbor</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">neighbor_loc</span><span class="p">]</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">MISSING_PIECE_PUZZLE_INFO_VALUE</span><span class="p">:</span>
+                <span class="c1"># If the neighboring cell is empty and it has a best buddy, it is wrong</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_exterior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">numb_wrong_exterior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Piece has a neighbor</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Increment interior best buddy count</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_total_numb_interior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">neighbor_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">neighbor_loc</span><span class="p">]:</span>
+                    <span class="n">numb_wrong_interior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Update the master data structure showing the best buddy distribution</span>
+        <span class="n">numpy_index</span> <span class="o">=</span> <span class="n">ImageBestBuddyStatistics</span><span class="o">.</span><span class="n">best_buddies_versus_accuracy_tuple</span><span class="p">(</span><span class="n">numb_piece_bb</span><span class="p">,</span>
+                                                                                  <span class="n">numb_wrong_interior_bb</span><span class="p">,</span>
+                                                                                  <span class="n">numb_wrong_exterior_bb</span><span class="p">)</span>
+        <span class="c1"># Increment the statistics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_best_buddies_versus_accuracy</span><span class="p">[</span><span class="n">numpy_index</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple">[docs]</a>    <span class="k">def</span> <span class="nf">best_buddies_versus_accuracy_tuple</span><span class="p">(</span><span class="n">numb_bb</span><span class="p">,</span> <span class="n">numb_wrong_interior_bb</span><span class="p">,</span> <span class="n">numb_wrong_exterior_bb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            numb_bb (int): Total number of best buddies for a piece</span>
+<span class="sd">            numb_wrong_interior_bb (int): Number of best buddies for a piece that were wrong on an internal</span>
+<span class="sd">              locaton (i.e. where it had a neighbor)</span>
+<span class="sd">            numb_wrong_exterior_bb (int): Number of best buddies for a piece that were wrong when it had no neighbor</span>
+
+<span class="sd">        Returns (Tuple[int]): Tuple for accessing the numpy array</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">numb_bb</span> <span class="o">&gt;=</span> <span class="n">numb_wrong_interior_bb</span> <span class="o">+</span> <span class="n">numb_wrong_exterior_bb</span>
+        <span class="k">return</span> <span class="n">numb_bb</span><span class="p">,</span> <span class="n">numb_wrong_interior_bb</span><span class="p">,</span> <span class="n">numb_wrong_exterior_bb</span></div></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">bb_results</span> <span class="o">=</span> <span class="n">ImageBestBuddyStatistics</span><span class="p">(</span><span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">muffins_300x200.jpg&quot;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">,</span>
+                                          <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">)</span>
+    <span class="c1"># bb_results = ImageBestBuddyStatistics(&quot;.\\images\\7.jpg&quot;, 28, PuzzleType.type2,</span>
+    <span class="c1">#                                       PuzzlePiece.calculate_asymmetric_distance)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+
+
+
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Zayd Hammoudeh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.01',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

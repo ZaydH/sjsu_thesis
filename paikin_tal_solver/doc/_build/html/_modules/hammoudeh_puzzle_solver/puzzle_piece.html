@@ -1,0 +1,1166 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hammoudeh_puzzle_solver.puzzle_piece &mdash; Hammoudeh Puzzle Solver 0.01 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Hammoudeh Puzzle Solver 0.01 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Hammoudeh Puzzle Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.01
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Project Packages</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Hammoudeh Puzzle Solver</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hammoudeh_puzzle_solver.puzzle_piece</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hammoudeh_puzzle_solver.puzzle_piece</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created by Zayd Hammoudeh (zayd.hammoudeh@sjsu.edu)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">cv2</span>  <span class="c1"># OpenCV</span>
+
+
+<div class="viewcode-block" id="Location"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.Location">[docs]</a><span class="k">class</span> <span class="nc">Location</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Location Object</span>
+
+<span class="sd">    Used to represent any two dimensional location in matrix row/column notation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="n">row</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column</span> <span class="o">=</span> <span class="n">column</span></div>
+
+
+<div class="viewcode-block" id="PuzzlePieceRotation"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation">[docs]</a><span class="k">class</span> <span class="nc">PuzzlePieceRotation</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Puzzle Piece PieceRotation</span>
+
+<span class="sd">    Enumerated type for representing the amount of rotation for a puzzle piece.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Pieces can only be rotated in 90 degree increments.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">degree_0</span> <span class="o">=</span> <span class="mi">0</span>      <span class="c1"># No rotation</span>
+    <span class="n">degree_90</span> <span class="o">=</span> <span class="mi">90</span>    <span class="c1"># 90 degree rotation</span>
+    <span class="n">degree_180</span> <span class="o">=</span> <span class="mi">180</span>  <span class="c1"># 180 degree rotation</span>
+    <span class="n">degree_270</span> <span class="o">=</span> <span class="mi">270</span>  <span class="c1"># 270 degree rotation</span>
+    <span class="n">degree_360</span> <span class="o">=</span> <span class="mi">360</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePieceRotation.all_rotations"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.all_rotations">[docs]</a>    <span class="k">def</span> <span class="nf">all_rotations</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        All Rotation Accessor</span>
+
+<span class="sd">        Gets a list of all supported rotations for a puzzle piece.  The list is ascending from 0 degrees to 270</span>
+<span class="sd">        degrees increasing.</span>
+
+<span class="sd">        Returns ([PuzzlePieceRotation]):</span>
+<span class="sd">        List of all puzzle rotations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">,</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">,</span>
+                <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span><span class="p">,</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">]</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePieceRotation.random_rotation"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.random_rotation">[docs]</a>    <span class="k">def</span> <span class="nf">random_rotation</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Random Rotation</span>
+
+<span class="sd">        Generates and returns a random rotation.</span>
+
+<span class="sd">        Returns (PuzzlePieceRotation):</span>
+<span class="sd">        A random puzzle piece rotation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">all_rotations</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="PuzzlePieceSide"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide">[docs]</a><span class="k">class</span> <span class="nc">PuzzlePieceSide</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Puzzle Piece Side</span>
+
+<span class="sd">    Enumerated type for representing the four sides of the a puzzle piece.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Pieces can only be rotated in 90 degree increments.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">top</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">bottom</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePieceSide.get_numb_sides"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.get_numb_sides">[docs]</a>    <span class="k">def</span> <span class="nf">get_numb_sides</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accessor for the number of sizes for a puzzle piece.</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">        Since these are rectangular pieces, it returns size 4.  This is currently fixed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">4</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePieceSide.get_all_sides"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.get_all_sides">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_sides</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Static method to extract all the sides of a piece.</span>
+
+<span class="sd">        Returns ([PuzzlePieceSide]):</span>
+<span class="sd">        List of all sides of a puzzle piece starting at the top and moving clockwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">complementary_side</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines and returns the complementary side of this implicit side parameter.  For example, if this side</span>
+<span class="sd">        is &quot;left&quot; then the function returns &quot;right&quot; and vice versa.</span>
+
+<span class="sd">        Returns (PuzzlePieceSide):</span>
+<span class="sd">        Complementary side of the piece.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+
+        <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+
+        <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+
+        <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">side_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the name of a puzzle piece side without the class name</span>
+
+<span class="sd">        Returns (str): name of the side as a string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SolidColor"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.SolidColor">[docs]</a><span class="k">class</span> <span class="nc">SolidColor</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solid color in Blue, Green, Red (BGR) format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">black</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">white</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PuzzlePiece"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece">[docs]</a><span class="k">class</span> <span class="nc">PuzzlePiece</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Puzzle Piece Object.  It is a very simple object that stores the puzzle piece&#39;s pixel information in a</span>
+<span class="sd">    NumPY array.  It also stores the piece&#39;s original information (e.g. X/Y location and puzzle ID) along with</span>
+<span class="sd">    what was determined by the solver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Represents L-A-B dimensions in the LAB color space</span>
+    <span class="n">NUMB_LAB_COLORSPACE_DIMENSIONS</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="n">_PERFORM_ASSERTION_CHECKS</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c1"># Use predicted values for edge borders for speed up</span>
+    <span class="n">_USE_STORED_PREDICTED_VALUE_SPEED_UP</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c1"># When drawing the image results, optionally draw a border around the pieces to</span>
+    <span class="c1"># make piece differences more evident.</span>
+    <span class="n">_ADD_RESULTS_IMAGE_BORDER</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">_WHITE_BORDER_THICKNESS</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># pixels</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_id</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">lab_img</span><span class="p">,</span> <span class="n">piece_id</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">puzzle_grid_size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Puzzle Piece Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            puzzle_id (int): Puzzle identification number</span>
+<span class="sd">            location ([int]): (row, column) location of this piece.</span>
+<span class="sd">            lab_img: Image data in the form of a numpy array.</span>
+<span class="sd">            piece_id (int): Piece identification number.</span>
+<span class="sd">            puzzle_grid_size ([int]): Grid size of the puzzle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Verify the piece id information</span>
+        <span class="k">if</span> <span class="n">piece_id</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">puzzle_grid_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Using the puzzle grid size is not supported if piece id is </span><span class="se">\&quot;</span><span class="s2">None</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Piece ID is left to the solver to set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span> <span class="o">=</span> <span class="n">piece_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_piece_id</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_puzzle_id</span> <span class="o">=</span> <span class="n">puzzle_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_puzzle_id</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># Store the original location of the puzzle piece and initialize a placeholder x/y location.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_loc</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># Optionally calculate the identification numbers of the piece neighbors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">puzzle_grid_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculate_actual_neighbor_id_numbers</span><span class="p">(</span><span class="n">puzzle_grid_size</span><span class="p">)</span>
+
+        <span class="c1"># Store the image data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_img</span> <span class="o">=</span> <span class="n">lab_img</span>
+        <span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="o">!=</span> <span class="n">length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only square puzzle pieces are supported at this time.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">!=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">NUMB_LAB_COLORSPACE_DIMENSIONS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This image does not appear to be in the LAB colorspace as it does not have 3 dimensions&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="c1"># For some debug images, we may want to see a solid image instead of the original image.</span>
+        <span class="c1"># This property stores that color.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results_image_coloring</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># Used to speed up piece to piece calculations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_border_average_color</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predicted_border_values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_border_color_average</span><span class="p">()</span>
+
+        <span class="c1"># Rotation gets set later.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rotation</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="PuzzlePiece.calculate_actual_neighbor_id_numbers"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.calculate_actual_neighbor_id_numbers">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_actual_neighbor_id_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_grid_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Neighbor ID Calculator</span>
+
+<span class="sd">        Given a grid size, this function calculates the identification number of this piece&#39;s neighbors.  If a piece</span>
+<span class="sd">        has no neighbor, then location associated with that puzzle piece is filled with &quot;None&quot;.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            puzzle_grid_size ([int]): Grid size (number of rows, number of columns) for this piece&#39;s puzzle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Only need to calculate the actual neighbor id information once</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># Initialize actual neighbor id information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Extract the information on the puzzle grid size</span>
+        <span class="p">(</span><span class="n">numb_rows</span><span class="p">,</span> <span class="n">numb_cols</span><span class="p">)</span> <span class="o">=</span> <span class="n">puzzle_grid_size</span>
+
+        <span class="c1"># Check the top location first</span>
+        <span class="c1"># If the row is 0, then it has no top neighbor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span> <span class="o">-</span> <span class="n">numb_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">))</span>
+
+        <span class="c1"># Check the right side</span>
+        <span class="c1"># If in the last column, it has no right neighbor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">numb_cols</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">))</span>
+
+        <span class="c1"># Check the bottom side</span>
+        <span class="c1"># If in the last column, it has no right neighbor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">numb_rows</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span> <span class="o">+</span> <span class="n">numb_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">))</span>
+
+        <span class="c1"># Check the right side</span>
+        <span class="c1"># If in the last column, it has no left neighbor</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">neighbor_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">))</span>
+
+        <span class="c1"># Convert the list to a tuple since it is immutable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_calculate_border_color_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the average color for each border to expedite calculations of puzzle piece side</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Top side border sum</span>
+        <span class="c1"># noinspection PyListCreation</span>
+        <span class="n">border_color</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="mi">0</span><span class="p">))]</span>
+        <span class="c1"># Right side</span>
+        <span class="n">border_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="c1"># Bottom side</span>
+        <span class="n">border_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="c1"># Left side</span>
+        <span class="n">border_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+
+        <span class="c1"># convert to average</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">border_color</span><span class="p">)):</span>
+            <span class="n">border_color</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">border_color</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">NUMB_LAB_COLORSPACE_DIMENSIONS</span><span class="p">)</span>
+
+        <span class="c1"># Convert to a tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_border_average_color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">border_color</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PuzzlePiece.border_average_color"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.border_average_color">[docs]</a>    <span class="k">def</span> <span class="nf">border_average_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Border Average Color Accessor</span>
+
+<span class="sd">        Gets the average color for a border piece.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            side (PuzzlePieceSide): Side of the puzzle piece whose average value will be returned.</span>
+
+<span class="sd">        Returns (float): Average pixel value for the puzzle piece border.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_border_average_color</span><span class="p">[</span><span class="n">side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">original_neighbor_id_numbers_and_sides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Neighbor Identification Number Property</span>
+
+<span class="sd">        In a puzzle, each piece has up to four neighbors.  This function access that identification number information.</span>
+
+<span class="sd">        Returns ([int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side</span>
+<span class="sd">        of the original object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Verify that the array containing the neighbor id numbers is not none</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+
+        <span class="c1"># Return the piece&#39;s neighbor identification numbers</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_neighbor_ids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the size of the square puzzle piece.  Since it is square, width its width equals its length.</span>
+
+<span class="sd">        Returns (int): Width of the puzzle piece in pixels.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the location of the puzzle piece on the board.</span>
+
+<span class="sd">        Returns ([int]): Tuple of the (row, column)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_loc</span>
+
+    <span class="nd">@location.setter</span>
+    <span class="k">def</span> <span class="nf">location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_loc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the puzzle piece location.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_loc ([int]): New puzzle piece location.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_loc</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Location of a puzzle piece must be a two dimensional tuple&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_loc</span> <span class="o">=</span> <span class="n">new_loc</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">puzzle_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assigned Puzzle Identification Number</span>
+
+<span class="sd">        Gets the location of the puzzle piece on the board.</span>
+
+<span class="sd">        Returns (int): Assigned Puzzle ID number.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_puzzle_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">actual_puzzle_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Actual Puzzle Identification Number</span>
+
+<span class="sd">        Gets the actual (i.e. correct) puzzle identification number of the puzzle.</span>
+
+<span class="sd">        Returns (int): Actual (correct) puzzle identification number this piece originated from.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_puzzle_id</span>
+
+    <span class="nd">@puzzle_id.setter</span>
+    <span class="k">def</span> <span class="nf">puzzle_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_puzzle_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the puzzle ID number for the puzzle piece.</span>
+
+<span class="sd">        Returns (int): Board identification number</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_puzzle_id</span> <span class="o">=</span> <span class="n">new_puzzle_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">original_piece_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Original Piece ID Number</span>
+
+<span class="sd">        Gets the original piece identification number</span>
+
+<span class="sd">        Returns (int): Original identification number assigned to the piece at its creation.  Should be globally</span>
+<span class="sd">        unique.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Puzzle Piece ID Getter</span>
+
+<span class="sd">        Gets the identification number for a puzzle piece.</span>
+
+<span class="sd">        Returns (int): Puzzle piece identification number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check whether the assigned piece ID is not none</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_piece_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+        <span class="c1"># Return the piece id number</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_piece_id</span>
+
+    <span class="nd">@id_number.setter</span>
+    <span class="k">def</span> <span class="nf">id_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_piece_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Piece ID Setter</span>
+
+<span class="sd">        Sets the puzzle piece&#39;s identification number.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_piece_id (int): Puzzle piece identification number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_piece_id</span> <span class="o">=</span> <span class="n">new_piece_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lab_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get&#39;s a puzzle piece&#39;s image in the LAB colorspace.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        Numpy array of the piece&#39;s lab image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rotation Accessor</span>
+
+<span class="sd">        Gets the puzzle piece&#39;s rotation.</span>
+
+<span class="sd">        Returns (PuzzlePieceRotation):</span>
+
+<span class="sd">        The puzzle piece&#39;s rotation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rotation</span>
+
+    <span class="nd">@rotation.setter</span>
+    <span class="k">def</span> <span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_rotation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Puzzle Piece Rotation Setter</span>
+
+<span class="sd">        Updates a puzzle piece&#39;s rotation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            new_rotation (PuzzlePieceRotation): New rotation for the puzzle piece.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rotation</span> <span class="o">=</span> <span class="n">new_rotation</span>
+
+<div class="viewcode-block" id="PuzzlePiece.side_adjacent_to_location"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.side_adjacent_to_location">[docs]</a>    <span class="k">def</span> <span class="nf">side_adjacent_to_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given an adjacent puzzle location, this function returns the side that is touching that adjacent location.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            location (Tuple[int]): A puzzle piece location adjacent to this piece.</span>
+
+<span class="sd">        Returns (PuzzlePieceSide): Side of this piece that is touching the adjacent location</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loc_and_side</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_neighbor_locations_and_sides</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loc_and_side</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">loc</span> <span class="o">==</span> <span class="n">location</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">side</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specified Location: </span><span class="se">\&quot;</span><span class="s2">(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)</span><span class="se">\&quot;</span><span class="s2"> is not adjacent this piece&#39;s location </span><span class="se">\&quot;</span><span class="s2">(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                                                                 <span class="n">location</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                                                                                 <span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">results_image_coloring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the results color image for the piece.</span>
+
+<span class="sd">        Returns(List): Either a single BGR integer list when a solid color is used.  If it is using polygon print,</span>
+<span class="sd">          then the return is a List[(List[int], PuzzlePieceSide)].</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_image_coloring</span>
+
+    <span class="nd">@results_image_coloring.setter</span>
+    <span class="k">def</span> <span class="nf">results_image_coloring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the image coloring when only a single color is needed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            color (List[int]): Color of the image in BGR format</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results_image_coloring</span> <span class="o">=</span> <span class="n">color</span>
+
+<div class="viewcode-block" id="PuzzlePiece.reset_image_coloring_for_polygons"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.reset_image_coloring_for_polygons">[docs]</a>    <span class="k">def</span> <span class="nf">reset_image_coloring_for_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up the results image coloring for</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results_image_coloring</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="PuzzlePiece.results_image_polygon_coloring"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.results_image_polygon_coloring">[docs]</a>    <span class="k">def</span> <span class="nf">results_image_polygon_coloring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the image coloring when only a single color is needed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            side (PuzzlePieceSide): Side of the piece that will be assigned a color.</span>
+<span class="sd">            color (List[int]): Color of the image in BGR format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results_image_coloring</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">side</span><span class="p">,</span> <span class="n">color</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PuzzlePiece.get_neighbor_locations_and_sides"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_neighbor_locations_and_sides">[docs]</a>    <span class="k">def</span> <span class="nf">get_neighbor_locations_and_sides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Neighbor Locations and Sides</span>
+
+<span class="sd">        Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS</span>
+<span class="sd">        puzzle piece that corresponds to those locations so that it can be added to the open slot list.</span>
+
+<span class="sd">        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle</span>
+<span class="sd">        piece side.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+
+        <span class="c1"># TODO this approach does not account for missing pieces.</span>
+        <span class="k">return</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="n">piece_loc</span><span class="p">,</span> <span class="n">piece_rotation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Neighbor Locations and Sides</span>
+
+<span class="sd">        Static method that given a piece location and rotation, it returns the four surrounding coordinates/location</span>
+<span class="sd">        and the puzzle piece side that aligns with it so that it can be added to the open slot list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            piece_loc ([int]):</span>
+<span class="sd">            piece_rotation (PuzzlePieceRotation):</span>
+
+<span class="sd">        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle</span>
+<span class="sd">        piece side.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the top location and respective side</span>
+        <span class="n">top_loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="n">location_piece_side_tuples</span> <span class="o">=</span> <span class="p">[(</span><span class="n">top_loc</span><span class="p">,</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">piece_rotation</span><span class="p">,</span>
+                                                                                      <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">))]</span>
+        <span class="c1"># Get the right location and respective side</span>
+        <span class="n">right_loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="n">location_piece_side_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">right_loc</span><span class="p">,</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">piece_rotation</span><span class="p">,</span>
+                                                                                            <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)))</span>
+        <span class="c1"># Get the bottom location and its respective side</span>
+        <span class="n">bottom_loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="n">location_piece_side_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bottom_loc</span><span class="p">,</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">piece_rotation</span><span class="p">,</span>
+                                                                                             <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)))</span>
+        <span class="c1"># Get the right location and respective side</span>
+        <span class="n">left_loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="n">location_piece_side_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">left_loc</span><span class="p">,</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">piece_rotation</span><span class="p">,</span>
+                                                                                           <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)))</span>
+        <span class="c1"># Return the location/piece side tuples</span>
+        <span class="k">return</span> <span class="n">location_piece_side_tuples</span>
+
+<div class="viewcode-block" id="PuzzlePiece.bgr_image"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.bgr_image">[docs]</a>    <span class="k">def</span> <span class="nf">bgr_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get&#39;s a puzzle piece&#39;s image in the BGR colorspace.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        Numpy array of the piece&#39;s BGR image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_LAB2BGR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PuzzlePiece.get_row_pixels"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_row_pixels">[docs]</a>    <span class="k">def</span> <span class="nf">get_row_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_numb</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts a row of pixels from a puzzle piece.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_numb (int): Pixel row in the image.  Must be between 0 and the width of the piece - 1 (inclusive).</span>
+<span class="sd">            reverse (Optional bool): Select whether to reverse the pixel information.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">row_numb</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Row number for a piece must be greater than or equal to zero.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">row_numb</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Row number for a piece must be less than the puzzle&#39;s pieces width&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="p">[</span><span class="n">row_numb</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="p">[</span><span class="n">row_numb</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span></div>
+
+<div class="viewcode-block" id="PuzzlePiece.get_column_pixels"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_column_pixels">[docs]</a>    <span class="k">def</span> <span class="nf">get_column_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col_numb</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts a row of pixels from a puzzle piece.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            col_numb (int): Pixel column in the image.  Must be between 0 and the width of the piece - 1 (inclusive).</span>
+<span class="sd">            reverse (Optional bool): Select whether to reverse the pixel information.</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">col_numb</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column number for a piece must be greater than or equal to zero.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">col_numb</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column number for a piece must be less than the puzzle&#39;s pieces width&quot;</span><span class="p">)</span>
+        <span class="c1"># If you reverse, change the order of the pixels.</span>
+        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">col_numb</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="p">[:,</span> <span class="n">col_numb</span><span class="p">,</span> <span class="p">:]</span></div>
+
+    <span class="k">def</span> <span class="nf">_assign_to_original_location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loopback Location Assigner</span>
+
+<span class="sd">        Test Method Only.  Correctly assigns a piece to its original location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span>
+
+    <span class="k">def</span> <span class="nf">_set_id_number_to_original_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loopback ID Number</span>
+
+<span class="sd">        Test Method Only.  Sets the assigned and original piece id number to the same value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_piece_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePiece.calculate_asymmetric_distance"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.calculate_asymmetric_distance">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">piece_i</span><span class="p">,</span> <span class="n">piece_i_side</span><span class="p">,</span> <span class="n">piece_j</span><span class="p">,</span> <span class="n">piece_j_side</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses the Asymmetric Distance function to calculate the distance between two puzzle pieces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            piece_i (PuzzlePiece):</span>
+<span class="sd">            piece_i_side (PuzzlePieceSide):</span>
+<span class="sd">            piece_j (PuzzlePiece):</span>
+<span class="sd">            piece_j_side (PuzzlePieceSide): Side of piece j that is adjacent to piece i.</span>
+
+<span class="sd">        Returns (double):</span>
+<span class="sd">            Distance between</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get the border information for p_i if not pre-calculated</span>
+        <span class="n">i_border</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">i_second_to_last</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">_predicted_border_values</span><span class="p">[</span><span class="n">piece_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_USE_STORED_PREDICTED_VALUE_SPEED_UP</span><span class="p">:</span>
+            <span class="c1"># Get the border and second to last ROW on the TOP side of piece i</span>
+            <span class="k">if</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">:</span>
+                <span class="n">i_border</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">i_second_to_last</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Get the border and second to last COLUMN on the RIGHT side of piece i</span>
+            <span class="k">elif</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+                <span class="n">i_border</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="n">piece_i</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">i_second_to_last</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="n">piece_i</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># Get the border and second to last ROW on the BOTTOM side of piece i</span>
+            <span class="k">elif</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">:</span>
+                <span class="n">i_border</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="n">piece_i</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">i_second_to_last</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="n">piece_i</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># Get the border and second to last COLUMN on the LEFT side of piece i</span>
+            <span class="k">elif</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>
+                <span class="n">i_border</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">i_second_to_last</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid edge for piece i&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If rotation is allowed need to reverse pixel order in some cases.</span>
+        <span class="n">reverse</span> <span class="o">=</span> <span class="bp">False</span>  <span class="c1"># By default do not reverse</span>
+        <span class="c1"># Always need to reverse when they are the same side</span>
+        <span class="k">if</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">piece_j_side</span><span class="p">:</span>
+            <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="c1"># Get the pixels along the TOP of piece_j</span>
+        <span class="k">if</span> <span class="n">piece_j_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+                <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">j_border</span> <span class="o">=</span> <span class="n">piece_j</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">reverse</span><span class="p">)</span>
+
+        <span class="c1"># Get the pixels along the RIGHT of piece_j</span>
+        <span class="k">elif</span> <span class="n">piece_j_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">:</span>
+                <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">j_border</span> <span class="o">=</span> <span class="n">piece_j</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="n">piece_i</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">reverse</span><span class="p">)</span>
+
+        <span class="c1"># Get the pixels along the BOTTOM of piece_j</span>
+        <span class="k">elif</span> <span class="n">piece_j_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>
+                <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">j_border</span> <span class="o">=</span> <span class="n">piece_j</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="n">piece_i</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">reverse</span><span class="p">)</span>
+
+        <span class="c1"># Get the pixels along the RIGHT of piece_j</span>
+        <span class="k">elif</span> <span class="n">piece_j_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">piece_i_side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">:</span>
+                <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">j_border</span> <span class="o">=</span> <span class="n">piece_j</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">reverse</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid edge for piece i&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If needed, recalculate the side value.</span>
+        <span class="k">if</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">_predicted_border_values</span><span class="p">[</span><span class="n">piece_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_USE_STORED_PREDICTED_VALUE_SPEED_UP</span><span class="p">:</span>
+            <span class="c1"># Calculate the value of pixels on piece j&#39;s edge.</span>
+            <span class="n">piece_i</span><span class="o">.</span><span class="n">_predicted_border_values</span><span class="p">[</span><span class="n">piece_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">i_border</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+                                                                    <span class="o">-</span> <span class="n">i_second_to_last</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+        <span class="c1"># Get the predicated stored value</span>
+        <span class="n">predicted_j</span> <span class="o">=</span> <span class="n">piece_i</span><span class="o">.</span><span class="n">_predicted_border_values</span><span class="p">[</span><span class="n">piece_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">pixel_diff</span> <span class="o">=</span> <span class="n">predicted_j</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="o">-</span> <span class="n">j_border</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="c1"># Return the sum of the absolute values.</span>
+        <span class="n">pixel_diff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">pixel_diff</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pixel_diff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PuzzlePiece.set_placed_piece_rotation"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.set_placed_piece_rotation">[docs]</a>    <span class="k">def</span> <span class="nf">set_placed_piece_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placed_side</span><span class="p">,</span> <span class="n">neighbor_piece_side</span><span class="p">,</span> <span class="n">neighbor_piece_rotation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Placed Piece Rotation Setter</span>
+
+<span class="sd">        Given an already placed neighbor piece&#39;s adjacent side and rotation, this function sets the rotation</span>
+<span class="sd">        of some newly placed piece that is put adjacent to that neighbor piece.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            placed_side (PuzzlePieceSide): Side of the placed puzzle piece that is adjacent to the neighbor piece</span>
+
+<span class="sd">            neighbor_piece_side (PuzzlePieceSide): Side of the neighbor piece that is adjacent to the newly</span>
+<span class="sd">            placed piece.</span>
+
+<span class="sd">            neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the already placed neighbor piece</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate the placed piece&#39;s new rotation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">placed_side</span><span class="p">,</span> <span class="n">neighbor_piece_side</span><span class="p">,</span>
+                                                                     <span class="n">neighbor_piece_rotation</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">placed_piece_side</span><span class="p">,</span> <span class="n">neighbor_piece_side</span><span class="p">,</span> <span class="n">neighbor_piece_rotation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Placed Piece Rotation Calculator</span>
+
+<span class="sd">        Given an already placed neighbor piece, this function determines the correct rotation for a newly placed</span>
+<span class="sd">        piece.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            placed_piece_side (PuzzlePieceSide): Side of the placed puzzle piece adjacent to the existing piece</span>
+<span class="sd">            neighbor_piece_side (PuzzlePieceSide): Side of the neighbor of the placed piece that is touching</span>
+<span class="sd">            neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the neighbor piece</span>
+
+<span class="sd">        Returns (PuzzlePieceRotation): Rotation of the placed puzzle piece given the rotation and side</span>
+<span class="sd">        of the neighbor piece.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the neighbor piece rotation</span>
+        <span class="n">unrotated_complement</span> <span class="o">=</span> <span class="n">neighbor_piece_side</span><span class="o">.</span><span class="n">complementary_side</span>
+
+        <span class="n">placed_rotation_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">neighbor_piece_rotation</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">placed_rotation_val</span> <span class="o">+=</span> <span class="mi">90</span> <span class="o">*</span> <span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_360</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="p">(</span><span class="n">unrotated_complement</span><span class="o">.</span><span class="n">value</span>
+                                                                             <span class="o">-</span> <span class="n">placed_piece_side</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+        <span class="c1"># Calculate the normalized rotation</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">placed_rotation_val</span> <span class="o">%=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_360</span><span class="o">.</span><span class="n">value</span>
+        <span class="c1"># Check if a valid rotation value.</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">placed_rotation_val</span> <span class="o">%</span> <span class="mi">90</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="k">return</span> <span class="n">PuzzlePieceRotation</span><span class="p">(</span><span class="n">placed_rotation_val</span> <span class="o">%</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_360</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_determine_unrotated_side</span><span class="p">(</span><span class="n">piece_rotation</span><span class="p">,</span> <span class="n">rotated_side</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unrotated Side Determiner</span>
+
+<span class="sd">        Given a piece&#39;s rotation and the side of the piece (from the reference of the puzzle), find its actual</span>
+<span class="sd">        (i.e. unrotated) side.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            piece_rotation (PuzzlePieceRotation): Specified rotation for a puzzle piece.</span>
+<span class="sd">            rotated_side (PuzzlePieceSide): From a Puzzle perspective, this is the exposed side</span>
+
+<span class="sd">        Returns(PuzzlePieceSide): Actual side of the puzzle piece</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rotated_side_val</span> <span class="o">=</span> <span class="n">rotated_side</span><span class="o">.</span><span class="n">value</span>
+        <span class="c1"># Get the number of 90 degree rotations</span>
+        <span class="n">numb_90_degree_rotations</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">piece_rotation</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="mi">90</span><span class="p">)</span>
+
+        <span class="c1"># Get the unrotated side</span>
+        <span class="n">unrotated_side</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotated_side_val</span> <span class="o">+</span> <span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span> <span class="o">-</span> <span class="n">numb_90_degree_rotations</span><span class="p">))</span>
+        <span class="n">unrotated_side</span> <span class="o">%=</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
+
+        <span class="c1"># Return the actual side</span>
+        <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="p">(</span><span class="n">unrotated_side</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_neighbor_piece_rotated_side</span><span class="p">(</span><span class="n">placed_piece_loc</span><span class="p">,</span> <span class="n">neighbor_piece_loc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            placed_piece_loc ([int]): Location of the newly placed piece</span>
+<span class="sd">            neighbor_piece_loc ([int): Location of the neighbor of the newly placed piece</span>
+
+<span class="sd">        Returns (PuzzlePieceSide): Side of the newly placed piece where the placed piece is now location.</span>
+
+<span class="sd">        Notes: This does not take into account any rotation of the neighbor piece.  That is why this function is</span>
+<span class="sd">        referred has &quot;rotated side&quot; in its name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate the row and column distances</span>
+        <span class="n">row_dist</span> <span class="o">=</span> <span class="n">placed_piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">neighbor_piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">col_dist</span> <span class="o">=</span> <span class="n">placed_piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">neighbor_piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Perform some checking on the pieces</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="c1"># Verify the pieces are in the same puzzle</span>
+            <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">row_dist</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">col_dist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="c1"># Determine the relative side of the placed piece</span>
+        <span class="k">if</span> <span class="n">row_dist</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+        <span class="k">elif</span> <span class="n">row_dist</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+        <span class="k">elif</span> <span class="n">col_dist</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePiece.create_solid_image"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.create_solid_image">[docs]</a>    <span class="k">def</span> <span class="nf">create_solid_image</span><span class="p">(</span><span class="n">bgr_color</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a solid image for displaying in output images.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bgr_color (Tuple[int]): Color  in BLUE, GREEN, RED notation.  Each element for blue, green, or red</span>
+<span class="sd">              must be between 0 and 255 inclusive.</span>
+<span class="sd">            width (int): Width of the image in pixels.</span>
+<span class="sd">            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image</span>
+<span class="sd">              is a square.</span>
+
+<span class="sd">        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Handle the case when no height is specified.</span>
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="c1"># Create a black image</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">NUMB_LAB_COLORSPACE_DIMENSIONS</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="c1"># Fill with the bgr color</span>
+        <span class="n">image</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">bgr_color</span><span class="o">.</span><span class="n">value</span>
+        <span class="c1"># Optionally add a border around the pieces before returning</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_ADD_RESULTS_IMAGE_BORDER</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">add_results_image_border</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">image</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePiece.add_results_image_border"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.add_results_image_border">[docs]</a>    <span class="k">def</span> <span class="nf">add_results_image_border</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optionally add an image border around the piece image.  This is primarily intended for use</span>
+<span class="sd">        with the solid results images.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image (Numpy[int]): Piece image with no border</span>
+
+<span class="sd">        Returns (Numpy[int]): Piece image with a border around the solid image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">SolidColor</span><span class="o">.</span><span class="n">white</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                      <span class="n">thickness</span><span class="o">=</span><span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_WHITE_BORDER_THICKNESS</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PuzzlePiece.create_side_polygon_image"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.create_side_polygon_image">[docs]</a>    <span class="k">def</span> <span class="nf">create_side_polygon_image</span><span class="p">(</span><span class="n">bgr_color_by_side</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a solid image for displaying in output images.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bgr_color_by_side (Tuple[(Tuple[int], PuzzlePieceSide)]): Color in BLUE, GREEN, RED notation for each</span>
+<span class="sd">              specified puzzle piece side.  Draws four triangles based off the</span>
+<span class="sd">            width (int): Width of the image in pixels.</span>
+<span class="sd">            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image</span>
+<span class="sd">              is a square.</span>
+
+<span class="sd">        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Handle the case when no height is specified.</span>
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="n">width</span>
+
+        <span class="c1"># Verify each side is accounted for.</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">bgr_color_by_side</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
+
+        <span class="c1"># Define the center point of the image.</span>
+        <span class="n">center_point</span> <span class="o">=</span> <span class="p">[</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># Used for assertion checking.</span>
+        <span class="n">sides_drawn</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Define the other four coordinates for the polygon.</span>
+        <span class="n">top_left</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">top_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">bottom_left</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">bottom_right</span> <span class="o">=</span> <span class="p">[</span><span class="n">height</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Create a black image</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">NUMB_LAB_COLORSPACE_DIMENSIONS</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="c1"># For each side, fill with a polygon.</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="n">bgr_color_by_side</span><span class="p">:</span>
+
+            <span class="c1"># Build the points in the polygon vector</span>
+            <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">:</span>
+                <span class="n">vector_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">top_left</span><span class="p">,</span> <span class="n">top_right</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">:</span>
+                <span class="n">vector_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">top_right</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">side</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">:</span>
+                <span class="n">vector_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">bottom_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vector_points</span> <span class="o">=</span> <span class="p">[</span><span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_left</span><span class="p">]</span>
+            <span class="n">vector_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">center_point</span><span class="p">)</span>
+
+            <span class="c1"># Add drawn sides to the assertion checks</span>
+            <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+                <span class="c1"># Ensure no side is drawn twice</span>
+                <span class="k">assert</span> <span class="n">side</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sides_drawn</span>
+                <span class="c1"># Add the side tot he list.</span>
+                <span class="n">sides_drawn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">side</span><span class="p">)</span>
+
+            <span class="c1"># Build a polygon</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">vector_points</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">fillConvexPoly</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+
+        <span class="c1"># Verify that all sides are drawn</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sides_drawn</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
+
+        <span class="c1"># Draw an &quot;X&quot; to clearly demarcate the triangles</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">top_left</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bottom_right</span><span class="p">),</span> <span class="n">SolidColor</span><span class="o">.</span><span class="n">black</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># noinspection PyUnresolvedReferences</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">top_right</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bottom_left</span><span class="p">),</span> <span class="n">SolidColor</span><span class="o">.</span><span class="n">black</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Optionally add a border around the pieces before returning</span>
+        <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_ADD_RESULTS_IMAGE_BORDER</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">add_results_image_border</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">image</span></div>
+
+<div class="viewcode-block" id="PuzzlePiece.is_correctly_placed"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.is_correctly_placed">[docs]</a>    <span class="k">def</span> <span class="nf">is_correctly_placed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_offset_upper_left_location</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Piece Placement Checker</span>
+
+<span class="sd">        Checks whether the puzzle piece is correctly placed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            puzzle_offset_upper_left_location (Tuple[int]): Modified location for the origin of the puzzle</span>
+
+<span class="sd">        Returns (bool): True if the puzzle piece is in the correct location and False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Verify all dimensions</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span><span class="p">)):</span>
+            <span class="c1"># If for the current dimension</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">puzzle_offset_upper_left_location</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="c1"># Mark as correctly placed</span>
+        <span class="k">return</span> <span class="bp">True</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Zayd Hammoudeh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.01',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

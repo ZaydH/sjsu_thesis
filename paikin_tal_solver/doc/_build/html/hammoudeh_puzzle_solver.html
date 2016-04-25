@@ -1,0 +1,2234 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hammoudeh_puzzle_solver package &mdash; Hammoudeh Puzzle Solver 0.01 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Hammoudeh Puzzle Solver 0.01 documentation" href="index.html"/>
+        <link rel="up" title="Project Packages" href="modules.html"/>
+        <link rel="prev" title="paikin_tal_solver package" href="paikin_tal_solver.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Hammoudeh Puzzle Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.01
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Project Packages</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="paikin_tal_solver.html">paikin_tal_solver package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">hammoudeh_puzzle_solver package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.best_buddy_image_analyzer">hammoudeh_puzzle_solver.best_buddy_image_analyzer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.best_buddy_placer">hammoudeh_puzzle_solver.best_buddy_placer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.puzzle_importer">hammoudeh_puzzle_solver.puzzle_importer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.puzzle_importer_tester">hammoudeh_puzzle_solver.puzzle_importer_tester module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.puzzle_piece">hammoudeh_puzzle_solver.puzzle_piece module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.solver_driver">hammoudeh_puzzle_solver.solver_driver module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver.solver_helper_classes">hammoudeh_puzzle_solver.solver_helper_classes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hammoudeh_puzzle_solver">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Hammoudeh Puzzle Solver</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="modules.html">Project Packages</a> &raquo;</li>
+      
+    <li>hammoudeh_puzzle_solver package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/hammoudeh_puzzle_solver.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hammoudeh-puzzle-solver-package">
+<h1>hammoudeh_puzzle_solver package<a class="headerlink" href="#hammoudeh-puzzle-solver-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.best_buddy_image_analyzer">
+<span id="hammoudeh-puzzle-solver-best-buddy-image-analyzer-module"></span><h2>hammoudeh_puzzle_solver.best_buddy_image_analyzer module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.best_buddy_image_analyzer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.best_buddy_image_analyzer.</code><code class="descname">ImageBestBuddyStatistics</code><span class="sig-paren">(</span><em>image_filepath</em>, <em>piece_width</em>, <em>puzzle_type</em>, <em>distance_function</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_image_analyzer.html#ImageBestBuddyStatistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class used to get the best buddy accuracy statistics for any image.</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.analyze_piece_best_buddy_info">
+<code class="descname">analyze_piece_best_buddy_info</code><span class="sig-paren">(</span><em>piece</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_image_analyzer.html#ImageBestBuddyStatistics.analyze_piece_best_buddy_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.analyze_piece_best_buddy_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyze the best buddy information for a single piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece (PuzzlePiece): Puzzle piece whose best buddy info will be analyzed</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple">
+<em class="property">static </em><code class="descname">best_buddies_versus_accuracy_tuple</code><span class="sig-paren">(</span><em>numb_bb</em>, <em>numb_wrong_interior_bb</em>, <em>numb_wrong_exterior_bb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_image_analyzer.html#ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">numb_bb (int): Total number of best buddies for a piece
+numb_wrong_interior_bb (int): Number of best buddies for a piece that were wrong on an internal</p>
+<blockquote>
+<div>locaton (i.e. where it had a neighbor)</div></blockquote>
+<p class="last">numb_wrong_exterior_bb (int): Number of best buddies for a piece that were wrong when it had no neighbor</p>
+</dd>
+</dl>
+<p>Returns (Tuple[int]): Tuple for accessing the numpy array</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.file_extension">
+<code class="descname">file_extension</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.file_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the file extension (e.g.</p>
+<p>Returns (str): File extension of the original image</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.filename_root">
+<code class="descname">filename_root</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.filename_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the file name of the original image used without file extension of path information.</p>
+<p>Returns (str): Filename of the original image with the file extension and file path removed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.best_buddy_placer">
+<span id="hammoudeh-puzzle-solver-best-buddy-placer-module"></span><h2>hammoudeh_puzzle_solver.best_buddy_placer module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.best_buddy_placer" title="Permalink to this headline">¶</a></h2>
+<p>This contains classes that will be used by the best buddy placer technique developed by Zayd Hammoudeh
+as an extension of Paikin and Tal&#8217;s solver.</p>
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.best_buddy_placer.</code><code class="descname">BestBuddyPlacerCollection</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#BestBuddyPlacerCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.get_open_slot_dictionary">
+<code class="descname">get_open_slot_dictionary</code><span class="sig-paren">(</span><em>numb_neighbors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#BestBuddyPlacerCollection.get_open_slot_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.get_open_slot_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all the open slots with the specified number of neighbors.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>numb_neighbors (int): Number of neighbors adjacent to the set of open slots</dd>
+</dl>
+<p>Returns (dict): Dictionary containing the open slots in the puzzles with the specified number of neighbors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.remove_open_slot">
+<code class="descname">remove_open_slot</code><span class="sig-paren">(</span><em>piece_location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#BestBuddyPlacerCollection.remove_open_slot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.remove_open_slot" title="Permalink to this definition">¶</a></dt>
+<dd><p>After a piece is placed, this function updates the data structures in teh best buddy placer to
+reflect this is no longer an open slot.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>piece_location (PuzzleLocation): Location (both (row, column) and puzzle ID) where the last piece was</dt>
+<dd>placed</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.update_open_slot">
+<code class="descname">update_open_slot</code><span class="sig-paren">(</span><em>puzzle_location</em>, <em>side</em>, <em>neighbor_side_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#BestBuddyPlacerCollection.update_open_slot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.update_open_slot" title="Permalink to this definition">¶</a></dt>
+<dd><p>When a piece is placed, some set of adjacent slots will need to be updated.  This performs that
+neighbor updating.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>puzzle_location (PuzzleLocation): Unique location of the open slot
+side (PuzzlePieceSide): Side of the open slot where neighbor information is going to be added.
+neighbor_side_info (NeighborSidePair): Information regarding the piece neighbor</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.best_buddy_placer.</code><code class="descname">MultisidePuzzleOpenSlot</code><span class="sig-paren">(</span><em>puzzle_location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#MultisidePuzzleOpenSlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Represents a single open slot in a puzzle being solved.</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.get_neighbor_info">
+<code class="descname">get_neighbor_info</code><span class="sig-paren">(</span><em>open_slot_side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#MultisidePuzzleOpenSlot.get_neighbor_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.get_neighbor_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the neighbor identification number of a neighboring piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>open_slot_side (PuzzlePieceSide): Side of the open slot</dd>
+</dl>
+<p>Returns (NeighborSidePair): If the piece has a neighbor on the specified side, it returns a NeighborSidePair
+containing the neighbor id and the neighbor&#8217;s side.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.key">
+<code class="descname">key</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the key of a MultisidePuzzleOpenSlot object.</p>
+<p>Returns (str): Unique key for a multisided open slot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.location">
+<code class="descname">location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the actual location of the open slot.</p>
+<p>Returns (PuzzleLocation): Location of the open slot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.numb_neighbors">
+<code class="descname">numb_neighbors</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.numb_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines the number of ne</p>
+<p>Returns(int): Number neighbors for this open slot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.update_side_neighbor_info">
+<code class="descname">update_side_neighbor_info</code><span class="sig-paren">(</span><em>side</em>, <em>neighbor_side_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#MultisidePuzzleOpenSlot.update_side_neighbor_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.update_side_neighbor_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the side neighbor information for a piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>side (PuzzlePieceSide): Side of the open slot of interest
+neighbor_side_info (NeighborSidePair): Information on the neighbor including the side of the neighbor
+that is adjacent to this piece.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.puzzle_importer">
+<span id="hammoudeh-puzzle-solver-puzzle-importer-module"></span><h2>hammoudeh_puzzle_solver.puzzle_importer module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.puzzle_importer" title="Permalink to this headline">¶</a></h2>
+<p>Jigsaw Puzzle Object</p>
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">BestBuddyAccuracy</code><span class="sig-paren">(</span><em>puzzle_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Store the best buddy accuracy information for a single puzzle</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_correct_best_buddy">
+<code class="descname">add_correct_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.add_correct_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_correct_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Side of the piece where the BB is being referred.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number ofr the piece of interest
+side (PuzzlePieceSide): Puzzle piece side of reference for the correct best buddy</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_open_best_buddy">
+<code class="descname">add_open_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.add_open_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_open_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an unpaired open best buddy from the list</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Piece identification number of the as of yet unpaired best buddy
+side (PuzzlePieceSide): Side of the unpaired best buddy</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_piece_side_tuple_to_dict">
+<em class="property">static </em><code class="descname">add_piece_side_tuple_to_dict</code><span class="sig-paren">(</span><em>bb_dict</em>, <em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.add_piece_side_tuple_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_piece_side_tuple_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a best buddy information to the specified best buddy dictionary.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>bb_dict (dict): Dictionary containing best buddy information
+piece_id (int): Identification number of the piece
+side (PuzzlePieceSide): Side of the piece that is referred to for best buddy.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_wrong_best_buddy">
+<code class="descname">add_wrong_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.add_wrong_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.add_wrong_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int):
+side (PuzzlePieceSide):</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.check_if_piece_side_tuple_in_dict">
+<em class="property">static </em><code class="descname">check_if_piece_side_tuple_in_dict</code><span class="sig-paren">(</span><em>bb_dict</em>, <em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.check_if_piece_side_tuple_in_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.check_if_piece_side_tuple_in_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the piece and side exists in the specified best buddy dictionary.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>bb_dict (dict): Best buddy information dictionary
+piece_id (int): Identification number for the piece
+side (PuzzlePieceSide): Side of the piece where the BB is being referred.</dd>
+</dl>
+<p>Returns (bool):
+True if the pairing of piece_id and side exists in the BB dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.delete_open_best_buddy">
+<code class="descname">delete_open_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.delete_open_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.delete_open_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an unpaired open best buddy to the list</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Piece identification number of the as of yet unpaired best buddy
+side (PuzzlePieceSide): Side of the unpaired best buddy</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.exists_correct_best_buddy">
+<code class="descname">exists_correct_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.exists_correct_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.exists_correct_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a pairing of a piece identification number and side exists in the pool of CORRECT best buddies.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Piece identification number
+side (PuzzlePieceSide): Possible neighbor side</dd>
+</dl>
+<p>Returns (bool): True if the key is in the dictionary and False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.exists_open_best_buddy">
+<code class="descname">exists_open_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.exists_open_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.exists_open_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a pairing of a piece identification number and side exists in the pool of open best buddies.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Piece identification number
+side (PuzzlePieceSide): Possible neighbor side</dd>
+</dl>
+<p>Returns (bool): True if the key is in the dictionary and False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.exists_wrong_best_buddy">
+<code class="descname">exists_wrong_best_buddy</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.exists_wrong_best_buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.exists_wrong_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a pairing of a piece identification number and side exists in the pool of WRONG best buddies.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Piece identification number
+side (PuzzlePieceSide): Possible neighbor side</dd>
+</dl>
+<p>Returns (bool): True if the key is in the dictionary and False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.get_piece_side_result">
+<code class="descname">get_piece_side_result</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.get_piece_side_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.get_piece_side_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the best buddy result for the combination of puzzle piece and side.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the piece
+side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest</dd>
+</dl>
+<p>Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_correct_best_buddies">
+<code class="descname">numb_correct_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_correct_best_buddies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of correct best buddies who are next to their best buddy</p>
+<p>Returns (int): Total number of correct best buddies</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_open_best_buddies">
+<code class="descname">numb_open_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_open_best_buddies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns (int): Total number of best buddies whose best buddies have not yet been placed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_wrong_best_buddies">
+<code class="descname">numb_wrong_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_wrong_best_buddies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of correct best buddies who are NOT next to their best buddy</p>
+<p>Returns (int): Total number of WRONG best buddies</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.piece_side_tuple_key">
+<em class="property">static </em><code class="descname">piece_side_tuple_key</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.piece_side_tuple_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.piece_side_tuple_key" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int):
+side (PuzzlePieceSide):</dd>
+</dl>
+<p>Returns (string):</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">BestBuddyResultsCollection</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyResultsCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Stores the best buddy result accuracies in a single object.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.best_buddy_accuracy">
+<code class="descname">best_buddy_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.best_buddy_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property to get access to all the best buddy information.</p>
+<p>Returns (List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.create_best_buddy_accuracy_for_new_puzzle">
+<code class="descname">create_best_buddy_accuracy_for_new_puzzle</code><span class="sig-paren">(</span><em>puzzle_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyResultsCollection.create_best_buddy_accuracy_for_new_puzzle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.create_best_buddy_accuracy_for_new_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a best buddy accuracy for a new puzzle.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>puzzle_id (int): Creates a new best buddy accuracy for a puzzle</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.output_results_images">
+<code class="descname">output_results_images</code><span class="sig-paren">(</span><em>solved_puzzles</em>, <em>puzzle_type</em>, <em>timestamp</em>, <em>orig_img_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyResultsCollection.output_results_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.output_results_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the results information to a data visualization to see where there are right and wrong
+best buddies.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>solved_puzzles (List[Puzzle]): List of puzzles.
+puzzle_type (PuzzleType): Type of the solved puzzle.
+timestamp (float): Timestamp as a floating point number.  Converted to a string by this function.
+orig_img_filename (Optional str): Filename of the original image</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.print_results">
+<code class="descname">print_results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyResultsCollection.print_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.print_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the best buddy accuracy information to the console.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.total_best_buddy_count">
+<code class="descname">total_best_buddy_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyResultsCollection.total_best_buddy_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.total_best_buddy_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the total number of best buddies represented by this collection.</p>
+<p>Returns (int): Total number of best buddies in the collection</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">DirectAccuracyPuzzleResults</code><span class="sig-paren">(</span><em>original_puzzle_id</em>, <em>solved_puzzle_id</em>, <em>numb_pieces_in_original_puzzle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Structure used for managing puzzle placement results.</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_correct_placement">
+<code class="descname">add_correct_placement</code><span class="sig-paren">(</span><em>piece</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults.add_correct_placement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_correct_placement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correctly Placed Piece Tracker</p>
+<p>Adds a piece that has been placed correctly</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece (PuzzlePiece): Puzzle Piece that was placed CORRECTLY.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_different_puzzle">
+<code class="descname">add_different_puzzle</code><span class="sig-paren">(</span><em>piece</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults.add_different_puzzle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_different_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrong Puzzle ID Tracker</p>
+<p>Adds a piece that was assigned to a DIFFERENT PUZZLE ID number to the tracker.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece (PuzzlePiece): Puzzle Piece that was placed with the different PUZZLE IDENTIFICATION NUMBER</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_wrong_location">
+<code class="descname">add_wrong_location</code><span class="sig-paren">(</span><em>piece</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults.add_wrong_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_wrong_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrong Piece Location Tracker</p>
+<p>Adds a piece that was assigned to the wrong location number to the tracker.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece (PuzzlePiece): Piece placed in the wrong LOCATION</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_wrong_rotation">
+<code class="descname">add_wrong_rotation</code><span class="sig-paren">(</span><em>piece</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults.add_wrong_rotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.add_wrong_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrong Piece Rotation Tracker</p>
+<p>Adds a piece that had the wrong rotation</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece (PuzzlePiece): Puzzle Piece that was placed with the wrong Rotation (i.e. not 0 degrees)</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.check_if_update_direct_accuracy">
+<em class="property">static </em><code class="descname">check_if_update_direct_accuracy</code><span class="sig-paren">(</span><em>current_best_direct_accuracy</em>, <em>new_direct_accuracy</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults.check_if_update_direct_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.check_if_update_direct_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the current best direct accuracy should be replaced with a newly calculated direct
+accuracy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">current_best_direct_accuracy (DirectAccuracyPuzzleResults): The best direct accuracy results
+found so far.</p>
+<p class="last">new_direct_accuracy (DirectAccuracyPuzzleResults): The newly calculated best direct accuracy</p>
+</dd>
+<dt>Returns (bool):</dt>
+<dd>True if the current best direct accuracy should be replaced with the new direct accuracy and False
+otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.get_piece_result">
+<code class="descname">get_piece_result</code><span class="sig-paren">(</span><em>piece_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyPuzzleResults.get_piece_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.get_piece_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the direct accuracy results (e.g. wrong puzzle, wrong id, wrong rotation, etc.) for an individual
+piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the piece</dd>
+</dl>
+<p>Returns (PieceDirectAccuracyResult): Direct accuracy result for an individual piece</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_correct_placements">
+<code class="descname">numb_correct_placements</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_correct_placements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of Pieces Placed Correctly Property</p>
+<p>Gets the number of pieces placed correctly.</p>
+<p>Returns (int): Number of pieces correctly placed with the right puzzle ID, location, and rotation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_different_puzzle">
+<code class="descname">numb_different_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_different_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of Pieces in the Wrong Puzzle</p>
+<p>Gets the number of pieces placed in entirely the wrong puzzle.</p>
+<p>Returns (int): Number of pieces placed in the wrong puzzle</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_pieces_from_original_puzzle_in_solved_puzzle">
+<code class="descname">numb_pieces_from_original_puzzle_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_pieces_from_original_puzzle_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of pieces from the original puzzle in the solved result</p>
+<p>Returns (int): Only the number of included pieces</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_wrong_location">
+<code class="descname">numb_wrong_location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_wrong_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of Pieces Placed in the Wrong Location</p>
+<p>Gets the number of pieces placed in the wrong LOCATION.</p>
+<p>Returns (int): Number of pieces placed in the wrong location.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_wrong_rotation">
+<code class="descname">numb_wrong_rotation</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_wrong_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of Pieces with the Wrong Rotation</p>
+<p>Gets the number of pieces placed with the wrong ROTATION.</p>
+<p>Returns (int): Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.original_puzzle_id">
+<code class="descname">original_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.original_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Direct Accuracy Original Puzzle ID Number Accessor</p>
+<p>Returns (int): The puzzle ID associated with the ORIGINAL set of puzzle results</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.solved_puzzle_id">
+<code class="descname">solved_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.solved_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Direct Accuracy Solved Puzzle ID Number Accessor</p>
+<p>Returns (int): The puzzle ID associated with the SOLVED set of puzzle pieces</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.total_numb_pieces_in_solved_puzzle">
+<code class="descname">total_numb_pieces_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.total_numb_pieces_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total Number of Pieces in the solved image</p>
+<p>Returns (int): Total number of pieces (both with expected puzzle id and wrong puzzle id(s))</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.weighted_accuracy">
+<code class="descname">weighted_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.weighted_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and returns the weighted accuracy score for this puzzle.</p>
+<p>Returns (float): Weighted accuracy score for this puzzle solution</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyType">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">DirectAccuracyType</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#DirectAccuracyType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Defines the direct accuracy types.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyType.Modified_Direct_Accuracy">
+<code class="descname">Modified_Direct_Accuracy</code><em class="property"> = &lt;DirectAccuracyType.Modified_Direct_Accuracy: 0&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyType.Modified_Direct_Accuracy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyType.Standard_Direct_Accuracy">
+<code class="descname">Standard_Direct_Accuracy</code><em class="property"> = &lt;DirectAccuracyType.Modified_Direct_Accuracy: 0&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyType.Standard_Direct_Accuracy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">ModifiedNeighborAccuracy</code><span class="sig-paren">(</span><em>original_puzzle_id</em>, <em>solved_puzzle_id</em>, <em>number_of_pieces</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Encapsulating structure for the modified neighbor based accuracy approach.</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.add_correct_neighbor">
+<code class="descname">add_correct_neighbor</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.add_correct_neighbor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.add_correct_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores information on a CORRECT neighbor</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the CORRECT puzzle piece
+side (PuzzlePieceSide): Side of the puzzle piece with the CORRECT neighbor</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.add_wrong_neighbor">
+<code class="descname">add_wrong_neighbor</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.add_wrong_neighbor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.add_wrong_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores information on a wrong neighbor</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the wrong puzzle piece
+side (PuzzlePieceSide): Side of the puzzle piece with the wrong neighbor</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.add_wrong_puzzle_id">
+<code class="descname">add_wrong_puzzle_id</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.add_wrong_puzzle_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.add_wrong_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores information on piece assigned to the wrong puzzle ID.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the wrong puzzle piece
+side (PuzzlePieceSide): Side of the puzzle piece with the wrong neighbor</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.check_if_update_neighbor_accuracy">
+<em class="property">static </em><code class="descname">check_if_update_neighbor_accuracy</code><span class="sig-paren">(</span><em>current_best_neighbor_accuracy</em>, <em>new_neighbor_accuracy</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.check_if_update_neighbor_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.check_if_update_neighbor_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the current best direct accuracy should be replaced with a newly calculated direct
+accuracy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">current_best_neighbor_accuracy (ModifiedNeighborAccuracy): The best direct accuracy results
+found so far.</p>
+<p class="last">new_neighbor_accuracy (ModifiedNeighborAccuracy): The newly calculated best direct accuracy</p>
+</dd>
+<dt>Returns (bool):</dt>
+<dd>True if accuracy should be updated and False otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.correct_neighbor_count">
+<code class="descname">correct_neighbor_count</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.correct_neighbor_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the CORRECT neighbor count for this puzzle.</p>
+<p>Returns (int): Number of CORRECT neighbors in the puzzle</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.exists_correct_neighbor">
+<code class="descname">exists_correct_neighbor</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.exists_correct_neighbor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.exists_correct_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the pairing of the piece id and the side are in the CORRECT neighbors list.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the wrong puzzle piece
+side (PuzzlePieceSide): Side of the puzzle piece which is being checked for a CORRECT neighbor</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.exists_wrong_neighbor">
+<code class="descname">exists_wrong_neighbor</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.exists_wrong_neighbor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.exists_wrong_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the pairing of the piece id and the side are in the WRONG neighbors list.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the wrong puzzle piece
+side (PuzzlePieceSide): Side of the puzzle piece which is being checked for a WRONG neighbor</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.exists_wrong_puzzle_id">
+<code class="descname">exists_wrong_puzzle_id</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.exists_wrong_puzzle_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.exists_wrong_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether the pairing of the piece id and the side are in the WRONG PUZZLE ID list.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the wrong puzzle piece
+side (PuzzlePieceSide): Side of the puzzle piece which is being checked for a WRONG PUZZLE ID</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.get_piece_side_result">
+<code class="descname">get_piece_side_result</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#ModifiedNeighborAccuracy.get_piece_side_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.get_piece_side_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the best buddy result for the combination of puzzle piece and side.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_id (int): Identification number of the piece
+side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest</dd>
+</dl>
+<p>Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_from_original_puzzle_in_solved_puzzle">
+<code class="descname">numb_pieces_from_original_puzzle_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_from_original_puzzle_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of pieces from the original puzzle in the solved result</p>
+<p>Returns (int): Only the number of included pieces</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_in_original_puzzle">
+<code class="descname">numb_pieces_in_original_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_in_original_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property to extract the number of pieces in the original (input) puzzle.</p>
+<p>Returns (int): Piece count in the original, input puzzle</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.original_puzzle_id">
+<code class="descname">original_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.original_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original/Input Puzzle ID Number Property</p>
+<p>This method is used to access puzzle identification number information of the original/input puzzle.</p>
+<p>Returns (int): Original puzzle identification number associated with this set of modified neighbor
+accuracy information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.solved_puzzle_id">
+<code class="descname">solved_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.solved_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solved Puzzle ID Number Property</p>
+<p>This method is used to access puzzle identification number information of the puzzle that was output
+by the solved.</p>
+<p>Returns (int): Solved puzzle identification number associated with this set of modified neighbor
+accuracy information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.total_numb_pieces_in_solved_puzzle">
+<code class="descname">total_numb_pieces_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.total_numb_pieces_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of Included Pieces</p>
+<p>This function returns the number of puzzle pieces in the solved image.</p>
+<p>Returns (int): Number of pieces in the solved</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.weighted_accuracy">
+<code class="descname">weighted_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.weighted_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates and returns the weighted neighbor accuracy</p>
+<p>Returns (float): Weighted neighbor accuracy.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_neighbor_count">
+<code class="descname">wrong_neighbor_count</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_neighbor_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the wrong neighbor count for this puzzle.</p>
+<p>Returns (int): Number of wrong neighbors in the puzzle</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_puzzle_id">
+<code class="descname">wrong_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of pieces assigned to the wrong puzzle</p>
+<p>Returns (int): Number pieces in the wrong puzzle</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PickleHelper">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PickleHelper</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PickleHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PickleHelper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The Pickle Helper class is used to simplify the importing and exporting of objects via the Python Pickle
+Library.</p>
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PickleHelper.exporter">
+<em class="property">static </em><code class="descname">exporter</code><span class="sig-paren">(</span><em>obj</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PickleHelper.exporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PickleHelper.exporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Pickling Exporter Method</p>
+<p>Helper method used to export any object to a Pickle file.</p>
+<p>::Note::: This function does not support objects of type &#8220;Puzzle.&#8221;  They should use the class&#8217; specialized
+Pickling functions.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>obj:                Object to be exported to a specified Pickle file.
+filename (str):     Name of the Pickle file.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PickleHelper.importer">
+<em class="property">static </em><code class="descname">importer</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PickleHelper.importer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PickleHelper.importer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Pickling Importer Method</p>
+<p>Helper method used to import any object from a Pickle file.</p>
+<p>::Note::: This function does not support objects of type &#8220;Puzzle.&#8221;  They should use the class&#8217; specialized
+Pickling functions.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>filename (str): Pickle Filename</dd>
+</dl>
+<p>Returns: The object serialized in the specified filename.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PieceDirectAccuracyResult</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PieceDirectAccuracyResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Enumerated type used to represent the direct accuracy results for a single individual piece.  Each enumerated
+value is a tuple representing the color of the puzzle piece in BGR format.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.correct_placement">
+<code class="descname">correct_placement</code><em class="property"> = &lt;PieceDirectAccuracyResult.correct_placement: (0, 204, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.correct_placement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.different_puzzle">
+<code class="descname">different_puzzle</code><em class="property"> = &lt;PieceDirectAccuracyResult.different_puzzle: (255, 0, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.different_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.wrong_location">
+<code class="descname">wrong_location</code><em class="property"> = &lt;PieceDirectAccuracyResult.wrong_location: (0, 0, 255)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.wrong_location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.wrong_rotation">
+<code class="descname">wrong_rotation</code><em class="property"> = &lt;PieceDirectAccuracyResult.wrong_rotation: (51, 153, 255)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceDirectAccuracyResult.wrong_rotation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PieceSideBestBuddyAccuracyResult</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PieceSideBestBuddyAccuracyResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Enumerated type used to represent the direct accuracy results for a single individual piece.  Each enumerated
+value is a tuple representing the color of the puzzle piece in BGR format.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.correct_best_buddy">
+<code class="descname">correct_best_buddy</code><em class="property"> = &lt;PieceSideBestBuddyAccuracyResult.correct_best_buddy: (0, 204, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.correct_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.no_best_buddy">
+<code class="descname">no_best_buddy</code><em class="property"> = &lt;PieceSideBestBuddyAccuracyResult.no_best_buddy: (255, 255, 255)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.no_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.open_best_buddy">
+<code class="descname">open_best_buddy</code><em class="property"> = &lt;PieceSideBestBuddyAccuracyResult.open_best_buddy: (255, 0, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.open_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.wrong_best_buddy">
+<code class="descname">wrong_best_buddy</code><em class="property"> = &lt;PieceSideBestBuddyAccuracyResult.wrong_best_buddy: (0, 0, 255)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideBestBuddyAccuracyResult.wrong_best_buddy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PieceSideNeighborAccuracyResult</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PieceSideNeighborAccuracyResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Defines the color for tuples of piece ids and sides according to the neighbor accuracy metric.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult.correct_neighbor">
+<code class="descname">correct_neighbor</code><em class="property"> = &lt;PieceSideNeighborAccuracyResult.correct_neighbor: (0, 204, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult.correct_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult.different_puzzle_id">
+<code class="descname">different_puzzle_id</code><em class="property"> = &lt;PieceSideNeighborAccuracyResult.different_puzzle_id: (255, 0, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult.different_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult.wrong_neighbor">
+<code class="descname">wrong_neighbor</code><em class="property"> = &lt;PieceSideNeighborAccuracyResult.wrong_neighbor: (0, 0, 255)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PieceSideNeighborAccuracyResult.wrong_neighbor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">Puzzle</code><span class="sig-paren">(</span><em>id_number</em>, <em>image_filename=None</em>, <em>piece_width=None</em>, <em>starting_piece_id=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Puzzle Object represents a single Jigsaw Puzzle.  It can import a puzzle from an image file and
+create the puzzle pieces.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.DEFAULT_PIECE_WIDTH">
+<code class="descname">DEFAULT_PIECE_WIDTH</code><em class="property"> = 25</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.DEFAULT_PIECE_WIDTH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.MISSING_PIECE_PUZZLE_INFO_VALUE">
+<code class="descname">MISSING_PIECE_PUZZLE_INFO_VALUE</code><em class="property"> = -1</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.MISSING_PIECE_PUZZLE_INFO_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.NUMBER_BGR_DIMENSIONS">
+<code class="descname">NUMBER_BGR_DIMENSIONS</code><em class="property"> = 3</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.NUMBER_BGR_DIMENSIONS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.OUTPUT_IMAGE_DIRECTORY">
+<code class="descname">OUTPUT_IMAGE_DIRECTORY</code><em class="property"> = '.\\solved\\'</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.OUTPUT_IMAGE_DIRECTORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.assign_all_piece_id_numbers_to_original_id">
+<code class="descname">assign_all_piece_id_numbers_to_original_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.assign_all_piece_id_numbers_to_original_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.assign_all_piece_id_numbers_to_original_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the piece ID number to its original ID number.  Should not generally be used in a puzzle solver.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.assign_all_pieces_to_original_location">
+<code class="descname">assign_all_pieces_to_original_location</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.assign_all_pieces_to_original_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.assign_all_pieces_to_original_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Piece Correct Assignment</p>
+<p>Assigns each piece to its original location for debug purposes.</p>
+<p>::Note:: This should NOT be used in a solver; that would be cheating.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.assign_all_pieces_to_same_rotation">
+<code class="descname">assign_all_pieces_to_same_rotation</code><span class="sig-paren">(</span><em>rotation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.assign_all_pieces_to_same_rotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.assign_all_pieces_to_same_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pieces Rotation Assigner</p>
+<p>Assigns each piece to a specified, single rotation</p>
+<p>::Note:: This should NOT be used in a solver; that would be cheating.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>rotation (PuzzlePieceRotation): Rotation to assign to all pieces.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.border_outer_stripe_width">
+<code class="descname">border_outer_stripe_width</code><em class="property"> = 1</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.border_outer_stripe_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.border_width">
+<code class="descname">border_width</code><em class="property"> = 3</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.border_width" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.build_placed_piece_info">
+<code class="descname">build_placed_piece_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.build_placed_piece_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.build_placed_piece_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placed Piece Info Builder</p>
+<p>For a puzzle, this function builds two Numpy 2D arrays. They are:</p>
+<ol class="arabic simple">
+<li>Piece Locations - A Numpy 2D matrix showing the PUZZLE PIECE ID NUMBER in each puzzle location.  If a puzzle</li>
+</ol>
+<blockquote>
+<div>piece location has no assigned piece, then the cell is filled with the Puzzle class&#8217;s static property
+&#8220;MISSING_PIECE_PUZZLE_INFO_VALUE&#8221;</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Piece Rotations - A Numpy 2D matrix showing the ROTATION VALUE NUMBER the puzzle piece in each puzzle</li>
+</ol>
+<blockquote>
+<div>location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the
+Puzzle class&#8217;s static property &#8220;MISSING_PIECE_PUZZLE_INFO_VALUE&#8221;</div></blockquote>
+<p>Returns (Tuple[Numpy[int]]): Location of each puzzle piece in the grid</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.build_puzzle_image">
+<code class="descname">build_puzzle_image</code><span class="sig-paren">(</span><em>use_results_coloring=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.build_puzzle_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.build_puzzle_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a puzzle image.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>use_results_coloring (Optional bool): If set to true, each piece&#8217;s image is not based off the original</dt>
+<dd>image but what was stored based off the results.</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns (Puzzle): Puzzle constructed from the pieces.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.create_solid_bgr_image">
+<em class="property">static </em><code class="descname">create_solid_bgr_image</code><span class="sig-paren">(</span><em>size</em>, <em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.create_solid_bgr_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.create_solid_bgr_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solid BGR Image Creator</p>
+<p>Creates a BGR Image (i.e. NumPy) array of the specified size.</p>
+<p>RIGHT NOW ONLY BLACK is supported.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>size ([int]): Size of the image in height by width
+color (ImageColor): Solid color of the image.</dd>
+</dl>
+<p>Returns:
+NumPy array representing a BGR image of the specified solid color</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.determine_modified_direct_accuracy">
+<code class="descname">determine_modified_direct_accuracy</code><span class="sig-paren">(</span><em>expected_puzzle_id</em>, <em>upper_left</em>, <em>numb_pieces_in_original_puzzle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.determine_modified_direct_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.determine_modified_direct_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified Direct Accuracy Finder</p>
+<p>Determines the accuracy of the placement using the modified direct accuracy method where by the piece accuracy
+is determined by something other than the exact upper-most left piece (i.e. location (0, 0)).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>expected_puzzle_id (int): Expected puzzle identification number
+upper_left(Tuple[int]): In the direct method, the upper-left most location is the origin.  In the
+&#8220;Modified Direct Method&#8221;, this can be a tuple in the format (row, column).
+numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle</dd>
+</dl>
+<p>Returns (DirectAccuracyPuzzleResults): Information regarding the modified direct accuracy of the placement</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.determine_standard_direct_accuracy">
+<code class="descname">determine_standard_direct_accuracy</code><span class="sig-paren">(</span><em>expected_puzzle_id</em>, <em>numb_pieces_in_original_puzzle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.determine_standard_direct_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.determine_standard_direct_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard Direct Accuracy Finder</p>
+<p>Determines the accuracy of the placement using the standard direct accuracy method.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>expected_puzzle_id (int): Expected puzzle identification number
+numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle</dd>
+</dl>
+<p>Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.display_image">
+<em class="property">static </em><code class="descname">display_image</code><span class="sig-paren">(</span><em>img</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.display_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.display_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the image in a window for debug viewing.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>img: OpenCV image in the form of a Numpy array</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.export_with_border">
+<code class="descname">export_with_border</code><em class="property"> = True</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.export_with_border" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.extract_subimage">
+<em class="property">static </em><code class="descname">extract_subimage</code><span class="sig-paren">(</span><em>img</em>, <em>upper_left</em>, <em>size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.extract_subimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.extract_subimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an image (in the form of a Numpy array) extract a subimage.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>img : Image in the form of a numpy array.
+upper_left ([int]): upper left location of the image to extract
+size ([int]): Size of the of the sub</dd>
+</dl>
+<p>Returns:
+Sub image as a numpy array</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_file_extension">
+<em class="property">static </em><code class="descname">get_file_extension</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.get_file_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_file_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the file extension of an object.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>filename (str): Filename of an object</dd>
+</dl>
+<p>Returns (str): File extension</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_filename_without_extension">
+<em class="property">static </em><code class="descname">get_filename_without_extension</code><span class="sig-paren">(</span><em>filename_and_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.get_filename_without_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_filename_without_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the file extension of an object.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>filename_and_path (str): Filename of an object</dd>
+</dl>
+<p>Returns (str): File extension</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_min_and_max_row_and_columns">
+<code class="descname">get_min_and_max_row_and_columns</code><span class="sig-paren">(</span><em>update_board_dimension_information</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.get_min_and_max_row_and_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_min_and_max_row_and_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min/Max Row and Column Finder</p>
+<p>For a given set of pieces, this function returns the minimum and maximum of the columns and rows
+across all of the pieces.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>update_board_dimension_information (bool): Selectively update the board dimension information (e.g.
+upper left location, grid_size, puzzle width, puzzle height, etc.).</dd>
+</dl>
+<p>Returns ([int]):
+Tuple in the form: (min_row, max_row, min_column, max_column)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_side_of_primary_adjacent_to_other_piece">
+<em class="property">static </em><code class="descname">get_side_of_primary_adjacent_to_other_piece</code><span class="sig-paren">(</span><em>primary_piece_location</em>, <em>other_piece_location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.get_side_of_primary_adjacent_to_other_piece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.get_side_of_primary_adjacent_to_other_piece" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two adjacent pieces (i.e. a primary piece and an other piece), return the side of the primary
+piece that is adjacent (i.e. touching) the other piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>primary_piece_location (PuzzleLocation): Location of the primary piece
+other_piece_location (PuzzleLocation): Location of the other piece</dd>
+</dl>
+<p>Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.grid_size">
+<code class="descname">grid_size</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.grid_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Grid Size Property</p>
+<p>Used to get the maximum dimensions of the puzzle in number of rows by number of columns.</p>
+<p>Returns ([int)): Grid size of the puzzle as a tuple in the form (number_rows, number_columns)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.id_number">
+<code class="descname">id_number</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.id_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Identification Number</p>
+<p>Gets the identification number for a puzzle.</p>
+<p>Returns (int): Identification number for the puzzle</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.insert_piece_into_image">
+<code class="descname">insert_piece_into_image</code><span class="sig-paren">(</span><em>piece</em>, <em>use_results_coloring=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.insert_piece_into_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.insert_piece_into_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a puzzle piece and converts its image into BGR then adds it to the master image.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">piece (PuzzlePiece): Puzzle piece to be inserted into the puzzle&#8217;s image.
+use_results_coloring (Optional bool): If set to true, each piece&#8217;s image is not based off the original</p>
+<blockquote class="last">
+<div>image but what was stored based off the results.</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.insert_subimage">
+<em class="property">static </em><code class="descname">insert_subimage</code><span class="sig-paren">(</span><em>master_img</em>, <em>upper_left</em>, <em>subimage</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.insert_subimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.insert_subimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an image (in the form of a NumPy array), insert another image into it.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>master_img : Image in the form of a NumPy array where the sub-image will be inserted
+upper_left ([int]): upper left location of the the master image where the sub image will be inserted
+subimage ([int]): Sub-image to be inserted into the master image.</dd>
+</dl>
+<p>Returns:
+Sub image as a numpy array</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.make_image_filename">
+<em class="property">static </em><code class="descname">make_image_filename</code><span class="sig-paren">(</span><em>image_descriptor</em>, <em>output_directory</em>, <em>puzzle_type</em>, <em>timestamp</em>, <em>orig_img_filename=None</em>, <em>puzzle_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.make_image_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.make_image_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds an image file name using a set of standard parameters.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image_descriptor (str): Descriptor of the output puzzle.
+output_directory (str): Path where the file should be output
+puzzle_type (PuzzleType): Type of the puzzle
+timestamp (float): Timestamp to be associated with the file
+orig_img_filename (Optional str): Path to the original file name
+puzzle_id (Optional int): Identification number of the puzzle.</dd>
+</dl>
+<p>Returns (str): Filename with extension and path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.make_pieces">
+<code class="descname">make_pieces</code><span class="sig-paren">(</span><em>starting_id_numb=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.make_pieces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.make_pieces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Generator</p>
+<p>Given a puzzle, this function turns the puzzle into a set of pieces.</p>
+<p><strong>Note:</strong> When creating the pieces, some of the source image may need to be discarded
+if the image size is not evenly divisible by the number of pieces specified
+as parameters to this function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>starting_id_numb (Optional int): Identification number of the first piece in the puzzle.  If it is not
+specified it defaults to 0.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.piece_width">
+<code class="descname">piece_width</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.piece_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the size of a puzzle piece.</p>
+<p>Returns (int): Height/width of each piece in pixels.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.pieces">
+<code class="descname">pieces</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.pieces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all of the pieces in this puzzle.</p>
+<p>Returns ([PuzzlePiece]):</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.print_debug_messages">
+<code class="descname">print_debug_messages</code><em class="property"> = True</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.print_debug_messages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.randomize_puzzle_piece_locations">
+<code class="descname">randomize_puzzle_piece_locations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.randomize_puzzle_piece_locations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.randomize_puzzle_piece_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Piece Location Randomizer</p>
+<p>Randomly assigns puzzle pieces to different locations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.randomize_puzzle_piece_rotations">
+<code class="descname">randomize_puzzle_piece_rotations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.randomize_puzzle_piece_rotations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.randomize_puzzle_piece_rotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Piece Rotation Randomizer</p>
+<p>Assigns a random rotation to each piece in the puzzle.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.reconstruct_from_pieces">
+<em class="property">static </em><code class="descname">reconstruct_from_pieces</code><span class="sig-paren">(</span><em>pieces</em>, <em>id_numb=-1</em>, <em>display_image=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.reconstruct_from_pieces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.reconstruct_from_pieces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a puzzle from a set of pieces.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>pieces ([PuzzlePiece]): Set of puzzle pieces that comprise the puzzle.
+id_numb (Optional int): Identification number for the puzzle
+display_image (Optional bool): Select whether to display the image at the end of reconstruction</dd>
+</dl>
+<p>Returns (Puzzle): Puzzle constructed from the pieces.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.reset_upper_left_location">
+<code class="descname">reset_upper_left_location</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.reset_upper_left_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.reset_upper_left_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset Upper Left Location</p>
+<p>&#8220;Upper Left&#8221; refers to the coordinate of the upper-leftmost piece.  By running this function, you
+update this reference point to (0, 0)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.save_to_file">
+<code class="descname">save_to_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.save_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.save_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save Puzzle to a File</p>
+<p>Saves a puzzle to the specified file name.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>filename (str): Filename and path to save the OpenCV image.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.set_piece_color_for_direct_accuracy">
+<code class="descname">set_piece_color_for_direct_accuracy</code><span class="sig-paren">(</span><em>direct_acc_results</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#Puzzle.set_piece_color_for_direct_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.set_piece_color_for_direct_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorizes a piece based off the direct accuracy results.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>direct_acc_results (DirectAccuracyPuzzleResults): Direct accuracy (either standard or modified) for
+the solved image.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleDimensions">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PuzzleDimensions</code><span class="sig-paren">(</span><em>puzzle_id</em>, <em>starting_point</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleDimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleDimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Stores the information regarding the puzzle dimensions including its top left and bottom right corners
+as well as its total size.</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleDimensions.update_dimensions">
+<code class="descname">update_dimensions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleDimensions.update_dimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleDimensions.update_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Dimensions Updater</p>
+<p>Updates the total dimensions of the puzzle.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PuzzleResultsCollection</code><span class="sig-paren">(</span><em>pieces_partitioned_by_puzzle</em>, <em>image_filepaths</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Stores all the puzzle results information in a single collection.</p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.calculate_accuracies">
+<code class="descname">calculate_accuracies</code><span class="sig-paren">(</span><em>solved_puzzles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsCollection.calculate_accuracies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.calculate_accuracies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Results Accuracy Calculator</p>
+<p>Calculates the standard direct, modified direct, and modified neighbor accuracies for a set of solved
+puzzles.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>solved_puzzles (List[Puzzle]): A set of solved puzzles</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.output_results_images">
+<code class="descname">output_results_images</code><span class="sig-paren">(</span><em>solved_puzzles</em>, <em>puzzle_type</em>, <em>timestamp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsCollection.output_results_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.output_results_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates images showing the results of the image.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>solved_puzzles (List[Puzzle]): A set of solved puzzles.
+puzzle_type (PuzzleType): Type of the solved image
+timestamp (float): Timestamp</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.print_results">
+<code class="descname">print_results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsCollection.print_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.print_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solver Accuracy Results Printer</p>
+<p>Prints the accuracy results of a solver to the console.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.results">
+<code class="descname">results</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Results Accessor</p>
+<p>Returns (PuzzleResultsInformation): Puzzle results information for a single puzzle.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PuzzleResultsInformation</code><span class="sig-paren">(</span><em>puzzle_id</em>, <em>original_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsInformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Encapsulates all of the accuracy results information for a puzzle.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.numb_pieces">
+<code class="descname">numb_pieces</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.numb_pieces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the piece count for an implicit puzzle id</p>
+<p>Returns (int): Number of pieces in original puzzle with this puzzle id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.original_filename">
+<code class="descname">original_filename</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.original_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property for accessing an image&#8217;s filename.</p>
+<p>Returns (str): Original filename of the input image</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.resolve_direct_accuracies">
+<code class="descname">resolve_direct_accuracies</code><span class="sig-paren">(</span><em>puzzle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsInformation.resolve_direct_accuracies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.resolve_direct_accuracies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Direct Accuracy Resolver</p>
+<p>In the case of multiple puzzles, there will be multiple direct accuracies for each</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>puzzle (Puzzle): A solved puzzle</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.resolve_neighbor_accuracies">
+<code class="descname">resolve_neighbor_accuracies</code><span class="sig-paren">(</span><em>puzzle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleResultsInformation.resolve_neighbor_accuracies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.resolve_neighbor_accuracies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neighbor Accuracy Resolved</p>
+<p>This function is used to calculate the neighbor accuracy of a solved puzzle and compare it to
+the results of previously calculated accuracies to select the best one.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>puzzle (Puzzle): A solved Puzzle</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PuzzleTester</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Puzzle tester class used for debugging the solver.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.GRID_SIZE">
+<code class="descname">GRID_SIZE</code><em class="property"> = (3, 3)</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.GRID_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.NUMB_PIXEL_DIMENSIONS">
+<code class="descname">NUMB_PIXEL_DIMENSIONS</code><em class="property"> = 3</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.NUMB_PIXEL_DIMENSIONS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.NUMB_PUZZLE_PIECES">
+<code class="descname">NUMB_PUZZLE_PIECES</code><em class="property"> = 9</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.NUMB_PUZZLE_PIECES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.PIECE_WIDTH">
+<code class="descname">PIECE_WIDTH</code><em class="property"> = 5</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.PIECE_WIDTH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE">
+<code class="descname">TEST_ARRAY_FIRST_PIXEL_VALUE</code><em class="property"> = 0</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_IMAGE_FILENAME">
+<code class="descname">TEST_IMAGE_FILENAME</code><em class="property"> = '.\\test\\test.jpg'</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_IMAGE_FILENAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_IMAGE_HEIGHT">
+<code class="descname">TEST_IMAGE_HEIGHT</code><em class="property"> = 200</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_IMAGE_HEIGHT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_IMAGE_WIDTH">
+<code class="descname">TEST_IMAGE_WIDTH</code><em class="property"> = 300</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.TEST_IMAGE_WIDTH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.build_dummy_puzzle">
+<em class="property">static </em><code class="descname">build_dummy_puzzle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleTester.build_dummy_puzzle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.build_dummy_puzzle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dummy Puzzle Builder</p>
+<p>Using an image on the disk, this function builds a dummy puzzle using a Numpy array that is manually
+loaded with sequentially increasing pixel values.</p>
+<p>Returns (Puzzle): A puzzle where each pixel dimension from left to right sequentially increases by
+one.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.build_pixel_list">
+<em class="property">static </em><code class="descname">build_pixel_list</code><span class="sig-paren">(</span><em>start_value</em>, <em>is_row</em>, <em>reverse_list=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleTester.build_pixel_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.build_pixel_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pixel List Builder</p>
+<p>Given a starting value for the first pixel in the first dimension, this function gets the pixel values
+in an array similar to a call to &#8220;get_row_pixels&#8221; or &#8220;get_column_pixels&#8221; for a puzzle piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">start_value (int): Value of the first (i.e. lowest valued) pixel&#8217;s first dimension</p>
+<p>is_row (bool): True if building a pixel list for a row and &#8220;False&#8221; if it is a column.  This is used to
+determine the stepping factor from one pixel to the next.</p>
+<p class="last">reverse_list (bool): If &#8220;True&#8221;, HIGHEST valued pixel dimension is returned in the first index of the list
+and all subsequent pixel values are monotonically DECREASING.  If &#8220;False&#8221;, the LOWEST valued pixel dimension
+is returned in the first index of the list and all subsequent pixel values are monotonically increasing.</p>
+</dd>
+</dl>
+<p>Returns ([int]): An array of individual values simulating a set of pixels</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.piece_to_piece_step_size">
+<em class="property">static </em><code class="descname">piece_to_piece_step_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleTester.piece_to_piece_step_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.piece_to_piece_step_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Piece to Piece Step Size</p>
+<p>For a given pixel&#8217;s given dimension, this function returns the number of dimensions between this pixel and
+the matching pixel exactly one puzzle piece away.</p>
+<p>It is essentially the number of dimensions multiplied by the width of a puzzle piece (in pixels).</p>
+<p>Returns (int): Offset in dimensions.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.row_to_row_step_size">
+<em class="property">static </em><code class="descname">row_to_row_step_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleTester.row_to_row_step_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleTester.row_to_row_step_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Row to Row Step Size</p>
+<p>For a given pixel&#8217;s given dimension, this function returns the number of dimensions between this pixel and
+the matching pixel exactly one row below.</p>
+<p>It is essentially the number of dimensions multiplied by the width of the original image (in pixels).</p>
+<p>Returns (int): Offset in dimensions.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleType">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer.</code><code class="descname">PuzzleType</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#PuzzleType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Type of the puzzle to solve.  Type 1 has no piece rotation while type 2 allows piece rotation.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleType.type1">
+<code class="descname">type1</code><em class="property"> = &lt;PuzzleType.type1: 1&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleType.type1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleType.type2">
+<code class="descname">type2</code><em class="property"> = &lt;PuzzleType.type2: 2&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleType.type2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.puzzle_importer_tester">
+<span id="hammoudeh-puzzle-solver-puzzle-importer-tester-module"></span><h2>hammoudeh_puzzle_solver.puzzle_importer_tester module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.puzzle_importer_tester" title="Permalink to this headline">¶</a></h2>
+<p>Jigsaw Puzzle and Puzzle Piece Unittest Module</p>
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_importer_tester.</code><code class="descname">PuzzleImporterTester</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test__get_neighbor_piece_rotated_side">
+<code class="descname">test__get_neighbor_piece_rotated_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test__get_neighbor_piece_rotated_side"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test__get_neighbor_piece_rotated_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_accuracy_calculator">
+<code class="descname">test_accuracy_calculator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_accuracy_calculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_accuracy_calculator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_0">
+<code class="descname">test_calculate_placed_piece_rotation_degree_0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_180">
+<code class="descname">test_calculate_placed_piece_rotation_degree_180</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_180"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_180" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_90">
+<code class="descname">test_calculate_placed_piece_rotation_degree_90</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_90" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_determine_unrotated_side">
+<code class="descname">test_determine_unrotated_side</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_determine_unrotated_side"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_determine_unrotated_side" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_get_neighbor_locations_and_sides">
+<code class="descname">test_get_neighbor_locations_and_sides</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_get_neighbor_locations_and_sides"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_get_neighbor_locations_and_sides" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_neighbor_id_numbers">
+<code class="descname">test_neighbor_id_numbers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_neighbor_id_numbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_neighbor_id_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the functionality where the module gets the neighbor identification numbers for different puzzle pieces</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_creation">
+<code class="descname">test_puzzle_creation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_puzzle_creation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_creation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Import Parameter Checker</p>
+<p>Checks that for an image, the parameters of the image are successfully parsed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_piece_maker">
+<code class="descname">test_puzzle_piece_maker</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_puzzle_piece_maker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_piece_maker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Piece Maker Checker</p>
+<p>Checks that puzzle pieces are made as expected.  It also checks the get puzzle piece row/column values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_polygon">
+<code class="descname">test_puzzle_polygon</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_puzzle_polygon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_polygon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_side_of_primary_adjacent_to_other_piece">
+<code class="descname">test_side_of_primary_adjacent_to_other_piece</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html#PuzzleImporterTester.test_side_of_primary_adjacent_to_other_piece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_side_of_primary_adjacent_to_other_piece" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.puzzle_piece">
+<span id="hammoudeh-puzzle-solver-puzzle-piece-module"></span><h2>hammoudeh_puzzle_solver.puzzle_piece module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.puzzle_piece" title="Permalink to this headline">¶</a></h2>
+<p>Created by Zayd Hammoudeh (<a class="reference external" href="mailto:zayd&#46;hammoudeh&#37;&#52;&#48;sjsu&#46;edu">zayd<span>&#46;</span>hammoudeh<span>&#64;</span>sjsu<span>&#46;</span>edu</a>)</p>
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.Location">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_piece.</code><code class="descname">Location</code><span class="sig-paren">(</span><em>(row</em>, <em>column)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#Location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.Location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Location Object</p>
+<p>Used to represent any two dimensional location in matrix row/column notation.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_piece.</code><code class="descname">PuzzlePiece</code><span class="sig-paren">(</span><em>puzzle_id</em>, <em>location</em>, <em>lab_img</em>, <em>piece_id=None</em>, <em>puzzle_grid_size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Puzzle Piece Object.  It is a very simple object that stores the puzzle piece&#8217;s pixel information in a
+NumPY array.  It also stores the piece&#8217;s original information (e.g. X/Y location and puzzle ID) along with
+what was determined by the solver.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS">
+<code class="descname">NUMB_LAB_COLORSPACE_DIMENSIONS</code><em class="property"> = 3</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.actual_puzzle_id">
+<code class="descname">actual_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.actual_puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actual Puzzle Identification Number</p>
+<p>Gets the actual (i.e. correct) puzzle identification number of the puzzle.</p>
+<p>Returns (int): Actual (correct) puzzle identification number this piece originated from.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.add_results_image_border">
+<em class="property">static </em><code class="descname">add_results_image_border</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.add_results_image_border"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.add_results_image_border" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optionally add an image border around the piece image.  This is primarily intended for use
+with the solid results images.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image (Numpy[int]): Piece image with no border</dd>
+</dl>
+<p>Returns (Numpy[int]): Piece image with a border around the solid image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.bgr_image">
+<code class="descname">bgr_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.bgr_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.bgr_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get&#8217;s a puzzle piece&#8217;s image in the BGR colorspace.</p>
+<p>Returns:
+Numpy array of the piece&#8217;s BGR image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.border_average_color">
+<code class="descname">border_average_color</code><span class="sig-paren">(</span><em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.border_average_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.border_average_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Border Average Color Accessor</p>
+<p>Gets the average color for a border piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>side (PuzzlePieceSide): Side of the puzzle piece whose average value will be returned.</dd>
+</dl>
+<p>Returns (float): Average pixel value for the puzzle piece border.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.calculate_actual_neighbor_id_numbers">
+<code class="descname">calculate_actual_neighbor_id_numbers</code><span class="sig-paren">(</span><em>puzzle_grid_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.calculate_actual_neighbor_id_numbers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.calculate_actual_neighbor_id_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neighbor ID Calculator</p>
+<p>Given a grid size, this function calculates the identification number of this piece&#8217;s neighbors.  If a piece
+has no neighbor, then location associated with that puzzle piece is filled with &#8220;None&#8221;.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>puzzle_grid_size ([int]): Grid size (number of rows, number of columns) for this piece&#8217;s puzzle.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.calculate_asymmetric_distance">
+<em class="property">static </em><code class="descname">calculate_asymmetric_distance</code><span class="sig-paren">(</span><em>piece_i</em>, <em>piece_i_side</em>, <em>piece_j</em>, <em>piece_j_side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.calculate_asymmetric_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.calculate_asymmetric_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the Asymmetric Distance function to calculate the distance between two puzzle pieces.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>piece_i (PuzzlePiece):
+piece_i_side (PuzzlePieceSide):
+piece_j (PuzzlePiece):
+piece_j_side (PuzzlePieceSide): Side of piece j that is adjacent to piece i.</dd>
+<dt>Returns (double):</dt>
+<dd>Distance between</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.create_side_polygon_image">
+<em class="property">static </em><code class="descname">create_side_polygon_image</code><span class="sig-paren">(</span><em>bgr_color_by_side</em>, <em>width</em>, <em>height=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.create_side_polygon_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.create_side_polygon_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a solid image for displaying in output images.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>bgr_color_by_side (Tuple[(Tuple[int], PuzzlePieceSide)]): Color in BLUE, GREEN, RED notation for each</dt>
+<dd>specified puzzle piece side.  Draws four triangles based off the</dd>
+</dl>
+<p>width (int): Width of the image in pixels.
+height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image</p>
+<blockquote class="last">
+<div>is a square.</div></blockquote>
+</dd>
+</dl>
+<p>Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.create_solid_image">
+<em class="property">static </em><code class="descname">create_solid_image</code><span class="sig-paren">(</span><em>bgr_color</em>, <em>width</em>, <em>height=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.create_solid_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.create_solid_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a solid image for displaying in output images.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first docutils">
+<dt>bgr_color (Tuple[int]): Color  in BLUE, GREEN, RED notation.  Each element for blue, green, or red</dt>
+<dd>must be between 0 and 255 inclusive.</dd>
+</dl>
+<p>width (int): Width of the image in pixels.
+height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image</p>
+<blockquote class="last">
+<div>is a square.</div></blockquote>
+</dd>
+</dl>
+<p>Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_column_pixels">
+<code class="descname">get_column_pixels</code><span class="sig-paren">(</span><em>col_numb</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.get_column_pixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_column_pixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts a row of pixels from a puzzle piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>col_numb (int): Pixel column in the image.  Must be between 0 and the width of the piece - 1 (inclusive).
+reverse (Optional bool): Select whether to reverse the pixel information.</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_neighbor_locations_and_sides">
+<code class="descname">get_neighbor_locations_and_sides</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.get_neighbor_locations_and_sides"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_neighbor_locations_and_sides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neighbor Locations and Sides</p>
+<p>Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
+puzzle piece that corresponds to those locations so that it can be added to the open slot list.</p>
+<p>Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle
+piece side.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_row_pixels">
+<code class="descname">get_row_pixels</code><span class="sig-paren">(</span><em>row_numb</em>, <em>reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.get_row_pixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.get_row_pixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts a row of pixels from a puzzle piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>row_numb (int): Pixel row in the image.  Must be between 0 and the width of the piece - 1 (inclusive).
+reverse (Optional bool): Select whether to reverse the pixel information.</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.id_number">
+<code class="descname">id_number</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.id_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle Piece ID Getter</p>
+<p>Gets the identification number for a puzzle piece.</p>
+<p>Returns (int): Puzzle piece identification number</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.is_correctly_placed">
+<code class="descname">is_correctly_placed</code><span class="sig-paren">(</span><em>puzzle_offset_upper_left_location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.is_correctly_placed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.is_correctly_placed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Piece Placement Checker</p>
+<p>Checks whether the puzzle piece is correctly placed.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>puzzle_offset_upper_left_location (Tuple[int]): Modified location for the origin of the puzzle</dd>
+</dl>
+<p>Returns (bool): True if the puzzle piece is in the correct location and False otherwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.lab_image">
+<code class="descname">lab_image</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.lab_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get&#8217;s a puzzle piece&#8217;s image in the LAB colorspace.</p>
+<p>Returns:
+Numpy array of the piece&#8217;s lab image.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.location">
+<code class="descname">location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the location of the puzzle piece on the board.</p>
+<p>Returns ([int]): Tuple of the (row, column)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.original_neighbor_id_numbers_and_sides">
+<code class="descname">original_neighbor_id_numbers_and_sides</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.original_neighbor_id_numbers_and_sides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Neighbor Identification Number Property</p>
+<p>In a puzzle, each piece has up to four neighbors.  This function access that identification number information.</p>
+<p>Returns ([int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side
+of the original object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.original_piece_id">
+<code class="descname">original_piece_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.original_piece_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Original Piece ID Number</p>
+<p>Gets the original piece identification number</p>
+<p>Returns (int): Original identification number assigned to the piece at its creation.  Should be globally
+unique.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.puzzle_id">
+<code class="descname">puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.puzzle_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigned Puzzle Identification Number</p>
+<p>Gets the location of the puzzle piece on the board.</p>
+<p>Returns (int): Assigned Puzzle ID number.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.reset_image_coloring_for_polygons">
+<code class="descname">reset_image_coloring_for_polygons</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.reset_image_coloring_for_polygons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.reset_image_coloring_for_polygons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the results image coloring for</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.results_image_coloring">
+<code class="descname">results_image_coloring</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.results_image_coloring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the results color image for the piece.</p>
+<dl class="docutils">
+<dt>Returns(List): Either a single BGR integer list when a solid color is used.  If it is using polygon print,</dt>
+<dd>then the return is a List[(List[int], PuzzlePieceSide)].</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.results_image_polygon_coloring">
+<code class="descname">results_image_polygon_coloring</code><span class="sig-paren">(</span><em>side</em>, <em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.results_image_polygon_coloring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.results_image_polygon_coloring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the image coloring when only a single color is needed.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>side (PuzzlePieceSide): Side of the piece that will be assigned a color.
+color (List[int]): Color of the image in BGR format</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.rotation">
+<code class="descname">rotation</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotation Accessor</p>
+<p>Gets the puzzle piece&#8217;s rotation.</p>
+<p>Returns (PuzzlePieceRotation):</p>
+<p>The puzzle piece&#8217;s rotation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.set_placed_piece_rotation">
+<code class="descname">set_placed_piece_rotation</code><span class="sig-paren">(</span><em>placed_side</em>, <em>neighbor_piece_side</em>, <em>neighbor_piece_rotation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.set_placed_piece_rotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.set_placed_piece_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placed Piece Rotation Setter</p>
+<p>Given an already placed neighbor piece&#8217;s adjacent side and rotation, this function sets the rotation
+of some newly placed piece that is put adjacent to that neighbor piece.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">placed_side (PuzzlePieceSide): Side of the placed puzzle piece that is adjacent to the neighbor piece</p>
+<p>neighbor_piece_side (PuzzlePieceSide): Side of the neighbor piece that is adjacent to the newly
+placed piece.</p>
+<p class="last">neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the already placed neighbor piece</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.side_adjacent_to_location">
+<code class="descname">side_adjacent_to_location</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.side_adjacent_to_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.side_adjacent_to_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an adjacent puzzle location, this function returns the side that is touching that adjacent location.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>location (Tuple[int]): A puzzle piece location adjacent to this piece.</dd>
+</dl>
+<p>Returns (PuzzlePieceSide): Side of this piece that is touching the adjacent location</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.width">
+<code class="descname">width</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the size of the square puzzle piece.  Since it is square, width its width equals its length.</p>
+<p>Returns (int): Width of the puzzle piece in pixels.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_piece.</code><code class="descname">PuzzlePieceRotation</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePieceRotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Puzzle Piece PieceRotation</p>
+<p>Enumerated type for representing the amount of rotation for a puzzle piece.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>Pieces can only be rotated in 90 degree increments.</dd>
+</dl>
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.all_rotations">
+<em class="property">static </em><code class="descname">all_rotations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePieceRotation.all_rotations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.all_rotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>All Rotation Accessor</p>
+<p>Gets a list of all supported rotations for a puzzle piece.  The list is ascending from 0 degrees to 270
+degrees increasing.</p>
+<p>Returns ([PuzzlePieceRotation]):
+List of all puzzle rotations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_0">
+<code class="descname">degree_0</code><em class="property"> = &lt;PuzzlePieceRotation.degree_0: 0&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_180">
+<code class="descname">degree_180</code><em class="property"> = &lt;PuzzlePieceRotation.degree_180: 180&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_180" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_270">
+<code class="descname">degree_270</code><em class="property"> = &lt;PuzzlePieceRotation.degree_270: 270&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_270" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_360">
+<code class="descname">degree_360</code><em class="property"> = &lt;PuzzlePieceRotation.degree_360: 360&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_360" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_90">
+<code class="descname">degree_90</code><em class="property"> = &lt;PuzzlePieceRotation.degree_90: 90&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.degree_90" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.random_rotation">
+<em class="property">static </em><code class="descname">random_rotation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePieceRotation.random_rotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceRotation.random_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random Rotation</p>
+<p>Generates and returns a random rotation.</p>
+<p>Returns (PuzzlePieceRotation):
+A random puzzle piece rotation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_piece.</code><code class="descname">PuzzlePieceSide</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePieceSide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Puzzle Piece Side</p>
+<p>Enumerated type for representing the four sides of the a puzzle piece.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>Pieces can only be rotated in 90 degree increments.</dd>
+</dl>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.bottom">
+<code class="descname">bottom</code><em class="property"> = &lt;PuzzlePieceSide.bottom: 2&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.bottom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.complementary_side">
+<code class="descname">complementary_side</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.complementary_side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines and returns the complementary side of this implicit side parameter.  For example, if this side
+is &#8220;left&#8221; then the function returns &#8220;right&#8221; and vice versa.</p>
+<p>Returns (PuzzlePieceSide):
+Complementary side of the piece.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.get_all_sides">
+<em class="property">static </em><code class="descname">get_all_sides</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePieceSide.get_all_sides"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.get_all_sides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method to extract all the sides of a piece.</p>
+<p>Returns ([PuzzlePieceSide]):
+List of all sides of a puzzle piece starting at the top and moving clockwise.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.get_numb_sides">
+<em class="property">static </em><code class="descname">get_numb_sides</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePieceSide.get_numb_sides"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.get_numb_sides" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor for the number of sizes for a puzzle piece.</p>
+<p>Returns (int):
+Since these are rectangular pieces, it returns size 4.  This is currently fixed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.left">
+<code class="descname">left</code><em class="property"> = &lt;PuzzlePieceSide.left: 3&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.left" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.right">
+<code class="descname">right</code><em class="property"> = &lt;PuzzlePieceSide.right: 1&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.right" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.side_name">
+<code class="descname">side_name</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.side_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the name of a puzzle piece side without the class name</p>
+<p>Returns (str): name of the side as a string</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.top">
+<code class="descname">top</code><em class="property"> = &lt;PuzzlePieceSide.top: 0&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.SolidColor">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.puzzle_piece.</code><code class="descname">SolidColor</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#SolidColor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.SolidColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Solid color in Blue, Green, Red (BGR) format.</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.SolidColor.black">
+<code class="descname">black</code><em class="property"> = &lt;SolidColor.black: (0, 0, 0)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.SolidColor.black" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.puzzle_piece.SolidColor.white">
+<code class="descname">white</code><em class="property"> = &lt;SolidColor.white: (255, 255, 255)&gt;</em><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.SolidColor.white" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.solver_driver">
+<span id="hammoudeh-puzzle-solver-solver-driver-module"></span><h2>hammoudeh_puzzle_solver.solver_driver module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.solver_driver" title="Permalink to this headline">¶</a></h2>
+<p>Main Puzzle Solver Driver</p>
+<dl class="function">
+<dt id="hammoudeh_puzzle_solver.solver_driver.paikin_tal_driver">
+<code class="descclassname">hammoudeh_puzzle_solver.solver_driver.</code><code class="descname">paikin_tal_driver</code><span class="sig-paren">(</span><em>image_files</em>, <em>puzzle_type=None</em>, <em>piece_width=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/solver_driver.html#paikin_tal_driver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_driver.paikin_tal_driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the Paikin and Tal image solver.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>image_files ([str]): An array of one or more image file path(s).
+puzzle_type (Optional PuzzleType): Type of the puzzle to solve
+piece_width (Optional int): Width of a puzzle piece in pixels.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hammoudeh_puzzle_solver.solver_driver.print_elapsed_time">
+<code class="descclassname">hammoudeh_puzzle_solver.solver_driver.</code><code class="descname">print_elapsed_time</code><span class="sig-paren">(</span><em>elapsed_time</em>, <em>task_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/solver_driver.html#print_elapsed_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_driver.print_elapsed_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Elapsed Time Printer</p>
+<p>Prints the elapsed time for a task in nice formatting.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>elapsed_time (int): Elapsed time in seconds
+task_name (string): Name of the task that was performed</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="hammoudeh_puzzle_solver.solver_driver.run_paikin_tal_solver">
+<code class="descclassname">hammoudeh_puzzle_solver.solver_driver.</code><code class="descname">run_paikin_tal_solver</code><span class="sig-paren">(</span><em>image_files</em>, <em>puzzle_type</em>, <em>piece_width</em>, <em>pickle_placement_start_filename</em>, <em>pickle_placement_complete_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/solver_driver.html#run_paikin_tal_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_driver.run_paikin_tal_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paikin &amp; Tal Solver</p>
+<p>This function takes a set of inputs and runs the Paikin and Tal solver.  It can be sped-up by importing
+the calculations of distances from existing Pickle files.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">image_files (List[String]): Path to the image files used to create the puzzles
+puzzle_type (PuzzleType): Type of the puzzle to be solved
+piece_width (int): Width/length of all puzzle pieces
+pickle_placement_start_filename (String): Filename to export a pickle file after calculating all</p>
+<blockquote>
+<div>inter-piece distances and before starting placement.  If recalculating distances is disabled, then
+this serves as the filename to import calculated distances from.</div></blockquote>
+<p class="last">pickle_placement_complete_filename (String): Filename to e</p>
+</dd>
+</dl>
+<p>Returns (PaikinTalSolver): Solved Paikin &amp; Tal result.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver.solver_helper_classes">
+<span id="hammoudeh-puzzle-solver-solver-helper-classes-module"></span><h2>hammoudeh_puzzle_solver.solver_helper_classes module<a class="headerlink" href="#module-hammoudeh_puzzle_solver.solver_helper_classes" title="Permalink to this headline">¶</a></h2>
+<p>This module contains classes that would be helpful to any solver largely irrespective of the technique
+used by the solver.</p>
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.solver_helper_classes.</code><code class="descname">NeighborSidePair</code><span class="sig-paren">(</span><em>neighbor_piece_id</em>, <em>neighbor_side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/solver_helper_classes.html#NeighborSidePair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Structure for storing information about a pairing of neighbor side and piece id</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.id_number">
+<code class="descname">id_number</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.id_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the identification number of a neighbor piece in the neighbor side tuple.</p>
+<p>Returns (int): Identification number of a neighbor piece</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.side">
+<code class="descname">side</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.side" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the side of the neighbor piece of interest.</p>
+<p>Returns (PuzzlePieceSide): Side of the neighbor piece</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.NextPieceToPlace">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.solver_helper_classes.</code><code class="descname">NextPieceToPlace</code><span class="sig-paren">(</span><em>open_slot_location</em>, <em>next_piece_id</em>, <em>next_piece_side</em>, <em>neighbor_piece_id</em>, <em>neighbor_piece_side</em>, <em>compatibility</em>, <em>is_best_buddy</em>, <em>numb_best_buddies=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/solver_helper_classes.html#NextPieceToPlace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.NextPieceToPlace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Contains all the information on the next piece in the puzzle to be placed.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation">
+<em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.solver_helper_classes.</code><code class="descname">PuzzleLocation</code><span class="sig-paren">(</span><em>puzzle_id</em>, <em>row</em>, <em>column</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/solver_helper_classes.html#PuzzleLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Structure for formalizing a puzzle location</p>
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.key">
+<code class="descname">key</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a unique key for a given puzzle location on a given board.</p>
+<p>Returns (str): Key for this puzzle location</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.location">
+<code class="descname">location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puzzle location as a tuple of (row, column)</p>
+<p>Returns (Tuple[int]): Tuple in the form (row, column)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hammoudeh_puzzle_solver">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hammoudeh_puzzle_solver" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="paikin_tal_solver.html" class="btn btn-neutral" title="paikin_tal_solver package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Zayd Hammoudeh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.01',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
