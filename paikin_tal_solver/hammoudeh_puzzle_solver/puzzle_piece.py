@@ -305,7 +305,7 @@ class PuzzlePiece(object):
 
         In a puzzle, each piece has up to four neighbors.  This function access that identification number information.
 
-        Returns ([int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side
+        Returns (List[int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side
         of the original object.
 
         """
