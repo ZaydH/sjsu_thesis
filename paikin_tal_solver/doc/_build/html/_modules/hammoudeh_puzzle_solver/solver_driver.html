@@ -1,0 +1,482 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hammoudeh_puzzle_solver.solver_driver &mdash; Hammoudeh Puzzle Solver 0.01 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Hammoudeh Puzzle Solver 0.01 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Hammoudeh Puzzle Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.01
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Project Packages</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Hammoudeh Puzzle Solver</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hammoudeh_puzzle_solver.solver_driver</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hammoudeh_puzzle_solver.solver_driver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Main Puzzle Solver Driver</span>
+
+<span class="sd">.. moduleauthor:: Zayd Hammoudeh &lt;hammoudeh@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_importer</span> <span class="kn">import</span> <span class="n">Puzzle</span><span class="p">,</span> <span class="n">PuzzleTester</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="p">,</span> <span class="n">PuzzleResultsCollection</span><span class="p">,</span> \
+    <span class="n">PickleHelper</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePiece</span>
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<span class="kn">from</span> <span class="nn">paikin_tal_solver.inter_piece_distance</span> <span class="kn">import</span> <span class="n">InterPieceDistance</span>
+<span class="kn">from</span> <span class="nn">paikin_tal_solver.solver</span> <span class="kn">import</span> <span class="n">PaikinTalSolver</span>
+
+<span class="c1"># Select whether to display the images after reconstruction</span>
+<span class="n">DISPLAY_IMAGES</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">DEFAULT_PUZZLE_TYPE</span> <span class="o">=</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span>
+<span class="n">DEFAULT_PUZZLE_PIECE_WIDTH</span> <span class="o">=</span> <span class="mi">28</span>
+
+<span class="c1"># When true, all asymmetric distances are recalculated.</span>
+<span class="n">PERFORM_PLACEMENT</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">RECALCULATE_DISTANCES</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">USE_KNOWN_PUZZLE_DIMENSIONS</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="c1"># Defining a directory where pickle files are stored.</span>
+<span class="n">PICKLE_DIRECTORY</span> <span class="o">=</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">pickle_files</span><span class="se">\\</span><span class="s2">&quot;</span>
+
+
+<div class="viewcode-block" id="paikin_tal_driver"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.solver_driver.paikin_tal_driver">[docs]</a><span class="k">def</span> <span class="nf">paikin_tal_driver</span><span class="p">(</span><span class="n">image_files</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">piece_width</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs the Paikin and Tal image solver.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image_files ([str]): An array of one or more image file path(s).</span>
+<span class="sd">        puzzle_type (Optional PuzzleType): Type of the puzzle to solve</span>
+<span class="sd">        piece_width (Optional int): Width of a puzzle piece in pixels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Define the variables needed through the driver</span>
+    <span class="n">local_puzzle_type</span> <span class="o">=</span> <span class="n">puzzle_type</span> <span class="k">if</span> <span class="n">puzzle_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">DEFAULT_PUZZLE_TYPE</span>
+    <span class="n">local_piece_width</span> <span class="o">=</span> <span class="n">piece_width</span> <span class="k">if</span> <span class="n">piece_width</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">DEFAULT_PUZZLE_PIECE_WIDTH</span>
+
+    <span class="c1"># Print the names of the images being solved:</span>
+    <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Names of the Image Files:&quot;</span>
+    <span class="k">for</span> <span class="n">img_file</span> <span class="ow">in</span> <span class="n">image_files</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_filename_without_extension</span><span class="p">(</span><span class="n">img_file</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Extract the filename of the image(s)</span>
+    <span class="n">pickle_root_filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)):</span>
+        <span class="c1"># Get the root of the filename (i.e. without path and file extension</span>
+        <span class="n">img_root_filename</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_filename_without_extension</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="c1"># Append the file name to the information</span>
+        <span class="n">pickle_root_filename</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">img_root_filename</span>
+    <span class="n">pickle_root_filename</span> <span class="o">+=</span> <span class="s2">&quot;_type_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">local_puzzle_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pk&quot;</span>
+
+    <span class="c1"># Build the filenames</span>
+    <span class="n">pickle_placement_start_filename</span> <span class="o">=</span> <span class="n">PICKLE_DIRECTORY</span> <span class="o">+</span> <span class="s2">&quot;start&quot;</span> <span class="o">+</span> <span class="n">pickle_root_filename</span>
+    <span class="n">pickle_placement_complete_filename</span> <span class="o">=</span> <span class="n">PICKLE_DIRECTORY</span> <span class="o">+</span> <span class="s2">&quot;placed&quot;</span> <span class="o">+</span> <span class="n">pickle_root_filename</span>
+
+    <span class="c1"># When skipping placement, simply import the solved results.</span>
+    <span class="k">if</span> <span class="n">PERFORM_PLACEMENT</span><span class="p">:</span>
+        <span class="n">paikin_tal_solver</span> <span class="o">=</span> <span class="n">run_paikin_tal_solver</span><span class="p">(</span><span class="n">image_files</span><span class="p">,</span> <span class="n">local_puzzle_type</span><span class="p">,</span> <span class="n">local_piece_width</span><span class="p">,</span>
+                                                  <span class="n">pickle_placement_start_filename</span><span class="p">,</span> <span class="n">pickle_placement_complete_filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;Importing solved puzzle from pickle file: </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pickle_placement_complete_filename</span>
+        <span class="n">paikin_tal_solver</span> <span class="o">=</span> <span class="n">PickleHelper</span><span class="o">.</span><span class="n">importer</span><span class="p">(</span><span class="n">pickle_placement_complete_filename</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;Pickle import of solved puzzle complete.&quot;</span>
+
+    <span class="c1"># Get the results</span>
+    <span class="p">(</span><span class="n">pieces_partitioned_by_puzzle_id</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">get_solved_puzzles</span><span class="p">()</span>
+
+    <span class="c1"># Create a time stamp for the results</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Iterate through all the puzzles.  Reconstruct them and get their accuracies.</span>
+    <span class="n">output_puzzles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">puzzle_pieces</span> <span class="ow">in</span> <span class="n">pieces_partitioned_by_puzzle_id</span><span class="p">:</span>
+        <span class="c1"># Get the first piece of the puzzle and extract information on it.</span>
+        <span class="n">first_piece</span> <span class="o">=</span> <span class="n">puzzle_pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">puzzle_id</span> <span class="o">=</span> <span class="n">first_piece</span><span class="o">.</span><span class="n">puzzle_id</span>
+
+        <span class="c1"># Reconstruct the puzzle</span>
+        <span class="n">new_puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">reconstruct_from_pieces</span><span class="p">(</span><span class="n">puzzle_pieces</span><span class="p">,</span> <span class="n">puzzle_id</span><span class="p">)</span>
+
+        <span class="c1"># Optionally display the images</span>
+        <span class="k">if</span> <span class="n">DISPLAY_IMAGES</span><span class="p">:</span>
+            <span class="c1"># noinspection PyProtectedMember</span>
+            <span class="n">Puzzle</span><span class="o">.</span><span class="n">display_image</span><span class="p">(</span><span class="n">new_puzzle</span><span class="o">.</span><span class="n">_img</span><span class="p">)</span>
+
+        <span class="c1"># Store the reconstructed image</span>
+        <span class="n">filename_descriptor</span> <span class="o">=</span> <span class="s2">&quot;reconstructed&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">orig_img_filename</span> <span class="o">=</span> <span class="n">image_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">puzzle_id_filename</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">orig_img_filename</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">puzzle_id_filename</span> <span class="o">=</span> <span class="n">puzzle_id</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">make_image_filename</span><span class="p">(</span><span class="n">filename_descriptor</span><span class="p">,</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">OUTPUT_IMAGE_DIRECTORY</span><span class="p">,</span>
+                                              <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">puzzle_type</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span>
+                                              <span class="n">orig_img_filename</span><span class="o">=</span><span class="n">orig_img_filename</span><span class="p">,</span> <span class="n">puzzle_id</span><span class="o">=</span><span class="n">puzzle_id_filename</span><span class="p">)</span>
+        <span class="n">new_puzzle</span><span class="o">.</span><span class="n">save_to_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># Append the puzzle to the list</span>
+        <span class="n">output_puzzles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_puzzle</span><span class="p">)</span>
+
+    <span class="c1"># Determine the image filename</span>
+    <span class="n">orig_img_filename</span> <span class="o">=</span> <span class="n">image_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="c1"># Print the best buddy accuracy information</span>
+    <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">best_buddy_accuracy</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
+    <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">best_buddy_accuracy</span><span class="o">.</span><span class="n">output_results_images</span><span class="p">(</span><span class="n">output_puzzles</span><span class="p">,</span> <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">puzzle_type</span><span class="p">,</span>
+                                                                <span class="n">timestamp</span><span class="p">,</span> <span class="n">orig_img_filename</span><span class="o">=</span><span class="n">orig_img_filename</span><span class="p">)</span>
+
+    <span class="c1"># Build the results information collection</span>
+    <span class="n">results_information</span> <span class="o">=</span> <span class="n">PuzzleResultsCollection</span><span class="p">(</span><span class="n">pieces_partitioned_by_puzzle_id</span><span class="p">,</span> <span class="n">image_files</span><span class="p">)</span>
+    <span class="c1"># Calculate and print the accuracy results</span>
+    <span class="n">results_information</span><span class="o">.</span><span class="n">calculate_accuracies</span><span class="p">(</span><span class="n">output_puzzles</span><span class="p">)</span>
+    <span class="c1"># Print the results to the console</span>
+    <span class="n">results_information</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
+    <span class="c1"># Print the results as image files</span>
+    <span class="n">results_information</span><span class="o">.</span><span class="n">output_results_images</span><span class="p">(</span><span class="n">output_puzzles</span><span class="p">,</span> <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">puzzle_type</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_paikin_tal_solver"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.solver_driver.run_paikin_tal_solver">[docs]</a><span class="k">def</span> <span class="nf">run_paikin_tal_solver</span><span class="p">(</span><span class="n">image_files</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">,</span> <span class="n">piece_width</span><span class="p">,</span> <span class="n">pickle_placement_start_filename</span><span class="p">,</span>
+                          <span class="n">pickle_placement_complete_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Paikin &amp; Tal Solver</span>
+
+<span class="sd">    This function takes a set of inputs and runs the Paikin and Tal solver.  It can be sped-up by importing</span>
+<span class="sd">    the calculations of distances from existing Pickle files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image_files (List[String]): Path to the image files used to create the puzzles</span>
+<span class="sd">        puzzle_type (PuzzleType): Type of the puzzle to be solved</span>
+<span class="sd">        piece_width (int): Width/length of all puzzle pieces</span>
+<span class="sd">        pickle_placement_start_filename (String): Filename to export a pickle file after calculating all</span>
+<span class="sd">         inter-piece distances and before starting placement.  If recalculating distances is disabled, then</span>
+<span class="sd">         this serves as the filename to import calculated distances from.</span>
+<span class="sd">        pickle_placement_complete_filename (String): Filename to e</span>
+
+<span class="sd">    Returns (PaikinTalSolver): Solved Paikin &amp; Tal result.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">puzzles</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Stores all of the puzzles.</span>
+    <span class="n">combined_pieces</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Merge all the pieces together</span>
+
+    <span class="c1"># Optionally import the images from disk</span>
+    <span class="k">if</span> <span class="n">RECALCULATE_DISTANCES</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">)):</span>
+            <span class="c1"># Define the identification number of the first piece</span>
+            <span class="n">starting_piece_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_pieces</span><span class="p">)</span>
+
+            <span class="c1"># Build the puzzle and add it to the list of puzzles</span>
+            <span class="n">new_puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">image_files</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">piece_width</span><span class="p">,</span> <span class="n">starting_piece_id</span><span class="p">)</span>
+            <span class="n">puzzles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_puzzle</span><span class="p">)</span>
+
+            <span class="c1"># Concatenate to the list of all pieces.</span>
+            <span class="n">combined_pieces</span> <span class="o">+=</span> <span class="n">puzzles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">pieces</span>
+
+        <span class="c1"># Select whether or not to use fixed puzzle dimensions</span>
+        <span class="n">puzzle_dimensions</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">USE_KNOWN_PUZZLE_DIMENSIONS</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">puzzle_dimensions</span> <span class="o">=</span> <span class="n">puzzles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid_size</span>
+
+        <span class="c1"># Create the Paikin Tal Solver</span>
+        <span class="k">print</span> <span class="s2">&quot;Inter-piece distance calculation started at: &quot;</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">paikin_tal_solver</span> <span class="o">=</span> <span class="n">PaikinTalSolver</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image_files</span><span class="p">),</span> <span class="n">combined_pieces</span><span class="p">,</span>
+                                            <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">,</span>
+                                            <span class="n">fixed_puzzle_dimensions</span><span class="o">=</span><span class="n">puzzle_dimensions</span><span class="p">)</span>
+        <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">,</span> <span class="s2">&quot;inter-piece distance calculation&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># Add a blank line.</span>
+        <span class="c1"># Export the Paikin Tal Object.</span>
+        <span class="n">PickleHelper</span><span class="o">.</span><span class="n">exporter</span><span class="p">(</span><span class="n">paikin_tal_solver</span><span class="p">,</span> <span class="n">pickle_placement_start_filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s2">&quot;Beginning import of pickle file: </span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">pickle_placement_start_filename</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&quot;\n\n</span><span class="s2">&quot;</span>
+        <span class="n">paikin_tal_solver</span> <span class="o">=</span> <span class="n">PickleHelper</span><span class="o">.</span><span class="n">importer</span><span class="p">(</span><span class="n">pickle_placement_start_filename</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;Pickle Import completed.</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
+        <span class="c1"># noinspection PyProtectedMember</span>
+        <span class="c1"># This recalculate of start piece is included since how start piece is selected is configurable.</span>
+        <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">find_start_piece_candidates</span><span class="p">()</span>
+
+    <span class="c1"># Run the Solver</span>
+    <span class="k">print</span> <span class="s2">&quot;Placer started at: &quot;</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">paikin_tal_solver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">,</span> <span class="s2">&quot;placement&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Export the completed solver results</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">formatted_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y.%m.</span><span class="si">%d</span><span class="s1">_%H.%M.%S&#39;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s2">&quot;Beginning pickle export of solved results at time: </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">formatted_time</span>
+    <span class="n">PickleHelper</span><span class="o">.</span><span class="n">exporter</span><span class="p">(</span><span class="n">paikin_tal_solver</span><span class="p">,</span> <span class="n">pickle_placement_complete_filename</span><span class="p">)</span>
+    <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;pickle completed solver export&quot;</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s2">&quot;Completed pickle export of the solved puzzle.&quot;</span>
+    <span class="k">return</span> <span class="n">paikin_tal_solver</span></div>
+
+
+<div class="viewcode-block" id="print_elapsed_time"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.solver_driver.print_elapsed_time">[docs]</a><span class="k">def</span> <span class="nf">print_elapsed_time</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">,</span> <span class="n">task_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elapsed Time Printer</span>
+
+<span class="sd">    Prints the elapsed time for a task in nice formatting.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        elapsed_time (int): Elapsed time in seconds</span>
+<span class="sd">        task_name (string): Name of the task that was performed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the current time</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y.%m.</span><span class="si">%d</span><span class="s1">_%H.%M.%S&#39;</span><span class="p">)</span>
+    <span class="c1"># Print elapsed time and the current time.</span>
+    <span class="k">print</span> <span class="s2">&quot;The task </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2"> took </span><span class="si">%d</span><span class="s2"> min </span><span class="si">%d</span><span class="s2"> sec and completed at </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">elapsed_time</span> <span class="o">//</span> <span class="mi">60</span><span class="p">,</span> <span class="n">elapsed_time</span> <span class="o">%</span> <span class="mi">60</span><span class="p">,</span>
+                                                                       <span class="n">current_time</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># images = [&quot;.\\images\\muffins_300x200.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\duck.bmp&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
+    <span class="c1"># images = [&quot;.\\images\\cat_sleeping_boy.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 28)</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\two_faced_cat.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 25)</span>
+    <span class="c1"># images = [&quot;.\\images\\7.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\mcgill_20.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\7.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\two_faced_cat.jpg&quot;, &quot;.\\images\\muffins_300x200.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 28)</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\mcgill_03.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_10.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\3300_1.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1"># images = [&quot;.\\images\\boat_100x100.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 25)</span>
+    <span class="c1"># images = [&quot;.\\images\\che_100x100.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 25)</span>
+    <span class="c1">#</span>
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\3300_1.jpg&quot;]</span>
+    <span class="c1"># PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True</span>
+    <span class="c1"># InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True</span>
+    <span class="c1"># InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">bgu_805_08.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">mcgill_20.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">3300_1.jpg&quot;</span><span class="p">]</span>
+    <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_CLEAR_BEST_BUDDY_HEAP_ON_SPAWN</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_NEIGHBOR_COMPATIBILITY_SCALAR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">paikin_tal_driver</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span>
+
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\3300_1.jpg&quot;]</span>
+    <span class="c1"># PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True</span>
+    <span class="c1"># InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False</span>
+    <span class="c1"># InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1">#</span>
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\3300_1.jpg&quot;]</span>
+    <span class="c1"># PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = False</span>
+    <span class="c1"># InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False</span>
+    <span class="c1"># InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1">#</span>
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\3300_1.jpg&quot;]</span>
+    <span class="c1"># PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = False</span>
+    <span class="c1"># InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False</span>
+    <span class="c1"># InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;]</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Zayd Hammoudeh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.01',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

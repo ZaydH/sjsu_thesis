@@ -1,0 +1,638 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hammoudeh_puzzle_solver.puzzle_importer_tester &mdash; Hammoudeh Puzzle Solver 0.01 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Hammoudeh Puzzle Solver 0.01 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Hammoudeh Puzzle Solver
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.01
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Project Packages</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Hammoudeh Puzzle Solver</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>hammoudeh_puzzle_solver.puzzle_importer_tester</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hammoudeh_puzzle_solver.puzzle_importer_tester</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Jigsaw Puzzle and Puzzle Piece Unittest Module</span>
+
+<span class="sd">.. moduleauthor:: Zayd Hammoudeh &lt;hammoudeh@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_importer</span> <span class="kn">import</span> <span class="n">Puzzle</span><span class="p">,</span> <span class="n">PuzzleTester</span><span class="p">,</span> <span class="n">PuzzleResultsCollection</span><span class="p">,</span> \
+    <span class="n">PieceDirectAccuracyResult</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePiece</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="p">,</span> <span class="n">PuzzlePieceRotation</span>
+
+
+<span class="c1"># noinspection PyMethodMayBeStatic</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.solver_helper_classes</span> <span class="kn">import</span> <span class="n">PuzzleLocation</span>
+
+
+<div class="viewcode-block" id="PuzzleImporterTester"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester">[docs]</a><span class="k">class</span> <span class="nc">PuzzleImporterTester</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_puzzle_creation"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_creation">[docs]</a>    <span class="k">def</span> <span class="nf">test_puzzle_creation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Puzzle Import Parameter Checker</span>
+
+<span class="sd">        Checks that for an image, the parameters of the image are successfully parsed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">test_img_id</span> <span class="o">=</span> <span class="mi">999</span>
+
+        <span class="c1"># Create a dummy image for testing purposes</span>
+        <span class="n">Puzzle</span><span class="o">.</span><span class="n">DEFAULT_PIECE_WIDTH</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span>
+        <span class="n">puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="p">(</span><span class="n">test_img_id</span><span class="p">,</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_FILENAME</span><span class="p">)</span>
+
+        <span class="c1"># Verify the test image id number</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_id</span> <span class="o">==</span> <span class="n">test_img_id</span><span class="p">)</span>
+
+        <span class="c1"># Verify the piece width information</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_piece_width</span> <span class="o">==</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">)</span>
+
+        <span class="c1"># Verify the image filename information</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_filename</span> <span class="o">==</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_FILENAME</span><span class="p">)</span>
+
+        <span class="c1"># Verify the image size info</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_img_height</span> <span class="o">==</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_HEIGHT</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_img_width</span> <span class="o">==</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_WIDTH</span><span class="p">)</span>
+
+        <span class="c1"># Verify the grid side is correct</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_grid_size</span> <span class="o">==</span> <span class="p">(</span><span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_HEIGHT</span> <span class="o">/</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">,</span>
+                                     <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_WIDTH</span> <span class="o">/</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">))</span>
+
+        <span class="c1"># Verify the number of pieces are correct.</span>
+        <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_HEIGHT</span> <span class="o">/</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">)</span> <span class="o">*</span>
+               <span class="p">(</span><span class="n">PuzzleTester</span><span class="o">.</span><span class="n">TEST_IMAGE_WIDTH</span> <span class="o">/</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">))</span>
+
+        <span class="c1"># Check information about the piece</span>
+        <span class="n">all_pieces</span> <span class="o">=</span> <span class="n">puzzle</span><span class="o">.</span><span class="n">pieces</span>  <span class="c1"># type: [PuzzlePiece]</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="n">all_pieces</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">width</span> <span class="o">==</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">)</span>
+
+            <span class="k">assert</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">_orig_puzzle_id</span> <span class="o">==</span> <span class="n">test_img_id</span><span class="p">)</span>
+            <span class="k">assert</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">_assigned_puzzle_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
+
+            <span class="k">assert</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">rotation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>  <span class="c1"># No rotation by default</span>
+
+            <span class="n">rand_loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9999</span><span class="p">),</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9999</span><span class="p">))</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">rand_loc</span>
+            <span class="k">assert</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">location</span> <span class="o">==</span> <span class="n">rand_loc</span><span class="p">)</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">_assign_to_original_location</span><span class="p">()</span>
+            <span class="k">assert</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">_orig_loc</span> <span class="o">==</span> <span class="n">piece</span><span class="o">.</span><span class="n">location</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_puzzle_piece_maker"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_piece_maker">[docs]</a>    <span class="k">def</span> <span class="nf">test_puzzle_piece_maker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Puzzle Piece Maker Checker</span>
+
+<span class="sd">        Checks that puzzle pieces are made as expected.  It also checks the get puzzle piece row/column values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Build a known test puzzle.</span>
+        <span class="n">puzzle</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_dummy_puzzle</span><span class="p">()</span>
+
+        <span class="c1"># Get the puzzle pieces</span>
+        <span class="n">pieces</span> <span class="o">=</span> <span class="n">puzzle</span><span class="o">.</span><span class="n">pieces</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="n">pieces</span><span class="p">:</span>
+            <span class="n">orig_loc</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">_orig_loc</span>
+            <span class="n">upper_left_dim</span> <span class="o">=</span> <span class="n">orig_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">row_to_row_step_size</span><span class="p">()</span>
+            <span class="n">upper_left_dim</span> <span class="o">+=</span> <span class="n">orig_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">piece_to_piece_step_size</span><span class="p">()</span>
+
+            <span class="c1"># Test the Extraction of row pixel values</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">):</span>
+                <span class="n">first_dim_val</span> <span class="o">=</span> <span class="n">upper_left_dim</span> <span class="o">+</span> <span class="n">row</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">row_to_row_step_size</span><span class="p">()</span>
+
+                <span class="c1"># Test the extraction of pixel values.</span>
+                <span class="n">test_arr</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_pixel_list</span><span class="p">(</span><span class="n">first_dim_val</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                <span class="n">row_val</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">row_val</span><span class="p">,</span> <span class="n">test_arr</span><span class="p">))</span>  <span class="c1"># Verify the two arrays are equal.</span>
+
+                <span class="c1"># Test the reversing</span>
+                <span class="n">reverse_list</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">test_arr</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_pixel_list</span><span class="p">(</span><span class="n">first_dim_val</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">reverse_list</span><span class="p">)</span>
+                <span class="n">row_val</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_row_pixels</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">reverse_list</span><span class="p">)</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">row_val</span><span class="p">,</span> <span class="n">test_arr</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span><span class="p">):</span>
+                <span class="n">first_dim_val</span> <span class="o">=</span> <span class="n">upper_left_dim</span> <span class="o">+</span> <span class="n">col</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span>
+
+                <span class="c1"># Test the extraction of pixel values.</span>
+                <span class="n">is_col</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">test_arr</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_pixel_list</span><span class="p">(</span><span class="n">first_dim_val</span><span class="p">,</span> <span class="n">is_col</span><span class="p">)</span>
+                <span class="n">col_val</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">col_val</span><span class="p">,</span> <span class="n">test_arr</span><span class="p">))</span>  <span class="c1"># Verify the two arrays are equal.</span>
+
+                <span class="c1"># Test the reversing</span>
+                <span class="n">reverse_list</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">test_arr</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_pixel_list</span><span class="p">(</span><span class="n">first_dim_val</span><span class="p">,</span> <span class="n">is_col</span><span class="p">,</span> <span class="n">reverse_list</span><span class="p">)</span>
+                <span class="n">col_val</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_column_pixels</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">reverse_list</span><span class="p">)</span>
+                <span class="k">assert</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">col_val</span><span class="p">,</span> <span class="n">test_arr</span><span class="p">))</span>
+
+        <span class="c1"># Calculate the asymmetric distance for two neighboring pieces on ADJACENT SIDES</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Calculate the asymmetric distance for two neighboring pieces on ADJACENT SIDES</span>
+        <span class="n">pieces_per_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PUZZLE_PIECES</span><span class="p">))</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="n">pieces_per_row</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="n">pieces_per_row</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the asymmetric distance for pieces two spaces away</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">expected_dist</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">piece_to_piece_step_size</span><span class="p">()</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="n">expected_dist</span><span class="p">)</span>
+        <span class="c1"># Calculate the asymmetric distance for pieces two spaces away</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="n">expected_dist</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">piece_to_piece_step_size</span><span class="p">()</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="n">expected_dist</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the asymmetric distance for two neighboring pieces on non-adjacent</span>
+        <span class="n">asym_dist</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">(</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                              <span class="n">pieces</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="c1"># Distance between first pixel in top row of piece to last pixel of piece j almost like to puzzle pieces</span>
+        <span class="n">pixel_to_pixel_dist</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span><span class="p">)</span>
+        <span class="n">pixel_to_pixel_dist</span> <span class="o">-=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">row_to_row_step_size</span><span class="p">()</span>
+        <span class="c1"># Calculate the expected distance</span>
+        <span class="n">expected_dist</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span><span class="p">):</span>
+            <span class="n">expected_dist</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pixel_to_pixel_dist</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span> <span class="o">==</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">pixel_to_pixel_dist</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">asym_dist</span> <span class="o">==</span> <span class="n">expected_dist</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test__get_neighbor_piece_rotated_side"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test__get_neighbor_piece_rotated_side">[docs]</a>    <span class="k">def</span> <span class="nf">test__get_neighbor_piece_rotated_side</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Test calculation of the top side.</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+
+        <span class="c1"># Test calculation of the bottom side.</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+
+        <span class="c1"># Test calculation of the left side.</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+
+        <span class="c1"># Test calculation of the right side.</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_piece_rotated_side</span><span class="p">((</span><span class="mi">13</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_determine_unrotated_side"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_determine_unrotated_side">[docs]</a>    <span class="k">def</span> <span class="nf">test_determine_unrotated_side</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Find the unrotated side of a puzzle piece</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+
+        <span class="c1"># Find the puzzle piece side when the piece is rotated 90 degrees</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+
+        <span class="c1"># Find the puzzle piece side when the piece is rotated 180 degrees</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+
+        <span class="c1"># Find the puzzle piece side when the piece is rotated 270 degrees</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
+        <span class="k">assert</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_determine_unrotated_side</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">==</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_0"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_0">[docs]</a>    <span class="k">def</span> <span class="nf">test_calculate_placed_piece_rotation_degree_0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (TOP)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (RIGHT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (BOTTOM)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (BOTTOM)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (BOTTOM)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (BOTTOM)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (LEFT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_90"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_90">[docs]</a>    <span class="k">def</span> <span class="nf">test_calculate_placed_piece_rotation_degree_90</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (TOP)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (RIGHT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (BOTTOM)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (LEFT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_180"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_calculate_placed_piece_rotation_degree_180">[docs]</a>    <span class="k">def</span> <span class="nf">test_calculate_placed_piece_rotation_degree_180</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (TOP)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (RIGHT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (BOTTOM)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (LEFT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+        <span class="c1"># Calculate for unrotated pieces placed in complementary locations (LEFT)</span>
+        <span class="n">placed_rotation</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_calculate_placed_piece_rotation</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                                                                       <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">placed_rotation</span> <span class="o">==</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_get_neighbor_locations_and_sides"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_get_neighbor_locations_and_sides">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Test with no rotation</span>
+        <span class="n">test_loc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">test_rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+        <span class="n">location_and_sides</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="n">test_loc</span><span class="p">,</span> <span class="n">test_rotation</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+
+        <span class="c1"># Test with 90 degrees of rotation</span>
+        <span class="n">test_loc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">44</span><span class="p">)</span>
+        <span class="n">test_rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+        <span class="n">location_and_sides</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="n">test_loc</span><span class="p">,</span> <span class="n">test_rotation</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span>
+
+        <span class="c1"># Test with 180 degrees of rotation</span>
+        <span class="n">test_loc</span> <span class="o">=</span> <span class="p">(</span><span class="mi">66</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">test_rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_180</span>
+        <span class="n">location_and_sides</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="n">test_loc</span><span class="p">,</span> <span class="n">test_rotation</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+        <span class="c1"># Test with 270 degrees of rotation</span>
+        <span class="n">test_loc</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">56</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>
+        <span class="n">test_rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_270</span>
+        <span class="n">location_and_sides</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_get_neighbor_locations_and_sides</span><span class="p">(</span><span class="n">test_loc</span><span class="p">,</span> <span class="n">test_rotation</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">location_and_sides</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="p">((</span><span class="n">test_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_neighbor_id_numbers"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_neighbor_id_numbers">[docs]</a>    <span class="k">def</span> <span class="nf">test_neighbor_id_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Test the functionality where the module gets the neighbor identification numbers for different puzzle pieces</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Build a known test puzzle.</span>
+        <span class="n">puzzle</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_dummy_puzzle</span><span class="p">()</span>
+
+        <span class="c1"># Get the pieces from the dummy puzzle.</span>
+        <span class="n">pieces</span> <span class="o">=</span> <span class="n">puzzle</span><span class="o">.</span><span class="n">pieces</span>
+
+        <span class="c1"># Check the neighbor coordinates of the first piece</span>
+        <span class="k">assert</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span> <span class="o">==</span> <span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+                                                                    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span> <span class="o">==</span> <span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+                                                                    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span> <span class="o">==</span> <span class="p">((</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+                                                                    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span> <span class="o">==</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+                                                                    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">pieces</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span> <span class="o">==</span> <span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">),</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+                                                                    <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_puzzle_polygon"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_puzzle_polygon">[docs]</a>    <span class="k">def</span> <span class="nf">test_puzzle_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Define the color side pairing for the test</span>
+        <span class="n">color_side</span> <span class="o">=</span> <span class="p">[(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">PieceDirectAccuracyResult</span><span class="o">.</span><span class="n">different_puzzle</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                      <span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">PieceDirectAccuracyResult</span><span class="o">.</span><span class="n">correct_placement</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                      <span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">PieceDirectAccuracyResult</span><span class="o">.</span><span class="n">wrong_location</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                      <span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">PieceDirectAccuracyResult</span><span class="o">.</span><span class="n">wrong_rotation</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span>
+        <span class="c1"># noinspection PyUnusedLocal</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">create_side_polygon_image</span><span class="p">(</span><span class="n">color_side</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span></div>
+        <span class="c1"># Puzzle.display_image(image)</span>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_accuracy_calculator"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_accuracy_calculator">[docs]</a>    <span class="k">def</span> <span class="nf">test_accuracy_calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># Build a known test puzzle.</span>
+        <span class="n">dummy_puzzle</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">build_dummy_puzzle</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="n">dummy_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">:</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">_assign_to_original_location</span><span class="p">()</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">_set_id_number_to_original_id</span><span class="p">()</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+
+        <span class="c1"># Test different conditions</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Set all piece rotation to the default</span>
+                <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="n">dummy_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">:</span>
+                    <span class="n">piece</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">dummy_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_90</span>
+
+            <span class="c1"># Build the results information collection</span>
+            <span class="n">results_information</span> <span class="o">=</span> <span class="n">PuzzleResultsCollection</span><span class="p">([</span><span class="n">dummy_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">],</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">dummy.jpg&quot;</span><span class="p">)</span>
+            <span class="n">results_information</span><span class="o">.</span><span class="n">calculate_accuracies</span><span class="p">([</span><span class="n">dummy_puzzle</span><span class="p">])</span>
+
+            <span class="c1"># Verify the neighbor results</span>
+            <span class="n">numb_pieces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dummy_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">results_information</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">numb_correct_placements</span> <span class="o">==</span> <span class="n">numb_pieces</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">numb_wrong_rotation</span> <span class="o">==</span> <span class="mi">0</span>
+
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_direct_accuracy</span><span class="o">.</span><span class="n">numb_correct_placements</span> <span class="o">==</span> <span class="n">numb_pieces</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_direct_accuracy</span><span class="o">.</span><span class="n">numb_wrong_rotation</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">numb_correct_placements</span> <span class="o">==</span> <span class="n">numb_pieces</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">numb_wrong_rotation</span> <span class="o">==</span> <span class="mi">1</span>
+
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_direct_accuracy</span><span class="o">.</span><span class="n">numb_correct_placements</span> <span class="o">==</span> <span class="n">numb_pieces</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_direct_accuracy</span><span class="o">.</span><span class="n">numb_wrong_rotation</span> <span class="o">==</span> <span class="mi">1</span>
+
+            <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">numb_different_puzzle</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">numb_wrong_location</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">standard_direct_accuracy</span><span class="o">.</span><span class="n">total_numb_pieces_in_solved_puzzle</span> <span class="o">==</span> <span class="n">numb_pieces</span>
+
+            <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_direct_accuracy</span><span class="o">.</span><span class="n">numb_wrong_location</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_direct_accuracy</span><span class="o">.</span><span class="n">total_numb_pieces_in_solved_puzzle</span> <span class="o">==</span> <span class="n">numb_pieces</span>
+
+            <span class="c1"># Check the neighbor accuracy</span>
+            <span class="n">numb_sides</span> <span class="o">=</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_neighbor_accuracy</span><span class="o">.</span><span class="n">correct_neighbor_count</span> <span class="o">==</span> <span class="n">numb_sides</span> <span class="o">*</span> <span class="n">numb_pieces</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_neighbor_accuracy</span><span class="o">.</span><span class="n">wrong_neighbor_count</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_neighbor_accuracy</span><span class="o">.</span><span class="n">correct_neighbor_count</span> <span class="o">==</span> <span class="n">numb_sides</span> <span class="o">*</span> <span class="n">numb_pieces</span> <span class="o">-</span> <span class="mi">5</span>
+                <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_neighbor_accuracy</span><span class="o">.</span><span class="n">wrong_neighbor_count</span> <span class="o">==</span> <span class="mi">5</span>
+            <span class="k">assert</span> <span class="n">results</span><span class="o">.</span><span class="n">modified_neighbor_accuracy</span><span class="o">.</span><span class="n">total_numb_pieces_in_solved_puzzle</span> <span class="o">==</span> <span class="n">numb_pieces</span></div>
+
+<div class="viewcode-block" id="PuzzleImporterTester.test_side_of_primary_adjacent_to_other_piece"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer_tester.PuzzleImporterTester.test_side_of_primary_adjacent_to_other_piece">[docs]</a>    <span class="k">def</span> <span class="nf">test_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Check bottom</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">bottom</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+        <span class="c1"># Check bottom</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">top</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+        <span class="c1"># Check right</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+        <span class="c1"># Check left</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">49</span><span class="p">)</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="n">PuzzleLocation</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Zayd Hammoudeh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.01',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
