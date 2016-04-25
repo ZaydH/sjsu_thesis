@@ -1,6 +1,4 @@
 """Jigsaw Puzzle Object
-
-.. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
 import copy
 import os
@@ -24,7 +22,8 @@ class PickleHelper(object):
 
     @staticmethod
     def importer(filename):
-        """Generic Pickling Importer Method
+        """
+        Generic Pickling Importer Method
 
         Helper method used to import any object from a Pickle file.
 
@@ -37,6 +36,7 @@ class PickleHelper(object):
         Returns: The object serialized in the specified filename.
 
         """
+
         # Check the file directory exists
         file_directory = os.path.dirname(os.path.abspath(filename))
         if not os.path.isdir(file_directory):
@@ -1710,10 +1710,12 @@ class Puzzle(object):
         # Return the minimum and maximum row/column information
         return min_row, max_row, min_col, max_col
 
-    def _assign_all_pieces_to_original_location(self):
+    def assign_all_pieces_to_original_location(self):
         """Piece Correct Assignment
 
-        Test Method Only. Assigns each piece to its original location for debug purposes.
+        Assigns each piece to its original location for debug purposes.
+
+        ::Note:: This should NOT be used in a solver; that would be cheating.
         """
         for piece in self._pieces:
             # noinspection PyProtectedMember
@@ -1958,7 +1960,9 @@ class Puzzle(object):
         """
         Placed Piece Info Builder
 
-        For a puzzle, this function builds a Numpy 2d matrix showing the location of each piece.  If a possible
+        For a puzzle, this function builds two Numpy 2D arrays. They are:
+
+        1. a Numpy 2d matrix showing the location of each piece.  If a possible
         puzzle piece location has no assigned piece, then the cell is filled with "None."
 
         Returns (Tuple[Numpy[int]]): Location of each puzzle piece in the grid
@@ -2012,6 +2016,13 @@ class Puzzle(object):
             return PuzzlePieceSide.left
         if diff_col == -1:
             return PuzzlePieceSide.right
+
+    def assign_all_piece_id_numbers_to_original_id(self):
+        """
+        Sets the piece ID number to its original ID number.  Should not generally be used in a puzzle solver.
+        """
+        for piece in self._pieces:
+            piece.id_number = piece.original_piece_id
 
 
 class PuzzleTester(object):

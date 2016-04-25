@@ -528,6 +528,7 @@ class PuzzlePiece(object):
             assert self.location is not None
             assert self.rotation is not None
 
+        # TODO this approach does not account for missing pieces.
         return PuzzlePiece._get_neighbor_locations_and_sides(self.location, self.rotation)
 
     @staticmethod
@@ -942,7 +943,9 @@ class PuzzlePiece(object):
             assert len(sides_drawn) == PuzzlePieceSide.get_numb_sides()
 
         # Draw an "X" to clearly demarcate the triangles
+        # noinspection PyUnresolvedReferences
         cv2.line(image, tuple(top_left), tuple(bottom_right), SolidColor.black.value, thickness=1)
+        # noinspection PyUnresolvedReferences
         cv2.line(image, tuple(top_right), tuple(bottom_left), SolidColor.black.value, thickness=1)
 
         # Optionally add a border around the pieces before returning
