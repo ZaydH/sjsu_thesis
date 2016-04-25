@@ -1345,9 +1345,13 @@ class Puzzle(object):
     # Define the number of dimensions in the BGR space (i.e. blue, green, red)
     NUMBER_BGR_DIMENSIONS = 3
 
+    # Define the border when generating the accuracy images.
     export_with_border = True
     border_width = 3
     border_outer_stripe_width = 1
+
+    # Value stored when building the puzzle info when no piece is present in a given location
+    MISSING_PIECE_PUZZLE_INFO_VALUE = -1
 
     def __init__(self, id_number, image_filename=None, piece_width=None, starting_piece_id=0):
         """Puzzle Constructor
@@ -1721,6 +1725,22 @@ class Puzzle(object):
             # noinspection PyProtectedMember
             piece._assign_to_original_location()
 
+    def assign_all_pieces_to_same_rotation(self, rotation):
+        """
+        Pieces Rotation Assigner
+
+        Assigns each piece to a specified, single rotation
+
+        ::Note:: This should NOT be used in a solver; that would be cheating.
+
+        Args:
+            rotation (PuzzlePieceRotation): Rotation to assign to all pieces.
+
+        """
+        for piece in self._pieces:
+            # noinspection PyProtectedMember
+            piece.rotation = rotation
+
     @property
     def grid_size(self):
         """
@@ -1827,7 +1847,7 @@ class Puzzle(object):
         """
         import os
         ext = str(os.path.basename(filename)).split('.', 1)[1]
-        return '.' + ext if ext else None
+        return ext if ext else None
 
     @staticmethod
     def get_filename_without_extension(filename_and_path):
@@ -1876,7 +1896,7 @@ class Puzzle(object):
         # Add timestamp and file extension
         output_filename += "_" + ts_str
         if img_extension is not None:
-            output_filename += img_extension
+            output_filename += "." + img_extension
         else:
             output_filename += ".jpg"
 
@@ -1962,8 +1982,14 @@ class Puzzle(object):
 
         For a puzzle, this function builds two Numpy 2D arrays. They are:
 
-        1. a Numpy 2d matrix showing the location of each piece.  If a possible
-        puzzle piece location has no assigned piece, then the cell is filled with "None."
+
+        1. Piece Locations - A Numpy 2D matrix showing the PUZZLE PIECE ID NUMBER in each puzzle location.  If a puzzle
+         piece location has no assigned piece, then the cell is filled with the Puzzle class's static property
+         "MISSING_PIECE_PUZZLE_INFO_VALUE"
+
+        2. Piece Rotations - A Numpy 2D matrix showing the ROTATION VALUE NUMBER the puzzle piece in each puzzle
+         location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the
+         Puzzle class's static property "MISSING_PIECE_PUZZLE_INFO_VALUE"
 
         Returns (Tuple[Numpy[int]]): Location of each puzzle piece in the grid
         """
