@@ -6,7 +6,9 @@ import numpy
 import sys
 
 # noinspection PyUnresolvedReferences
-from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleType, PickleHelper
+import time
+
+from hammoudeh_puzzle_solver.puzzle_importer import Puzzle, PuzzleType, PickleHelper, PieceSideBestBuddyAccuracyResult
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
 from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
@@ -63,6 +65,9 @@ class ImageBestBuddyStatistics(object):
         for piece in self._puzzle.pieces:
             self.analyze_piece_best_buddy_info(piece)
 
+        # Output the best buddy accuracy image.
+        self.output_results_image()
+
         # Clear up the memory
         self._puzzle = None
         self._interpiece_distance = None
@@ -102,8 +107,11 @@ class ImageBestBuddyStatistics(object):
         numb_wrong_interior_bb = 0
         numb_wrong_exterior_bb = 0
 
+        # Reset the image coloring
+        piece.reset_image_coloring_for_polygons()
+
         # Iterate through all sides
-        for i in xrange(0, PuzzlePieceSide.get_numb_sides()):
+        for i in xrange(PuzzlePieceSide.get_numb_sides()):
 
             # Get the neighbor location
             (neighbor_loc, piece_side) = neighbor_loc_and_sides[i]
@@ -119,6 +127,7 @@ class ImageBestBuddyStatistics(object):
             # Get the best buddy information for the piece.
             bb_info = self._interpiece_distance.best_buddies(piece.id_number, piece_side)
             if not bb_info:
+                piece.results_image_polygon_coloring(piece_side, PieceSideBestBuddyAccuracyResult.no_best_buddy)
                 continue
             # Increment the best buddy count
             numb_piece_bb += 1
@@ -130,14 +139,20 @@ class ImageBestBuddyStatistics(object):
                 # If the neighboring cell is empty and it has a best buddy, it is wrong
                 self._numb_wrong_exterior_bb += 1
                 numb_wrong_exterior_bb += 1
+                piece.results_image_polygon_coloring(piece_side, PieceSideBestBuddyAccuracyResult.wrong_best_buddy)
 
             # Piece has a neighbor
             else:
                 # Increment interior best buddy count
                 self._total_numb_interior_bb += 1
-                if neighbor_id != self._piece_locations[neighbor_loc]:
+                # TODO currently only supports single best buddy
+                bb_info = bb_info[0]
+                if neighbor_id != bb_info[0] or piece_side.complementary_side != bb_info[1]:
                     numb_wrong_interior_bb += 1
                     self._numb_wrong_interior_bb += 1
+                    piece.results_image_polygon_coloring(piece_side, PieceSideBestBuddyAccuracyResult.wrong_best_buddy)
+                else:
+                    piece.results_image_polygon_coloring(piece_side, PieceSideBestBuddyAccuracyResult.correct_best_buddy)
         # Update the master data structure showing the best buddy distribution
         numpy_index = ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple(numb_piece_bb,
                                                                                   numb_wrong_interior_bb,
@@ -207,15 +222,31 @@ class ImageBestBuddyStatistics(object):
         """
         return 1 - 1.0 * self._numb_wrong_interior_bb / self._total_numb_interior_bb
 
+    def output_results_image(self):
+        """
+        Creates an image showing the best buddy accuracy distribution of an image.
+        """
+        # Create a time stamp for the results
+        timestamp = time.time()
+        # Build the original filename
+        orig_img_filename = self._filename_root + "." + self._file_extension
+
+        descriptor = "image_best_buddies"
+        output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, self.puzzle_type,
+                                                     timestamp, orig_img_filename=orig_img_filename)
+        # Stores the results to a file.
+        self._puzzle.build_puzzle_image(use_results_coloring=True)
+        self._puzzle.save_to_file(output_filename)
+
 
 if __name__ == '__main__':
 
     pickle_file = ImageBestBuddyStatistics.PICKLE_DIRECTORY + "bb_accuracy.pk"
 
-    # # bb_results = ImageBestBuddyStatistics(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2,
-    # #                                       PuzzlePiece.calculate_asymmetric_distance)
-    # bb_results = ImageBestBuddyStatistics(".\\images\\7.jpg", 28, PuzzleType.type2,
+    # bb_results = ImageBestBuddyStatistics(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2,
     #                                       PuzzlePiece.calculate_asymmetric_distance)
+    # # bb_results = ImageBestBuddyStatistics(".\\images\\7.jpg", 28, PuzzleType.type2,
+    # #                                       PuzzlePiece.calculate_asymmetric_distance)
     # PickleHelper.exporter(bb_results, pickle_file)
 
     # Calculate the print the results.
