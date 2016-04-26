@@ -9,6 +9,7 @@ echo.Python update complete.
 echo. 
 echo.  
 echo.Installing Python packages.
+call:conda_basic_install anaconda-client
 call:conda_basic_install pip
 call:conda_basic_install Pillow
 call:conda_basic_install enum34
@@ -22,7 +23,6 @@ call:conda_basic_install pylint
 
 call:conda_install_from_conda_direct opencv3
 call:conda_install_from_conda_direct opencv
-
 
 echo.
 echo.
