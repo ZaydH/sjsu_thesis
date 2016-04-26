@@ -119,7 +119,7 @@ class PaikinTalSolver(object):
     _MINIMUM_CLEAN_HEAP_FREQUENCY = 100
 
     # Select whether to use the best_buddy_placer
-    _USE_BEST_BUDDY_PLACER = False
+    use_best_buddy_placer = False
 
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
@@ -339,7 +339,7 @@ class PaikinTalSolver(object):
                 i += 1
 
         # Remove the open slot from the best buddy placer
-        if PaikinTalSolver._USE_BEST_BUDDY_PLACER:
+        if PaikinTalSolver.use_best_buddy_placer:
             self._best_buddy_placer.remove_open_slot(slot_to_remove)
 
     def _remove_best_buddy_from_pool(self, piece_id):
@@ -382,12 +382,12 @@ class PaikinTalSolver(object):
                 self._clean_best_buddy_heap()
 
             # Use Best Buddy Placer By Default
-            if PaikinTalSolver._USE_BEST_BUDDY_PLACER:
+            if PaikinTalSolver.use_best_buddy_placer:
 
                 next_piece = self._select_piece_using_best_buddies()
 
             # Use Standard Paikin Tal Placer Always or if no best buddy found
-            if not PaikinTalSolver._USE_BEST_BUDDY_PLACER or next_piece is None:
+            if not PaikinTalSolver.use_best_buddy_placer or next_piece is None:
                 # Keep popping from the heap until a valid next piece is found.
                 while next_piece is None:
                     # Get the best next piece from the heap.
