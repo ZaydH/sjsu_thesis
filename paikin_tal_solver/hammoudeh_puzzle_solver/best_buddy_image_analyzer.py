@@ -40,6 +40,8 @@ class ImageBestBuddyStatistics(object):
         # Build a puzzle
         self._puzzle = Puzzle(0, image_filepath, piece_width)
 
+        self.numb_pieces = self._puzzle.numb_pieces
+
         # Get the piece IDs
         self._puzzle.assign_all_piece_id_numbers_to_original_id()
         self._puzzle.assign_all_pieces_to_original_location()
@@ -182,10 +184,14 @@ class ImageBestBuddyStatistics(object):
         """
         print "Best Buddy Results for Image:\t" + self._filename_root
         print "\tFile Extension:\t" + self._file_extension
+        print "\tNumber of Pieces:\t%d" % self.numb_pieces
 
         # Total number of best buddies
         print "\tTotal Number of Best Buddies:\t%d" % self.total_number_of_best_buddies
         print "\tTotal Best Buddy Accuracy:\t\t%1.2f%%" % (100 * self.total_accuracy)
+
+        bb_density = 100 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
+        print "\tBest Buddy Density:\t\t\t\t%1.2f%%" % bb_density
         print "\tInterior Best Buddy Accuracy:\t%1.2f%%" % (100 * self.interior_accuracy)
         print ""
         print "\tNumber of Wrong Interior Best Buddies:\t%d" % self._numb_wrong_interior_bb
@@ -243,11 +249,13 @@ if __name__ == '__main__':
 
     pickle_file = ImageBestBuddyStatistics.PICKLE_DIRECTORY + "bb_accuracy.pk"
 
+    bb_results = ImageBestBuddyStatistics(".\\images\\duck.bmp", 28, PuzzleType.type2,
+                                          PuzzlePiece.calculate_asymmetric_distance)
     # bb_results = ImageBestBuddyStatistics(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2,
     #                                       PuzzlePiece.calculate_asymmetric_distance)
     # # bb_results = ImageBestBuddyStatistics(".\\images\\7.jpg", 28, PuzzleType.type2,
     # #                                       PuzzlePiece.calculate_asymmetric_distance)
-    # PickleHelper.exporter(bb_results, pickle_file)
+    PickleHelper.exporter(bb_results, pickle_file)
 
     # Calculate the print the results.
     bb_results = PickleHelper.importer(pickle_file)

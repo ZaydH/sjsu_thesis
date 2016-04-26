@@ -1468,6 +1468,16 @@ class Puzzle(object):
                 piece_id += 1
 
     @property
+    def numb_pieces(self):
+        """
+        Gets the number of pieces.  Note missing pieces are not counted in this statistic.
+
+        Returns (int): Number of pieces in the puzzle
+
+        """
+        return len(self._pieces)
+
+    @property
     def id_number(self):
         """
         Puzzle Identification Number
