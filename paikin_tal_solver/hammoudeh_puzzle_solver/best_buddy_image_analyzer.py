@@ -190,12 +190,23 @@ class ImageBestBuddyStatistics(object):
         print "\tTotal Number of Best Buddies:\t%d" % self.total_number_of_best_buddies
         print "\tTotal Best Buddy Accuracy:\t\t%1.2f%%" % (100 * self.total_accuracy)
 
-        bb_density = 100 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
-        print "\tBest Buddy Density:\t\t\t\t%1.2f%%" % bb_density
+        print "\tBest Buddy Density:\t\t\t\t%1.2f%%" %(100 * self.density)
         print "\tInterior Best Buddy Accuracy:\t%1.2f%%" % (100 * self.interior_accuracy)
         print ""
         print "\tNumber of Wrong Interior Best Buddies:\t%d" % self._numb_wrong_interior_bb
         print "\tNumber of Wrong Exterior Best Buddies:\t%d" % self._numb_wrong_exterior_bb
+
+    @property
+    def density(self):
+        """
+        Calculates the best buddy density for the original image.  It is defined as the total number of best
+        buddies divided by the total number of possible best buddies (i.e. number of pieces multipled by the number
+        of sides per piece).
+
+        Returns (float): Best buddy density
+
+        """
+        return 100.0 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
 
     @property
     def total_number_of_best_buddies(self):
@@ -249,10 +260,12 @@ if __name__ == '__main__':
 
     pickle_file = ImageBestBuddyStatistics.PICKLE_DIRECTORY + "bb_accuracy.pk"
 
-    bb_results = ImageBestBuddyStatistics(".\\images\\duck.bmp", 28, PuzzleType.type2,
-                                          PuzzlePiece.calculate_asymmetric_distance)
+    # bb_results = ImageBestBuddyStatistics(".\\images\\duck.bmp", 28, PuzzleType.type2,
+    #                                       PuzzlePiece.calculate_asymmetric_distance)
     # bb_results = ImageBestBuddyStatistics(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2,
     #                                       PuzzlePiece.calculate_asymmetric_distance)
+    bb_results = ImageBestBuddyStatistics(".\\images\\cat_sleeping_boy.jpg", 28, PuzzleType.type2,
+                                          PuzzlePiece.calculate_asymmetric_distance)
     # # bb_results = ImageBestBuddyStatistics(".\\images\\7.jpg", 28, PuzzleType.type2,
     # #                                       PuzzlePiece.calculate_asymmetric_distance)
     PickleHelper.exporter(bb_results, pickle_file)
