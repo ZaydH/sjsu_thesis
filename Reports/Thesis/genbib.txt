@@ -1,0 +1,2 @@
+ bibtex thesis
+ bibtex thesisbib

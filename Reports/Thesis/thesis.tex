@@ -1,0 +1,129 @@
+%
+%
+% ***** used to mark places where you need to make changes in this file
+%
+% Abstract, acknowledgements, chapters, appendices, and references are in separate tex files
+%
+%
+\documentclass[oneref]{urithesis}
+\usepackage{amsmath,amsthm, amsfonts, amssymb, amsxtra,amsopn}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{algorithmic}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{cmap}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black,filecolor=black}
+\usepackage[T1]{fontenc}
+\usepackage[tableposition=top]{caption}
+% Top=1.25 inches - 0.05 inches for the header.
+%
+%\usepackage[total={6.0in, 8.5in}, 
+%            top=1.25in, left=1.5in]{geometry}
+\usepackage[vmargin={1.25in, 1.25in}, hmargin={1.5in, 1in},
+            textwidth=6in,
+            textheight=5.25in]{geometry}
+\usepackage{microtype}
+\DisableLigatures{encoding = *, family = * }
+
+% no limit on percentage of floats per page
+\renewcommand{\floatpagefraction}{1.0}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\textfraction}{0.0}
+
+% eref puts parenthesis around reference, like "equation (1)"
+\def\eref#1{(\ref{#1})}
+
+%
+% ***** project type: For CS 298 use "\projectType{Project}" and for CS 299 use "\projectType{Thesis}"
+%
+\def\projectType{Thesis}
+%\def\projectType{Project}
+%
+% ***** graduation month
+%
+\def\graduationMonth{May}
+%
+% ***** advisor's name
+%
+\def\advisorName{Dr. Chris Pollett}
+\def\advisorAffiliation{Department of Computer Science}
+%
+% ***** first committee member's name
+%
+\def\firstCommitteeMember{Dr. Thomas Austin}
+\def\firstCommitteeMemberAffiliation{Department of Computer Science}
+%
+% ***** second committee member's name
+%
+\def\secondCommitteeMember{Dr. Teng Moh}
+\def\secondCommitteeMemberAffiliation{Department of Mathematics}
+
+\setcounter{secnumdepth}{3}
+
+\begin{document}
+
+%
+% ***** title
+%
+\title{Typesetting Your Report for Fun and Profit}
+
+%
+% ***** author's name
+%
+\author{Zayd Hammoudeh}
+%
+% ***** graduation year
+%
+\copyrightyear{2016}
+
+%
+% Do not change this...
+%
+\ifthenelse{\equal{\projectType}{Thesis}}
+           {\raggedright \parindent=30pt}
+           {}
+
+\pagestyle{empty}
+
+%
+% ***** abstract is file abs.tex
+%
+\abstract{abs}
+
+%
+% ***** acknowledgements in file ack.tex
+%
+\acknowledgements{ack}
+
+\setlength{\parskip}{.1 in}
+%uncomment the following for single space drafts
+%\singlespace
+\doublespace
+\pagenumbering{arabic}
+
+\setcounter{page}{0}
+
+%
+% ***** chapters in files chap1.tex, chap2.tex, and so on
+%
+\newchapter{chap1}
+\newchapter{chap2}
+\newchapter{chap3}
+
+%
+% ***** bibliography/references in file bib.tex
+%
+\input bib.tex
+
+%
+% ***** appendices in appA.tex, appB.tex, ...
+%
+\newappendix{appA}
+\newappendix{appB}
+
+
+\end{document}
