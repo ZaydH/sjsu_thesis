@@ -483,8 +483,10 @@ containing the neighbor id and the neighbor&#8217;s side.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (bool):
-True if the pairing of piece_id and side exists in the BB dictionary.</p>
+<dl class="docutils">
+<dt>Returns (bool):</dt>
+<dd>True if the pairing of piece_id and side exists in the BB dictionary.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -521,7 +523,10 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (bool): True if the key is in the dictionary and False otherwise.</p>
+<dl class="docutils">
+<dt>Returns (bool):</dt>
+<dd>True if the key is in the dictionary and False otherwise.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -540,7 +545,10 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (bool): True if the key is in the dictionary and False otherwise.</p>
+<dl class="docutils">
+<dt>Returns (bool):</dt>
+<dd>True if the key is in the dictionary and False otherwise.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -559,7 +567,10 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (bool): True if the key is in the dictionary and False otherwise.</p>
+<dl class="docutils">
+<dt>Returns (bool):</dt>
+<dd>True if the key is in the dictionary and False otherwise.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -578,14 +589,20 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result</p>
+<dl class="docutils">
+<dt>Returns (PieceSideBestBuddyAccuracyResult):</dt>
+<dd>Best buddy accuracy result</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_correct_best_buddies">
 <code class="descname">numb_correct_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_correct_best_buddies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the number of correct best buddies who are next to their best buddy</p>
-<p>Returns (int): Total number of correct best buddies</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Total number of correct best buddies</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -598,13 +615,17 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_wrong_best_buddies">
 <code class="descname">numb_wrong_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_wrong_best_buddies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the number of correct best buddies who are NOT next to their best buddy</p>
-<p>Returns (int): Total number of WRONG best buddies</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Total number of WRONG best buddies</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.piece_side_tuple_key">
 <em class="property">static </em><code class="descname">piece_side_tuple_key</code><span class="sig-paren">(</span><em>piece_id</em>, <em>side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyAccuracy.piece_side_tuple_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.piece_side_tuple_key" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Creates a unique dictionary key for storing the piece side tuple.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -616,7 +637,10 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (string):</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Dictionary key in the form &#8220;&lt;piece_id&gt;_&lt;side_int_value&gt;&#8221;</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -630,7 +654,10 @@ True if the pairing of piece_id and side exists in the BB dictionary.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.best_buddy_accuracy">
 <code class="descname">best_buddy_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.best_buddy_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Property to get access to all the best buddy information.</p>
-<p>Returns (List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.</p>
+<dl class="docutils">
+<dt>Returns (List[BestBuddyAccuracy]):</dt>
+<dd>The best buddy accuracy objects for all puzzles.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -678,7 +705,10 @@ best buddies.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.total_best_buddy_count">
 <code class="descname">total_best_buddy_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_importer.html#BestBuddyResultsCollection.total_best_buddy_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyResultsCollection.total_best_buddy_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the total number of best buddies represented by this collection.</p>
-<p>Returns (int): Total number of best buddies in the collection</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Total number of best buddies in the collection</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -786,7 +816,10 @@ piece.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (PieceDirectAccuracyResult): Direct accuracy result for an individual piece</p>
+<dl class="docutils">
+<dt>Returns (PieceDirectAccuracyResult):</dt>
+<dd>Direct accuracy result for an individual piece</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -794,7 +827,10 @@ piece.</p>
 <code class="descname">numb_correct_placements</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_correct_placements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of Pieces Placed Correctly Property</p>
 <p>Gets the number of pieces placed correctly.</p>
-<p>Returns (int): Number of pieces correctly placed with the right puzzle ID, location, and rotation.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces correctly placed with the right puzzle ID, location, and rotation.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -802,14 +838,20 @@ piece.</p>
 <code class="descname">numb_different_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_different_puzzle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of Pieces in the Wrong Puzzle</p>
 <p>Gets the number of pieces placed in entirely the wrong puzzle.</p>
-<p>Returns (int): Number of pieces placed in the wrong puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces placed in the wrong puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_pieces_from_original_puzzle_in_solved_puzzle">
 <code class="descname">numb_pieces_from_original_puzzle_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_pieces_from_original_puzzle_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of pieces from the original puzzle in the solved result</p>
-<p>Returns (int): Only the number of included pieces</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Only the number of included pieces</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -817,7 +859,10 @@ piece.</p>
 <code class="descname">numb_wrong_location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_wrong_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of Pieces Placed in the Wrong Location</p>
 <p>Gets the number of pieces placed in the wrong LOCATION.</p>
-<p>Returns (int): Number of pieces placed in the wrong location.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces placed in the wrong location.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -825,35 +870,50 @@ piece.</p>
 <code class="descname">numb_wrong_rotation</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.numb_wrong_rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of Pieces with the Wrong Rotation</p>
 <p>Gets the number of pieces placed with the wrong ROTATION.</p>
-<p>Returns (int): Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.original_puzzle_id">
 <code class="descname">original_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.original_puzzle_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Direct Accuracy Original Puzzle ID Number Accessor</p>
-<p>Returns (int): The puzzle ID associated with the ORIGINAL set of puzzle results</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>The puzzle ID associated with the ORIGINAL set of puzzle results</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.solved_puzzle_id">
 <code class="descname">solved_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.solved_puzzle_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Direct Accuracy Solved Puzzle ID Number Accessor</p>
-<p>Returns (int): The puzzle ID associated with the SOLVED set of puzzle pieces</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>The puzzle ID associated with the SOLVED set of puzzle pieces</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.total_numb_pieces_in_solved_puzzle">
 <code class="descname">total_numb_pieces_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.total_numb_pieces_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Total Number of Pieces in the solved image</p>
-<p>Returns (int): Total number of pieces (both with expected puzzle id and wrong puzzle id(s))</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Total number of pieces (both with expected puzzle id and wrong puzzle id(s))</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.weighted_accuracy">
 <code class="descname">weighted_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.DirectAccuracyPuzzleResults.weighted_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates and returns the weighted accuracy score for this puzzle.</p>
-<p>Returns (float): Weighted accuracy score for this puzzle solution</p>
+<dl class="docutils">
+<dt>Returns (float):</dt>
+<dd>Weighted accuracy score for this puzzle solution</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -962,7 +1022,10 @@ accuracy.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.correct_neighbor_count">
 <code class="descname">correct_neighbor_count</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.correct_neighbor_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the CORRECT neighbor count for this puzzle.</p>
-<p>Returns (int): Number of CORRECT neighbors in the puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of CORRECT neighbors in the puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1035,21 +1098,30 @@ accuracy.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result</p>
+<dl class="docutils">
+<dt>Returns (PieceSideBestBuddyAccuracyResult):</dt>
+<dd>Best buddy accuracy result</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_from_original_puzzle_in_solved_puzzle">
 <code class="descname">numb_pieces_from_original_puzzle_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_from_original_puzzle_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of pieces from the original puzzle in the solved result</p>
-<p>Returns (int): Only the number of included pieces</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Only the number of included pieces</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_in_original_puzzle">
 <code class="descname">numb_pieces_in_original_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.numb_pieces_in_original_puzzle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Property to extract the number of pieces in the original (input) puzzle.</p>
-<p>Returns (int): Piece count in the original, input puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Piece count in the original, input puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1057,8 +1129,10 @@ accuracy.</p>
 <code class="descname">original_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.original_puzzle_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Original/Input Puzzle ID Number Property</p>
 <p>This method is used to access puzzle identification number information of the original/input puzzle.</p>
-<p>Returns (int): Original puzzle identification number associated with this set of modified neighbor
-accuracy information.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Original puzzle identification number associated with this set of modified neighbor accuracy information.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1067,8 +1141,10 @@ accuracy information.</p>
 <dd><p>Solved Puzzle ID Number Property</p>
 <p>This method is used to access puzzle identification number information of the puzzle that was output
 by the solved.</p>
-<p>Returns (int): Solved puzzle identification number associated with this set of modified neighbor
-accuracy information.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Solved puzzle identification number associated with this set of modified neighbor accuracy information.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1076,28 +1152,40 @@ accuracy information.</p>
 <code class="descname">total_numb_pieces_in_solved_puzzle</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.total_numb_pieces_in_solved_puzzle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of Included Pieces</p>
 <p>This function returns the number of puzzle pieces in the solved image.</p>
-<p>Returns (int): Number of pieces in the solved</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces in the solved</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.weighted_accuracy">
 <code class="descname">weighted_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.weighted_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates and returns the weighted neighbor accuracy</p>
-<p>Returns (float): Weighted neighbor accuracy.</p>
+<dl class="docutils">
+<dt>Returns (float):</dt>
+<dd>Weighted neighbor accuracy.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_neighbor_count">
 <code class="descname">wrong_neighbor_count</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_neighbor_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the wrong neighbor count for this puzzle.</p>
-<p>Returns (int): Number of wrong neighbors in the puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of wrong neighbors in the puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_puzzle_id">
 <code class="descname">wrong_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.ModifiedNeighborAccuracy.wrong_puzzle_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the number of pieces assigned to the wrong puzzle</p>
-<p>Returns (int): Number pieces in the wrong puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number pieces in the wrong puzzle</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1142,9 +1230,10 @@ Pickling functions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; Pickle Filename</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The object serialized in the specified filename.</td>
+</tr>
 </tbody>
 </table>
-<p>Returns: The object serialized in the specified filename.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1310,7 +1399,10 @@ create the puzzle pieces.</p>
 <blockquote>
 <div>location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the
 Puzzle class&#8217;s static property &#8220;MISSING_PIECE_PUZZLE_INFO_VALUE&#8221;</div></blockquote>
-<p>Returns (Tuple[Numpy[int]]): Location of each puzzle piece in the grid</p>
+<dl class="docutils">
+<dt>Returns (Tuple[Numpy[int]]):</dt>
+<dd>Location of each puzzle piece in the grid</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1326,7 +1418,10 @@ image but what was stored based off the results.</td>
 </tr>
 </tbody>
 </table>
-<p>Returns (Puzzle): Puzzle constructed from the pieces.</p>
+<dl class="docutils">
+<dt>Returns (Puzzle):</dt>
+<dd>Puzzle constructed from the pieces.</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1339,16 +1434,17 @@ image but what was stored based off the results.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>size</strong> (<em>[int]</em>) &#8211; Size of the image in height by width</li>
 <li><strong>color</strong> (<em>ImageColor</em>) &#8211; Solid color of the image.</li>
 </ul>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">NumPy array representing a BGR image of the specified solid color</p>
+</td>
+</tr>
 </tbody>
 </table>
-<p>Returns:
-NumPy array representing a BGR image of the specified solid color</p>
 </dd></dl>
 
 <dl class="method">
@@ -1371,7 +1467,10 @@ is determined by something other than the exact upper-most left piece (i.e. loca
 </tr>
 </tbody>
 </table>
-<p>Returns (DirectAccuracyPuzzleResults): Information regarding the modified direct accuracy of the placement</p>
+<dl class="docutils">
+<dt>Returns (DirectAccuracyPuzzleResults):</dt>
+<dd>Information regarding the modified direct accuracy of the placement</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1391,7 +1490,10 @@ is determined by something other than the exact upper-most left piece (i.e. loca
 </tr>
 </tbody>
 </table>
-<p>Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement</p>
+<dl class="docutils">
+<dt>Returns (DirectAccuracyPuzzleResults):</dt>
+<dd>Information regarding the direct accuracy of the placement</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1430,8 +1532,10 @@ is determined by something other than the exact upper-most left piece (i.e. loca
 </tr>
 </tbody>
 </table>
-<p>Returns:
-Sub image as a numpy array</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Sub image as a numpy array</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1446,7 +1550,10 @@ Sub image as a numpy array</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (str): File extension</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>File extension of the specified filename (without the period)</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1461,7 +1568,10 @@ Sub image as a numpy array</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (str): File extension</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Filename of the object with the path and file extension removed.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1482,8 +1592,10 @@ across all of the pieces.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns ([int]):
-Tuple in the form: (min_row, max_row, min_column, max_column)</p>
+<dl class="docutils">
+<dt>Returns ([int]):</dt>
+<dd>Tuple in the form: (min_row, max_row, min_column, max_column)</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1503,7 +1615,10 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.</p>
+<dl class="docutils">
+<dt>Returns (PuzzlePieceSide):</dt>
+<dd>Side of the primary piece adjacent to the other piece.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1511,7 +1626,10 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 <code class="descname">grid_size</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.grid_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle Grid Size Property</p>
 <p>Used to get the maximum dimensions of the puzzle in number of rows by number of columns.</p>
-<p>Returns ([int)): Grid size of the puzzle as a tuple in the form (number_rows, number_columns)</p>
+<dl class="docutils">
+<dt>Returns ([int)):</dt>
+<dd>Grid size of the puzzle as a tuple in the form (number_rows, number_columns)</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1519,7 +1637,10 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 <code class="descname">id_number</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.id_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle Identification Number</p>
 <p>Gets the identification number for a puzzle.</p>
-<p>Returns (int): Identification number for the puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Identification number for the puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1558,8 +1679,10 @@ image but what was stored based off the results.</li>
 </tr>
 </tbody>
 </table>
-<p>Returns:
-Sub image as a numpy array</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Sub image as a numpy array</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1582,7 +1705,10 @@ Sub image as a numpy array</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (str): Filename with extension and path.</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Image file name constructed from the specified parameters.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1611,21 +1737,30 @@ as parameters to this function.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.numb_pieces">
 <code class="descname">numb_pieces</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.numb_pieces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the number of pieces.  Note missing pieces are not counted in this statistic.</p>
-<p>Returns (int): Number of pieces in the puzzle</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces in the puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.piece_width">
 <code class="descname">piece_width</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.piece_width" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the size of a puzzle piece.</p>
-<p>Returns (int): Height/width of each piece in pixels.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Height/width of each piece in number of pixels.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.Puzzle.pieces">
 <code class="descname">pieces</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.Puzzle.pieces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets all of the pieces in this puzzle.</p>
-<p>Returns ([PuzzlePiece]):</p>
+<dl class="docutils">
+<dt>Returns (List[PuzzlePiece]):</dt>
+<dd>A list of the pieces in the puzzle</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1664,7 +1799,10 @@ as parameters to this function.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (Puzzle): Puzzle constructed from the pieces.</p>
+<dl class="docutils">
+<dt>Returns (Puzzle):</dt>
+<dd>Puzzle constructed from the pieces.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1776,7 +1914,10 @@ puzzles.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.results">
 <code class="descname">results</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsCollection.results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle Results Accessor</p>
-<p>Returns (PuzzleResultsInformation): Puzzle results information for a single puzzle.</p>
+<dl class="docutils">
+<dt>Returns (PuzzleResultsInformation):</dt>
+<dd>Puzzle results information for a single puzzle.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1790,14 +1931,20 @@ puzzles.</p>
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.numb_pieces">
 <code class="descname">numb_pieces</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.numb_pieces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the piece count for an implicit puzzle id</p>
-<p>Returns (int): Number of pieces in original puzzle with this puzzle id</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces in original puzzle with this puzzle id</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.original_filename">
 <code class="descname">original_filename</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.PuzzleResultsInformation.original_filename" title="Permalink to this definition">¶</a></dt>
 <dd><p>Property for accessing an image&#8217;s filename.</p>
-<p>Returns (str): Original filename of the input image</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Original filename of the input image</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1884,8 +2031,10 @@ the results of previously calculated accuracies to select the best one.</p>
 <dd><p>Dummy Puzzle Builder</p>
 <p>Using an image on the disk, this function builds a dummy puzzle using a Numpy array that is manually
 loaded with sequentially increasing pixel values.</p>
-<p>Returns (Puzzle): A puzzle where each pixel dimension from left to right sequentially increases by
-one.</p>
+<dl class="docutils">
+<dt>Returns (Puzzle):</dt>
+<dd>A puzzle where each pixel dimension from left to right sequentially increases by one.</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1910,7 +2059,10 @@ in an array similar to a call to &#8220;get_row_pixels&#8221; or &#8220;get_colu
 </tr>
 </tbody>
 </table>
-<p>Returns ([int]): An array of individual values simulating a set of pixels</p>
+<dl class="docutils">
+<dt>Returns ([int]):</dt>
+<dd>An array of individual values simulating a set of pixels</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1920,7 +2072,10 @@ in an array similar to a call to &#8220;get_row_pixels&#8221; or &#8220;get_colu
 <p>For a given pixel&#8217;s given dimension, this function returns the number of dimensions between this pixel and
 the matching pixel exactly one puzzle piece away.</p>
 <p>It is essentially the number of dimensions multiplied by the width of a puzzle piece (in pixels).</p>
-<p>Returns (int): Offset in dimensions.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Offset in dimensions.</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1930,7 +2085,10 @@ the matching pixel exactly one puzzle piece away.</p>
 <p>For a given pixel&#8217;s given dimension, this function returns the number of dimensions between this pixel and
 the matching pixel exactly one row below.</p>
 <p>It is essentially the number of dimensions multiplied by the width of the original image (in pixels).</p>
-<p>Returns (int): Offset in dimensions.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Offset in dimensions.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2056,7 +2214,10 @@ what was determined by the solver.</p>
 <code class="descname">actual_puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.actual_puzzle_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actual Puzzle Identification Number</p>
 <p>Gets the actual (i.e. correct) puzzle identification number of the puzzle.</p>
-<p>Returns (int): Actual (correct) puzzle identification number this piece originated from.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Actual (correct) puzzle identification number this piece originated from.</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -2072,15 +2233,20 @@ with the solid results images.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (Numpy[int]): Piece image with a border around the solid image.</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Piece image with a border around the solid image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.bgr_image">
 <code class="descname">bgr_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/puzzle_piece.html#PuzzlePiece.bgr_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.bgr_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get&#8217;s a puzzle piece&#8217;s image in the BGR colorspace.</p>
-<p>Returns:
-Numpy array of the piece&#8217;s BGR image.</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Numpy array of the piece&#8217;s BGR image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2096,7 +2262,10 @@ Numpy array of the piece&#8217;s BGR image.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (float): Average pixel value for the puzzle piece border.</p>
+<dl class="docutils">
+<dt>Returns (float):</dt>
+<dd>The average pixel value for the puzzle piece border.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2135,7 +2304,7 @@ has no neighbor, then location associated with that puzzle piece is filled with 
 </table>
 <dl class="docutils">
 <dt>Returns (double):</dt>
-<dd>Distance between</dd>
+<dd>Distance between the sides of two puzzle pieces.</dd>
 </dl>
 </dd></dl>
 
@@ -2158,7 +2327,10 @@ is a square.</li>
 </tr>
 </tbody>
 </table>
-<p>Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Image in the form of a NumPy matrix of size: (length by width by 3)</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -2180,7 +2352,10 @@ is a square.</li>
 </tr>
 </tbody>
 </table>
-<p>Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Image in the form of a NumPy matrix of size: (length by width by 3)</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2199,7 +2374,10 @@ is a square.</li>
 </tr>
 </tbody>
 </table>
-<p>Returns:</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>A vector of 3-dimensional pixel values for a column in the image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2208,8 +2386,10 @@ is a square.</li>
 <dd><p>Neighbor Locations and Sides</p>
 <p>Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
 puzzle piece that corresponds to those locations so that it can be added to the open slot list.</p>
-<p>Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle
-piece side.</p>
+<dl class="docutils">
+<dt>Returns ([([int], PuzzlePieceSide)]):</dt>
+<dd>Valid puzzle piece locations and the respective puzzle piece side.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2228,7 +2408,10 @@ piece side.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns:</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>A vector of 3-dimensional pixel values for a row in the image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -2236,7 +2419,10 @@ piece side.</p>
 <code class="descname">id_number</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.id_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle Piece ID Getter</p>
 <p>Gets the identification number for a puzzle piece.</p>
-<p>Returns (int): Puzzle piece identification number</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Puzzle piece identification number</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2252,22 +2438,30 @@ piece side.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (bool): True if the puzzle piece is in the correct location and False otherwise.</p>
+<dl class="docutils">
+<dt>Returns (bool):</dt>
+<dd>True if the puzzle piece is in the correct location and False otherwise.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.lab_image">
 <code class="descname">lab_image</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.lab_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get&#8217;s a puzzle piece&#8217;s image in the LAB colorspace.</p>
-<p>Returns:
-Numpy array of the piece&#8217;s lab image.</p>
+<dl class="docutils">
+<dt>Returns (Numpy[int]):</dt>
+<dd>Numpy array of the piece&#8217;s lab image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.location">
 <code class="descname">location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the location of the puzzle piece on the board.</p>
-<p>Returns ([int]): Tuple of the (row, column)</p>
+<dl class="docutils">
+<dt>Returns ([int]):</dt>
+<dd>Tuple of the (row, column)</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -2275,8 +2469,10 @@ Numpy array of the piece&#8217;s lab image.</p>
 <code class="descname">original_neighbor_id_numbers_and_sides</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.original_neighbor_id_numbers_and_sides" title="Permalink to this definition">¶</a></dt>
 <dd><p>Neighbor Identification Number Property</p>
 <p>In a puzzle, each piece has up to four neighbors.  This function access that identification number information.</p>
-<p>Returns (List[int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side
-of the original object.</p>
+<dl class="docutils">
+<dt>Returns (List[int, PuzzlePieceSide]):</dt>
+<dd>Identification number for the puzzle piece on the specified side of the original object.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -2284,8 +2480,10 @@ of the original object.</p>
 <code class="descname">original_piece_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.original_piece_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Original Piece ID Number</p>
 <p>Gets the original piece identification number</p>
-<p>Returns (int): Original identification number assigned to the piece at its creation.  Should be globally
-unique.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Original identification number assigned to the piece at its creation.  Should be globally unique.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -2293,7 +2491,10 @@ unique.</p>
 <code class="descname">puzzle_id</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.puzzle_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assigned Puzzle Identification Number</p>
 <p>Gets the location of the puzzle piece on the board.</p>
-<p>Returns (int): Assigned Puzzle ID number.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Assigned Puzzle ID number.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2307,8 +2508,9 @@ unique.</p>
 <code class="descname">results_image_coloring</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.results_image_coloring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the results color image for the piece.</p>
 <dl class="docutils">
-<dt>Returns(List): Either a single BGR integer list when a solid color is used.  If it is using polygon print,</dt>
-<dd>then the return is a List[(List[int], PuzzlePieceSide)].</dd>
+<dt>Returns(List):</dt>
+<dd>Either a single BGR integer list when a solid color is used.  If it is using polygon print, then the
+return is a List[(List[int], PuzzlePieceSide)].</dd>
 </dl>
 </dd></dl>
 
@@ -2335,8 +2537,10 @@ unique.</p>
 <code class="descname">rotation</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rotation Accessor</p>
 <p>Gets the puzzle piece&#8217;s rotation.</p>
-<p>Returns (PuzzlePieceRotation):</p>
-<p>The puzzle piece&#8217;s rotation</p>
+<dl class="docutils">
+<dt>Returns (PuzzlePieceRotation):</dt>
+<dd>The puzzle piece&#8217;s rotation</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2373,14 +2577,20 @@ of some newly placed piece that is put adjacent to that neighbor piece.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (PuzzlePieceSide): Side of this piece that is touching the adjacent location</p>
+<dl class="docutils">
+<dt>Returns (PuzzlePieceSide):</dt>
+<dd>Side of this piece that is touching the adjacent location</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.width">
 <code class="descname">width</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePiece.width" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the size of the square puzzle piece.  Since it is square, width its width equals its length.</p>
-<p>Returns (int): Width of the puzzle piece in pixels.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Width of the puzzle piece in pixels.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2501,7 +2711,10 @@ is &#8220;left&#8221; then the function returns &#8220;right&#8221; and vice ver
 <dt id="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.side_name">
 <code class="descname">side_name</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide.side_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the name of a puzzle piece side without the class name</p>
-<p>Returns (str): name of the side as a string</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>The name of the side as a string</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">

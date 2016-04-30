@@ -33,7 +33,8 @@ class PickleHelper(object):
         Args:
             filename (str): Pickle Filename
 
-        Returns: The object serialized in the specified filename.
+        Returns:
+            The object serialized in the specified filename.
 
         """
 
@@ -171,7 +172,8 @@ class PuzzleResultsCollection(object):
         """
         Puzzle Results Accessor
 
-        Returns (PuzzleResultsInformation): Puzzle results information for a single puzzle.
+        Returns (PuzzleResultsInformation):
+            Puzzle results information for a single puzzle.
         """
         return self._puzzle_results
 
@@ -351,7 +353,8 @@ class PuzzleResultsInformation(object):
         """
         Gets the piece count for an implicit puzzle id
 
-        Returns (int): Number of pieces in original puzzle with this puzzle id
+        Returns (int):
+            Number of pieces in original puzzle with this puzzle id
 
         """
         return self._numb_pieces
@@ -520,7 +523,8 @@ class PuzzleResultsInformation(object):
         """
         Property for accessing an image's filename.
 
-        Returns (str): Original filename of the input image
+        Returns (str):
+            Original filename of the input image
 
         """
         return self._original_filename
@@ -559,7 +563,8 @@ class DirectAccuracyPuzzleResults(object):
         Args:
             piece_id (int): Identification number of the piece
 
-        Returns (PieceDirectAccuracyResult): Direct accuracy result for an individual piece
+        Returns (PieceDirectAccuracyResult):
+            Direct accuracy result for an individual piece
         """
         key = str(piece_id)
         if key in self._correct_placement:
@@ -582,7 +587,8 @@ class DirectAccuracyPuzzleResults(object):
         """
         Direct Accuracy Original Puzzle ID Number Accessor
 
-        Returns (int): The puzzle ID associated with the ORIGINAL set of puzzle results
+        Returns (int):
+            The puzzle ID associated with the ORIGINAL set of puzzle results
         """
         return self._orig_puzzle_id
 
@@ -591,7 +597,8 @@ class DirectAccuracyPuzzleResults(object):
         """
         Direct Accuracy Solved Puzzle ID Number Accessor
 
-        Returns (int): The puzzle ID associated with the SOLVED set of puzzle pieces
+        Returns (int):
+            The puzzle ID associated with the SOLVED set of puzzle pieces
         """
         return self._solved_puzzle_id
 
@@ -644,7 +651,8 @@ class DirectAccuracyPuzzleResults(object):
         """
         Calculates and returns the weighted accuracy score for this puzzle.
 
-        Returns (float): Weighted accuracy score for this puzzle solution
+        Returns (float):
+            Weighted accuracy score for this puzzle solution
 
         """
         return 1.0 * self.numb_correct_placements / (self.numb_pieces_in_original_puzzle
@@ -657,7 +665,8 @@ class DirectAccuracyPuzzleResults(object):
 
         Gets the number of pieces placed correctly.
 
-        Returns (int): Number of pieces correctly placed with the right puzzle ID, location, and rotation.
+        Returns (int):
+            Number of pieces correctly placed with the right puzzle ID, location, and rotation.
         """
         return len(self._correct_placement)
 
@@ -668,7 +677,8 @@ class DirectAccuracyPuzzleResults(object):
 
         Gets the number of pieces placed in the wrong LOCATION.
 
-        Returns (int): Number of pieces placed in the wrong location.
+        Returns (int):
+            Number of pieces placed in the wrong location.
         """
         return len(self._wrong_location)
 
@@ -679,7 +689,8 @@ class DirectAccuracyPuzzleResults(object):
 
         Gets the number of pieces placed with the wrong ROTATION.
 
-        Returns (int): Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)
+        Returns (int):
+            Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)
         """
         return len(self._wrong_rotation)
 
@@ -690,7 +701,8 @@ class DirectAccuracyPuzzleResults(object):
 
         Gets the number of pieces placed in entirely the wrong puzzle.
 
-        Returns (int): Number of pieces placed in the wrong puzzle
+        Returns (int):
+            Number of pieces placed in the wrong puzzle
         """
         return len(self._different_puzzle)
 
@@ -699,7 +711,8 @@ class DirectAccuracyPuzzleResults(object):
         """
         Total Number of Pieces in the solved image
 
-        Returns (int): Total number of pieces (both with expected puzzle id and wrong puzzle id(s))
+        Returns (int):
+            Total number of pieces (both with expected puzzle id and wrong puzzle id(s))
 
         """
         return self.numb_pieces_from_original_puzzle_in_solved_puzzle + self.numb_different_puzzle
@@ -709,7 +722,8 @@ class DirectAccuracyPuzzleResults(object):
         """
         Number of pieces from the original puzzle in the solved result
 
-        Returns (int): Only the number of included pieces
+        Returns (int):
+            Only the number of included pieces
 
         """
         return self.numb_correct_placements + self.numb_wrong_location + self.numb_wrong_rotation
@@ -777,7 +791,8 @@ class BestBuddyResultsCollection(object):
         """
         Property to get access to all the best buddy information.
 
-        Returns (List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.
+        Returns (List[BestBuddyAccuracy]):
+            The best buddy accuracy objects for all puzzles.
 
         """
         return self._best_buddy_accuracy
@@ -786,7 +801,8 @@ class BestBuddyResultsCollection(object):
         """
         Allows for the iteration over a set of best buddy objects.
 
-        Returns(List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.
+        Returns(List[BestBuddyAccuracy]):
+            The best buddy accuracy objects for all puzzles.
 
         """
         for i in xrange(0, len(self._best_buddy_accuracy)):
@@ -799,7 +815,8 @@ class BestBuddyResultsCollection(object):
         Args:
             key (int): Puzzle id
 
-        Returns(List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.
+        Returns(List[BestBuddyAccuracy]):
+            The best buddy accuracy objects for all puzzles.
 
         """
         return self._best_buddy_accuracy[key]
@@ -808,7 +825,8 @@ class BestBuddyResultsCollection(object):
         """
         Gets the total number of best buddies represented by this collection.
 
-        Returns (int): Total number of best buddies in the collection
+        Returns (int):
+            Total number of best buddies in the collection
 
         """
         bb_count = 0
@@ -922,7 +940,8 @@ class BestBuddyAccuracy(object):
             piece_id (int): Piece identification number
             side (PuzzlePieceSide): Possible neighbor side
 
-        Returns (bool): True if the key is in the dictionary and False otherwise.
+        Returns (bool):
+            True if the key is in the dictionary and False otherwise.
 
         """
         return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._open_best_buddies, piece_id, side)
@@ -935,7 +954,8 @@ class BestBuddyAccuracy(object):
             piece_id (int): Piece identification number
             side (PuzzlePieceSide): Possible neighbor side
 
-        Returns (bool): True if the key is in the dictionary and False otherwise.
+        Returns (bool):
+            True if the key is in the dictionary and False otherwise.
 
         """
         return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._wrong_best_buddies, piece_id, side)
@@ -957,7 +977,8 @@ class BestBuddyAccuracy(object):
             piece_id (int): Piece identification number
             side (PuzzlePieceSide): Possible neighbor side
 
-        Returns (bool): True if the key is in the dictionary and False otherwise.
+        Returns (bool):
+            True if the key is in the dictionary and False otherwise.
 
         """
         return BestBuddyAccuracy.check_if_piece_side_tuple_in_dict(self._correct_best_buddies, piece_id, side)
@@ -980,7 +1001,8 @@ class BestBuddyAccuracy(object):
             piece_id (int): Identification number of the piece
             side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest
 
-        Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result
+        Returns (PieceSideBestBuddyAccuracyResult):
+            Best buddy accuracy result
         """
         if self.exists_wrong_best_buddy(piece_id, side):
             return PieceSideBestBuddyAccuracyResult.wrong_best_buddy
@@ -1018,7 +1040,7 @@ class BestBuddyAccuracy(object):
             side (PuzzlePieceSide): Side of the piece where the BB is being referred.
 
         Returns (bool):
-        True if the pairing of piece_id and side exists in the BB dictionary.
+            True if the pairing of piece_id and side exists in the BB dictionary.
         """
         key = BestBuddyAccuracy.piece_side_tuple_key(piece_id, side)
         return key in bb_dict
@@ -1026,13 +1048,14 @@ class BestBuddyAccuracy(object):
     @staticmethod
     def piece_side_tuple_key(piece_id, side):
         """
+        Creates a unique dictionary key for storing the piece side tuple.
 
         Args:
             piece_id (int):
             side (PuzzlePieceSide):
 
-        Returns (string):
-
+        Returns (str):
+            Dictionary key in the form "<piece_id>_<side_int_value>"
         """
         return str(piece_id) + "_" + str(side.value)
 
@@ -1040,7 +1063,8 @@ class BestBuddyAccuracy(object):
     def numb_open_best_buddies(self):
         """
 
-        Returns (int): Total number of best buddies whose best buddies have not yet been placed.
+        Returns (int):
+            Total number of best buddies whose best buddies have not yet been placed.
 
         """
         return len(self._open_best_buddies)
@@ -1050,7 +1074,8 @@ class BestBuddyAccuracy(object):
         """
         Gets the number of correct best buddies who are next to their best buddy
 
-        Returns (int): Total number of correct best buddies
+        Returns (int):
+            Total number of correct best buddies
 
         """
         return len(self._correct_best_buddies)
@@ -1060,7 +1085,8 @@ class BestBuddyAccuracy(object):
         """
         Gets the number of correct best buddies who are NOT next to their best buddy
 
-        Returns (int): Total number of WRONG best buddies
+        Returns (int):
+            Total number of WRONG best buddies
 
         """
         return len(self._wrong_best_buddies)
@@ -1069,7 +1095,8 @@ class BestBuddyAccuracy(object):
         """
         Constructs the best buddy accuracy information as a string
 
-        Returns (string): Best Buddy accuracy as a string
+        Returns (string):
+            Best Buddy accuracy as a string
         """
         return "Best Buddy Info for Solved Puzzle #%s\n" % self.puzzle_id \
                + "\tNumb Open Best Buddies:\t\t%s\n" % self.numb_open_best_buddies \
@@ -1111,7 +1138,8 @@ class ModifiedNeighborAccuracy(object):
             piece_id (int): Identification number of the piece
             side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest
 
-        Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result
+        Returns (PieceSideBestBuddyAccuracyResult):
+            Best buddy accuracy result
         """
         if self.exists_wrong_puzzle_id(piece_id, side):
             return PieceSideNeighborAccuracyResult.different_puzzle_id
@@ -1153,7 +1181,8 @@ class ModifiedNeighborAccuracy(object):
         """
         Gets the number of pieces assigned to the wrong puzzle
 
-        Returns (int): Number pieces in the wrong puzzle
+        Returns (int):
+            Number pieces in the wrong puzzle
 
         """
         return len(self._wrong_puzzle_id)
@@ -1185,7 +1214,8 @@ class ModifiedNeighborAccuracy(object):
         """
         Gets the CORRECT neighbor count for this puzzle.
 
-        Returns (int): Number of CORRECT neighbors in the puzzle
+        Returns (int):
+            Number of CORRECT neighbors in the puzzle
 
         """
         return len(self._correct_neighbors)
@@ -1217,7 +1247,8 @@ class ModifiedNeighborAccuracy(object):
         """
         Gets the wrong neighbor count for this puzzle.
 
-        Returns (int): Number of wrong neighbors in the puzzle
+        Returns (int):
+            Number of wrong neighbors in the puzzle
 
         """
         return len(self._wrong_neighbors)
@@ -1229,8 +1260,8 @@ class ModifiedNeighborAccuracy(object):
 
         This method is used to access puzzle identification number information of the original/input puzzle.
 
-        Returns (int): Original puzzle identification number associated with this set of modified neighbor
-        accuracy information.
+        Returns (int):
+            Original puzzle identification number associated with this set of modified neighbor accuracy information.
         """
         return self._original_puzzle_id
 
@@ -1242,8 +1273,8 @@ class ModifiedNeighborAccuracy(object):
         This method is used to access puzzle identification number information of the puzzle that was output
         by the solved.
 
-        Returns (int): Solved puzzle identification number associated with this set of modified neighbor
-        accuracy information.
+        Returns (int):
+            Solved puzzle identification number associated with this set of modified neighbor accuracy information.
         """
         return self._solved_puzzle_id
 
@@ -1254,7 +1285,8 @@ class ModifiedNeighborAccuracy(object):
 
         This function returns the number of puzzle pieces in the solved image.
 
-        Returns (int): Number of pieces in the solved
+        Returns (int):
+            Number of pieces in the solved
         """
         return self.numb_pieces_from_original_puzzle_in_solved_puzzle + self.wrong_puzzle_id
 
@@ -1263,7 +1295,8 @@ class ModifiedNeighborAccuracy(object):
         """
         Property to extract the number of pieces in the original (input) puzzle.
 
-        Returns (int): Piece count in the original, input puzzle
+        Returns (int):
+            Piece count in the original, input puzzle
 
         """
         return self._actual_number_of_pieces
@@ -1273,7 +1306,8 @@ class ModifiedNeighborAccuracy(object):
         """
         Number of pieces from the original puzzle in the solved result
 
-        Returns (int): Only the number of included pieces
+        Returns (int):
+            Only the number of included pieces
 
         """
         return (self.correct_neighbor_count + self.wrong_neighbor_count) / PuzzlePieceSide.get_numb_sides()
@@ -1318,7 +1352,8 @@ class ModifiedNeighborAccuracy(object):
         """
         Calculates and returns the weighted neighbor accuracy
 
-        Returns (float): Weighted neighbor accuracy.
+        Returns (float):
+            Weighted neighbor accuracy.
         """
         accuracy = 1.0 * self.correct_neighbor_count / (self._actual_number_of_pieces + self.wrong_puzzle_id)
         accuracy /= PuzzlePieceSide.get_numb_sides()
@@ -1363,7 +1398,8 @@ class Puzzle(object):
             image_filename (Optional str): File path of the image to load
             piece_width (Optional int): Width of a puzzle piece in pixels
             starting_piece_id (int): Identification number for the first piece in the puzzle.  If not specified,
-            it default to 0.
+                it default to 0.
+
         Returns (Puzzle):
             Puzzle divided into pieces based off the source image and the specified parameters.
         """
@@ -1472,7 +1508,8 @@ class Puzzle(object):
         """
         Gets the number of pieces.  Note missing pieces are not counted in this statistic.
 
-        Returns (int): Number of pieces in the puzzle
+        Returns (int):
+            Number of pieces in the puzzle
 
         """
         return len(self._pieces)
@@ -1484,7 +1521,8 @@ class Puzzle(object):
 
         Gets the identification number for a puzzle.
 
-        Returns (int): Identification number for the puzzle
+        Returns (int):
+            Identification number for the puzzle
         """
         return self._id
 
@@ -1493,7 +1531,8 @@ class Puzzle(object):
         """
         Gets all of the pieces in this puzzle.
 
-        Returns ([PuzzlePiece]):
+        Returns (List[PuzzlePiece]):
+            A list of the pieces in the puzzle
         """
         return self._pieces
 
@@ -1502,7 +1541,8 @@ class Puzzle(object):
         """
         Gets the size of a puzzle piece.
 
-        Returns (int): Height/width of each piece in pixels.
+        Returns (int):
+            Height/width of each piece in number of pixels.
 
         """
         return self._piece_width
@@ -1517,7 +1557,8 @@ class Puzzle(object):
             id_numb (Optional int): Identification number for the puzzle
             display_image (Optional bool): Select whether to display the image at the end of reconstruction
 
-        Returns (Puzzle): Puzzle constructed from the pieces.
+        Returns (Puzzle):
+            Puzzle constructed from the pieces.
         """
 
         if len(pieces) == 0:
@@ -1561,7 +1602,8 @@ class Puzzle(object):
             use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
               image but what was stored based off the results.
 
-        Returns (Puzzle): Puzzle constructed from the pieces.
+        Returns (Puzzle):
+            Puzzle constructed from the pieces.
         """
         # noinspection PyTypeChecker
         self._img = PuzzlePiece.create_solid_image(SolidColor.black, self._img_width, self._img_height)
@@ -1589,7 +1631,8 @@ class Puzzle(object):
             expected_puzzle_id (int): Expected puzzle identification number
             numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle
 
-        Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement
+        Returns (DirectAccuracyPuzzleResults):
+            Information regarding the direct accuracy of the placement
 
         """
         return self.determine_modified_direct_accuracy(expected_puzzle_id, (0, 0), numb_pieces_in_original_puzzle)
@@ -1607,7 +1650,8 @@ class Puzzle(object):
             "Modified Direct Method", this can be a tuple in the format (row, column).
             numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle
 
-        Returns (DirectAccuracyPuzzleResults): Information regarding the modified direct accuracy of the placement
+        Returns (DirectAccuracyPuzzleResults):
+            Information regarding the modified direct accuracy of the placement
 
         """
         # Optionally perform the assertion checks
@@ -1691,7 +1735,7 @@ class Puzzle(object):
             upper left location, grid_size, puzzle width, puzzle height, etc.).
 
         Returns ([int]):
-        Tuple in the form: (min_row, max_row, min_column, max_column)
+            Tuple in the form: (min_row, max_row, min_column, max_column)
         """
         first_piece = self._pieces[0]
         min_row = max_row = first_piece.location[0]
@@ -1758,7 +1802,8 @@ class Puzzle(object):
 
         Used to get the maximum dimensions of the puzzle in number of rows by number of columns.
 
-        Returns ([int)): Grid size of the puzzle as a tuple in the form (number_rows, number_columns)
+        Returns ([int)):
+            Grid size of the puzzle as a tuple in the form (number_rows, number_columns)
 
         """
         return self._grid_size
@@ -1778,7 +1823,7 @@ class Puzzle(object):
             color (ImageColor): Solid color of the image.
 
         Returns:
-        NumPy array representing a BGR image of the specified solid color
+            NumPy array representing a BGR image of the specified solid color
         """
         dimensions = (size[0], size[1], Puzzle.NUMBER_BGR_DIMENSIONS)
         return numpy.zeros(dimensions, numpy.uint8)
@@ -1793,8 +1838,8 @@ class Puzzle(object):
             upper_left ([int]): upper left location of the image to extract
             size ([int]): Size of the of the sub
 
-        Returns:
-        Sub image as a numpy array
+        Returns (Numpy[int]):
+            Sub image as a numpy array
         """
 
         # Calculate the lower right of the image
@@ -1853,7 +1898,8 @@ class Puzzle(object):
         Args:
             filename (str): Filename of an object
 
-        Returns (str): File extension
+        Returns (str):
+            File extension of the specified filename (without the period)
         """
         import os
         ext = str(os.path.basename(filename)).split('.', 1)[1]
@@ -1867,7 +1913,8 @@ class Puzzle(object):
         Args:
             filename_and_path (str): Filename of an object
 
-        Returns (str): File extension
+        Returns (str):
+            Filename of the object with the path and file extension removed.
         """
         return os.path.splitext(os.path.basename(filename_and_path))[0]
 
@@ -1885,7 +1932,8 @@ class Puzzle(object):
             orig_img_filename (Optional str): Path to the original file name
             puzzle_id (Optional int): Identification number of the puzzle.
 
-        Returns (str): Filename with extension and path.
+        Returns (str):
+            Image file name constructed from the specified parameters.
         """
 
         # Store the reconstructed image
@@ -1922,8 +1970,8 @@ class Puzzle(object):
             upper_left ([int]): upper left location of the the master image where the sub image will be inserted
             subimage ([int]): Sub-image to be inserted into the master image.
 
-        Returns:
-        Sub image as a numpy array
+        Returns (Numpy[int]):
+            Sub image as a numpy array
         """
 
         # Verify the upper left input value is valid.
@@ -2001,7 +2049,8 @@ class Puzzle(object):
          location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the
          Puzzle class's static property "MISSING_PIECE_PUZZLE_INFO_VALUE"
 
-        Returns (Tuple[Numpy[int]]): Location of each puzzle piece in the grid
+        Returns (Tuple[Numpy[int]]):
+            Location of each puzzle piece in the grid
         """
 
         # Check whether the upper location is (0, 0)
@@ -2030,7 +2079,8 @@ class Puzzle(object):
             primary_piece_location (PuzzleLocation): Location of the primary piece
             other_piece_location (PuzzleLocation): Location of the other piece
 
-        Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.
+        Returns (PuzzlePieceSide):
+            Side of the primary piece adjacent to the other piece.
         """
 
         diff_row = primary_piece_location.location[0] - other_piece_location.location[0]
@@ -2096,7 +2146,8 @@ class PuzzleTester(object):
             and all subsequent pixel values are monotonically DECREASING.  If "False", the LOWEST valued pixel dimension
             is returned in the first index of the list and all subsequent pixel values are monotonically increasing.
 
-        Returns ([int]): An array of individual values simulating a set of pixels
+        Returns ([int]):
+            An array of individual values simulating a set of pixels
         """
 
         # Determine the pixel to pixel step size
@@ -2128,7 +2179,8 @@ class PuzzleTester(object):
 
         It is essentially the number of dimensions multiplied by the width of the original image (in pixels).
 
-        Returns (int): Offset in dimensions.
+        Returns (int):
+            Offset in dimensions.
         """
         step_size = PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.PIECE_WIDTH * math.sqrt(PuzzleTester.NUMB_PUZZLE_PIECES)
         return int(step_size)
@@ -2143,7 +2195,8 @@ class PuzzleTester(object):
 
         It is essentially the number of dimensions multiplied by the width of a puzzle piece (in pixels).
 
-        Returns (int): Offset in dimensions.
+        Returns (int):
+            Offset in dimensions.
         """
         return PuzzleTester.NUMB_PIXEL_DIMENSIONS * PuzzleTester.PIECE_WIDTH
 
@@ -2155,8 +2208,8 @@ class PuzzleTester(object):
         Using an image on the disk, this function builds a dummy puzzle using a Numpy array that is manually
         loaded with sequentially increasing pixel values.
 
-        Returns (Puzzle): A puzzle where each pixel dimension from left to right sequentially increases by
-        one.
+        Returns (Puzzle):
+            A puzzle where each pixel dimension from left to right sequentially increases by one.
         """
 
         # Create a puzzle whose image data will be overridden

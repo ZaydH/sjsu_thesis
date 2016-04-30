@@ -162,7 +162,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str): Pickle Filename</span>
 
-<span class="sd">        Returns: The object serialized in the specified filename.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The object serialized in the specified filename.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -300,7 +301,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Puzzle Results Accessor</span>
 
-<span class="sd">        Returns (PuzzleResultsInformation): Puzzle results information for a single puzzle.</span>
+<span class="sd">        Returns (PuzzleResultsInformation):</span>
+<span class="sd">            Puzzle results information for a single puzzle.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_results</span>
 
@@ -480,7 +482,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the piece count for an implicit puzzle id</span>
 
-<span class="sd">        Returns (int): Number of pieces in original puzzle with this puzzle id</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces in original puzzle with this puzzle id</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span>
@@ -649,7 +652,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property for accessing an image&#39;s filename.</span>
 
-<span class="sd">        Returns (str): Original filename of the input image</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            Original filename of the input image</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_filename</span></div>
@@ -688,7 +692,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            piece_id (int): Identification number of the piece</span>
 
-<span class="sd">        Returns (PieceDirectAccuracyResult): Direct accuracy result for an individual piece</span>
+<span class="sd">        Returns (PieceDirectAccuracyResult):</span>
+<span class="sd">            Direct accuracy result for an individual piece</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">piece_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correct_placement</span><span class="p">:</span>
@@ -711,7 +716,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Direct Accuracy Original Puzzle ID Number Accessor</span>
 
-<span class="sd">        Returns (int): The puzzle ID associated with the ORIGINAL set of puzzle results</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            The puzzle ID associated with the ORIGINAL set of puzzle results</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_puzzle_id</span>
 
@@ -720,7 +726,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Direct Accuracy Solved Puzzle ID Number Accessor</span>
 
-<span class="sd">        Returns (int): The puzzle ID associated with the SOLVED set of puzzle pieces</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            The puzzle ID associated with the SOLVED set of puzzle pieces</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solved_puzzle_id</span>
 
@@ -773,7 +780,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates and returns the weighted accuracy score for this puzzle.</span>
 
-<span class="sd">        Returns (float): Weighted accuracy score for this puzzle solution</span>
+<span class="sd">        Returns (float):</span>
+<span class="sd">            Weighted accuracy score for this puzzle solution</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_correct_placements</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numb_pieces_in_original_puzzle</span>
@@ -786,7 +794,8 @@
 
 <span class="sd">        Gets the number of pieces placed correctly.</span>
 
-<span class="sd">        Returns (int): Number of pieces correctly placed with the right puzzle ID, location, and rotation.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces correctly placed with the right puzzle ID, location, and rotation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_correct_placement</span><span class="p">)</span>
 
@@ -797,7 +806,8 @@
 
 <span class="sd">        Gets the number of pieces placed in the wrong LOCATION.</span>
 
-<span class="sd">        Returns (int): Number of pieces placed in the wrong location.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces placed in the wrong location.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrong_location</span><span class="p">)</span>
 
@@ -808,7 +818,8 @@
 
 <span class="sd">        Gets the number of pieces placed with the wrong ROTATION.</span>
 
-<span class="sd">        Returns (int): Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces placed with the incorrect rotation (i.e. not 0 degrees)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrong_rotation</span><span class="p">)</span>
 
@@ -819,7 +830,8 @@
 
 <span class="sd">        Gets the number of pieces placed in entirely the wrong puzzle.</span>
 
-<span class="sd">        Returns (int): Number of pieces placed in the wrong puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces placed in the wrong puzzle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_different_puzzle</span><span class="p">)</span>
 
@@ -828,7 +840,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Total Number of Pieces in the solved image</span>
 
-<span class="sd">        Returns (int): Total number of pieces (both with expected puzzle id and wrong puzzle id(s))</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Total number of pieces (both with expected puzzle id and wrong puzzle id(s))</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_pieces_from_original_puzzle_in_solved_puzzle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_different_puzzle</span>
@@ -838,7 +851,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of pieces from the original puzzle in the solved result</span>
 
-<span class="sd">        Returns (int): Only the number of included pieces</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Only the number of included pieces</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_correct_placements</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_wrong_location</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_wrong_rotation</span>
@@ -906,7 +920,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property to get access to all the best buddy information.</span>
 
-<span class="sd">        Returns (List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.</span>
+<span class="sd">        Returns (List[BestBuddyAccuracy]):</span>
+<span class="sd">            The best buddy accuracy objects for all puzzles.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span>
@@ -915,7 +930,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allows for the iteration over a set of best buddy objects.</span>
 
-<span class="sd">        Returns(List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.</span>
+<span class="sd">        Returns(List[BestBuddyAccuracy]):</span>
+<span class="sd">            The best buddy accuracy objects for all puzzles.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="p">)):</span>
@@ -928,7 +944,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            key (int): Puzzle id</span>
 
-<span class="sd">        Returns(List[BestBuddyAccuracy]): The best buddy accuracy objects for all puzzles.</span>
+<span class="sd">        Returns(List[BestBuddyAccuracy]):</span>
+<span class="sd">            The best buddy accuracy objects for all puzzles.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
@@ -937,7 +954,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the total number of best buddies represented by this collection.</span>
 
-<span class="sd">        Returns (int): Total number of best buddies in the collection</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Total number of best buddies in the collection</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bb_count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1051,7 +1069,8 @@
 <span class="sd">            piece_id (int): Piece identification number</span>
 <span class="sd">            side (PuzzlePieceSide): Possible neighbor side</span>
 
-<span class="sd">        Returns (bool): True if the key is in the dictionary and False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if the key is in the dictionary and False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">BestBuddyAccuracy</span><span class="o">.</span><span class="n">check_if_piece_side_tuple_in_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_best_buddies</span><span class="p">,</span> <span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span></div>
@@ -1064,7 +1083,8 @@
 <span class="sd">            piece_id (int): Piece identification number</span>
 <span class="sd">            side (PuzzlePieceSide): Possible neighbor side</span>
 
-<span class="sd">        Returns (bool): True if the key is in the dictionary and False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if the key is in the dictionary and False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">BestBuddyAccuracy</span><span class="o">.</span><span class="n">check_if_piece_side_tuple_in_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrong_best_buddies</span><span class="p">,</span> <span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span></div>
@@ -1086,7 +1106,8 @@
 <span class="sd">            piece_id (int): Piece identification number</span>
 <span class="sd">            side (PuzzlePieceSide): Possible neighbor side</span>
 
-<span class="sd">        Returns (bool): True if the key is in the dictionary and False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if the key is in the dictionary and False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">BestBuddyAccuracy</span><span class="o">.</span><span class="n">check_if_piece_side_tuple_in_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_correct_best_buddies</span><span class="p">,</span> <span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span></div>
@@ -1109,7 +1130,8 @@
 <span class="sd">            piece_id (int): Identification number of the piece</span>
 <span class="sd">            side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest</span>
 
-<span class="sd">        Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result</span>
+<span class="sd">        Returns (PieceSideBestBuddyAccuracyResult):</span>
+<span class="sd">            Best buddy accuracy result</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists_wrong_best_buddy</span><span class="p">(</span><span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">PieceSideBestBuddyAccuracyResult</span><span class="o">.</span><span class="n">wrong_best_buddy</span>
@@ -1147,7 +1169,7 @@
 <span class="sd">            side (PuzzlePieceSide): Side of the piece where the BB is being referred.</span>
 
 <span class="sd">        Returns (bool):</span>
-<span class="sd">        True if the pairing of piece_id and side exists in the BB dictionary.</span>
+<span class="sd">            True if the pairing of piece_id and side exists in the BB dictionary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">BestBuddyAccuracy</span><span class="o">.</span><span class="n">piece_side_tuple_key</span><span class="p">(</span><span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">bb_dict</span></div>
@@ -1155,13 +1177,14 @@
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="BestBuddyAccuracy.piece_side_tuple_key"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.piece_side_tuple_key">[docs]</a>    <span class="k">def</span> <span class="nf">piece_side_tuple_key</span><span class="p">(</span><span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a unique dictionary key for storing the piece side tuple.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            piece_id (int):</span>
 <span class="sd">            side (PuzzlePieceSide):</span>
 
-<span class="sd">        Returns (string):</span>
-
+<span class="sd">        Returns (str):</span>
+<span class="sd">            Dictionary key in the form &quot;&lt;piece_id&gt;_&lt;side_int_value&gt;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">piece_id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">side</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
 
@@ -1169,7 +1192,8 @@
     <span class="k">def</span> <span class="nf">numb_open_best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        Returns (int): Total number of best buddies whose best buddies have not yet been placed.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Total number of best buddies whose best buddies have not yet been placed.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_best_buddies</span><span class="p">)</span>
@@ -1179,7 +1203,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the number of correct best buddies who are next to their best buddy</span>
 
-<span class="sd">        Returns (int): Total number of correct best buddies</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Total number of correct best buddies</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_correct_best_buddies</span><span class="p">)</span>
@@ -1189,7 +1214,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the number of correct best buddies who are NOT next to their best buddy</span>
 
-<span class="sd">        Returns (int): Total number of WRONG best buddies</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Total number of WRONG best buddies</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrong_best_buddies</span><span class="p">)</span>
@@ -1198,7 +1224,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs the best buddy accuracy information as a string</span>
 
-<span class="sd">        Returns (string): Best Buddy accuracy as a string</span>
+<span class="sd">        Returns (string):</span>
+<span class="sd">            Best Buddy accuracy as a string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;Best Buddy Info for Solved Puzzle #</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">puzzle_id</span> \
                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Numb Open Best Buddies:</span><span class="se">\t\t</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_open_best_buddies</span> \
@@ -1240,7 +1267,8 @@
 <span class="sd">            piece_id (int): Identification number of the piece</span>
 <span class="sd">            side (PuzzlePieceSide): Side of the puzzle piece of puzzle piece of interest</span>
 
-<span class="sd">        Returns (PieceSideBestBuddyAccuracyResult): Best buddy accuracy result</span>
+<span class="sd">        Returns (PieceSideBestBuddyAccuracyResult):</span>
+<span class="sd">            Best buddy accuracy result</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists_wrong_puzzle_id</span><span class="p">(</span><span class="n">piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">PieceSideNeighborAccuracyResult</span><span class="o">.</span><span class="n">different_puzzle_id</span>
@@ -1282,7 +1310,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the number of pieces assigned to the wrong puzzle</span>
 
-<span class="sd">        Returns (int): Number pieces in the wrong puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number pieces in the wrong puzzle</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrong_puzzle_id</span><span class="p">)</span>
@@ -1314,7 +1343,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the CORRECT neighbor count for this puzzle.</span>
 
-<span class="sd">        Returns (int): Number of CORRECT neighbors in the puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of CORRECT neighbors in the puzzle</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_correct_neighbors</span><span class="p">)</span>
@@ -1346,7 +1376,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the wrong neighbor count for this puzzle.</span>
 
-<span class="sd">        Returns (int): Number of wrong neighbors in the puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of wrong neighbors in the puzzle</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrong_neighbors</span><span class="p">)</span>
@@ -1358,8 +1389,8 @@
 
 <span class="sd">        This method is used to access puzzle identification number information of the original/input puzzle.</span>
 
-<span class="sd">        Returns (int): Original puzzle identification number associated with this set of modified neighbor</span>
-<span class="sd">        accuracy information.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Original puzzle identification number associated with this set of modified neighbor accuracy information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_puzzle_id</span>
 
@@ -1371,8 +1402,8 @@
 <span class="sd">        This method is used to access puzzle identification number information of the puzzle that was output</span>
 <span class="sd">        by the solved.</span>
 
-<span class="sd">        Returns (int): Solved puzzle identification number associated with this set of modified neighbor</span>
-<span class="sd">        accuracy information.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Solved puzzle identification number associated with this set of modified neighbor accuracy information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solved_puzzle_id</span>
 
@@ -1383,7 +1414,8 @@
 
 <span class="sd">        This function returns the number of puzzle pieces in the solved image.</span>
 
-<span class="sd">        Returns (int): Number of pieces in the solved</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces in the solved</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_pieces_from_original_puzzle_in_solved_puzzle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrong_puzzle_id</span>
 
@@ -1392,7 +1424,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Property to extract the number of pieces in the original (input) puzzle.</span>
 
-<span class="sd">        Returns (int): Piece count in the original, input puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Piece count in the original, input puzzle</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_number_of_pieces</span>
@@ -1402,7 +1435,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Number of pieces from the original puzzle in the solved result</span>
 
-<span class="sd">        Returns (int): Only the number of included pieces</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Only the number of included pieces</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correct_neighbor_count</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrong_neighbor_count</span><span class="p">)</span> <span class="o">/</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
@@ -1447,7 +1481,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates and returns the weighted neighbor accuracy</span>
 
-<span class="sd">        Returns (float): Weighted neighbor accuracy.</span>
+<span class="sd">        Returns (float):</span>
+<span class="sd">            Weighted neighbor accuracy.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">correct_neighbor_count</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actual_number_of_pieces</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrong_puzzle_id</span><span class="p">)</span>
         <span class="n">accuracy</span> <span class="o">/=</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span>
@@ -1492,7 +1527,8 @@
 <span class="sd">            image_filename (Optional str): File path of the image to load</span>
 <span class="sd">            piece_width (Optional int): Width of a puzzle piece in pixels</span>
 <span class="sd">            starting_piece_id (int): Identification number for the first piece in the puzzle.  If not specified,</span>
-<span class="sd">            it default to 0.</span>
+<span class="sd">                it default to 0.</span>
+
 <span class="sd">        Returns (Puzzle):</span>
 <span class="sd">            Puzzle divided into pieces based off the source image and the specified parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1601,7 +1637,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the number of pieces.  Note missing pieces are not counted in this statistic.</span>
 
-<span class="sd">        Returns (int): Number of pieces in the puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces in the puzzle</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)</span>
@@ -1613,7 +1650,8 @@
 
 <span class="sd">        Gets the identification number for a puzzle.</span>
 
-<span class="sd">        Returns (int): Identification number for the puzzle</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Identification number for the puzzle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
@@ -1622,7 +1660,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets all of the pieces in this puzzle.</span>
 
-<span class="sd">        Returns ([PuzzlePiece]):</span>
+<span class="sd">        Returns (List[PuzzlePiece]):</span>
+<span class="sd">            A list of the pieces in the puzzle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span>
 
@@ -1631,7 +1670,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the size of a puzzle piece.</span>
 
-<span class="sd">        Returns (int): Height/width of each piece in pixels.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Height/width of each piece in number of pixels.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_width</span>
@@ -1646,7 +1686,8 @@
 <span class="sd">            id_numb (Optional int): Identification number for the puzzle</span>
 <span class="sd">            display_image (Optional bool): Select whether to display the image at the end of reconstruction</span>
 
-<span class="sd">        Returns (Puzzle): Puzzle constructed from the pieces.</span>
+<span class="sd">        Returns (Puzzle):</span>
+<span class="sd">            Puzzle constructed from the pieces.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1690,7 +1731,8 @@
 <span class="sd">            use_results_coloring (Optional bool): If set to true, each piece&#39;s image is not based off the original</span>
 <span class="sd">              image but what was stored based off the results.</span>
 
-<span class="sd">        Returns (Puzzle): Puzzle constructed from the pieces.</span>
+<span class="sd">        Returns (Puzzle):</span>
+<span class="sd">            Puzzle constructed from the pieces.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># noinspection PyTypeChecker</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_img</span> <span class="o">=</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">create_solid_image</span><span class="p">(</span><span class="n">SolidColor</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img_height</span><span class="p">)</span>
@@ -1718,7 +1760,8 @@
 <span class="sd">            expected_puzzle_id (int): Expected puzzle identification number</span>
 <span class="sd">            numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle</span>
 
-<span class="sd">        Returns (DirectAccuracyPuzzleResults): Information regarding the direct accuracy of the placement</span>
+<span class="sd">        Returns (DirectAccuracyPuzzleResults):</span>
+<span class="sd">            Information regarding the direct accuracy of the placement</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_modified_direct_accuracy</span><span class="p">(</span><span class="n">expected_puzzle_id</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">numb_pieces_in_original_puzzle</span><span class="p">)</span></div>
@@ -1736,7 +1779,8 @@
 <span class="sd">            &quot;Modified Direct Method&quot;, this can be a tuple in the format (row, column).</span>
 <span class="sd">            numb_pieces_in_original_puzzle (int): Number of pieces in the original puzzle</span>
 
-<span class="sd">        Returns (DirectAccuracyPuzzleResults): Information regarding the modified direct accuracy of the placement</span>
+<span class="sd">        Returns (DirectAccuracyPuzzleResults):</span>
+<span class="sd">            Information regarding the modified direct accuracy of the placement</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Optionally perform the assertion checks</span>
@@ -1820,7 +1864,7 @@
 <span class="sd">            upper left location, grid_size, puzzle width, puzzle height, etc.).</span>
 
 <span class="sd">        Returns ([int]):</span>
-<span class="sd">        Tuple in the form: (min_row, max_row, min_column, max_column)</span>
+<span class="sd">            Tuple in the form: (min_row, max_row, min_column, max_column)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">first_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">min_row</span> <span class="o">=</span> <span class="n">max_row</span> <span class="o">=</span> <span class="n">first_piece</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1887,7 +1931,8 @@
 
 <span class="sd">        Used to get the maximum dimensions of the puzzle in number of rows by number of columns.</span>
 
-<span class="sd">        Returns ([int)): Grid size of the puzzle as a tuple in the form (number_rows, number_columns)</span>
+<span class="sd">        Returns ([int)):</span>
+<span class="sd">            Grid size of the puzzle as a tuple in the form (number_rows, number_columns)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_size</span>
@@ -1907,7 +1952,7 @@
 <span class="sd">            color (ImageColor): Solid color of the image.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        NumPy array representing a BGR image of the specified solid color</span>
+<span class="sd">            NumPy array representing a BGR image of the specified solid color</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">NUMBER_BGR_DIMENSIONS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span></div>
@@ -1922,8 +1967,8 @@
 <span class="sd">            upper_left ([int]): upper left location of the image to extract</span>
 <span class="sd">            size ([int]): Size of the of the sub</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">        Sub image as a numpy array</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Sub image as a numpy array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Calculate the lower right of the image</span>
@@ -1982,7 +2027,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str): Filename of an object</span>
 
-<span class="sd">        Returns (str): File extension</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            File extension of the specified filename (without the period)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">os</span>
         <span class="n">ext</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -1996,7 +2042,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filename_and_path (str): Filename of an object</span>
 
-<span class="sd">        Returns (str): File extension</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            Filename of the object with the path and file extension removed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename_and_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span></div>
 
@@ -2014,7 +2061,8 @@
 <span class="sd">            orig_img_filename (Optional str): Path to the original file name</span>
 <span class="sd">            puzzle_id (Optional int): Identification number of the puzzle.</span>
 
-<span class="sd">        Returns (str): Filename with extension and path.</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            Image file name constructed from the specified parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Store the reconstructed image</span>
@@ -2051,8 +2099,8 @@
 <span class="sd">            upper_left ([int]): upper left location of the the master image where the sub image will be inserted</span>
 <span class="sd">            subimage ([int]): Sub-image to be inserted into the master image.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">        Sub image as a numpy array</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Sub image as a numpy array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify the upper left input value is valid.</span>
@@ -2130,7 +2178,8 @@
 <span class="sd">         location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the</span>
 <span class="sd">         Puzzle class&#39;s static property &quot;MISSING_PIECE_PUZZLE_INFO_VALUE&quot;</span>
 
-<span class="sd">        Returns (Tuple[Numpy[int]]): Location of each puzzle piece in the grid</span>
+<span class="sd">        Returns (Tuple[Numpy[int]]):</span>
+<span class="sd">            Location of each puzzle piece in the grid</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Check whether the upper location is (0, 0)</span>
@@ -2159,7 +2208,8 @@
 <span class="sd">            primary_piece_location (PuzzleLocation): Location of the primary piece</span>
 <span class="sd">            other_piece_location (PuzzleLocation): Location of the other piece</span>
 
-<span class="sd">        Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.</span>
+<span class="sd">        Returns (PuzzlePieceSide):</span>
+<span class="sd">            Side of the primary piece adjacent to the other piece.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">diff_row</span> <span class="o">=</span> <span class="n">primary_piece_location</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_piece_location</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -2225,7 +2275,8 @@
 <span class="sd">            and all subsequent pixel values are monotonically DECREASING.  If &quot;False&quot;, the LOWEST valued pixel dimension</span>
 <span class="sd">            is returned in the first index of the list and all subsequent pixel values are monotonically increasing.</span>
 
-<span class="sd">        Returns ([int]): An array of individual values simulating a set of pixels</span>
+<span class="sd">        Returns ([int]):</span>
+<span class="sd">            An array of individual values simulating a set of pixels</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Determine the pixel to pixel step size</span>
@@ -2257,7 +2308,8 @@
 
 <span class="sd">        It is essentially the number of dimensions multiplied by the width of the original image (in pixels).</span>
 
-<span class="sd">        Returns (int): Offset in dimensions.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Offset in dimensions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">step_size</span> <span class="o">=</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PUZZLE_PIECES</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">step_size</span><span class="p">)</span></div>
@@ -2272,7 +2324,8 @@
 
 <span class="sd">        It is essentially the number of dimensions multiplied by the width of a puzzle piece (in pixels).</span>
 
-<span class="sd">        Returns (int): Offset in dimensions.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Offset in dimensions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">NUMB_PIXEL_DIMENSIONS</span> <span class="o">*</span> <span class="n">PuzzleTester</span><span class="o">.</span><span class="n">PIECE_WIDTH</span></div>
 
@@ -2284,8 +2337,8 @@
 <span class="sd">        Using an image on the disk, this function builds a dummy puzzle using a Numpy array that is manually</span>
 <span class="sd">        loaded with sequentially increasing pixel values.</span>
 
-<span class="sd">        Returns (Puzzle): A puzzle where each pixel dimension from left to right sequentially increases by</span>
-<span class="sd">        one.</span>
+<span class="sd">        Returns (Puzzle):</span>
+<span class="sd">            A puzzle where each pixel dimension from left to right sequentially increases by one.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Create a puzzle whose image data will be overridden</span>

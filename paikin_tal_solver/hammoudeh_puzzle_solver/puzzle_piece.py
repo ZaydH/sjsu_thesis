@@ -84,7 +84,7 @@ class PuzzlePieceSide(Enum):
         Accessor for the number of sizes for a puzzle piece.
 
         Returns (int):
-        Since these are rectangular pieces, it returns size 4.  This is currently fixed.
+            Since these are rectangular pieces, it returns size 4.  This is currently fixed.
         """
         return 4
 
@@ -94,7 +94,7 @@ class PuzzlePieceSide(Enum):
         Static method to extract all the sides of a piece.
 
         Returns ([PuzzlePieceSide]):
-        List of all sides of a puzzle piece starting at the top and moving clockwise.
+            List of all sides of a puzzle piece starting at the top and moving clockwise.
         """
         return [PuzzlePieceSide.top, PuzzlePieceSide.right, PuzzlePieceSide.bottom, PuzzlePieceSide.left]
 
@@ -105,7 +105,7 @@ class PuzzlePieceSide(Enum):
         is "left" then the function returns "right" and vice versa.
 
         Returns (PuzzlePieceSide):
-        Complementary side of the piece.
+            Complementary side of the piece.
         """
         if self == PuzzlePieceSide.top:
             return PuzzlePieceSide.bottom
@@ -124,7 +124,8 @@ class PuzzlePieceSide(Enum):
         """
         Gets the name of a puzzle piece side without the class name
 
-        Returns (str): name of the side as a string
+        Returns (str):
+            The name of the side as a string
         """
         return str(self).split(".")[1]
 
@@ -294,7 +295,8 @@ class PuzzlePiece(object):
         Args:
             side (PuzzlePieceSide): Side of the puzzle piece whose average value will be returned.
 
-        Returns (float): Average pixel value for the puzzle piece border.
+        Returns (float):
+            The average pixel value for the puzzle piece border.
         """
         return self._border_average_color[side.value]
 
@@ -305,8 +307,8 @@ class PuzzlePiece(object):
 
         In a puzzle, each piece has up to four neighbors.  This function access that identification number information.
 
-        Returns (List[int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side
-        of the original object.
+        Returns (List[int, PuzzlePieceSide]):
+            Identification number for the puzzle piece on the specified side of the original object.
 
         """
         # Verify that the array containing the neighbor id numbers is not none
@@ -321,7 +323,8 @@ class PuzzlePiece(object):
         """
         Gets the size of the square puzzle piece.  Since it is square, width its width equals its length.
 
-        Returns (int): Width of the puzzle piece in pixels.
+        Returns (int):
+            Width of the puzzle piece in pixels.
 
         """
         return self._width
@@ -331,7 +334,8 @@ class PuzzlePiece(object):
         """
         Gets the location of the puzzle piece on the board.
 
-        Returns ([int]): Tuple of the (row, column)
+        Returns ([int]):
+            Tuple of the (row, column)
 
         """
         return self._assigned_loc
@@ -356,7 +360,8 @@ class PuzzlePiece(object):
 
         Gets the location of the puzzle piece on the board.
 
-        Returns (int): Assigned Puzzle ID number.
+        Returns (int):
+            Assigned Puzzle ID number.
 
         """
         return self._assigned_puzzle_id
@@ -368,7 +373,9 @@ class PuzzlePiece(object):
 
         Gets the actual (i.e. correct) puzzle identification number of the puzzle.
 
-        Returns (int): Actual (correct) puzzle identification number this piece originated from.
+        Returns (int):
+            Actual (correct) puzzle identification number this piece originated from.
+
         """
         return self._orig_puzzle_id
 
@@ -377,7 +384,8 @@ class PuzzlePiece(object):
         """
         Updates the puzzle ID number for the puzzle piece.
 
-        Returns (int): Board identification number
+        Returns (int):
+            Board identification number
 
         """
         self._assigned_puzzle_id = new_puzzle_id
@@ -389,8 +397,8 @@ class PuzzlePiece(object):
 
         Gets the original piece identification number
 
-        Returns (int): Original identification number assigned to the piece at its creation.  Should be globally
-        unique.
+        Returns (int):
+            Original identification number assigned to the piece at its creation.  Should be globally unique.
         """
         return self._orig_piece_id
 
@@ -401,7 +409,8 @@ class PuzzlePiece(object):
 
         Gets the identification number for a puzzle piece.
 
-        Returns (int): Puzzle piece identification number
+        Returns (int):
+            Puzzle piece identification number
         """
         # Check whether the assigned piece ID is not none
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
@@ -426,8 +435,8 @@ class PuzzlePiece(object):
         """
         Get's a puzzle piece's image in the LAB colorspace.
 
-        Returns:
-        Numpy array of the piece's lab image.
+        Returns (Numpy[int]):
+            Numpy array of the piece's lab image.
         """
         return self._img
 
@@ -439,8 +448,7 @@ class PuzzlePiece(object):
         Gets the puzzle piece's rotation.
 
         Returns (PuzzlePieceRotation):
-
-        The puzzle piece's rotation
+            The puzzle piece's rotation
         """
         return self._rotation
 
@@ -463,7 +471,8 @@ class PuzzlePiece(object):
         Args:
             location (Tuple[int]): A puzzle piece location adjacent to this piece.
 
-        Returns (PuzzlePieceSide): Side of this piece that is touching the adjacent location
+        Returns (PuzzlePieceSide):
+            Side of this piece that is touching the adjacent location
 
         """
         loc_and_side = self.get_neighbor_locations_and_sides()
@@ -480,8 +489,9 @@ class PuzzlePiece(object):
         """
         Gets the results color image for the piece.
 
-        Returns(List): Either a single BGR integer list when a solid color is used.  If it is using polygon print,
-          then the return is a List[(List[int], PuzzlePieceSide)].
+        Returns(List):
+            Either a single BGR integer list when a solid color is used.  If it is using polygon print, then the
+            return is a List[(List[int], PuzzlePieceSide)].
 
         """
         return self._results_image_coloring
@@ -520,8 +530,8 @@ class PuzzlePiece(object):
         Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
         puzzle piece that corresponds to those locations so that it can be added to the open slot list.
 
-        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle
-        piece side.
+        Returns ([([int], PuzzlePieceSide)]):
+            Valid puzzle piece locations and the respective puzzle piece side.
         """
 
         if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
@@ -543,8 +553,8 @@ class PuzzlePiece(object):
             piece_loc ([int]):
             piece_rotation (PuzzlePieceRotation):
 
-        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle
-        piece side.
+        Returns ([([int], PuzzlePieceSide)]):
+            Valid puzzle piece locations and the respective puzzle piece side.
         """
         # Get the top location and respective side
         top_loc = (piece_loc[0] - 1, piece_loc[1])
@@ -573,8 +583,8 @@ class PuzzlePiece(object):
         """
         Get's a puzzle piece's image in the BGR colorspace.
 
-        Returns:
-        Numpy array of the piece's BGR image.
+        Returns (Numpy[int]):
+            Numpy array of the piece's BGR image.
         """
         return cv2.cvtColor(self._img, cv2.COLOR_LAB2BGR)
 
@@ -586,8 +596,8 @@ class PuzzlePiece(object):
             row_numb (int): Pixel row in the image.  Must be between 0 and the width of the piece - 1 (inclusive).
             reverse (Optional bool): Select whether to reverse the pixel information.
 
-        Returns:
-
+        Returns (Numpy[int]):
+            A vector of 3-dimensional pixel values for a row in the image.
         """
         if row_numb < 0:
             raise ValueError("Row number for a piece must be greater than or equal to zero.")
@@ -607,8 +617,8 @@ class PuzzlePiece(object):
             col_numb (int): Pixel column in the image.  Must be between 0 and the width of the piece - 1 (inclusive).
             reverse (Optional bool): Select whether to reverse the pixel information.
 
-        Returns:
-
+        Returns (Numpy[int]):
+            A vector of 3-dimensional pixel values for a column in the image.
         """
         if col_numb < 0:
             raise ValueError("Column number for a piece must be greater than or equal to zero.")
@@ -648,7 +658,7 @@ class PuzzlePiece(object):
             piece_j_side (PuzzlePieceSide): Side of piece j that is adjacent to piece i.
 
         Returns (double):
-            Distance between
+            Distance between the sides of two puzzle pieces.
         """
 
         # Get the border information for p_i if not pre-calculated
@@ -755,8 +765,8 @@ class PuzzlePiece(object):
             neighbor_piece_side (PuzzlePieceSide): Side of the neighbor of the placed piece that is touching
             neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the neighbor piece
 
-        Returns (PuzzlePieceRotation): Rotation of the placed puzzle piece given the rotation and side
-        of the neighbor piece.
+        Returns (PuzzlePieceRotation):
+            Rotation of the placed puzzle piece given the rotation and side of the neighbor piece.
         """
         # Get the neighbor piece rotation
         unrotated_complement = neighbor_piece_side.complementary_side
@@ -786,7 +796,8 @@ class PuzzlePiece(object):
             piece_rotation (PuzzlePieceRotation): Specified rotation for a puzzle piece.
             rotated_side (PuzzlePieceSide): From a Puzzle perspective, this is the exposed side
 
-        Returns(PuzzlePieceSide): Actual side of the puzzle piece
+        Returns(PuzzlePieceSide):
+            Actual side of the puzzle piece
         """
         rotated_side_val = rotated_side.value
         # Get the number of 90 degree rotations
@@ -809,7 +820,7 @@ class PuzzlePiece(object):
 
         Returns (PuzzlePieceSide): Side of the newly placed piece where the placed piece is now location.
 
-        Notes: This does not take into account any rotation of the neighbor piece.  That is why this function is
+        ::Note:: This does not take into account any rotation of the neighbor piece.  That is why this function is
         referred has "rotated side" in its name.
         """
         # Calculate the row and column distances
@@ -843,7 +854,8 @@ class PuzzlePiece(object):
             height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
               is a square.
 
-        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)
+        Returns (Numpy[int]):
+            Image in the form of a NumPy matrix of size: (length by width by 3)
 
         """
         # Handle the case when no height is specified.
@@ -868,7 +880,8 @@ class PuzzlePiece(object):
         Args:
             image (Numpy[int]): Piece image with no border
 
-        Returns (Numpy[int]): Piece image with a border around the solid image.
+        Returns (Numpy[int]):
+            Piece image with a border around the solid image.
         """
         (height, width, _) = image.shape
         # noinspection PyUnresolvedReferences
@@ -888,7 +901,8 @@ class PuzzlePiece(object):
             height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
               is a square.
 
-        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)
+        Returns (Numpy[int]):
+            Image in the form of a NumPy matrix of size: (length by width by 3)
 
         """
         # Handle the case when no height is specified.
@@ -963,7 +977,8 @@ class PuzzlePiece(object):
         Args:
             puzzle_offset_upper_left_location (Tuple[int]): Modified location for the origin of the puzzle
 
-        Returns (bool): True if the puzzle piece is in the correct location and False otherwise.
+        Returns (bool):
+            True if the puzzle piece is in the correct location and False otherwise.
         """
 
         # Verify all dimensions

@@ -253,7 +253,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the name of a puzzle piece side without the class name</span>
 
-<span class="sd">        Returns (str): name of the side as a string</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            The name of the side as a string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
 
@@ -423,7 +424,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            side (PuzzlePieceSide): Side of the puzzle piece whose average value will be returned.</span>
 
-<span class="sd">        Returns (float): Average pixel value for the puzzle piece border.</span>
+<span class="sd">        Returns (float):</span>
+<span class="sd">            The average pixel value for the puzzle piece border.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_border_average_color</span><span class="p">[</span><span class="n">side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
 
@@ -434,8 +436,8 @@
 
 <span class="sd">        In a puzzle, each piece has up to four neighbors.  This function access that identification number information.</span>
 
-<span class="sd">        Returns (List[int, PuzzlePieceSide]): Identification number for the puzzle piece on the specified side</span>
-<span class="sd">        of the original object.</span>
+<span class="sd">        Returns (List[int, PuzzlePieceSide]):</span>
+<span class="sd">            Identification number for the puzzle piece on the specified side of the original object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Verify that the array containing the neighbor id numbers is not none</span>
@@ -450,7 +452,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the size of the square puzzle piece.  Since it is square, width its width equals its length.</span>
 
-<span class="sd">        Returns (int): Width of the puzzle piece in pixels.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Width of the puzzle piece in pixels.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
@@ -460,7 +463,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the location of the puzzle piece on the board.</span>
 
-<span class="sd">        Returns ([int]): Tuple of the (row, column)</span>
+<span class="sd">        Returns ([int]):</span>
+<span class="sd">            Tuple of the (row, column)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_loc</span>
@@ -485,7 +489,8 @@
 
 <span class="sd">        Gets the location of the puzzle piece on the board.</span>
 
-<span class="sd">        Returns (int): Assigned Puzzle ID number.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Assigned Puzzle ID number.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_puzzle_id</span>
@@ -497,7 +502,9 @@
 
 <span class="sd">        Gets the actual (i.e. correct) puzzle identification number of the puzzle.</span>
 
-<span class="sd">        Returns (int): Actual (correct) puzzle identification number this piece originated from.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Actual (correct) puzzle identification number this piece originated from.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_puzzle_id</span>
 
@@ -506,7 +513,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the puzzle ID number for the puzzle piece.</span>
 
-<span class="sd">        Returns (int): Board identification number</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Board identification number</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assigned_puzzle_id</span> <span class="o">=</span> <span class="n">new_puzzle_id</span>
@@ -518,8 +526,8 @@
 
 <span class="sd">        Gets the original piece identification number</span>
 
-<span class="sd">        Returns (int): Original identification number assigned to the piece at its creation.  Should be globally</span>
-<span class="sd">        unique.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Original identification number assigned to the piece at its creation.  Should be globally unique.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_piece_id</span>
 
@@ -530,7 +538,8 @@
 
 <span class="sd">        Gets the identification number for a puzzle piece.</span>
 
-<span class="sd">        Returns (int): Puzzle piece identification number</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Puzzle piece identification number</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check whether the assigned piece ID is not none</span>
         <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
@@ -555,8 +564,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get&#39;s a puzzle piece&#39;s image in the LAB colorspace.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">        Numpy array of the piece&#39;s lab image.</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Numpy array of the piece&#39;s lab image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_img</span>
 
@@ -568,8 +577,7 @@
 <span class="sd">        Gets the puzzle piece&#39;s rotation.</span>
 
 <span class="sd">        Returns (PuzzlePieceRotation):</span>
-
-<span class="sd">        The puzzle piece&#39;s rotation</span>
+<span class="sd">            The puzzle piece&#39;s rotation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rotation</span>
 
@@ -592,7 +600,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            location (Tuple[int]): A puzzle piece location adjacent to this piece.</span>
 
-<span class="sd">        Returns (PuzzlePieceSide): Side of this piece that is touching the adjacent location</span>
+<span class="sd">        Returns (PuzzlePieceSide):</span>
+<span class="sd">            Side of this piece that is touching the adjacent location</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loc_and_side</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_neighbor_locations_and_sides</span><span class="p">()</span>
@@ -609,8 +618,9 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the results color image for the piece.</span>
 
-<span class="sd">        Returns(List): Either a single BGR integer list when a solid color is used.  If it is using polygon print,</span>
-<span class="sd">          then the return is a List[(List[int], PuzzlePieceSide)].</span>
+<span class="sd">        Returns(List):</span>
+<span class="sd">            Either a single BGR integer list when a solid color is used.  If it is using polygon print, then the</span>
+<span class="sd">            return is a List[(List[int], PuzzlePieceSide)].</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_image_coloring</span>
@@ -649,8 +659,8 @@
 <span class="sd">        Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS</span>
 <span class="sd">        puzzle piece that corresponds to those locations so that it can be added to the open slot list.</span>
 
-<span class="sd">        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle</span>
-<span class="sd">        piece side.</span>
+<span class="sd">        Returns ([([int], PuzzlePieceSide)]):</span>
+<span class="sd">            Valid puzzle piece locations and the respective puzzle piece side.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECKS</span><span class="p">:</span>
@@ -672,8 +682,8 @@
 <span class="sd">            piece_loc ([int]):</span>
 <span class="sd">            piece_rotation (PuzzlePieceRotation):</span>
 
-<span class="sd">        Returns ([([int], PuzzlePieceSide)]): Valid puzzle piece locations and the respective puzzle</span>
-<span class="sd">        piece side.</span>
+<span class="sd">        Returns ([([int], PuzzlePieceSide)]):</span>
+<span class="sd">            Valid puzzle piece locations and the respective puzzle piece side.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the top location and respective side</span>
         <span class="n">top_loc</span> <span class="o">=</span> <span class="p">(</span><span class="n">piece_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">piece_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -702,8 +712,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get&#39;s a puzzle piece&#39;s image in the BGR colorspace.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">        Numpy array of the piece&#39;s BGR image.</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Numpy array of the piece&#39;s BGR image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_LAB2BGR</span><span class="p">)</span></div>
 
@@ -715,8 +725,8 @@
 <span class="sd">            row_numb (int): Pixel row in the image.  Must be between 0 and the width of the piece - 1 (inclusive).</span>
 <span class="sd">            reverse (Optional bool): Select whether to reverse the pixel information.</span>
 
-<span class="sd">        Returns:</span>
-
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            A vector of 3-dimensional pixel values for a row in the image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">row_numb</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Row number for a piece must be greater than or equal to zero.&quot;</span><span class="p">)</span>
@@ -736,8 +746,8 @@
 <span class="sd">            col_numb (int): Pixel column in the image.  Must be between 0 and the width of the piece - 1 (inclusive).</span>
 <span class="sd">            reverse (Optional bool): Select whether to reverse the pixel information.</span>
 
-<span class="sd">        Returns:</span>
-
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            A vector of 3-dimensional pixel values for a column in the image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">col_numb</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column number for a piece must be greater than or equal to zero.&quot;</span><span class="p">)</span>
@@ -777,7 +787,7 @@
 <span class="sd">            piece_j_side (PuzzlePieceSide): Side of piece j that is adjacent to piece i.</span>
 
 <span class="sd">        Returns (double):</span>
-<span class="sd">            Distance between</span>
+<span class="sd">            Distance between the sides of two puzzle pieces.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Get the border information for p_i if not pre-calculated</span>
@@ -884,8 +894,8 @@
 <span class="sd">            neighbor_piece_side (PuzzlePieceSide): Side of the neighbor of the placed piece that is touching</span>
 <span class="sd">            neighbor_piece_rotation (PuzzlePieceRotation): Rotation of the neighbor piece</span>
 
-<span class="sd">        Returns (PuzzlePieceRotation): Rotation of the placed puzzle piece given the rotation and side</span>
-<span class="sd">        of the neighbor piece.</span>
+<span class="sd">        Returns (PuzzlePieceRotation):</span>
+<span class="sd">            Rotation of the placed puzzle piece given the rotation and side of the neighbor piece.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the neighbor piece rotation</span>
         <span class="n">unrotated_complement</span> <span class="o">=</span> <span class="n">neighbor_piece_side</span><span class="o">.</span><span class="n">complementary_side</span>
@@ -915,7 +925,8 @@
 <span class="sd">            piece_rotation (PuzzlePieceRotation): Specified rotation for a puzzle piece.</span>
 <span class="sd">            rotated_side (PuzzlePieceSide): From a Puzzle perspective, this is the exposed side</span>
 
-<span class="sd">        Returns(PuzzlePieceSide): Actual side of the puzzle piece</span>
+<span class="sd">        Returns(PuzzlePieceSide):</span>
+<span class="sd">            Actual side of the puzzle piece</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rotated_side_val</span> <span class="o">=</span> <span class="n">rotated_side</span><span class="o">.</span><span class="n">value</span>
         <span class="c1"># Get the number of 90 degree rotations</span>
@@ -938,7 +949,7 @@
 
 <span class="sd">        Returns (PuzzlePieceSide): Side of the newly placed piece where the placed piece is now location.</span>
 
-<span class="sd">        Notes: This does not take into account any rotation of the neighbor piece.  That is why this function is</span>
+<span class="sd">        ::Note:: This does not take into account any rotation of the neighbor piece.  That is why this function is</span>
 <span class="sd">        referred has &quot;rotated side&quot; in its name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Calculate the row and column distances</span>
@@ -972,7 +983,8 @@
 <span class="sd">            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image</span>
 <span class="sd">              is a square.</span>
 
-<span class="sd">        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Image in the form of a NumPy matrix of size: (length by width by 3)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Handle the case when no height is specified.</span>
@@ -997,7 +1009,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            image (Numpy[int]): Piece image with no border</span>
 
-<span class="sd">        Returns (Numpy[int]): Piece image with a border around the solid image.</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Piece image with a border around the solid image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
         <span class="c1"># noinspection PyUnresolvedReferences</span>
@@ -1017,7 +1030,8 @@
 <span class="sd">            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image</span>
 <span class="sd">              is a square.</span>
 
-<span class="sd">        Returns (Numpy[int]): Image in the form of a NumPy matrix of size: (length by width by 3)</span>
+<span class="sd">        Returns (Numpy[int]):</span>
+<span class="sd">            Image in the form of a NumPy matrix of size: (length by width by 3)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Handle the case when no height is specified.</span>
@@ -1092,7 +1106,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            puzzle_offset_upper_left_location (Tuple[int]): Modified location for the origin of the puzzle</span>
 
-<span class="sd">        Returns (bool): True if the puzzle piece is in the correct location and False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if the puzzle piece is in the correct location and False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Verify all dimensions</span>

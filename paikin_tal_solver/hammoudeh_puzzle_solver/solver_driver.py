@@ -22,7 +22,7 @@ DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
 PERFORM_PLACEMENT = True
-RECALCULATE_DISTANCES = True
+RECALCULATE_DISTANCES = False
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
@@ -142,7 +142,8 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
          this serves as the filename to import calculated distances from.
         pickle_placement_complete_filename (String): Filename to e
 
-    Returns (PaikinTalSolver): Solved Paikin & Tal result.
+    Returns (PaikinTalSolver):
+        Solved Paikin & Tal result.
 
     """
 
@@ -223,14 +224,18 @@ def print_elapsed_time(elapsed_time, task_name):
 
 
 if __name__ == "__main__":
+    # PaikinTalSolver.use_best_buddy_placer = False
     # images = [".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
+    #
+    # PaikinTalSolver.use_best_buddy_placer = True
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\duck.bmp"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # images = [".\\images\\cat_sleeping_boy.jpg"]
+    images = [".\\images\\cat_sleeping_boy.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 28)
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     # images = [".\\images\\two_faced_cat.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 25)
@@ -263,11 +268,11 @@ if __name__ == "__main__":
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
-    InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
-    InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
+    # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
+    # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
