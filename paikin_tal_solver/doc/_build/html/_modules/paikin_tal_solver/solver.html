@@ -248,7 +248,7 @@
     <span class="n">_MINIMUM_CLEAN_HEAP_FREQUENCY</span> <span class="o">=</span> <span class="mi">100</span>
 
     <span class="c1"># Select whether to use the best_buddy_placer</span>
-    <span class="n">_USE_BEST_BUDDY_PLACER</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">use_best_buddy_placer</span> <span class="o">=</span> <span class="bp">False</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numb_puzzles</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">new_board_mutual_compatibility</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fixed_puzzle_dimensions</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -468,7 +468,7 @@
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Remove the open slot from the best buddy placer</span>
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_USE_BEST_BUDDY_PLACER</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">use_best_buddy_placer</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_placer</span><span class="o">.</span><span class="n">remove_open_slot</span><span class="p">(</span><span class="n">slot_to_remove</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_remove_best_buddy_from_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_id</span><span class="p">):</span>
@@ -511,12 +511,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_clean_best_buddy_heap</span><span class="p">()</span>
 
             <span class="c1"># Use Best Buddy Placer By Default</span>
-            <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_USE_BEST_BUDDY_PLACER</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">use_best_buddy_placer</span><span class="p">:</span>
 
                 <span class="n">next_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_select_piece_using_best_buddies</span><span class="p">()</span>
 
             <span class="c1"># Use Standard Paikin Tal Placer Always or if no best buddy found</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_USE_BEST_BUDDY_PLACER</span> <span class="ow">or</span> <span class="n">next_piece</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">use_best_buddy_placer</span> <span class="ow">or</span> <span class="n">next_piece</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="c1"># Keep popping from the heap until a valid next piece is found.</span>
                 <span class="k">while</span> <span class="n">next_piece</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="c1"># Get the best next piece from the heap.</span>

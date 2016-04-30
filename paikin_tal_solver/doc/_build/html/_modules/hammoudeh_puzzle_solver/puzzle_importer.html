@@ -1597,6 +1597,16 @@
                 <span class="n">piece_id</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">numb_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of pieces.  Note missing pieces are not counted in this statistic.</span>
+
+<span class="sd">        Returns (int): Number of pieces in the puzzle</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">id_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Puzzle Identification Number</span>

@@ -127,9 +127,17 @@
            <div itemprop="articleBody">
             
   <h1>Source code for hammoudeh_puzzle_solver.best_buddy_image_analyzer</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Best Buddy Analyzer for Normal Images</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_importer</span> <span class="kn">import</span> <span class="n">Puzzle</span><span class="p">,</span> <span class="n">PuzzleType</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_importer</span> <span class="kn">import</span> <span class="n">Puzzle</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="p">,</span> <span class="n">PickleHelper</span><span class="p">,</span> <span class="n">PieceSideBestBuddyAccuracyResult</span>
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePiece</span><span class="p">,</span> <span class="n">PuzzlePieceRotation</span>
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePieceSide</span>
 <span class="kn">from</span> <span class="nn">paikin_tal_solver.inter_piece_distance</span> <span class="kn">import</span> <span class="n">InterPieceDistance</span>
@@ -139,6 +147,9 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class used to get the best buddy accuracy statistics for any image.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Location to export pickle files to.</span>
+    <span class="n">PICKLE_DIRECTORY</span> <span class="o">=</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">pickle_files</span><span class="se">\\</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_filepath</span><span class="p">,</span> <span class="n">piece_width</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">):</span>
 
@@ -156,15 +167,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># Build a puzzle</span>
-        <span class="n">temp_puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image_filepath</span><span class="p">,</span> <span class="n">piece_width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image_filepath</span><span class="p">,</span> <span class="n">piece_width</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">numb_pieces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">numb_pieces</span>
 
         <span class="c1"># Get the piece IDs</span>
-        <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">assign_all_piece_id_numbers_to_original_id</span><span class="p">()</span>
-        <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">assign_all_pieces_to_original_location</span><span class="p">()</span>
-        <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">assign_all_pieces_to_same_rotation</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">assign_all_piece_id_numbers_to_original_id</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">assign_all_pieces_to_original_location</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">assign_all_pieces_to_same_rotation</span><span class="p">(</span><span class="n">PuzzlePieceRotation</span><span class="o">.</span><span class="n">degree_0</span><span class="p">)</span>
 
         <span class="c1"># Calculate the inter-piece distance</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="p">(</span><span class="n">temp_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">)</span>
 
         <span class="c1"># Get the link between number of test buddies and accuracy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_numb_best_buddies_versus_accuracy</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
@@ -172,10 +185,23 @@
                                                                <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
                                                               <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
         <span class="c1"># Store the location of each piece</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">temp_puzzle</span><span class="o">.</span><span class="n">build_placed_piece_info</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">build_placed_piece_info</span><span class="p">()</span>
 
-        <span class="c1"># Clear the inter-piece distance in case this will be pickled.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span> <span class="o">=</span> <span class="bp">None</span>
+<div class="viewcode-block" id="ImageBestBuddyStatistics.calculate_results"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.calculate_results">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the best buddy accuracy results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Calculate the best buddy information for each piece.</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">pieces</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">analyze_piece_best_buddy_info</span><span class="p">(</span><span class="n">piece</span><span class="p">)</span>
+
+        <span class="c1"># Output the best buddy accuracy image.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_results_image</span><span class="p">()</span>
+
+        <span class="c1"># Clear up the memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span> <span class="o">=</span> <span class="bp">None</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filename_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -189,7 +215,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">file_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the file extension (e.g.</span>
+<span class="sd">        Returns the file extension (e.g. &quot;jpg&quot;, &quot;bmp&quot;, &quot;png&quot;, etc.)</span>
 
 <span class="sd">        Returns (str): File extension of the original image</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -205,50 +231,65 @@
 
         <span class="c1"># Get the neighbor location and sides</span>
         <span class="n">neighbor_loc_and_sides</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_neighbor_locations_and_sides</span><span class="p">()</span>
-        <span class="n">original_neighbor_id_and_side</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span><span class="p">()</span>
+        <span class="n">original_neighbor_id_and_side</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">original_neighbor_id_numbers_and_sides</span>
 
         <span class="c1"># Initialize the counters for the piece on the total number of best best buddies and how many are wrong</span>
         <span class="n">numb_piece_bb</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">numb_wrong_interior_bb</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">numb_wrong_exterior_bb</span> <span class="o">=</span> <span class="mi">0</span>
 
+        <span class="c1"># Reset the image coloring</span>
+        <span class="n">piece</span><span class="o">.</span><span class="n">reset_image_coloring_for_polygons</span><span class="p">()</span>
+
         <span class="c1"># Iterate through all sides</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">neighbor_loc_and_sides</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()):</span>
 
             <span class="c1"># Get the neighbor location</span>
             <span class="p">(</span><span class="n">neighbor_loc</span><span class="p">,</span> <span class="n">piece_side</span><span class="p">)</span> <span class="o">=</span> <span class="n">neighbor_loc_and_sides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="p">(</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">neighbor_side</span><span class="p">)</span> <span class="o">=</span> <span class="n">original_neighbor_id_and_side</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">neighbor_id_and_side</span> <span class="o">=</span> <span class="n">original_neighbor_id_and_side</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
             <span class="c1"># Assert neighbor and piece side are complementary</span>
-            <span class="k">assert</span> <span class="n">piece_side</span><span class="o">.</span><span class="n">complementary_side</span> <span class="o">==</span> <span class="n">neighbor_side</span>
+            <span class="k">if</span> <span class="n">neighbor_id_and_side</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">neighbor_side</span><span class="p">)</span> <span class="o">=</span> <span class="n">neighbor_id_and_side</span>
+                <span class="k">assert</span> <span class="n">piece_side</span> <span class="o">==</span> <span class="n">neighbor_side</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">neighbor_id</span> <span class="o">=</span> <span class="o">-</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span>
 
             <span class="c1"># Get the best buddy information for the piece.</span>
             <span class="n">bb_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpiece_distance</span><span class="o">.</span><span class="n">best_buddies</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">id_number</span><span class="p">,</span> <span class="n">piece_side</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">bb_info</span><span class="p">:</span>
+                <span class="n">piece</span><span class="o">.</span><span class="n">results_image_polygon_coloring</span><span class="p">(</span><span class="n">piece_side</span><span class="p">,</span> <span class="n">PieceSideBestBuddyAccuracyResult</span><span class="o">.</span><span class="n">no_best_buddy</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="c1"># Increment the best buddy count</span>
             <span class="n">numb_piece_bb</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="c1"># Check if there is a neighbor</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">neighbor_loc</span><span class="p">]</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">MISSING_PIECE_PUZZLE_INFO_VALUE</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">neighbor_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">neighbor_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">grid_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="ow">or</span> <span class="n">neighbor_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">neighbor_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">grid_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">neighbor_loc</span><span class="p">]</span> <span class="o">==</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">MISSING_PIECE_PUZZLE_INFO_VALUE</span><span class="p">):</span>
                 <span class="c1"># If the neighboring cell is empty and it has a best buddy, it is wrong</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_exterior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">numb_wrong_exterior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">piece</span><span class="o">.</span><span class="n">results_image_polygon_coloring</span><span class="p">(</span><span class="n">piece_side</span><span class="p">,</span> <span class="n">PieceSideBestBuddyAccuracyResult</span><span class="o">.</span><span class="n">wrong_best_buddy</span><span class="p">)</span>
 
             <span class="c1"># Piece has a neighbor</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Increment interior best buddy count</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_total_numb_interior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">neighbor_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">neighbor_loc</span><span class="p">]:</span>
+                <span class="c1"># TODO currently only supports single best buddy</span>
+                <span class="n">bb_info</span> <span class="o">=</span> <span class="n">bb_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">neighbor_id</span> <span class="o">!=</span> <span class="n">bb_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">piece_side</span><span class="o">.</span><span class="n">complementary_side</span> <span class="o">!=</span> <span class="n">bb_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
                     <span class="n">numb_wrong_interior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">piece</span><span class="o">.</span><span class="n">results_image_polygon_coloring</span><span class="p">(</span><span class="n">piece_side</span><span class="p">,</span> <span class="n">PieceSideBestBuddyAccuracyResult</span><span class="o">.</span><span class="n">wrong_best_buddy</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">piece</span><span class="o">.</span><span class="n">results_image_polygon_coloring</span><span class="p">(</span><span class="n">piece_side</span><span class="p">,</span> <span class="n">PieceSideBestBuddyAccuracyResult</span><span class="o">.</span><span class="n">correct_best_buddy</span><span class="p">)</span>
         <span class="c1"># Update the master data structure showing the best buddy distribution</span>
         <span class="n">numpy_index</span> <span class="o">=</span> <span class="n">ImageBestBuddyStatistics</span><span class="o">.</span><span class="n">best_buddies_versus_accuracy_tuple</span><span class="p">(</span><span class="n">numb_piece_bb</span><span class="p">,</span>
                                                                                   <span class="n">numb_wrong_interior_bb</span><span class="p">,</span>
                                                                                   <span class="n">numb_wrong_exterior_bb</span><span class="p">)</span>
         <span class="c1"># Increment the statistics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_numb_best_buddies_versus_accuracy</span><span class="p">[</span><span class="n">numpy_index</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
-
 
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.best_buddies_versus_accuracy_tuple">[docs]</a>    <span class="k">def</span> <span class="nf">best_buddies_versus_accuracy_tuple</span><span class="p">(</span><span class="n">numb_bb</span><span class="p">,</span> <span class="n">numb_wrong_interior_bb</span><span class="p">,</span> <span class="n">numb_wrong_exterior_bb</span><span class="p">):</span>
@@ -264,27 +305,104 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">numb_bb</span> <span class="o">&gt;=</span> <span class="n">numb_wrong_interior_bb</span> <span class="o">+</span> <span class="n">numb_wrong_exterior_bb</span>
-        <span class="k">return</span> <span class="n">numb_bb</span><span class="p">,</span> <span class="n">numb_wrong_interior_bb</span><span class="p">,</span> <span class="n">numb_wrong_exterior_bb</span></div></div>
+        <span class="k">return</span> <span class="n">numb_bb</span><span class="p">,</span> <span class="n">numb_wrong_interior_bb</span><span class="p">,</span> <span class="n">numb_wrong_exterior_bb</span></div>
+
+<div class="viewcode-block" id="ImageBestBuddyStatistics.print_results"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.print_results">[docs]</a>    <span class="k">def</span> <span class="nf">print_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the best buddy results to the console.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s2">&quot;Best Buddy Results for Image:</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_root</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">File Extension:</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_extension</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Number of Pieces:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">numb_pieces</span>
+
+        <span class="c1"># Total number of best buddies</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total Number of Best Buddies:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_best_buddies</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Total Best Buddy Accuracy:</span><span class="se">\t\t</span><span class="si">%1.2f%%</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_accuracy</span><span class="p">)</span>
+
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Best Buddy Density:</span><span class="se">\t\t\t\t</span><span class="si">%1.2f%%</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">density</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Interior Best Buddy Accuracy:</span><span class="se">\t</span><span class="si">%1.2f%%</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">interior_accuracy</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Number of Wrong Interior Best Buddies:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span>
+        <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Number of Wrong Exterior Best Buddies:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_exterior_bb</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the best buddy density for the original image.  It is defined as the total number of best</span>
+<span class="sd">        buddies divided by the total number of possible best buddies (i.e. number of pieces multipled by the number</span>
+<span class="sd">        of sides per piece).</span>
+
+<span class="sd">        Returns (float): Best buddy density</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_best_buddies</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numb_pieces</span> <span class="o">*</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_number_of_best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the total of best buddies (both interior/exterior and right/wrong).</span>
+
+<span class="sd">        Returns (int): Best buddy count</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_exterior_bb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_numb_interior_bb</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the best buddy accuracy across the entire image  It is defined as:</span>
+
+<span class="sd">        :math:`accuracy = 1 - (numb_wrong_interior_bb + numb_wrong_exterior_bb)/(total_numb_best_buddy)`</span>
+
+<span class="sd">        Returns (float): Best buddy accuracy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_exterior_bb</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_best_buddies</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">interior_accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the best buddy accuracy considering only interior best buddies.  It is defined as:</span>
+
+<span class="sd">        :math:`interior_accuracy = 1 - (numb_wrong_interior_bb)/(total_numb_interior_best_buddy)`</span>
+
+<span class="sd">        Returns (float): Best buddy accuracy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_wrong_interior_bb</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_numb_interior_bb</span>
+
+<div class="viewcode-block" id="ImageBestBuddyStatistics.output_results_image"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.output_results_image">[docs]</a>    <span class="k">def</span> <span class="nf">output_results_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an image showing the best buddy accuracy distribution of an image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a time stamp for the results</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1"># Build the original filename</span>
+        <span class="n">orig_img_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename_root</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_extension</span>
+
+        <span class="n">descriptor</span> <span class="o">=</span> <span class="s2">&quot;image_best_buddies&quot;</span>
+        <span class="n">output_filename</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">make_image_filename</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">OUTPUT_IMAGE_DIRECTORY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">puzzle_type</span><span class="p">,</span>
+                                                     <span class="n">timestamp</span><span class="p">,</span> <span class="n">orig_img_filename</span><span class="o">=</span><span class="n">orig_img_filename</span><span class="p">)</span>
+        <span class="c1"># Stores the results to a file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">build_puzzle_image</span><span class="p">(</span><span class="n">use_results_coloring</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle</span><span class="o">.</span><span class="n">save_to_file</span><span class="p">(</span><span class="n">output_filename</span><span class="p">)</span></div></div>
 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">bb_results</span> <span class="o">=</span> <span class="n">ImageBestBuddyStatistics</span><span class="p">(</span><span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">muffins_300x200.jpg&quot;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">,</span>
-                                          <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">)</span>
-    <span class="c1"># bb_results = ImageBestBuddyStatistics(&quot;.\\images\\7.jpg&quot;, 28, PuzzleType.type2,</span>
+
+    <span class="n">pickle_file</span> <span class="o">=</span> <span class="n">ImageBestBuddyStatistics</span><span class="o">.</span><span class="n">PICKLE_DIRECTORY</span> <span class="o">+</span> <span class="s2">&quot;bb_accuracy.pk&quot;</span>
+
+    <span class="c1"># bb_results = ImageBestBuddyStatistics(&quot;.\\images\\duck.bmp&quot;, 28, PuzzleType.type2,</span>
     <span class="c1">#                                       PuzzlePiece.calculate_asymmetric_distance)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># bb_results = ImageBestBuddyStatistics(&quot;.\\images\\muffins_300x200.jpg&quot;, 28, PuzzleType.type2,</span>
+    <span class="c1">#                                       PuzzlePiece.calculate_asymmetric_distance)</span>
+    <span class="n">bb_results</span> <span class="o">=</span> <span class="n">ImageBestBuddyStatistics</span><span class="p">(</span><span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">cat_sleeping_boy.jpg&quot;</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">,</span>
+                                          <span class="n">PuzzlePiece</span><span class="o">.</span><span class="n">calculate_asymmetric_distance</span><span class="p">)</span>
+    <span class="c1"># # bb_results = ImageBestBuddyStatistics(&quot;.\\images\\7.jpg&quot;, 28, PuzzleType.type2,</span>
+    <span class="c1"># #                                       PuzzlePiece.calculate_asymmetric_distance)</span>
+    <span class="n">PickleHelper</span><span class="o">.</span><span class="n">exporter</span><span class="p">(</span><span class="n">bb_results</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">)</span>
 
-
-
-
-
-
-
-
-
-
-
-
+    <span class="c1"># Calculate the print the results.</span>
+    <span class="n">bb_results</span> <span class="o">=</span> <span class="n">PickleHelper</span><span class="o">.</span><span class="n">importer</span><span class="p">(</span><span class="n">pickle_file</span><span class="p">)</span>
+    <span class="n">bb_results</span><span class="o">.</span><span class="n">calculate_results</span><span class="p">()</span>
+    <span class="n">bb_results</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
 </pre></div>
 
            </div>

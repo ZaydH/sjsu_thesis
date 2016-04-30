@@ -151,7 +151,7 @@
 
 <span class="c1"># When true, all asymmetric distances are recalculated.</span>
 <span class="n">PERFORM_PLACEMENT</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="n">RECALCULATE_DISTANCES</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">RECALCULATE_DISTANCES</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">USE_KNOWN_PUZZLE_DIMENSIONS</span> <span class="o">=</span> <span class="bp">False</span>
 
 <span class="c1"># Defining a directory where pickle files are stored.</span>
@@ -352,14 +352,18 @@
 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># PaikinTalSolver.use_best_buddy_placer = False</span>
     <span class="c1"># images = [&quot;.\\images\\muffins_300x200.jpg&quot;]</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="c1">#</span>
+    <span class="c1"># PaikinTalSolver.use_best_buddy_placer = True</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
     <span class="c1"># images = [&quot;.\\images\\duck.bmp&quot;]</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
-    <span class="c1"># images = [&quot;.\\images\\cat_sleeping_boy.jpg&quot;]</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">cat_sleeping_boy.jpg&quot;</span><span class="p">]</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 28)</span>
-    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
+    <span class="n">paikin_tal_driver</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span>
     <span class="c1"># images = [&quot;.\\images\\two_faced_cat.jpg&quot;]</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type1, 25)</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 25)</span>
@@ -392,11 +396,11 @@
     <span class="c1"># InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1</span>
     <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
 
-    <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">bgu_805_08.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">mcgill_20.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.</span><span class="se">\\</span><span class="s2">images</span><span class="se">\\</span><span class="s2">3300_1.jpg&quot;</span><span class="p">]</span>
-    <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_CLEAR_BEST_BUDDY_HEAP_ON_SPAWN</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_NEIGHBOR_COMPATIBILITY_SCALAR</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">paikin_tal_driver</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span>
+    <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\3300_1.jpg&quot;]</span>
+    <span class="c1"># PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True</span>
+    <span class="c1"># InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True</span>
+    <span class="c1"># InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1</span>
+    <span class="c1"># paikin_tal_driver(images, PuzzleType.type2, 28)</span>
 
     <span class="c1"># images = [&quot;.\\images\\bgu_805_08.jpg&quot;, &quot;.\\images\\mcgill_20.jpg&quot;, &quot;.\\images\\3300_1.jpg&quot;]</span>
     <span class="c1"># PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True</span>
