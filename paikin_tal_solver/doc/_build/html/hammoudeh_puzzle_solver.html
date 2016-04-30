@@ -193,7 +193,10 @@ locaton (i.e. where it had a neighbor)</li>
 </tr>
 </tbody>
 </table>
-<p>Returns (Tuple[int]): Tuple for accessing the numpy array</p>
+<dl class="docutils">
+<dt>Returns (Tuple[int]):</dt>
+<dd>Tuple for accessing the numpy array</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -208,28 +211,40 @@ locaton (i.e. where it had a neighbor)</li>
 <dd><p>Calculates the best buddy density for the original image.  It is defined as the total number of best
 buddies divided by the total number of possible best buddies (i.e. number of pieces multipled by the number
 of sides per piece).</p>
-<p>Returns (float): Best buddy density</p>
+<dl class="docutils">
+<dt>Returns (float):</dt>
+<dd>Best buddy density across the entire image.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.file_extension">
 <code class="descname">file_extension</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.file_extension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the file extension (e.g. &#8220;jpg&#8221;, &#8220;bmp&#8221;, &#8220;png&#8221;, etc.)</p>
-<p>Returns (str): File extension of the original image</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>File extension of the original image</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.filename_root">
 <code class="descname">filename_root</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.filename_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the file name of the original image used without file extension of path information.</p>
-<p>Returns (str): Filename of the original image with the file extension and file path removed.</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Filename of the original image with the file extension and file path removed.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.interior_accuracy">
 <code class="descname">interior_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.interior_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>Gets the best buddy accuracy considering only interior best buddies.  It is defined as</em> &#8211; <span class="math">\(interior_accuracy = 1 - (numb_wrong_interior_bb)/(total_numb_interior_best_buddy)\)</span></p>
-<p>Returns (float): Best buddy accuracy</p>
+<dl class="docutils">
+<dt>Returns (float):</dt>
+<dd>Best buddy accuracy considering only interior pieces.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -248,14 +263,20 @@ of sides per piece).</p>
 <dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.total_accuracy">
 <code class="descname">total_accuracy</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.total_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>Gets the best buddy accuracy across the entire image  It is defined as</em> &#8211; <span class="math">\(accuracy = 1 - (numb_wrong_interior_bb + numb_wrong_exterior_bb)/(total_numb_best_buddy)\)</span></p>
-<p>Returns (float): Best buddy accuracy</p>
+<dl class="docutils">
+<dt>Returns (float):</dt>
+<dd>Best buddy accuracy for the entire image</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.total_number_of_best_buddies">
 <code class="descname">total_number_of_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_image_analyzer.ImageBestBuddyStatistics.total_number_of_best_buddies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the total of best buddies (both interior/exterior and right/wrong).</p>
-<p>Returns (int): Best buddy count</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of best buddies in the image</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -269,6 +290,7 @@ as an extension of Paikin and Tal&#8217;s solver.</p>
 <dt id="hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection">
 <em class="property">class </em><code class="descclassname">hammoudeh_puzzle_solver.best_buddy_placer.</code><code class="descname">BestBuddyPlacerCollection</code><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#BestBuddyPlacerCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A container object used to store all the data used by the best buddy placer.</p>
 <dl class="method">
 <dt id="hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.get_open_slot_dictionary">
 <code class="descname">get_open_slot_dictionary</code><span class="sig-paren">(</span><em>numb_neighbors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hammoudeh_puzzle_solver/best_buddy_placer.html#BestBuddyPlacerCollection.get_open_slot_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection.get_open_slot_dictionary" title="Permalink to this definition">¶</a></dt>
@@ -281,7 +303,10 @@ as an extension of Paikin and Tal&#8217;s solver.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (dict): Dictionary containing the open slots in the puzzles with the specified number of neighbors.</p>
+<dl class="docutils">
+<dt>Returns (dict):</dt>
+<dd>Dictionary containing the open slots in the puzzles with the specified number of neighbors.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -339,29 +364,41 @@ neighbor updating.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (NeighborSidePair): If the piece has a neighbor on the specified side, it returns a NeighborSidePair
-containing the neighbor id and the neighbor&#8217;s side.</p>
+<dl class="docutils">
+<dt>Returns (NeighborSidePair):</dt>
+<dd>If the piece has a neighbor on the specified side, it returns a NeighborSidePair containing the neighbor
+id and the neighbor&#8217;s side.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.key">
 <code class="descname">key</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the key of a MultisidePuzzleOpenSlot object.</p>
-<p>Returns (str): Unique key for a multisided open slot</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Unique key for a multisided open slot</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.location">
 <code class="descname">location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the actual location of the open slot.</p>
-<p>Returns (PuzzleLocation): Location of the open slot</p>
+<dl class="docutils">
+<dt>Returns (PuzzleLocation):</dt>
+<dd>Location of the open slot</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.numb_neighbors">
 <code class="descname">numb_neighbors</code><a class="headerlink" href="#hammoudeh_puzzle_solver.best_buddy_placer.MultisidePuzzleOpenSlot.numb_neighbors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determines the number of ne</p>
-<p>Returns(int): Number neighbors for this open slot.</p>
+<dd><p>Determines the number of neighbors (i.e. pieces) directly adjacent to this open location.</p>
+<dl class="docutils">
+<dt>Returns(int):</dt>
+<dd>Number neighbors for this open slot.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -608,7 +645,11 @@ containing the neighbor id and the neighbor&#8217;s side.</p>
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_open_best_buddies">
 <code class="descname">numb_open_best_buddies</code><a class="headerlink" href="#hammoudeh_puzzle_solver.puzzle_importer.BestBuddyAccuracy.numb_open_best_buddies" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Returns (int)</em> &#8211; Total number of best buddies whose best buddies have not yet been placed.</p>
+<dd><p>Property to get the total number of best buddies where one of the pair has not been placed.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Total number of best buddies whose best buddies have not yet been placed.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -2826,14 +2867,20 @@ used by the solver.</p>
 <dt id="hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.id_number">
 <code class="descname">id_number</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.id_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the identification number of a neighbor piece in the neighbor side tuple.</p>
-<p>Returns (int): Identification number of a neighbor piece</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Identification number of a neighbor piece</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.side">
 <code class="descname">side</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.NeighborSidePair.side" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the side of the neighbor piece of interest.</p>
-<p>Returns (PuzzlePieceSide): Side of the neighbor piece</p>
+<dl class="docutils">
+<dt>Returns (PuzzlePieceSide):</dt>
+<dd>Side of the neighbor piece</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2854,14 +2901,20 @@ used by the solver.</p>
 <dt id="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.key">
 <code class="descname">key</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a unique key for a given puzzle location on a given board.</p>
-<p>Returns (str): Key for this puzzle location</p>
+<dl class="docutils">
+<dt>Returns (str):</dt>
+<dd>Key for this puzzle location</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.location">
 <code class="descname">location</code><a class="headerlink" href="#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation.location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle location as a tuple of (row, column)</p>
-<p>Returns (Tuple[int]): Tuple in the form (row, column)</p>
+<dl class="docutils">
+<dt>Returns (Tuple[int]):</dt>
+<dd>Tuple in the form (row, column)</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2889,7 +2942,6 @@ used by the solver.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Zayd Hammoudeh.
 
     </p>
   </div> 

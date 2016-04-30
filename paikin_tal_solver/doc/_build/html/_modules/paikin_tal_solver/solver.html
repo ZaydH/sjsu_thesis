@@ -155,7 +155,8 @@
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        Returns (int): Best Buddy Pool Info Key.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Best Buddy Pool Info Key.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span></div>
 
@@ -187,8 +188,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            other:</span>
 
-<span class="sd">        Returns: Maximum heap so the piece with the higher mutual compatibility is given higher priority in the</span>
-<span class="sd">        priority queue.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Maximum heap so the piece with the higher mutual compatibility is given higher priority in the</span>
+<span class="sd">            priority queue.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Swapping to make a MAXIMUM heap</span>
         <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">mutual_compatibility</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutual_compatibility</span><span class="p">)</span></div>
@@ -376,7 +378,8 @@
 
 <span class="sd">        Gets the results for the set of the Paikin and Tal solver.</span>
 
-<span class="sd">        Returns ([[PuzzlePiece]]): Multiple puzzles each of which is a set of puzzle pieces.</span>
+<span class="sd">        Returns (List[PuzzlePiece]):</span>
+<span class="sd">            Multiple puzzles each of which is a set of puzzle pieces.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># A puzzle is an array of puzzle pieces that can then be reconstructed.</span>
         <span class="n">solved_puzzles</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actual_numb_puzzles</span><span class="p">)]</span>
@@ -554,8 +557,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Places a piece using the best buddy placing technique.</span>
 
-<span class="sd">        Returns (NextPieceToPlace): If a next piece is found, then it returns the information on the best piece to</span>
-<span class="sd">        place and None otherwise.</span>
+<span class="sd">        Returns (NextPieceToPlace):</span>
+<span class="sd">            If a next piece is found, then it returns the information on the best piece to place and None otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -598,7 +601,8 @@
 <span class="sd">            neighbor_count_open_slots (List[MultisidePuzzleOpenSlot]): Open slot information</span>
 <span class="sd">            numb_neighbor_sides (int): Number of sides with a neighbor</span>
 
-<span class="sd">        Returns (NextPieceToPlace): Information on a possible candidate for next piece to place</span>
+<span class="sd">        Returns (NextPieceToPlace):</span>
+<span class="sd">            Information on a possible candidate for next piece to place</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Get the information about the piece</span>
@@ -684,7 +688,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            slot_location (PuzzleLocation): Unique location in the puzzle</span>
 
-<span class="sd">        Returns: True of the location in the specified puzzle is open and false otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True of the location in the specified puzzle is open and false otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">slot_location</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">slot_location</span><span class="o">.</span><span class="n">location</span><span class="p">]</span> <span class="o">==</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_UNPLACED_PIECE_ID</span> \
                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_board_dimensions</span><span class="p">(</span><span class="n">slot_location</span><span class="p">)</span>
@@ -693,7 +698,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Determines whether best buddy heap housecleaning should be performed.</span>
 
-<span class="sd">        Returns (bool): True if BB heap house cleaning should not be performed and False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if BB heap house cleaning should not be performed and False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_ENABLE_BEST_BUDDY_HEAP_HOUSEKEEPING</span><span class="p">:</span>
@@ -743,7 +749,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            puzzle_location (PuzzleLocation): Unique location in the puzzles</span>
 
-<span class="sd">        Returns (bool): True if not an illegal based off the board location, False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if not an illegal based off the board location, False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -788,7 +795,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            unplaced_pieces ([BestBuddyPoolInfo]): Set of unplaced pieces</span>
 
-<span class="sd">        Returns (NextPieceToPlace): Information on the piece that was selected as the best to be placed.</span>
+<span class="sd">        Returns (NextPieceToPlace):</span>
+<span class="sd">            Information on the piece that was selected as the best to be placed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_best_buddy</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">best_piece</span> <span class="o">=</span> <span class="bp">None</span>
@@ -941,7 +949,8 @@
 <span class="sd">            primary_piece_location (PuzzleLocation): Location of the primary piece</span>
 <span class="sd">            other_piece_location (PuzzleLocation): Location of the other piece</span>
 
-<span class="sd">        Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.</span>
+<span class="sd">        Returns (PuzzlePieceSide):</span>
+<span class="sd">            Side of the primary piece adjacent to the other piece.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">diff_row</span> <span class="o">=</span> <span class="n">primary_piece_location</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">other_piece_location</span><span class="o">.</span><span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1000,7 +1009,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access all of the best buddy accuracy information associated with the puzzle.</span>
 
-<span class="sd">        Returns (List[BestBuddyAccuracy]): All the best buddy accuracy results in the puzzle.</span>
+<span class="sd">        Returns (List[BestBuddyAccuracy]):</span>
+<span class="sd">            All the best buddy accuracy results in the puzzle.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span>
 
@@ -1082,7 +1092,7 @@
 <span class="sd">        of that open slot and the best buddy added to the heap.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            placed_piece (PuzzlePiece):</span>
+<span class="sd">            placed_piece (PuzzlePiece): Last piece placed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the placed piece&#39;s ID number</span>
         <span class="n">piece_id</span> <span class="o">=</span> <span class="n">placed_piece</span><span class="o">.</span><span class="n">id_number</span>
@@ -1185,7 +1195,8 @@
 
 <span class="sd">        Gets whether the puzzle is type 1 or type 2</span>
 
-<span class="sd">        Returns (PuzzleType): Type of the puzzle (either 1 or 2)</span>
+<span class="sd">        Returns (PuzzleType):</span>
+<span class="sd">            Type of the puzzle (either 1 or 2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span></div>
 </pre></div>
@@ -1199,7 +1210,6 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Zayd Hammoudeh.
 
     </p>
   </div> 

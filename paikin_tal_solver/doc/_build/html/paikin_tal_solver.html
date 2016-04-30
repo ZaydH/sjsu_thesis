@@ -167,7 +167,10 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (List[(int, PuzzlePieceSide)]): Best buddy information for the specified piece.</p>
+<dl class="docutils">
+<dt>Returns (List[(int, PuzzlePieceSide)]):</dt>
+<dd>Best buddy information for the specified piece.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -208,7 +211,10 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (int): Asymmetric compatibility between puzzle pieces p_i and p_j.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Asymmetric compatibility between puzzle pieces p_i and p_j.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -230,25 +236,32 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (int): Asymmetric distance between puzzle pieces p_i and p_j.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Asymmetric distance between puzzle pieces p_i and p_j.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.best_buddies">
 <code class="descname">best_buddies</code><span class="sig-paren">(</span><em>p_i</em>, <em>p_i_side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.best_buddies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.best_buddies" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Gets the best buddy information (if any) for a specified piece&#8217;s side</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i</strong> (<em>int</em>) &#8211; </li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; </li>
+<li><strong>p_i</strong> (<em>int</em>) &#8211; Identification number of the piece who best buddy information is to be retrieved</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of piece whose best buddy is being retriefed</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>Returns ([int]): List of best buddy piece id numbers</p>
+<dl class="docutils">
+<dt>Returns (List[int]):</dt>
+<dd>List of best buddy piece id numbers</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -329,9 +342,12 @@ where a piece must have 4 best buddies and its best buddies must have 4 best bud
 </tr>
 </tbody>
 </table>
-<p>Returns: For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle
-pieces on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined
-in the PuzzlePieceSide enumerated type.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle pieces
+on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined
+in the PuzzlePieceSide enumerated type.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -362,7 +378,10 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 </tr>
 </tbody>
 </table>
-<p>Returns ([PuzzlePieceSide]): List of all valid sides for a neighboring puzzle piece.</p>
+<dl class="docutils">
+<dt>Returns (List[PuzzlePieceSide]):</dt>
+<dd>List of all valid sides for a neighboring puzzle piece.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -384,7 +403,10 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 </tr>
 </tbody>
 </table>
-<p>Returns (int): Mutual compatibility between puzzle pieces p_i and p_j.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Mutual compatibility between puzzle pieces p_i and p_j.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -396,15 +418,15 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>placed_pieces</strong> (<em>Optional [bool]</em>) &#8211; An array indicating whether each puzzle piece (by index) has been</li>
-<li><strong>placed.</strong> &#8211; </li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>placed_pieces</strong> (<em>Optional [bool]</em>) &#8211; An array indicating whether each puzzle piece (by index) has been
+placed.</td>
 </tr>
 </tbody>
 </table>
-<p>Returns (int): Index of the next piece to use for starting a board.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Index of the next piece to use for starting a board.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -418,8 +440,8 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>is_piece_placed</strong> (<em>[Bool]</em>) &#8211; List indicating whether each piece is placed</li>
-<li><strong>is_piece_placed_with_no_open_neighbors</strong> (<em>[Bool]</em>) &#8211; Subset of the elements in the array &#8220;is_piece_placed.&#8221;  It</li>
-<li><strong>only those pieces that are placed AND have no open locations amongst their direct neighbors.</strong> (<em>is</em>) &#8211; </li>
+<li><strong>is_piece_placed_with_no_open_neighbors</strong> (<em>[Bool]</em>) &#8211; Subset of the elements in the array &#8220;is_piece_placed.&#8221;  It
+is only those pieces that are placed AND have no open locations amongst their direct neighbors.</li>
 </ul>
 </td>
 </tr>
@@ -481,7 +503,10 @@ mutual compatibility, etc.) between a specific piece (based off the ID number) a
 </tr>
 </tbody>
 </table>
-<p>Returns: Asymmetric compatibility between the two pieces on their respective sides</p>
+<dl class="docutils">
+<dt>Returns (double):</dt>
+<dd>Asymmetric compatibility between the two pieces on their respective sides</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -502,8 +527,10 @@ mutual compatibility, etc.) between a specific piece (based off the ID number) a
 </tr>
 </tbody>
 </table>
-<p>Returns (int): Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their
-specified sides.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their specified sides.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -520,7 +547,10 @@ buddy, this function returns an empty list.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns ([int]): List of best buddy pieces</p>
+<dl class="docutils">
+<dt>Returns ([int]):</dt>
+<dd>List of best buddy pieces</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -537,7 +567,7 @@ buddy, this function returns an empty list.</p>
 </tbody>
 </table>
 <dl class="docutils">
-<dt>Returns ([(int, int)]):</dt>
+<dt>Returns (List[ Tuple[int] ]):</dt>
 <dd>Returns an array of the ID numbers and the respective side for the ID number for possible best buddies.</dd>
 </dl>
 </dd></dl>
@@ -600,7 +630,10 @@ buddy, this function returns an empty list.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns: Mutual compatibility between the two pieces on their respective sides</p>
+<dl class="docutils">
+<dt>Returns (double):</dt>
+<dd>Mutual compatibility between the two pieces on their respective sides</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -620,7 +653,10 @@ distance between it and any other piece.</p>
 <code class="descname">piece_id</code><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.piece_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Piece ID Accessor</p>
 <p>Gets the piece identification number for a PieceDistanceInformation object</p>
-<p>Returns (int): Piece identification number</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Piece identification number</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -646,8 +682,8 @@ distance between it and any other piece.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
-<li><strong>compatibility</strong> (<em>int</em>) &#8211; Mutual compatibility between p_i and p_j on their respective sides.</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i
+compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.</li>
 </ul>
 </td>
 </tr>
@@ -718,7 +754,10 @@ maximum heap.</p>
 <dt id="paikin_tal_solver.solver.PaikinTalSolver.best_buddy_accuracy">
 <code class="descname">best_buddy_accuracy</code><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.best_buddy_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access all of the best buddy accuracy information associated with the puzzle.</p>
-<p>Returns (List[BestBuddyAccuracy]): All the best buddy accuracy results in the puzzle.</p>
+<dl class="docutils">
+<dt>Returns (List[BestBuddyAccuracy]):</dt>
+<dd>All the best buddy accuracy results in the puzzle.</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -738,7 +777,10 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 </tr>
 </tbody>
 </table>
-<p>Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.</p>
+<dl class="docutils">
+<dt>Returns (PuzzlePieceSide):</dt>
+<dd>Side of the primary piece adjacent to the other piece.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -746,7 +788,10 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 <code class="descname">get_solved_puzzles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.get_solved_puzzles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.get_solved_puzzles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paikin and Tal Results Accessor</p>
 <p>Gets the results for the set of the Paikin and Tal solver.</p>
-<p>Returns ([[PuzzlePiece]]): Multiple puzzles each of which is a set of puzzle pieces.</p>
+<dl class="docutils">
+<dt>Returns (List[PuzzlePiece]):</dt>
+<dd>Multiple puzzles each of which is a set of puzzle pieces.</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -754,7 +799,10 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 <code class="descname">puzzle_type</code><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.puzzle_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle Type Accessor</p>
 <p>Gets whether the puzzle is type 1 or type 2</p>
-<p>Returns (PuzzleType): Type of the puzzle (either 1 or 2)</p>
+<dl class="docutils">
+<dt>Returns (PuzzleType):</dt>
+<dd>Type of the puzzle (either 1 or 2)</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -817,7 +865,6 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Zayd Hammoudeh.
 
     </p>
   </div> 

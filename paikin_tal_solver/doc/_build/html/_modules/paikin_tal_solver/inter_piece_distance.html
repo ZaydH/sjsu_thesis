@@ -160,7 +160,8 @@
 <span class="sd">            numb_pieces (int): Number of pieces in the puzzle</span>
 <span class="sd">            puzzle_type (PuzzleType):</span>
 
-<span class="sd">        Returns (PieceDistanceInformation): Distance information object for a single puzzle piece.</span>
+<span class="sd">        Returns (PieceDistanceInformation):</span>
+<span class="sd">            Distance information object for a single puzzle piece.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="n">id_numb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span> <span class="o">=</span> <span class="n">numb_pieces</span>
@@ -184,7 +185,8 @@
 
 <span class="sd">        Gets the piece identification number for a PieceDistanceInformation object</span>
 
-<span class="sd">        Returns (int): Piece identification number</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Piece identification number</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
@@ -199,8 +201,8 @@
 <span class="sd">            p_j (int): Secondary puzzle piece</span>
 <span class="sd">            p_j_side (PuzzlePieceSide):</span>
 
-<span class="sd">        Returns (int): Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their</span>
-<span class="sd">        specified sides.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their specified sides.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_distances</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span></div>
@@ -216,7 +218,8 @@
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
 
-<span class="sd">        Returns: Asymmetric compatibility between the two pieces on their respective sides</span>
+<span class="sd">        Returns (double):</span>
+<span class="sd">            Asymmetric compatibility between the two pieces on their respective sides</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span></div>
@@ -231,7 +234,7 @@
 <span class="sd">            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed</span>
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
-<span class="sd">            compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.</span>
+<span class="sd">                compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span> <span class="o">=</span> <span class="n">compatibility</span></div>
@@ -247,7 +250,8 @@
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
 
-<span class="sd">        Returns: Mutual compatibility between the two pieces on their respective sides</span>
+<span class="sd">        Returns (double):</span>
+<span class="sd">            Mutual compatibility between the two pieces on their respective sides</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
         <span class="c1"># Return the mutual compatibility</span>
@@ -262,7 +266,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            side (PuzzlePieceSide): Reference side of the puzzle piece</span>
 
-<span class="sd">        Returns ([(int, int)]):</span>
+<span class="sd">        Returns (List[ Tuple[int] ]):</span>
 <span class="sd">            Returns an array of the ID numbers and the respective side for the ID number for possible best buddies.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">PieceDistanceInformation</span><span class="o">.</span><span class="n">_ALLOW_MULTIPLE_BEST_BUDDIES</span><span class="p">:</span>
@@ -284,7 +288,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            side (PuzzlePieceSide): Side of the implicit puzzle piece.</span>
 
-<span class="sd">        Returns ([int]): List of best buddy pieces</span>
+<span class="sd">        Returns ([int]):</span>
+<span class="sd">            List of best buddy pieces</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddies</span><span class="p">[</span><span class="n">side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
 
@@ -297,7 +302,6 @@
 <span class="sd">        Returns (List[int]): List of best buddy pieces</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddies</span></div>
-
 
 <div class="viewcode-block" id="PieceDistanceInformation.add_best_buddy"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.add_best_buddy">[docs]</a>    <span class="k">def</span> <span class="nf">add_best_buddy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j_id_numb</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -531,12 +535,14 @@
 
     <span class="k">def</span> <span class="nf">_skip_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_piece</span><span class="p">,</span> <span class="n">p_j</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deetermine if a piece should be skilled during placement</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            skip_piece (Optional [Bool]):</span>
 <span class="sd">            p_j (Optional int):</span>
 
-<span class="sd">        Returns: True if this piece should be skipped and False otherwise.</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if this piece should be skipped and False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">p_j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">==</span> <span class="n">p_j</span><span class="p">)</span> <span class="ow">or</span> \
                 <span class="p">(</span><span class="n">skip_piece</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">skip_piece</span><span class="p">[</span><span class="n">p_j</span><span class="p">]):</span>  <span class="c1"># Do not compare a piece to itself.</span>
@@ -715,7 +721,7 @@
 <span class="sd">            is_piece_placed ([Bool]): List indicating whether each piece is placed</span>
 
 <span class="sd">            is_piece_placed_with_no_open_neighbors ([Bool]): Subset of the elements in the array &quot;is_piece_placed.&quot;  It</span>
-<span class="sd">            is only those pieces that are placed AND have no open locations amongst their direct neighbors.</span>
+<span class="sd">                is only those pieces that are placed AND have no open locations amongst their direct neighbors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
@@ -927,9 +933,10 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            placed_pieces (Optional [bool]): An array indicating whether each puzzle piece (by index) has been</span>
-<span class="sd">            placed.</span>
+<span class="sd">                placed.</span>
 
-<span class="sd">        Returns (int): Index of the next piece to use for starting a board.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Index of the next piece to use for starting a board.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># If no pieces are placed, then use the first piece</span>
         <span class="k">if</span> <span class="n">placed_pieces</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -945,12 +952,14 @@
 
 <div class="viewcode-block" id="InterPieceDistance.best_buddies"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.best_buddies">[docs]</a>    <span class="k">def</span> <span class="nf">best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the best buddy information (if any) for a specified piece&#39;s side</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            p_i (int):</span>
-<span class="sd">            p_i_side  (PuzzlePieceSide):</span>
+<span class="sd">            p_i (int): Identification number of the piece who best buddy information is to be retrieved</span>
+<span class="sd">            p_i_side  (PuzzlePieceSide): Side of piece whose best buddy is being retriefed</span>
 
-<span class="sd">        Returns ([int]): List of best buddy piece id numbers</span>
+<span class="sd">        Returns (List[int]):</span>
+<span class="sd">            List of best buddy piece id numbers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">best_buddies</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">)</span></div>
 
@@ -961,7 +970,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            p_i (int): Piece identification number</span>
 
-<span class="sd">        Returns (List[(int, PuzzlePieceSide)]): Best buddy information for the specified piece.</span>
+<span class="sd">        Returns (List[(int, PuzzlePieceSide)]):</span>
+<span class="sd">            Best buddy information for the specified piece.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">all_best_buddies</span><span class="p">()</span></div>
@@ -978,7 +988,8 @@
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
 
-<span class="sd">        Returns (int): Asymmetric distance between puzzle pieces p_i and p_j.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Asymmetric distance between puzzle pieces p_i and p_j.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># For a type 1 puzzles, ensure that the pu</span>
         <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
@@ -997,7 +1008,8 @@
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
 
-<span class="sd">        Returns (int): Asymmetric compatibility between puzzle pieces p_i and p_j.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Asymmetric compatibility between puzzle pieces p_i and p_j.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># For a type 1 puzzles, ensure that the pu</span>
         <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
@@ -1017,7 +1029,8 @@
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
 
-<span class="sd">        Returns (int): Mutual compatibility between puzzle pieces p_i and p_j.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Mutual compatibility between puzzle pieces p_i and p_j.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assert_valid_type1_side</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
@@ -1046,7 +1059,8 @@
 <span class="sd">            puzzle_type (PuzzleType): Puzzle type being solved.</span>
 <span class="sd">            p_i_side (PuzzlePieceSide): Side of p_i puzzle piece where p_j will be placed.</span>
 
-<span class="sd">        Returns ([PuzzlePieceSide]): List of all valid sides for a neighboring puzzle piece.</span>
+<span class="sd">        Returns (List[PuzzlePieceSide]):</span>
+<span class="sd">            List of all valid sides for a neighboring puzzle piece.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">puzzle_type</span> <span class="o">==</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type1</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">complementary_side</span><span class="p">]</span>
@@ -1062,9 +1076,10 @@
 <span class="sd">            puzzle_type (PuzzleType): Either type1 (no rotation) or type 2 (with rotation)</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side for the secondary piece p_j.</span>
 
-<span class="sd">        Returns: For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle</span>
-<span class="sd">        pieces on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined</span>
-<span class="sd">        in the PuzzlePieceSide enumerated type.</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle pieces</span>
+<span class="sd">            on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined</span>
+<span class="sd">            in the PuzzlePieceSide enumerated type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">puzzle_type</span> <span class="o">==</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type1</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
@@ -1094,7 +1109,8 @@
 <span class="sd">            p_i (int): Identification number of the puzzle piece</span>
 <span class="sd">            is_piece_placed_with_no_open_neighbors ([Bool]):  List indicating whether each piece is placed</span>
 
-<span class="sd">        Returns: True if piece p_i should be skipped and False otherwise</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if piece p_i should be skipped and False otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">is_piece_placed_with_no_open_neighbors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">[</span><span class="n">p_i</span><span class="p">]:</span>
             <span class="k">return</span> <span class="bp">True</span>
@@ -1111,7 +1127,6 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Zayd Hammoudeh.
 
     </p>
   </div> 

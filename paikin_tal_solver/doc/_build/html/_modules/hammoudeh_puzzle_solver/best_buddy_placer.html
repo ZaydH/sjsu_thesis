@@ -136,6 +136,9 @@
 
 
 <div class="viewcode-block" id="BestBuddyPlacerCollection"><a class="viewcode-back" href="../../hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.best_buddy_placer.BestBuddyPlacerCollection">[docs]</a><span class="k">class</span> <span class="nc">BestBuddyPlacerCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A container object used to store all the data used by the best buddy placer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Store the location of the open locations</span>
@@ -177,7 +180,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            numb_neighbors (int): Number of neighbors adjacent to the set of open slots</span>
 
-<span class="sd">        Returns (dict): Dictionary containing the open slots in the puzzles with the specified number of neighbors.</span>
+<span class="sd">        Returns (dict):</span>
+<span class="sd">            Dictionary containing the open slots in the puzzles with the specified number of neighbors.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multiside_open_slots_lists</span><span class="p">[</span><span class="n">numb_neighbors</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span></div>
@@ -282,8 +286,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            open_slot_side (PuzzlePieceSide): Side of the open slot</span>
 
-<span class="sd">        Returns (NeighborSidePair): If the piece has a neighbor on the specified side, it returns a NeighborSidePair</span>
-<span class="sd">        containing the neighbor id and the neighbor&#39;s side.</span>
+<span class="sd">        Returns (NeighborSidePair):</span>
+<span class="sd">            If the piece has a neighbor on the specified side, it returns a NeighborSidePair containing the neighbor</span>
+<span class="sd">            id and the neighbor&#39;s side.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neighbor_side_list</span><span class="p">[</span><span class="n">open_slot_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span></div>
@@ -293,7 +298,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the actual location of the open slot.</span>
 
-<span class="sd">        Returns (PuzzleLocation): Location of the open slot</span>
+<span class="sd">        Returns (PuzzleLocation):</span>
+<span class="sd">            Location of the open slot</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_location</span>
@@ -301,9 +307,10 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">numb_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Determines the number of ne</span>
+<span class="sd">        Determines the number of neighbors (i.e. pieces) directly adjacent to this open location.</span>
 
-<span class="sd">        Returns(int): Number neighbors for this open slot.</span>
+<span class="sd">        Returns(int):</span>
+<span class="sd">            Number neighbors for this open slot.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_neighbors</span>
@@ -313,7 +320,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the key of a MultisidePuzzleOpenSlot object.</span>
 
-<span class="sd">        Returns (str): Unique key for a multisided open slot</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            Unique key for a multisided open slot</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_location</span><span class="o">.</span><span class="n">key</span></div>
@@ -328,7 +336,6 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Zayd Hammoudeh.
 
     </p>
   </div> 

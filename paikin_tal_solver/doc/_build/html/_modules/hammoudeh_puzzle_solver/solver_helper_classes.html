@@ -171,7 +171,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            other (NextPieceToPlace): Another next piece location to consider.</span>
 
-<span class="sd">        Returns (bool): True if the implicit piece is a better next piece to place and</span>
+<span class="sd">        Returns (bool):</span>
+<span class="sd">            True if the implicit piece is a better next piece to place and</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># If the implicit piece is None and the other is not, then the other is better</span>
@@ -209,7 +210,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Puzzle location as a tuple of (row, column)</span>
 
-<span class="sd">        Returns (Tuple[int]): Tuple in the form (row, column)</span>
+<span class="sd">        Returns (Tuple[int]):</span>
+<span class="sd">            Tuple in the form (row, column)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span>
@@ -219,7 +221,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a unique key for a given puzzle location on a given board.</span>
 
-<span class="sd">        Returns (str): Key for this puzzle location</span>
+<span class="sd">        Returns (str):</span>
+<span class="sd">            Key for this puzzle location</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -248,7 +251,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the identification number of a neighbor piece in the neighbor side tuple.</span>
 
-<span class="sd">        Returns (int): Identification number of a neighbor piece</span>
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Identification number of a neighbor piece</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neighbor_id</span>
@@ -258,7 +262,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the side of the neighbor piece of interest.</span>
 
-<span class="sd">        Returns (PuzzlePieceSide): Side of the neighbor piece</span>
+<span class="sd">        Returns (PuzzlePieceSide):</span>
+<span class="sd">            Side of the neighbor piece</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neighbor_side</span></div>
@@ -273,7 +278,6 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Zayd Hammoudeh.
 
     </p>
   </div> 
