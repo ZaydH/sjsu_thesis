@@ -14,6 +14,8 @@
 
 % eref puts parenthesis around reference, like "equation (1)"
 \def\eref#1{(\ref{#1})}
+% Used to generate || || (Norm) symbol for Paikin and Tal
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
 
 \usepackage{mdframed}
@@ -104,7 +106,7 @@ Pairwise affinity quantifies the similarity between the edges of two puzzle piec
 
 \subsection{Cho \textit{et. al.} Pairwise Affinity}\label{sec:choPairwiseAffinity}
 
-As mentioned in section \ref{sec:previousWork}, Cho \textit{et. al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Their approach is shown in Equation~\eref{eq:choPairwise}, which quantifies the distance between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  $K$ is the width/height of a puzzle piece in number of pixels\footnote{Cho \textit{et. al.} used 7 for $K$}.  
+As mentioned in section \ref{sec:previousWork}, Cho \textit{et. al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Their approach is shown in Equation~\eref{eq:choPairwise}, which quantifies the distance between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  $K$ is the width/height of a puzzle piece in number of pixels\footnote{Cho \textit{et. al.} used 7 for $K$.}.  
 
 \begin{equation} \label{eq:choPairwise}
 D(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3}(x_i(k,K,d) - x_j(k,1,d))^2
@@ -114,7 +116,7 @@ Since the LAB colorspace has three dimensions (e.g. lightness and A/B opponent c
 
 \subsection{Pomeranz \textit{et. al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
 
-One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the piece's pixel dimensions.  It is possible that superior results may be achieved by allowing the solver to modify this exponent term.  Pomeranz \textit{et. al.} generalize Equation~\eref{eq:choPairwise} using the $L_p$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.
+One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the piece's pixel dimensions.  It is possible that superior results may be achieved by allowing the solver to modify this exponent term.  Pomeranz \textit{et. al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $L_p$ norm as shown in Equation~\eref{eq:pomeranzPairwise}\footnote{Pomeranz \textit{et. al.} used 28 for $K$.  This has generally become the standard in subsequent papers.}.
 
 \begin{equation} \label{eq:pomeranzPairwise}
 D(x_i,L,x_j,R) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\bigg)^{\frac{q}{p}}
@@ -134,8 +136,87 @@ Note that in Equation~\eref{eq:pomeranzPredCompat}, the difference between the c
 
 \subsection{Paikin \& Tal Pairwise Affinity}\label{sec:paikinPairwiseAffinity}
 
-It is important to note that distance and compatibility metrics may not be associative
+Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et. al.}'s predictive compatibility as the foundation of their asymmetric distance measure.  Paikin \& Tal's approach is shown in Equation~\eref{eq:paikinAsymDistance}.
 
+\begin{equation} \label{eq:paikinAsymDistance}
+D(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3} \norm{[2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d)}
+\end{equation}
+
+Note that Paikin \& Tal set $p$ and $q$ equal to 1 as it not only increased the accuracy of the solver but also significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,L,x_j,R)$ will not equal $D(x_j,R,x_i,L)$.
+
+Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining the pairwise compatibility.  In images (or areas of images) with little variation (e.g. an all white image), parts may have artificially high pairwise distances.  To account for this, Paikin \& Tal proposed asymmetric compatibility as shown in Equation~\eref{eq:paikinAsymCompatibility}.
+
+\begin{equation} \label{eq:paikinAsymCompatibility}
+C(x_i,L,x_j,R)=1 - \frac{D(x_i,L,x_j,R)}{secondD(x_i,L)}
+\end{equation}
+
+\noindent
+where $secondD(x_i,L)$ is the second best asymmetric distance between the left side of piece $x_i$ and all other pieces.  By normalizing compatibility with respect to the second best match, it is possible to identify those pairings that have actually have high compatibility while at the same time removing the artificially high compatibilities between pieces from areas of the image with low variation.
+
+\subsubsection{Improved Asymmetric Compatibility}\label{sec:hammoudehPairwiseAffinity}
+
+In an image that was generated from an analog input (e.g. a photograph), it is expected that there will be some degree of natural variation across the image due to variations in brightness, the object in the photo, and the image sensor.  However, in digital images that are generated or manipulated by computers, this variation can be trivially removed.  An example of this would be an image of a solid color or object(s) in front of a white background as shown in figure~\ref{fig:objectWhiteBackground}.
+
+\begin{figure}
+\centering
+\fbox{\includegraphics[width=50mm]{./images/raspberry_pixabay.jpg}}
+\caption{A Computer Manipulated Image with Poor Asymmetric Compatibility}
+\label{fig:objectWhiteBackground}
+\end{figure}
+
+The puzzles pieces along the border of the image as well as the pieces in the background have sides that are all white.  This entails that regardless of which of the three metrics are used, the distance between them is zero.  What is more, Paikin \& Tal do not explicitly define how to handle this case for asymmetric compatibility.  Therefore, to better handle computer generated images, this thesis proposes an enhanced definition of asymmetric compatibility as shown in Equation~\eref{eq:hammoudehAsymCompatibility}.  
+
+\begin{equation} \label{eq:hammoudehAsymCompatibility}
+C(x_i,L,x_j,R)= \begin{cases} 
+	1 - \frac{D(x_i,L,x_j,R)}{secondD(x_i,L)} & secondD(x_i,L) \ne 0
+\\
+	-\alpha & secondD(x_i,L) = 0
+\end{cases} 
+\end{equation}
+
+\noindent
+where $\alpha$ is a penalty term that denotes that such pairings have low compatibility.
+
+
+\subsection{Best Buddies}\label{sec:bestBuddies}
+
+As defined by Pomeranz \textit{et. al.}, two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_i$ and $s_j$ if they are more compatible (i.e. similar) to each other than they are to each other.  This is more formally described in Equation~\eref{eq:bestBuddyDefinition}.
+
+\begin{equation} \label{eq:bestBuddyDefinition}
+\begin{split}
+\begin{matrix}
+\forall{x_k} \forall{s_k} \in Parts, & C(x_i, s_i, x_j, s_j) \geq C(x_i, s_i, x_k, s_k)
+\\
+\\
+\multicolumn{2}{c}{\textnormal{and}}
+\\
+\\
+\forall{x_k} \forall{s_k} \in Parts, & C(x_j, s_j, x_i, s_i) \geq C(x_j, s_j, x_k, s_k)
+\end{matrix}
+\end{split}
+\end{equation}
+
+The definition of best buddies applies regardless of whether the compatibility definition of Pomeranz \textit{et. al.} or Paikin \& Tal is used.
+
+\subsubsection{An Improved Best Buddies Definition}\label{sec:bestBuddiesLimitations}
+
+In photographs, it is generally unlikely that there will be a significant number of cases where a piece has multiple best buddies on the same side.  However, in computer generated or computer manipulated images where there may be solid colors or backgrounds, that is far more common.  To address issues of this type, this thesis proposes a modified definition of best buddies as shown in Equation~\eref{eq:hammoudehBestBuddyDefinition}.
+
+\begin{equation} \label{eq:hammoudehBestBuddyDefinition}
+\begin{split}
+\begin{matrix}
+\forall{x_k} \forall{s_k} \in Parts, & C(x_i, s_i, x_j, s_j) > C(x_i, s_i, x_k, s_k)
+\\
+\\
+\multicolumn{2}{c}{\textnormal{and}}
+\\
+\\
+\forall{x_k} \forall{s_k} \in Parts, & C(x_j, s_j, x_i, s_i) > C(x_j, s_j, x_k, s_k)
+\end{matrix}
+\end{split}
+\end{equation}
+
+Rather than relying on best buddies being ``greater than or equal'' to all other pieces, the modified requirement is that pairings must be strictly greater than.  Hence, best buddy pairings are exclusive with cliques of size greater than two being explicitly disallowed.
 
 \pagebreak
 \bibliographystyle{ieeetr}
