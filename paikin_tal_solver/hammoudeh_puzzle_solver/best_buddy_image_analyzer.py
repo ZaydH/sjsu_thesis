@@ -171,7 +171,7 @@ class ImageBestBuddyStatistics(object):
         Args:
             numb_bb (int): Total number of best buddies for a piece
             numb_wrong_interior_bb (int): Number of best buddies for a piece that were wrong on an internal
-              locaton (i.e. where it had a neighbor)
+              location (i.e. where it had a neighbor)
             numb_wrong_exterior_bb (int): Number of best buddies for a piece that were wrong when it had no neighbor
 
         Returns (Tuple[int]):
@@ -193,7 +193,7 @@ class ImageBestBuddyStatistics(object):
         print "\tTotal Number of Best Buddies:\t%d" % self.total_number_of_best_buddies
         print "\tTotal Best Buddy Accuracy:\t\t%1.2f%%" % (100 * self.total_accuracy)
 
-        print "\tBest Buddy Density:\t\t\t\t%1.2f%%" %(100 * self.density)
+        print "\tBest Buddy Density:\t\t\t\t%1.2f%%" % (100 * self.density)
         print "\tInterior Best Buddy Accuracy:\t%1.2f%%" % (100 * self.interior_accuracy)
         print ""
         print "\tNumber of Wrong Interior Best Buddies:\t%d" % self._numb_wrong_interior_bb
@@ -210,7 +210,7 @@ class ImageBestBuddyStatistics(object):
             Best buddy density across the entire image.
 
         """
-        return 100.0 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
+        return self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
 
     @property
     def total_number_of_best_buddies(self):
@@ -271,7 +271,11 @@ if __name__ == '__main__':
     #                                       PuzzlePiece.calculate_asymmetric_distance)
     # bb_results = ImageBestBuddyStatistics(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2,
     #                                       PuzzlePiece.calculate_asymmetric_distance)
-    bb_results = ImageBestBuddyStatistics(".\\images\\cat_sleeping_boy.jpg", 28, PuzzleType.type2,
+    # bb_results = ImageBestBuddyStatistics(".\\images\\cat_sleeping_boy.jpg", 28, PuzzleType.type2,
+    #                                       PuzzlePiece.calculate_asymmetric_distance)
+    # bb_results = ImageBestBuddyStatistics(".\\images\\pskov-caves-monastery-1168117_640.jpg", 28, PuzzleType.type2,
+    #                                       PuzzlePiece.calculate_asymmetric_distance)
+    bb_results = ImageBestBuddyStatistics(".\\images\\stairs-547640_640.jpg", 28, PuzzleType.type2,
                                           PuzzlePiece.calculate_asymmetric_distance)
     # # bb_results = ImageBestBuddyStatistics(".\\images\\7.jpg", 28, PuzzleType.type2,
     # #                                       PuzzlePiece.calculate_asymmetric_distance)

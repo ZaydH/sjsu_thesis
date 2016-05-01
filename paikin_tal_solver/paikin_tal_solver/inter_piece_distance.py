@@ -841,7 +841,7 @@ class InterPieceDistance(object):
         Args:
             p_i (int): Piece identification number
 
-        Returns (List[(int, PuzzlePieceSide)]):
+        Returns (List[Tuple[int, PuzzlePieceSide]]):
             Best buddy information for the specified piece.
 
         """
