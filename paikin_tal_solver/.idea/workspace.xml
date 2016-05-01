@@ -2,13 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="347c6f18-024b-4c50-be46-e2779712015b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/images/dessert_best_buddy_visualization.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/images/dessert_pixabay.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/book_tunnel_pixabay.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/dandelion_pixabay.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/dessert_pixabay.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/primula_pixabay.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/small_pink_flowers_pixabay.jpg" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Reports/CS297_Final_Report/build/zayd_hammoudeh_-_cs297_final_report.pdf" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/build/zayd_hammoudeh_-_cs297_final_report.pdf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/doctrees/environment.pickle" afterPath="$PROJECT_DIR$/doc/_build/doctrees/environment.pickle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Reports/CS297_Final_Report/cs297_final_report_biblio.bib" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/cs297_final_report_biblio.bib" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Reports/CS297_Final_Report/zayd_hammoudeh_-_cs297_final_report.tex" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/zayd_hammoudeh_-_cs297_final_report.tex" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/Zayd.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/Zayd.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,7 +31,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/paikin_tal_solver$GenerateDocs.coverage" NAME="GenerateDocs Coverage Results" MODIFIED="1461549743838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/paikin_tal_solver$Puzzle_Importer_Tester.coverage" NAME="Puzzle Importer Tester Coverage Results" MODIFIED="1461243635830" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Best_Buddy_Image_Analyzer.coverage" NAME="Best Buddy Image Analyzer Coverage Results" MODIFIED="1462094376480" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Best_Buddy_Image_Analyzer.coverage" NAME="Best Buddy Image Analyzer Coverage Results" MODIFIED="1462099492077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
     <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Solver.coverage" NAME="Paikin Tal Solver Coverage Results" MODIFIED="1462089556216" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -85,8 +92,8 @@
       <file leaf-file-name="best_buddy_image_analyzer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="212" column="15" selection-start-line="212" selection-start-column="15" selection-end-line="212" selection-end-column="15" />
+            <state relative-caret-position="462">
+              <caret line="305" column="0" selection-start-line="305" selection-start-column="0" selection-end-line="305" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -734,7 +741,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32792208" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32792208" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32792208" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -1225,8 +1232,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="212" column="15" selection-start-line="212" selection-start-column="15" selection-end-line="212" selection-end-column="15" />
+        <state relative-caret-position="462">
+          <caret line="305" column="0" selection-start-line="305" selection-start-column="0" selection-end-line="305" selection-end-column="0" />
           <folding />
         </state>
       </provider>

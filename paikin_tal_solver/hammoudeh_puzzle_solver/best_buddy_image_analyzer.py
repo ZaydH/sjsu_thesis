@@ -210,8 +210,7 @@ class ImageBestBuddyStatistics(object):
             Best buddy density across the entire image.
 
         """
-        return self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
-
+        return 1.0 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
     @property
     def total_number_of_best_buddies(self):
         """
@@ -262,26 +261,45 @@ class ImageBestBuddyStatistics(object):
         self._puzzle.build_puzzle_image(use_results_coloring=True)
         self._puzzle.save_to_file(output_filename)
 
+def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
+    """
+    Runs the Best Buddy Analyzer on an image and outputs the best buddy results and generates a results image.
 
-if __name__ == '__main__':
+    Args:
+        image_file (str): Path to an image file
+        piece_width (int): Width of a puzzle piece in number of pixels
+        puzzle_type (PuzzleType): Type of the puzzle to solve
+
+    """
 
     pickle_file = ImageBestBuddyStatistics.PICKLE_DIRECTORY + "bb_accuracy.pk"
 
-    # bb_results = ImageBestBuddyStatistics(".\\images\\duck.bmp", 28, PuzzleType.type2,
-    #                                       PuzzlePiece.calculate_asymmetric_distance)
-    # bb_results = ImageBestBuddyStatistics(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2,
-    #                                       PuzzlePiece.calculate_asymmetric_distance)
-    # bb_results = ImageBestBuddyStatistics(".\\images\\cat_sleeping_boy.jpg", 28, PuzzleType.type2,
-    #                                       PuzzlePiece.calculate_asymmetric_distance)
-    # bb_results = ImageBestBuddyStatistics(".\\images\\pskov-caves-monastery-1168117_640.jpg", 28, PuzzleType.type2,
-    #                                       PuzzlePiece.calculate_asymmetric_distance)
-    bb_results = ImageBestBuddyStatistics(".\\images\\stairs-547640_640.jpg", 28, PuzzleType.type2,
+    bb_results = ImageBestBuddyStatistics(image_file, piece_width, puzzle_type,
                                           PuzzlePiece.calculate_asymmetric_distance)
-    # # bb_results = ImageBestBuddyStatistics(".\\images\\7.jpg", 28, PuzzleType.type2,
-    # #                                       PuzzlePiece.calculate_asymmetric_distance)
+
     PickleHelper.exporter(bb_results, pickle_file)
 
     # Calculate the print the results.
     bb_results = PickleHelper.importer(pickle_file)
     bb_results.calculate_results()
     bb_results.print_results()
+    print "\n\n"
+
+
+if __name__ == '__main__':
+    # run_best_buddies_analyzer(".\\images\\duck.bmp", 28, PuzzleType.type2)
+    #
+    # run_best_buddies_analyzer(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2)
+    #
+    # run_best_buddies_analyzer(".\\images\\cat_sleeping_boy.jpg", 28, PuzzleType.type2)
+
+    run_best_buddies_analyzer(".\\images\\book_tunnel_pixabay.jpg", 28, PuzzleType.type2)
+
+    run_best_buddies_analyzer(".\\images\\dessert_pixabay.jpg", 28, PuzzleType.type2)
+
+    run_best_buddies_analyzer(".\\images\\dandelion_pixabay.jpg", 28, PuzzleType.type2)
+
+    run_best_buddies_analyzer(".\\images\\primula_pixabay.jpg", 28, PuzzleType.type2)
+
+    run_best_buddies_analyzer(".\\images\\small_pink_flowers_pixabay.jpg", 28, PuzzleType.type2)
+
