@@ -266,6 +266,8 @@ Direct accuracy is the most naive accuracy measure.  It is defined as the ratio 
 DA = \frac{c}{n}
 \end{equation}
 
+Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in the accuracy.  This can be particularly true when the ground-truth image's puzzle dimensions are not known/fixed as described in Section~\ref{sec:shiftableEnhancedDirectAccuracy}.
+
 This thesis proposes two modifications to the direct accuracy metric known as ``Enhanced Direct Accuracy Score'' and ``Shiftable Enhanced Direct Accuracy Score''.  They each described in the following two subsections; afterwards, the thesis describes why both metrics serve complementary roles.
 
 \subsubsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
@@ -281,6 +283,25 @@ $c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with 
 When solving only a single puzzle, EDAS and the standard Direct Accuracy proposed by Cho \textit{et. al.} are equivalent.  In the case of solving multiple puzzles simultaneously, EDAS considers all pieces from the input puzzle of interest ($P_i$) while penalizing for pieces that are present from other input puzzles ($P_k$). 
 
 It is important note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator may be greater than the number of pieces in the solved puzzle $S_j$.
+
+\subsubsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
+
+As mentioned previously, direct accuracy is vulnerable to shifts in the original image.  At times, the degree to which direct accuracy punishes shifts can be overly punitive. 
+
+Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output.  Note that only a single piece is misplaced, causing all pieces to be shifted over one location to the right.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error indicates that it has room for improvement.
+
+\begin{figure}
+\centering
+\fbox{\includegraphics[width=50mm]{./images/muffins_300x200.jpg}}
+\\
+(a) Original Image
+\\ ~\\
+\fbox{\includegraphics[width=54.17mm]{./images/muffins_300x300_type1}}
+\\
+(b) Solver Output
+\caption{Solver Output where a Single Misplaced Piece Catastrophically Affects the Direct Accuracy}
+\label{fig:directAccuracyOnePieceEffect}
+\end{figure}
 
 \pagebreak
 \bibliographystyle{ieeetr}
