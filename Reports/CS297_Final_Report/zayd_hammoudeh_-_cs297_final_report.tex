@@ -4,13 +4,16 @@
 \usepackage{indentfirst}
 \usepackage{float}
 
+\usepackage{amsmath}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp} % Required for upquote.
 \usepackage{listings} % Include the listings-package
 % Ensure quotes in listings are straight.
 % Cleaner way to print strings in listings packages so no space symbol.
-\lstset{showstringspaces=false, 
-        upquote=true} 
+\lstset{showstringspaces=false, upquote=true} 
+
+% eref puts parenthesis around reference, like "equation (1)"
+\def\eref#1{(\ref{#1})}
 
 
 \usepackage{mdframed}
@@ -59,7 +62,7 @@
 
 \section{Introduction}\label{sec:introduction}
 
-Jigsaw puzzles have been around since the 1760s when they were made from wood.  Their name derives from the fact that they were originally carved using jigsaws.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by \cite{freeman1964}, and that solver could only solve 9 piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, it has been shown by \cite{altman1990} and \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
+Jigsaw puzzles have been around since the 1760s when they were made from wood.  Their name derives from the fact that they were originally carved using jigsaws.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by \cite{freeman1964}, and that solver could only solve 9 piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, it has been shown by \cite{altman1990} and \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
 A jig swap puzzles are specific type of jigsaw puzzle where  all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve than standard jigsaw puzzle as one can not consider mechanical compatibility when trying to determine affinity between pieces.  As such, one can only consider the image information on each individual piece when solving the puzzle.  
 
@@ -72,7 +75,67 @@ This project proposes an improved jig swap puzzle solver.  It also studies the f
 \pagebreak
 \section{Previous Work}\label{sec:previousWork}
 
-Computational solvers for jigsaw puzzles have been studied since the 1960's when Freeman and Garder proposed an approach that could solve jigsaw puzzles of up-to nine pieces using solely the piece shapes \cite{freeman1964}.  Since then the focus of research has shifted from traditional jigsaw puzzles to jig swap puzzles.  
+Computational solvers for jigsaw puzzles have been studied since the 1960s when Freeman and Garder proposed an approach that could solve jigsaw puzzles of up-to nine pieces using solely the piece shapes \cite{freeman1964}.  Since then the focus of research has shifted from traditional jigsaw puzzles to jig swap puzzles.  
+
+Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model build around a set of one or more ``anchor piece(s)''; these one or more anchor pieces were fixed in their correct location before the the solver began.  Cho \textit{et. al.} also assumed knowledge regarding the size of the puzzle dimensions.  Future solvers would on Cho \textit{et. al.}'s results while also reducing the amount of information passed to the solver beyond the set of pieces.
+
+A significant contribution of Cho \textit{et. al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK) since LAB normalizes the lightness and color variation across all three dimensions.  Cho \textit{et. al.} proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see \ref{sec:piecePairwiseAffinity} for more details).  
+
+Pomeranz \textit{et. al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces and the size of the puzzle.  Pomeranz \textit{et. al.} also generalized and improved on Cho \textit{et. al.} piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et. al.} proposed the concept of ``best buddies'', which are two pieces that are more similar to each other than they are to any other pieces.  Best buddies have served as the basis for both an estimation metric for the quality of a solved image as well as the foundation of some solvers' placers \cite{paikin2015}.
+
+In 2012, Gallagher \cite{gallagher2012} formalizes the different categories of jig swap problems into three primary types.  The following is Gallagher's proposed terminology, and his nomenclature is used throughout this document.
+
+\begin{itemize}
+
+	\item \textbf{Type 1 Puzzle}: The dimension of the puzzle (i.e. the width and height of the original image in number of pixels) is known.  What is more, the orientation of each piece is known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
+	
+	\item \textbf{Type 2 Puzzle}: This is an extension of a type 1, where the rotation of any piece is unknown.  This change alone increases the number of possible solutions by a factor of $4^n$ (where $n$ is the number of pieces in the puzzles) in comparison to a Type 1 puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the original puzzle can be unknown.
+	
+	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the puzzle pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
+
+\end{itemize}
+
+Sholomon \textit{et. al.} also propose a fourth type (i.e. "Type 4") puzzle whereby each puzzle piece has an image on both sides.  Each puzzle is similar to a 
+
+\pagebreak
+\section{Puzzle Piece Pairwise Affinity}\label{sec:piecePairwiseAffinity}
+
+Pairwise affinity quantifies the similarity between the edges of two puzzle pieces.  $D(x_i, s_i, x_j, s_j)$ and $C(x_i, s_i, x_j, s_j)$ represent the distance and compatibility (i.e. similarity) between side $s_i$ of puzzle piece $x_i$ and side $s_j$ of puzzle piece $x_j$.  
+
+\subsection{Cho \textit{et. al.} Pairwise Affinity}\label{sec:choPairwiseAffinity}
+
+As mentioned in section \ref{sec:previousWork}, Cho \textit{et. al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Their approach is shown in Equation~\eref{eq:choPairwise}, which quantifies the distance between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  $K$ is the width/height of a puzzle piece in number of pixels\footnote{Cho \textit{et. al.} used 7 for $K$}.  
+
+\begin{equation} \label{eq:choPairwise}
+D(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3}(x_i(k,K,d) - x_j(k,1,d))^2
+\end{equation}
+
+Since the LAB colorspace has three dimensions (e.g. lightness and A/B opponent colors), $d$ ranges between $1$ and $3$.  Similarly, $x_i(k,K,d)$ represents the LAB value in dimension $d$ of the pixel in row ``$k$'' of column $K$ in piece $x_i$.
+
+\subsection{Pomeranz \textit{et. al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
+
+One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the piece's pixel dimensions.  It is possible that superior results may be achieved by allowing the solver to modify this exponent term.  Pomeranz \textit{et. al.} generalize Equation~\eref{eq:choPairwise} using the $L_p$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.
+
+\begin{equation} \label{eq:pomeranzPairwise}
+D(x_i,L,x_j,R) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\bigg)^{\frac{q}{p}}
+\end{equation}
+
+Hence, for a distance measure equivalent to that of Cho \textit{et. al.}, $p$ and $q$ are set equal to $2$.
+
+An additional down side of the metric proposed by Cho \textit{et. al.} is that it only considers the border pixels.  Hence, if there is some gradient in the original image, two pieces may appear artificially dissimilar using this approach.  To address this issue, Pomeranz \textit{et. al.} proposed predictive compatibility.  Equation~\eref{eq:pomeranzPredCompat} shows the predictive compatibility between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  
+
+\begin{equation} \label{eq:pomeranzPredCompat}
+\begin{split}
+C(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d))^p \\ - ([2x_j(k, 1, d) - x_i(k, 2, d)] - x_i(k, K, d))^p\Big]^{\frac{q}{p}}
+\end{split}
+\end{equation}
+
+Note that in Equation~\eref{eq:pomeranzPredCompat}, the difference between the column of pixels adjacent to the edge is used to account for any gradient effects.
+
+\subsection{Paikin \& Tal Pairwise Affinity}\label{sec:paikinPairwiseAffinity}
+
+It is important to note that distance and compatibility metrics may not be associative
+
 
 \pagebreak
 \bibliographystyle{ieeetr}
