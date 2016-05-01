@@ -288,7 +288,7 @@ It is important note that EDAS is a score and not a measure of accuracy. While i
 
 As mentioned previously, direct accuracy is vulnerable to shifts in the original image.  At times, the degree to which direct accuracy punishes shifts can be overly punitive. 
 
-Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output.  Note that only a single piece is misplaced, causing all pieces to be shifted over one location to the right.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error indicates that it has room for improvement.
+Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output where the puzzle boundaries where not fixed.  Note that only a single piece is misplaced, causing all pieces to be shifted to the right one location.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error indicates that it has room for improvement.
 
 \begin{figure}
 \centering
@@ -302,6 +302,28 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an act
 \caption{Solver Output where a Single Misplaced Piece Catastrophically Affects the Direct Accuracy}
 \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
+
+To address the often misleadingly punitive nature of the direct accuracy measure, this thesis proposes the Shiftable Enhanced Direct Accuracy Score (SEDAS).  Let $p_n$ be the puzzle piece that is closest to the upper left corner of the solved image's boundary with a minimum Manhattan distance $d_min$.  Also let $L$ as the set of all possible puzzle piece locations that minimum distance $d_min$, then the SEDAS for a puzzle $P_i$ is defined as:
+
+\begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
+SEDAS_{P_i} = \argmax_{l \in L} \Big( \argmax_{s_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})} \Big)
+\end{equation}
+
+Note that as reference point ($l$) for the solved is shifted, then only the number of pieces in the correct location ($c_(i,j)$) will also change.  
+
+Rather than defining SEDAS based off the closest puzzle to the upper left corner of the image, an alternative is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach will usually be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
+
+\subsubsection{Importance of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
+
+While EDAS can be misleadingly punitive, it is not correct that EDAS should be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set of minimum distance locations ``$L$'' (as defined in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}).  Hence, there is no additional computational time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, it is often possible to detect whether there was any shifting in the original image.  This would not be possible if SEDAS was used alone.
+
+\subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
+
+\subsection{Visualizing Solver Accuracy Results}\label{sec:visualizingSolverAccuracy}
+
+\subsubsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
+
+\subsubsection{Visualizing Neighbor Accuracy}\label{sec:visualizingNeighborAccuracy}
 
 \pagebreak
 \bibliographystyle{ieeetr}
