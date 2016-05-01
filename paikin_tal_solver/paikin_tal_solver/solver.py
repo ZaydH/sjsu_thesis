@@ -26,7 +26,8 @@ class BestBuddyPoolInfo(object):
     def key(self):
         """
 
-        Returns (int): Best Buddy Pool Info Key.
+        Returns (int):
+            Best Buddy Pool Info Key.
         """
         return self._key
 
@@ -58,8 +59,9 @@ class BestBuddyHeapInfo(object):
         Args:
             other:
 
-        Returns: Maximum heap so the piece with the higher mutual compatibility is given higher priority in the
-        priority queue.
+        Returns (int):
+            Maximum heap so the piece with the higher mutual compatibility is given higher priority in the
+            priority queue.
         """
         # Swapping to make a MAXIMUM heap
         return cmp(other.mutual_compatibility, self.mutual_compatibility)
@@ -247,7 +249,8 @@ class PaikinTalSolver(object):
 
         Gets the results for the set of the Paikin and Tal solver.
 
-        Returns ([[PuzzlePiece]]): Multiple puzzles each of which is a set of puzzle pieces.
+        Returns (List[PuzzlePiece]):
+            Multiple puzzles each of which is a set of puzzle pieces.
         """
         # A puzzle is an array of puzzle pieces that can then be reconstructed.
         solved_puzzles = [[] for _ in range(self._actual_numb_puzzles)]
@@ -425,8 +428,8 @@ class PaikinTalSolver(object):
         """
         Places a piece using the best buddy placing technique.
 
-        Returns (NextPieceToPlace): If a next piece is found, then it returns the information on the best piece to
-        place and None otherwise.
+        Returns (NextPieceToPlace):
+            If a next piece is found, then it returns the information on the best piece to place and None otherwise.
 
         """
 
@@ -469,7 +472,8 @@ class PaikinTalSolver(object):
             neighbor_count_open_slots (List[MultisidePuzzleOpenSlot]): Open slot information
             numb_neighbor_sides (int): Number of sides with a neighbor
 
-        Returns (NextPieceToPlace): Information on a possible candidate for next piece to place
+        Returns (NextPieceToPlace):
+            Information on a possible candidate for next piece to place
         """
 
         # Get the information about the piece
@@ -555,7 +559,8 @@ class PaikinTalSolver(object):
         Args:
             slot_location (PuzzleLocation): Unique location in the puzzle
 
-        Returns: True of the location in the specified puzzle is open and false otherwise.
+        Returns (bool):
+            True of the location in the specified puzzle is open and false otherwise.
         """
         return self._piece_locations[slot_location.puzzle_id][slot_location.location] == PaikinTalSolver._UNPLACED_PIECE_ID \
                and self._check_board_dimensions(slot_location)
@@ -564,7 +569,8 @@ class PaikinTalSolver(object):
         """
         Determines whether best buddy heap housecleaning should be performed.
 
-        Returns (bool): True if BB heap house cleaning should not be performed and False otherwise.
+        Returns (bool):
+            True if BB heap house cleaning should not be performed and False otherwise.
 
         """
         if not PaikinTalSolver._ENABLE_BEST_BUDDY_HEAP_HOUSEKEEPING:
@@ -614,7 +620,8 @@ class PaikinTalSolver(object):
         Args:
             puzzle_location (PuzzleLocation): Unique location in the puzzles
 
-        Returns (bool): True if not an illegal based off the board location, False otherwise.
+        Returns (bool):
+            True if not an illegal based off the board location, False otherwise.
 
         """
 
@@ -659,7 +666,8 @@ class PaikinTalSolver(object):
         Args:
             unplaced_pieces ([BestBuddyPoolInfo]): Set of unplaced pieces
 
-        Returns (NextPieceToPlace): Information on the piece that was selected as the best to be placed.
+        Returns (NextPieceToPlace):
+            Information on the piece that was selected as the best to be placed.
         """
         is_best_buddy = False
         best_piece = None
@@ -812,7 +820,8 @@ class PaikinTalSolver(object):
             primary_piece_location (PuzzleLocation): Location of the primary piece
             other_piece_location (PuzzleLocation): Location of the other piece
 
-        Returns (PuzzlePieceSide): Side of the primary piece adjacent to the other piece.
+        Returns (PuzzlePieceSide):
+            Side of the primary piece adjacent to the other piece.
         """
 
         diff_row = primary_piece_location.location[0] - other_piece_location.location[0]
@@ -871,7 +880,8 @@ class PaikinTalSolver(object):
         """
         Access all of the best buddy accuracy information associated with the puzzle.
 
-        Returns (List[BestBuddyAccuracy]): All the best buddy accuracy results in the puzzle.
+        Returns (List[BestBuddyAccuracy]):
+            All the best buddy accuracy results in the puzzle.
         """
         return self._best_buddy_accuracy
 
@@ -953,7 +963,7 @@ class PaikinTalSolver(object):
         of that open slot and the best buddy added to the heap.
 
         Args:
-            placed_piece (PuzzlePiece):
+            placed_piece (PuzzlePiece): Last piece placed
         """
         # Get the placed piece's ID number
         piece_id = placed_piece.id_number
@@ -1056,6 +1066,7 @@ class PaikinTalSolver(object):
 
         Gets whether the puzzle is type 1 or type 2
 
-        Returns (PuzzleType): Type of the puzzle (either 1 or 2)
+        Returns (PuzzleType):
+            Type of the puzzle (either 1 or 2)
         """
         return self._puzzle_type

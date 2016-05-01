@@ -31,7 +31,8 @@ class PieceDistanceInformation(object):
             numb_pieces (int): Number of pieces in the puzzle
             puzzle_type (PuzzleType):
 
-        Returns (PieceDistanceInformation): Distance information object for a single puzzle piece.
+        Returns (PieceDistanceInformation):
+            Distance information object for a single puzzle piece.
         """
         self._id = id_numb
         self._numb_pieces = numb_pieces
@@ -55,7 +56,8 @@ class PieceDistanceInformation(object):
 
         Gets the piece identification number for a PieceDistanceInformation object
 
-        Returns (int): Piece identification number
+        Returns (int):
+            Piece identification number
         """
         return self._id
 
@@ -70,8 +72,8 @@ class PieceDistanceInformation(object):
             p_j (int): Secondary puzzle piece
             p_j_side (PuzzlePieceSide):
 
-        Returns (int): Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their
-        specified sides.
+        Returns (int):
+            Asymmetric distance between pieces p_i (implicit) and p_j (explicit) for their specified sides.
         """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         return self._asymmetric_distances[p_i_side.value, p_j, p_j_side_val]
@@ -87,7 +89,8 @@ class PieceDistanceInformation(object):
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
 
-        Returns: Asymmetric compatibility between the two pieces on their respective sides
+        Returns (double):
+            Asymmetric compatibility between the two pieces on their respective sides
         """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         return self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_val]
@@ -102,7 +105,7 @@ class PieceDistanceInformation(object):
             p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
-            compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.
+                compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.
         """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         self._mutual_compatibilities[p_i_side.value, p_j, p_j_side_val] = compatibility
@@ -118,7 +121,8 @@ class PieceDistanceInformation(object):
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
 
-        Returns: Mutual compatibility between the two pieces on their respective sides
+        Returns (double):
+            Mutual compatibility between the two pieces on their respective sides
         """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         # Return the mutual compatibility
@@ -133,7 +137,7 @@ class PieceDistanceInformation(object):
         Args:
             side (PuzzlePieceSide): Reference side of the puzzle piece
 
-        Returns ([(int, int)]):
+        Returns (List[ Tuple[int] ]):
             Returns an array of the ID numbers and the respective side for the ID number for possible best buddies.
         """
         if PieceDistanceInformation._ALLOW_MULTIPLE_BEST_BUDDIES:
@@ -155,7 +159,8 @@ class PieceDistanceInformation(object):
         Args:
             side (PuzzlePieceSide): Side of the implicit puzzle piece.
 
-        Returns ([int]): List of best buddy pieces
+        Returns ([int]):
+            List of best buddy pieces
         """
         return self._best_buddies[side.value]
 
@@ -168,7 +173,6 @@ class PieceDistanceInformation(object):
         Returns (List[int]): List of best buddy pieces
         """
         return self._best_buddies
-
 
     def add_best_buddy(self, p_i_side, p_j_id_numb, p_j_side):
         """
@@ -402,12 +406,14 @@ class PieceDistanceInformation(object):
 
     def _skip_piece(self, skip_piece, p_j=None):
         """
+        Deetermine if a piece should be skilled during placement
 
         Args:
             skip_piece (Optional [Bool]):
             p_j (Optional int):
 
-        Returns: True if this piece should be skipped and False otherwise.
+        Returns (bool):
+            True if this piece should be skipped and False otherwise.
         """
         if (p_j is not None and self._id == p_j) or \
                 (skip_piece is not None and skip_piece[p_j]):  # Do not compare a piece to itself.
@@ -586,7 +592,7 @@ class InterPieceDistance(object):
             is_piece_placed ([Bool]): List indicating whether each piece is placed
 
             is_piece_placed_with_no_open_neighbors ([Bool]): Subset of the elements in the array "is_piece_placed."  It
-            is only those pieces that are placed AND have no open locations amongst their direct neighbors.
+                is only those pieces that are placed AND have no open locations amongst their direct neighbors.
         """
 
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
@@ -798,9 +804,10 @@ class InterPieceDistance(object):
 
         Args:
             placed_pieces (Optional [bool]): An array indicating whether each puzzle piece (by index) has been
-            placed.
+                placed.
 
-        Returns (int): Index of the next piece to use for starting a board.
+        Returns (int):
+            Index of the next piece to use for starting a board.
         """
         # If no pieces are placed, then use the first piece
         if placed_pieces is None:
@@ -816,12 +823,14 @@ class InterPieceDistance(object):
 
     def best_buddies(self, p_i, p_i_side):
         """
+        Gets the best buddy information (if any) for a specified piece's side
 
         Args:
-            p_i (int):
-            p_i_side  (PuzzlePieceSide):
+            p_i (int): Identification number of the piece who best buddy information is to be retrieved
+            p_i_side  (PuzzlePieceSide): Side of piece whose best buddy is being retriefed
 
-        Returns ([int]): List of best buddy piece id numbers
+        Returns (List[int]):
+            List of best buddy piece id numbers
         """
         return self._piece_distance_info[p_i].best_buddies(p_i_side)
 
@@ -832,7 +841,8 @@ class InterPieceDistance(object):
         Args:
             p_i (int): Piece identification number
 
-        Returns (List[(int, PuzzlePieceSide)]): Best buddy information for the specified piece.
+        Returns (List[(int, PuzzlePieceSide)]):
+            Best buddy information for the specified piece.
 
         """
         return self._piece_distance_info[p_i].all_best_buddies()
@@ -849,7 +859,8 @@ class InterPieceDistance(object):
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
 
-        Returns (int): Asymmetric distance between puzzle pieces p_i and p_j.
+        Returns (int):
+            Asymmetric distance between puzzle pieces p_i and p_j.
         """
         # For a type 1 puzzles, ensure that the pu
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
@@ -868,7 +879,8 @@ class InterPieceDistance(object):
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
 
-        Returns (int): Asymmetric compatibility between puzzle pieces p_i and p_j.
+        Returns (int):
+            Asymmetric compatibility between puzzle pieces p_i and p_j.
         """
         # For a type 1 puzzles, ensure that the pu
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
@@ -888,7 +900,8 @@ class InterPieceDistance(object):
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
 
-        Returns (int): Mutual compatibility between puzzle pieces p_i and p_j.
+        Returns (int):
+            Mutual compatibility between puzzle pieces p_i and p_j.
         """
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
             self.assert_valid_type1_side(p_i_side, p_j_side)
@@ -917,7 +930,8 @@ class InterPieceDistance(object):
             puzzle_type (PuzzleType): Puzzle type being solved.
             p_i_side (PuzzlePieceSide): Side of p_i puzzle piece where p_j will be placed.
 
-        Returns ([PuzzlePieceSide]): List of all valid sides for a neighboring puzzle piece.
+        Returns (List[PuzzlePieceSide]):
+            List of all valid sides for a neighboring puzzle piece.
         """
         if puzzle_type == PuzzleType.type1:
             return [p_i_side.complementary_side]
@@ -933,9 +947,10 @@ class InterPieceDistance(object):
             puzzle_type (PuzzleType): Either type1 (no rotation) or type 2 (with rotation)
             p_j_side (PuzzlePieceSide): Side for the secondary piece p_j.
 
-        Returns: For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle
-        pieces on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined
-        in the PuzzlePieceSide enumerated type.
+        Returns (int):
+            For type 1 puzzles, this normalizes to an index of 0 since it is the only distance for two puzzle pieces
+            on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined
+            in the PuzzlePieceSide enumerated type.
         """
         if puzzle_type == PuzzleType.type1:
             return 0
@@ -965,7 +980,8 @@ class InterPieceDistance(object):
             p_i (int): Identification number of the puzzle piece
             is_piece_placed_with_no_open_neighbors ([Bool]):  List indicating whether each piece is placed
 
-        Returns: True if piece p_i should be skipped and False otherwise
+        Returns (bool):
+            True if piece p_i should be skipped and False otherwise
         """
         if is_piece_placed_with_no_open_neighbors is not None and is_piece_placed_with_no_open_neighbors[p_i]:
             return True

@@ -1062,6 +1062,7 @@ class BestBuddyAccuracy(object):
     @property
     def numb_open_best_buddies(self):
         """
+        Property to get the total number of best buddies where one of the pair has not been placed.
 
         Returns (int):
             Total number of best buddies whose best buddies have not yet been placed.

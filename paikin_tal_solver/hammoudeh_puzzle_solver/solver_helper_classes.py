@@ -42,7 +42,8 @@ class NextPieceToPlace(object):
         Args:
             other (NextPieceToPlace): Another next piece location to consider.
 
-        Returns (bool): True if the implicit piece is a better next piece to place and
+        Returns (bool):
+            True if the implicit piece is a better next piece to place and
 
         """
         # If the implicit piece is None and the other is not, then the other is better
@@ -80,7 +81,8 @@ class PuzzleLocation(object):
         """
         Puzzle location as a tuple of (row, column)
 
-        Returns (Tuple[int]): Tuple in the form (row, column)
+        Returns (Tuple[int]):
+            Tuple in the form (row, column)
 
         """
         return self.row, self.column
@@ -90,7 +92,8 @@ class PuzzleLocation(object):
         """
         Returns a unique key for a given puzzle location on a given board.
 
-        Returns (str): Key for this puzzle location
+        Returns (str):
+            Key for this puzzle location
 
         """
         if self._key is None:
@@ -119,7 +122,8 @@ class NeighborSidePair(object):
         """
         Gets the identification number of a neighbor piece in the neighbor side tuple.
 
-        Returns (int): Identification number of a neighbor piece
+        Returns (int):
+            Identification number of a neighbor piece
 
         """
         return self._neighbor_id
@@ -129,7 +133,8 @@ class NeighborSidePair(object):
         """
         Gets the side of the neighbor piece of interest.
 
-        Returns (PuzzlePieceSide): Side of the neighbor piece
+        Returns (PuzzlePieceSide):
+            Side of the neighbor piece
 
         """
         return self._neighbor_side

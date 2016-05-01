@@ -79,7 +79,8 @@ class ImageBestBuddyStatistics(object):
         """
         Returns the file name of the original image used without file extension of path information.
 
-        Returns (str): Filename of the original image with the file extension and file path removed.
+        Returns (str):
+            Filename of the original image with the file extension and file path removed.
         """
         return self.filename_root
 
@@ -88,9 +89,10 @@ class ImageBestBuddyStatistics(object):
         """
         Returns the file extension (e.g. "jpg", "bmp", "png", etc.)
 
-        Returns (str): File extension of the original image
+        Returns (str):
+            File extension of the original image
         """
-        return self.filename_root
+        return self._file_extension
 
     def analyze_piece_best_buddy_info(self, piece):
         """
@@ -172,7 +174,8 @@ class ImageBestBuddyStatistics(object):
               locaton (i.e. where it had a neighbor)
             numb_wrong_exterior_bb (int): Number of best buddies for a piece that were wrong when it had no neighbor
 
-        Returns (Tuple[int]): Tuple for accessing the numpy array
+        Returns (Tuple[int]):
+            Tuple for accessing the numpy array
 
         """
         assert numb_bb >= numb_wrong_interior_bb + numb_wrong_exterior_bb
@@ -203,7 +206,8 @@ class ImageBestBuddyStatistics(object):
         buddies divided by the total number of possible best buddies (i.e. number of pieces multipled by the number
         of sides per piece).
 
-        Returns (float): Best buddy density
+        Returns (float):
+            Best buddy density across the entire image.
 
         """
         return 100.0 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
@@ -213,7 +217,8 @@ class ImageBestBuddyStatistics(object):
         """
         Gets the total of best buddies (both interior/exterior and right/wrong).
 
-        Returns (int): Best buddy count
+        Returns (int):
+            Number of best buddies in the image
         """
         return self._numb_wrong_exterior_bb + self._total_numb_interior_bb
 
@@ -224,7 +229,8 @@ class ImageBestBuddyStatistics(object):
 
         :math:`accuracy = 1 - (numb_wrong_interior_bb + numb_wrong_exterior_bb)/(total_numb_best_buddy)`
 
-        Returns (float): Best buddy accuracy
+        Returns (float):
+            Best buddy accuracy for the entire image
         """
         return 1 - 1.0 * (self._numb_wrong_interior_bb + self._numb_wrong_exterior_bb) / self.total_number_of_best_buddies
 
@@ -235,7 +241,8 @@ class ImageBestBuddyStatistics(object):
 
         :math:`interior_accuracy = 1 - (numb_wrong_interior_bb)/(total_numb_interior_best_buddy)`
 
-        Returns (float): Best buddy accuracy
+        Returns (float):
+            Best buddy accuracy considering only interior pieces.
         """
         return 1 - 1.0 * self._numb_wrong_interior_bb / self._total_numb_interior_bb
 

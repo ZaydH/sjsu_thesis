@@ -7,6 +7,9 @@ from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
 
 
 class BestBuddyPlacerCollection(object):
+    """
+    A container object used to store all the data used by the best buddy placer.
+    """
 
     def __init__(self):
         # Store the location of the open locations
@@ -48,7 +51,8 @@ class BestBuddyPlacerCollection(object):
         Args:
             numb_neighbors (int): Number of neighbors adjacent to the set of open slots
 
-        Returns (dict): Dictionary containing the open slots in the puzzles with the specified number of neighbors.
+        Returns (dict):
+            Dictionary containing the open slots in the puzzles with the specified number of neighbors.
 
         """
         return self._multiside_open_slots_lists[numb_neighbors - 1]
@@ -153,8 +157,9 @@ class MultisidePuzzleOpenSlot(object):
         Args:
             open_slot_side (PuzzlePieceSide): Side of the open slot
 
-        Returns (NeighborSidePair): If the piece has a neighbor on the specified side, it returns a NeighborSidePair
-        containing the neighbor id and the neighbor's side.
+        Returns (NeighborSidePair):
+            If the piece has a neighbor on the specified side, it returns a NeighborSidePair containing the neighbor
+            id and the neighbor's side.
 
         """
         return self._neighbor_side_list[open_slot_side.value]
@@ -164,7 +169,8 @@ class MultisidePuzzleOpenSlot(object):
         """
         Returns the actual location of the open slot.
 
-        Returns (PuzzleLocation): Location of the open slot
+        Returns (PuzzleLocation):
+            Location of the open slot
 
         """
         return self._puzzle_location
@@ -172,9 +178,10 @@ class MultisidePuzzleOpenSlot(object):
     @property
     def numb_neighbors(self):
         """
-        Determines the number of ne
+        Determines the number of neighbors (i.e. pieces) directly adjacent to this open location.
 
-        Returns(int): Number neighbors for this open slot.
+        Returns(int):
+            Number neighbors for this open slot.
 
         """
         return self._numb_neighbors
@@ -184,7 +191,8 @@ class MultisidePuzzleOpenSlot(object):
         """
         Gets the key of a MultisidePuzzleOpenSlot object.
 
-        Returns (str): Unique key for a multisided open slot
+        Returns (str):
+            Unique key for a multisided open slot
 
         """
         return self._puzzle_location.key
