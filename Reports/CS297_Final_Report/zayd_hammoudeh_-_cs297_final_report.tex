@@ -16,6 +16,9 @@
 \def\eref#1{(\ref{#1})}
 % Used to generate || || (Norm) symbol for Paikin and Tal
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\numbwithdegreesymbol}[1]{#1$^\circ$}
+
+\DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
 
 
 \usepackage{mdframed}
@@ -70,7 +73,7 @@ A jig swap puzzles are specific type of jigsaw puzzle where  all pieces are equa
 
 Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies are applicable include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.
 
-Unlike traditional jigsaw or jig swap puzzles, the source (i.e. original) image is unknown for most practical applications.  This significantly complicates solving the problem as one must determine the overall structure of the complete solution solely from a bag of individual pieces with unknown relationships.
+Unlike traditional jigsaw or jig swap puzzles, the ground-truth (i.e. original) image is unknown for most practical applications.  This significantly complicates solving the problem as one must determine the overall structure of the complete solution solely from a bag of individual pieces with unknown relationships.
 
 This project proposes an improved jig swap puzzle solver.  It also studies the fundamental structures within images to determine which images are easy or difficult to solve using current techniques.  This study will help guide future research by focusing on the weaknesses with state of the art approaches. 
 
@@ -89,9 +92,9 @@ In 2012, Gallagher \cite{gallagher2012} formalizes the different categories of j
 
 \begin{itemize}
 
-	\item \textbf{Type 1 Puzzle}: The dimension of the puzzle (i.e. the width and height of the source image in number of pixels) is known.  What is more, the orientation of each piece is known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
+	\item \textbf{Type 1 Puzzle}: The dimension of the puzzle (i.e. the width and height of the ground-truth image in number of pixels) is known.  What is more, the orientation of each piece is known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
 	
-	\item \textbf{Type 2 Puzzle}: This is an extension of a type 1, where the rotation of any piece is unknown.  This change alone increases the number of possible solutions by a factor of $4^n$ (where $n$ is the number of pieces in the puzzles) in comparison to a Type 1 puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the source image/puzzle can be unknown.
+	\item \textbf{Type 2 Puzzle}: This is an extension of a type 1, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g. \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}).  This change alone increases the number of possible solutions by a factor of $4^n$ (where $n$ is the number of pieces in the puzzles) in comparison to a Type 1 puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image/puzzle can be unknown.
 	
 	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the puzzle pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
 
@@ -124,7 +127,7 @@ D(x_i,L,x_j,R) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p
 
 Hence, for a distance measure equivalent to that of Cho \textit{et. al.}, $p$ and $q$ are set equal to $2$.
 
-An additional down side of the metric proposed by Cho \textit{et. al.} is that it only considers the border pixels.  Hence, if there is some gradient in the source image, two pieces may appear artificially dissimilar using this approach.  To address this issue, Pomeranz \textit{et. al.} proposed predictive compatibility.  Equation~\eref{eq:pomeranzPredCompat} shows the predictive compatibility between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  
+An additional down side of the metric proposed by Cho \textit{et. al.} is that it only considers the border pixels.  Hence, if there is some gradient in the ground-truth image, two pieces may appear artificially dissimilar using this approach.  To address this issue, Pomeranz \textit{et. al.} proposed predictive compatibility.  Equation~\eref{eq:pomeranzPredCompat} shows the predictive compatibility between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  
 
 \begin{equation} \label{eq:pomeranzPredCompat}
 \begin{split}
@@ -205,28 +208,24 @@ In most cases, it is relatively rare that two pieces are best buddies and are no
 
 There is currently no standard for visualizing best buddy relationships in images.  This thesis proposes a format for the first time.  As a nomenclature, this thesis refers to any best buddies that are neighbors in the image as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies''.  
 
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being denoted as either adjacent or non-adjacent.  The four isosceles triangles all share a common, non-base vertex in the center of the puzzle piece.  A white border is placed around all puzzle pieces to make it easier to differentiate pieces from one another.  A black square represents a missing or unpopulated piece.
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being denoted as either adjacent or non-adjacent.  The four isosceles triangles all share a common, non-base vertex in the center of the puzzle piece.  A white border is placed around all puzzle pieces to make it easier to differentiate pieces from one another.  A black square represents a missing or unpopulated piece location.
 
-Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. 
+Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. Adjacent and non-adjacent best buddies are represented by green and red isosceles triangles.  Any edge that has no best buddies is shown as a white triangle.  
 
 \begin{figure}
 \centering
-\fbox{\includegraphics[width=50mm]{}}
+\fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}
 \\
 (a) Original Image
-\\
-\fbox{\includegraphics[width=50mm]{}}
+\\ ~\\
+\fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
 \\
 (b) Best Buddy Visualization
 \caption{Visualization of Best Buddies in an Image}
 \label{fig:bestBuddyVisualization}
 \end{figure}
 
-Adjacent and non-adjacent best buddies are represented by green and red isosceles triangles.  Any edge that has no best buddies is shown as a white triangle.
-
-
-
-\subsubsection{An Improved Best Buddies Definition}\label{sec:bestBuddiesLimitations}
+\subsubsection{Unique Best Buddies}\label{sec:improvedBestBuddies}
 
 As explained in Section~\ref{sec:hammoudehPairwiseAffinity}, reconstructing computer generated or computer manipulated image may introduce new challenges not found with photographs; best buddies is another example of this.
 
@@ -248,9 +247,40 @@ In photographs, it is generally unlikely that there will be a significant number
 
 Rather than relying on best buddies being ``greater than or equal'' to all other pieces, the modified requirement is that pairings must be strictly greater than.  Hence, best buddy pairings are exclusive with cliques of size greater than two being explicitly disallowed.
 
-\subsubsection{Interior and Exterior Best Buddies}\label{sec:bestBuddiesLimitations}
+\subsubsection{Interior and Exterior Best Buddies}\label{sec:interiorExteriorBestBuddies}
 
-In all previous research, all best buddies (in particular best buddy errors) were treated the same.  However, pieces that are on the exterior (i.e. edge) of a puzzle or that are next to a missing piece are expected to naturally have a higher rate of non-adjacent best buddies than pieces on the interior of the puzzle.  This is because such piece sides do not have an true neighbor leaving them more likely to couple with an unrelated piece.  When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors higher weight.
+In all previous research, all best buddies (in particular best buddy errors) were treated the same.  However, pieces that are on the exterior (i.e. edge) of a puzzle or that are next to a missing piece are expected to naturally have a higher rate of non-adjacent best buddies than pieces on the interior of the puzzle.  This is because such piece sides do not have an true neighbor leaving them more likely to couple with an unrelated piece.  As an example, Figure~\ref{fig:bestBuddyVisualization} has four non-adjacent interior best buddies and 14 exterior non-adjacent best buddies despite there being despite there being 16 times more interior edges than exterior edges. 
+
+When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors higher weight.
+
+\pagebreak
+\section{Quantifying Solver Accuracy}\label{sec:quantifyingSolverAccuracy}
+
+Cho \textit{et. al.} \cite{cho2010} defined the two metrics for quantifying the accuracy of a solver result namely: Direct Accuracy and Neighbor Accuracy. These metrics have been used in subsequent work \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing metrics, the weaknesses of these metrics, and proposes enhancements to these metrics to make them more meaningful for type 2 puzzles as well as when solving multiple puzzles simultaneously.
+
+\subsection{Direct Accuracy}\label{sec:directAccuracy}
+
+Direct accuracy is the most naive accuracy measure.  It is defined as the ratio of the number of pieces placed in the same location as the ground-truth (i.e. source).  The formal definition of direct accuracy ($DA$) is shown in Equation~\eref{eq:directAccuracy} where $n$ is the number of pieces in the source puzzle and $c$ is the number of pieces placed in their correct location.
+
+\begin{equation} \label{eq:directAccuracy}
+DA = \frac{c}{n}
+\end{equation}
+
+This thesis proposes two modifications to the direct accuracy metric known as ``Enhanced Direct Accuracy Score'' and ``Shiftable Enhanced Direct Accuracy Score''.  They each described in the following two subsections; afterwards, the thesis describes why both metrics serve complementary roles.
+
+\subsubsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
+
+The standard direct accuracy metric does not account for the possibility that in the solver output there may be pieces from multiple puzzles.  For a puzzle $P_i$ in the set of input puzzles $P$ (where $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is a solved puzzle in $S$, then Equation~\ref{eq:enhancedDirectAccuracyScore} defines the Enhanced Direct Accuracy Score (EDAS).
+
+\begin{equation} \label{eq:enhancedDirectAccuracyScore}
+EDAS_{P_i} = \argmax_{s_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
+\end{equation}
+
+$c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation in type 2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in solved $S_j$.
+
+When solving only a single puzzle, EDAS and the standard Direct Accuracy proposed by Cho \textit{et. al.} are equivalent.  In the case of solving multiple puzzles simultaneously, EDAS considers all pieces from the input puzzle of interest ($P_i$) while penalizing for pieces that are present from other input puzzles ($P_k$). 
+
+It is important note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator may be greater than the number of pieces in the solved puzzle $S_j$.
 
 \pagebreak
 \bibliographystyle{ieeetr}
