@@ -105,7 +105,7 @@ class PieceDistanceInformation(object):
             p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed
             p_j (int): Secondary piece for the asymmetric distance.
             p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i
-                compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.
+            compatibility (float): Mutual compatibility between p_i and p_j on their respective sides.
         """
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         self._mutual_compatibilities[p_i_side.value, p_j, p_j_side_val] = compatibility
