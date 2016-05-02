@@ -4,11 +4,15 @@
 \usepackage{indentfirst}
 \usepackage{float}
 
-\usepackage{xcolor, colortbl} % Used for coloring the cells of the table
+\usepackage{xcolor, colortbl} % Used for coloring the cells of tables
 \usepackage{amsmath}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp} % Required for upquote.
-\usepackage{listings} % Include the listings-package
+\usepackage{listings} % Used for printing source code in papers
+
+\usepackage{algorithm} % Used for writing algorithms in a paper
+\usepackage[noend]{algpseudocode} % Allows psuedocode keywords (e.g. "if", "while", "for", etc.) in algorithms.
+
 % Ensure quotes in listings are straight.
 % Cleaner way to print strings in listings packages so no space symbol.
 \lstset{showstringspaces=false, upquote=true} 
@@ -62,6 +66,7 @@
 
 \pagenumbering{roman}
 
+\renewcommand{\contentsname}{Table of Contents} % Change header of TOC from "Contents" to "Table of Contents"
 \tableofcontents{\protect\newpage}
 
 \addcontentsline{toc}{section}{List of Figures}
@@ -470,6 +475,9 @@ All pieces that came from the building exterior image are shown as blue.  The pi
 
 
 
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                    Paikin & Tal Solver                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,7 +485,60 @@ All pieces that came from the building exterior image are shown as blue.  The pi
 \pagebreak
 \section{Paikin \& Tal Solver}\label{sec:paikinTalSolver}
 
-This section describes in detail the solver proposed by Paikin \& Tal.  The official source code for this solver was never made open source.  As part of this thesis, Paikin \& Tal solver was implemented in Python.  The following subsection describes the components of the Paikin \& Tal solver and is followed by a discussion concerning some of the solver's weaknesses.
+This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; their Java implementation was never open sourced.  As such, this section also describes a complete implementation of their approach developed as part of this thesis.  The section concludes with a summary of some of the weaknesses of Paikin \& Tal's approach. 
+
+\subsection{Overview of Paikin \& Tal's Algorithm}\label{sec:paikinTalAlgorithm}
+
+Paikin \& Tal's solver was inspired by the solver developed by Pomeranz \textit{et. al.} in \cite{pomeranz2011}.  However, unlike the previous work, Paikin \& Tal's is deterministic; their greedy algorithm iteratively places the puzzle piece that at each stage has the maximum confidence score. Paikin \& Tal's approach is able to handle puzzles with missing pieces where the puzzle size and piece orientation are unknown.  The only input provided to the algorithm is the expected number of output puzzles.
+
+Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selecting of the seed piece, and placement.  These are described in the following subsections.  The modification required to the algorithm to solve multiple puzzles simultaneously is describing in an additional subsection.
+
+\subsubsection{Inter-Puzzle Piece Distance Calculation}\label{sec:paikinTalInterPieceDistance}
+
+The first stage of Paikin \& Tal's algorithm is to calculate the inter-piece distance between all pairs of pieces.  This is done using the asymmetric distance measure described in Section~\eref{eq:paikinAsymDistance}.  This information is stored in an $n$ by $n$ matrix (where $n$ is the number of puzzle pieces); after being calculated, the asymmetric distance never needs to be recalculated again throughout the duration of the algorithm.
+
+As explained in Section~\ref{eq:paikinAsymDistance}, Paikin \& Tal normalizes all of the asymmetric distances between each possible pairing of pieces by the second best distance for each piece.  This has the effect of amplifying truly unique pairings versus pairings that arise from low variation areas of the image.  They refer to this as ``asymmetric compatibility''.  The asymmetric compatibility is then used to find the best buddies (if any) for all pieces.  
+
+The last step when calculating inter-piece distance is to calculate the mutual compatibility ($\tilde{C}$), which is defined in Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_i,x_j,s_j)$ is the asymmetric compatibility between side $s_i$ of piece $x_j$ and side $s_j$ of piece $x_j$; $C(x_j,s_j,x_i,s_i)$ is defined similarly.  It is important to note that mutual compatibility is symmetric.
+
+\begin{equation} \label{eq:mutualCompatibility}
+\tilde{C}(x_i,s_i,x_j,s_j)=\tilde{C}(x_j,s_j,x_i,s_i)=\frac{C(x_i,s_i,x_j,s_j) + C(x_j,s_j,x_i,s_i) }{2}
+\end{equation}
+
+\subsubsection{Selecting the Seed Piece}\label{sec:paikinTalSeedPiece}
+
+Similar to Pomeranz \textit{et. al.}, Paikin \& Tal is a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that initial seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant effect on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
+
+Paikin \& Tal define a seed piece as distinctive if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; ties are broken by selecting the piece that has the maximum sum of mutual compatibilities among its neighbors.
+
+\subsubsection{Placement}\label{sec:paikinTalPlacer}
+
+
+
+\begin{algorithm}
+\caption{Paikin \& Tal Placer}\label{alg:paikinTalPlacer}
+\begin{algorithmic}[1]
+\While{ |UnplacedPieces| > 0 }
+
+   \If{ |BestBuddyPool| > 0 }
+      \State Get best candidate from the BestBuddyPool
+   \Else
+      \State Recalculate the asymmetric and mutual compatibility
+      \State Select piece with the highest asymmetric compatibility
+   \EndIf  
+   \State Place the best piece
+   \State Add the placed piece's unplaced best buddies to the BestBuddyPool
+
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{A Python Implementation of Paikin \& Tal's Algorithm}\label{sec:pythonPaikinTalAlgorithm}
+
+
+
+
 
 
 
