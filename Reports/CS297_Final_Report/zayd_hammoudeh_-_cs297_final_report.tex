@@ -509,29 +509,41 @@ The last step when calculating inter-piece distance is to calculate the mutual c
 
 Similar to Pomeranz \textit{et. al.}, Paikin \& Tal is a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that initial seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant effect on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
 
-Paikin \& Tal define a seed piece as distinctive if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; ties are broken by selecting the piece that has the maximum sum of mutual compatibilities among its neighbors.
+Paikin \& Tal define a seed piece as ``distinctive'' if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; ties are broken by selecting the piece that has the maximum sum of mutual compatibilities among its neighbors.
 
 \subsubsection{Placement}\label{sec:paikinTalPlacer}
 
-
+Paikin \& Tal utilize an iterative, greedy placer that places pieces around an expanding seed.  Pseudocode for their algorithm is shown in Algorithm~\ref{alg:paikinTalPlacer}.  Placement continues all pieces have been placed.
 
 \begin{algorithm}
 \caption{Paikin \& Tal Placer}\label{alg:paikinTalPlacer}
 \begin{algorithmic}[1]
-\While{ |UnplacedPieces| > 0 }
+\While{ |$UnplacedPieces$| > 0 }
 
-   \If{ |BestBuddyPool| > 0 }
-      \State Get best candidate from the BestBuddyPool
+   \If{ |$BestBuddyPool$| > 0 }
+      \State Get best candidate from the $BestBuddyPool$
    \Else
       \State Recalculate the asymmetric and mutual compatibility
       \State Select piece with the highest asymmetric compatibility
    \EndIf  
    \State Place the best piece
-   \State Add the placed piece's unplaced best buddies to the BestBuddyPool
+   \State Add the best piece's unplaced best buddies to the $BestBuddyPool$
 
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
+
+The selection of the next (i.e. best) piece to place emphasizes placing pieces about which there is the highest confidence.  First, if two pieces are best buddies, then there is a very significant chance that they are best buddies.  Second, even among a set of best buddies, some best buddies have stronger pairwise affinity than others as determined by the asymmetric compatibility.
+
+Whenever a piece (including the seed) is placed, all of that piece's unplaced best buddies are added to the $BestBuddyPool$.  As long as the best buddy pool is not empty, candidates for placement can only come from that pool; the best candidate from the $BestBuddyPool$ is the one with the maximum asymmetric compatibility with an open slot in the puzzle.  
+
+If the $BestBuddyPool$ is ever empty, the algorithm recalculates the asymmetric and mutual compatibilities between the unplaced pieces and any piece's open slot.  The piece that has maximum asymmetric compatibility with an open slot is then selected as the next piece for placement.
+
+\subsubsection{Solving Multiple Puzzles}\label{sec:solvingMultiplePuzzles}
+
+As mentioned in Section~\ref{sec:paikinTalSolver}, the only input to the Paikin \& Tal algorithm is that number of puzzles being solved.   When solving more than one puzzle at a time, only a minor change to the placer described in Algorithm~\ref{alg:paikinTalPlacer} is required.
+
+If at any time the mutual compatibility between the next piece to place and the open slot drops below a predefined threshold (e.g. Paikin \& Tal use 0.5) and the current number of boards is less than the specified number of boards, then the algorithm spawns a new puzzle.  This entails clearing the $BestBuddyPool$ and selecting a seed piece using the approach previously described in Section~\ref{sec:paikinTalSeedPiece}.   Placement then continues simultaneously across all puzzles.
 
 
 \subsection{A Python Implementation of Paikin \& Tal's Algorithm}\label{sec:pythonPaikinTalAlgorithm}
