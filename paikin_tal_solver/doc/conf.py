@@ -208,7 +208,7 @@ html_show_copyright = False
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'HammoudehPuzzleSolverdoc'
+htmlhelp_basename = 'Hammoudeh Jigsaw Puzzle Solver'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -275,7 +275,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'HammoudehPuzzleSolver', u'Hammoudeh Puzzle Solver Documentation',
-     author, 'HammoudehPuzzleSolver', 'One line description of project.',
+     author, 'Zayd Hammoudeh', 'One line description of project.',
      'Miscellaneous'),
 ]
 

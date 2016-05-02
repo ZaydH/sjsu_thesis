@@ -7,8 +7,8 @@ import sys
 
 import operator
 
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide
+from hammoudeh_puzzle.puzzle_importer import PuzzleType
+from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
 
 
 class PieceDistanceInformation(object):

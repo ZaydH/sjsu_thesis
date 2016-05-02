@@ -32,7 +32,7 @@
   
     <link rel="top" title="Hammoudeh Puzzle Solver 0.01 documentation" href="index.html"/>
         <link rel="up" title="Project Packages" href="modules.html"/>
-        <link rel="next" title="hammoudeh_puzzle_solver package" href="hammoudeh_puzzle_solver.html"/>
+        <link rel="next" title="hammoudeh_puzzle package" href="hammoudeh_puzzle.html"/>
         <link rel="prev" title="Project Packages" href="modules.html"/> 
 
   
@@ -92,7 +92,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-paikin_tal_solver">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="hammoudeh_puzzle_solver.html">hammoudeh_puzzle_solver package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hammoudeh_puzzle.html">hammoudeh_puzzle package</a></li>
 </ul>
 </li>
 </ul>
@@ -168,7 +168,7 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 </tbody>
 </table>
 <dl class="docutils">
-<dt>Returns (List[(int, PuzzlePieceSide)]):</dt>
+<dt>Returns (List[Tuple[int, PuzzlePieceSide]]):</dt>
 <dd>Best buddy information for the specified piece.</dd>
 </dl>
 </dd></dl>
@@ -183,8 +183,8 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) where p_i will be placed.</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed.</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) where p_i will be placed.</li>
 </ul>
 </td>
 </tr>
@@ -203,9 +203,9 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i</strong> (<em>int</em>) &#8211; Primary piece for asymmetric distance</li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
 </ul>
 </td>
 </tr>
@@ -228,9 +228,9 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i</strong> (<em>int</em>) &#8211; Primary piece for asymmetric distance</li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
 </ul>
 </td>
 </tr>
@@ -252,7 +252,7 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i</strong> (<em>int</em>) &#8211; Identification number of the piece who best buddy information is to be retrieved</li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of piece whose best buddy is being retriefed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of piece whose best buddy is being retriefed</li>
 </ul>
 </td>
 </tr>
@@ -335,8 +335,8 @@ where a piece must have 4 best buddies and its best buddies must have 4 best bud
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>puzzle_type</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer.PuzzleType" title="hammoudeh_puzzle_solver.puzzle_importer.PuzzleType"><em>PuzzleType</em></a>) &#8211; Either type1 (no rotation) or type 2 (with rotation)</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side for the secondary piece p_j.</li>
+<li><strong>puzzle_type</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_importer.PuzzleType" title="hammoudeh_puzzle.puzzle_importer.PuzzleType"><em>PuzzleType</em></a>) &#8211; Either type1 (no rotation) or type 2 (with rotation)</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side for the secondary piece p_j.</li>
 </ul>
 </td>
 </tr>
@@ -371,8 +371,8 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>puzzle_type</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_importer.PuzzleType" title="hammoudeh_puzzle_solver.puzzle_importer.PuzzleType"><em>PuzzleType</em></a>) &#8211; Puzzle type being solved.</li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of p_i puzzle piece where p_j will be placed.</li>
+<li><strong>puzzle_type</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_importer.PuzzleType" title="hammoudeh_puzzle.puzzle_importer.PuzzleType"><em>PuzzleType</em></a>) &#8211; Puzzle type being solved.</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of p_i puzzle piece where p_j will be placed.</li>
 </ul>
 </td>
 </tr>
@@ -395,9 +395,9 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i</strong> (<em>int</em>) &#8211; Primary piece for asymmetric distance</li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
 </ul>
 </td>
 </tr>
@@ -467,9 +467,9 @@ mutual compatibility, etc.) between a specific piece (based off the ID number) a
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Identification number for a side of the puzzle piece p_i</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Identification number for a side of the puzzle piece p_i</li>
 <li><strong>p_j_id_numb</strong> (<em>int</em>) &#8211; Identification number for the best buddy puzzle piece</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Identification number for the side of p_j where p_i is placed</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Identification number for the side of p_j where p_i is placed</li>
 </ul>
 </td>
 </tr>
@@ -495,9 +495,9 @@ mutual compatibility, etc.) between a specific piece (based off the ID number) a
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
 </ul>
 </td>
 </tr>
@@ -519,9 +519,9 @@ mutual compatibility, etc.) between a specific piece (based off the ID number) a
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i - implicit)</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i - implicit)</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary puzzle piece</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; </li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; </li>
 </ul>
 </td>
 </tr>
@@ -543,7 +543,7 @@ buddy, this function returns an empty list.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the implicit puzzle piece.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the implicit puzzle piece.</td>
 </tr>
 </tbody>
 </table>
@@ -562,7 +562,7 @@ buddy, this function returns an empty list.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Reference side of the puzzle piece</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Reference side of the puzzle piece</td>
 </tr>
 </tbody>
 </table>
@@ -622,9 +622,9 @@ buddy, this function returns an empty list.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
 </ul>
 </td>
 </tr>
@@ -680,9 +680,9 @@ distance between it and any other piece.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle_solver.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i
 compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.</li>
 </ul>
 </td>
@@ -770,8 +770,8 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>primary_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation" title="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the primary piece</li>
-<li><strong>other_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle_solver.html#hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation" title="hammoudeh_puzzle_solver.solver_helper_classes.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the other piece</li>
+<li><strong>primary_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.solver_helper_classes.PuzzleLocation" title="hammoudeh_puzzle.solver_helper_classes.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the primary piece</li>
+<li><strong>other_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.solver_helper_classes.PuzzleLocation" title="hammoudeh_puzzle.solver_helper_classes.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the other piece</li>
 </ul>
 </td>
 </tr>
@@ -853,7 +853,7 @@ piece that is adjacent (i.e. touching) the other piece.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="hammoudeh_puzzle_solver.html" class="btn btn-neutral float-right" title="hammoudeh_puzzle_solver package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="hammoudeh_puzzle.html" class="btn btn-neutral float-right" title="hammoudeh_puzzle package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="modules.html" class="btn btn-neutral" title="Project Packages" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,61 +1,61 @@
-hammoudeh_puzzle_solver package
+hammoudeh_puzzle package
 ===============================
 
 Submodules
 ----------
 
-hammoudeh_puzzle_solver.best_buddy_image_analyzer module
+hammoudeh_puzzle.best_buddy_image_analyzer module
 --------------------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.best_buddy_image_analyzer
+.. automodule:: hammoudeh_puzzle.best_buddy_image_analyzer
     :members:
     :undoc-members:
     :show-inheritance:
 
-hammoudeh_puzzle_solver.best_buddy_placer module
+hammoudeh_puzzle.best_buddy_placer module
 ------------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.best_buddy_placer
+.. automodule:: hammoudeh_puzzle.best_buddy_placer
     :members:
     :undoc-members:
     :show-inheritance:
 
-hammoudeh_puzzle_solver.puzzle_importer module
+hammoudeh_puzzle.puzzle_importer module
 ----------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.puzzle_importer
+.. automodule:: hammoudeh_puzzle.puzzle_importer
     :members:
     :undoc-members:
     :show-inheritance:
 
-hammoudeh_puzzle_solver.puzzle_importer_tester module
+hammoudeh_puzzle.puzzle_importer_tester module
 -----------------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.puzzle_importer_tester
+.. automodule:: hammoudeh_puzzle.puzzle_importer_tester
     :members:
     :undoc-members:
     :show-inheritance:
 
-hammoudeh_puzzle_solver.puzzle_piece module
+hammoudeh_puzzle.puzzle_piece module
 -------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.puzzle_piece
+.. automodule:: hammoudeh_puzzle.puzzle_piece
     :members:
     :undoc-members:
     :show-inheritance:
 
-hammoudeh_puzzle_solver.solver_driver module
+hammoudeh_puzzle.solver_driver module
 --------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.solver_driver
+.. automodule:: hammoudeh_puzzle.solver_driver
     :members:
     :undoc-members:
     :show-inheritance:
 
-hammoudeh_puzzle_solver.solver_helper_classes module
+hammoudeh_puzzle.solver_helper_classes module
 ----------------------------------------------------
 
-.. automodule:: hammoudeh_puzzle_solver.solver_helper_classes
+.. automodule:: hammoudeh_puzzle.solver_helper_classes
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,7 +64,7 @@ hammoudeh_puzzle_solver.solver_helper_classes module
 Module contents
 ---------------
 
-.. automodule:: hammoudeh_puzzle_solver
+.. automodule:: hammoudeh_puzzle
     :members:
     :undoc-members:
     :show-inheritance:

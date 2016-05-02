@@ -7,10 +7,10 @@ import heapq
 
 import numpy
 
-from hammoudeh_puzzle_solver.best_buddy_placer import BestBuddyPlacerCollection
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
-from hammoudeh_puzzle_solver.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair
+from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
+from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
+from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
+from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 

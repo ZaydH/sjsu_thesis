@@ -4,8 +4,8 @@
 """
 import unittest
 
-from hammoudeh_puzzle_solver.puzzle_importer import PuzzleType, PuzzleTester
-from hammoudeh_puzzle_solver.puzzle_piece import PuzzlePieceSide, PuzzlePiece
+from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleTester
+from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide, PuzzlePiece
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 

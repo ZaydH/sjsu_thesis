@@ -136,8 +136,8 @@
 
 <span class="kn">import</span> <span class="nn">operator</span>
 
-<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_importer</span> <span class="kn">import</span> <span class="n">PuzzleType</span>
-<span class="kn">from</span> <span class="nn">hammoudeh_puzzle_solver.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePieceSide</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_importer</span> <span class="kn">import</span> <span class="n">PuzzleType</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePieceSide</span>
 
 
 <div class="viewcode-block" id="PieceDistanceInformation"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation">[docs]</a><span class="k">class</span> <span class="nc">PieceDistanceInformation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -970,7 +970,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            p_i (int): Piece identification number</span>
 
-<span class="sd">        Returns (List[(int, PuzzlePieceSide)]):</span>
+<span class="sd">        Returns (List[Tuple[int, PuzzlePieceSide]]):</span>
 <span class="sd">            Best buddy information for the specified piece.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
