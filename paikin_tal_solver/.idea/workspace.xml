@@ -2,93 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="347c6f18-024b-4c50-be46-e2779712015b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/beautiful-1168104_640.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/kitten_white_background.jpg" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/best_buddy_image_analyzer.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/best_buddy_placer.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/puzzle_importer.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/puzzle_importer_tester.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/puzzle_piece.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/solver_driver.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/hammoudeh_puzzle_solver/solver_helper_classes.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Neighbors_Only/reconstructed_type_2_puzzle_0000_2016.04.05_06.24.33.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Neighbors_Only/reconstructed_type_2_puzzle_0001_2016.04.05_06.24.33.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Neighbors_Only/reconstructed_type_2_puzzle_0002_2016.04.05_06.24.33.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Whole_Area_1x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0000_2016.04.05_06.40.17.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Whole_Area_1x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0001_2016.04.05_06.40.17.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Whole_Area_1x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0002_2016.04.05_06.40.17.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Whole_Area_4x_Multiplier_for_Neighbors - Copy/reconstructed_type_2_puzzle_0000_2016.04.05_07.11.21.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Whole_Area_4x_Multiplier_for_Neighbors - Copy/reconstructed_type_2_puzzle_0001_2016.04.05_07.11.21.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Clear_BB_Heap_Whole_Area_4x_Multiplier_for_Neighbors - Copy/reconstructed_type_2_puzzle_0002_2016.04.05_07.11.21.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Leave_BB_Heap_Whole_Area_1x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0000_2016.04.05_07.25.47.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Leave_BB_Heap_Whole_Area_1x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0001_2016.04.05_07.25.47.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Leave_BB_Heap_Whole_Area_1x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0002_2016.04.05_07.25.47.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Leave_BB_Heap_Whole_Area_4x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0000_2016.04.05_07.44.21.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Leave_BB_Heap_Whole_Area_4x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0001_2016.04.05_07.44.21.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/Three_Puzzles_Leave_BB_Heap_Whole_Area_4x_Multiplier_for_Neighbors/reconstructed_type_2_puzzle_0002_2016.04.05_07.44.21.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_07_with_mcgill_20.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_mcgill_20_with_07.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_3300_1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_bgu_805_08.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_cat_sleeping_boy.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_mcgill_20.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_puzzle_0000.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_puzzle_0001.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solved/2016.04.05/reconstructed_type_2_puzzle_0002.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_placer.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/McGill_20_type_2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/boat_100x100_type_2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/che_type_1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/che_type_2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/duck_type_1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/muffins_300x200_type_1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solved/muffins_300x200_type_2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/__init__.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/__init__.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/3300_1.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/3300_1.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/7.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/7.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/bgu_805_08.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/bgu_805_08.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/bgu_805_10.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/bgu_805_10.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/boat_100x100.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/boat_100x100.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/book_tunnel_pixabay.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/book_tunnel_pixabay.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/cat_sleeping_boy.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/cat_sleeping_boy.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/che_100x100.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/che_100x100.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/dandelion_pixabay.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/dandelion_pixabay.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/dessert_pixabay.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/dessert_pixabay.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/duck.bmp" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/duck.bmp" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/mcgill_03.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/mcgill_03.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/mcgill_20.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/mcgill_20.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/muffins_300x200.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/muffins_300x200.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/primula_pixabay.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/primula_pixabay.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/raspberry_pixabay.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/raspberry_pixabay.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/small_pink_flowers_pixabay.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/small_pink_flowers_pixabay.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/images/two_faced_cat.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/images/two_faced_cat.jpg" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/hammoudeh_puzzle_solver/test/test.jpg" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/test/test.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/doc/_build/html/hammoudeh_puzzle.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Reports/CS297_Final_Report/build/zayd_hammoudeh_-_cs297_final_report.pdf" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/build/zayd_hammoudeh_-_cs297_final_report.pdf" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Reports/CS297_Final_Report/cs297_final_report_biblio.bib" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/cs297_final_report_biblio.bib" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/doctrees/environment.pickle" afterPath="$PROJECT_DIR$/doc/_build/doctrees/environment.pickle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/doctrees/hammoudeh_puzzle_solver.doctree" afterPath="$PROJECT_DIR$/doc/_build/doctrees/hammoudeh_puzzle_solver.doctree" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/doctrees/paikin_tal_solver.doctree" afterPath="$PROJECT_DIR$/doc/_build/doctrees/paikin_tal_solver.doctree" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/objects.inv" afterPath="$PROJECT_DIR$/doc/_build/html/objects.inv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../Reports/CS297_Final_Report/zayd_hammoudeh_-_cs297_final_report.tex" afterPath="$PROJECT_DIR$/../Reports/CS297_Final_Report/zayd_hammoudeh_-_cs297_final_report.tex" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/index.html" afterPath="$PROJECT_DIR$/doc/_build/html/_modules/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/paikin_tal_solver/inter_piece_distance.html" afterPath="$PROJECT_DIR$/doc/_build/html/_modules/paikin_tal_solver/inter_piece_distance.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/paikin_tal_solver/paikin_tal_tester.html" afterPath="$PROJECT_DIR$/doc/_build/html/_modules/paikin_tal_solver/paikin_tal_tester.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/_modules/paikin_tal_solver/solver.html" afterPath="$PROJECT_DIR$/doc/_build/html/_modules/paikin_tal_solver/solver.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/genindex.html" afterPath="$PROJECT_DIR$/doc/_build/html/genindex.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/hammoudeh_puzzle_solver.html" afterPath="$PROJECT_DIR$/doc/_build/html/hammoudeh_puzzle_solver.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/modules.html" afterPath="$PROJECT_DIR$/doc/_build/html/modules.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/paikin_tal_solver.html" afterPath="$PROJECT_DIR$/doc/_build/html/paikin_tal_solver.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/py-modindex.html" afterPath="$PROJECT_DIR$/doc/_build/html/py-modindex.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc/_build/html/searchindex.js" afterPath="$PROJECT_DIR$/doc/_build/html/searchindex.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/solver.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -104,8 +22,8 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/paikin_tal_solver$GenerateDocs.coverage" NAME="GenerateDocs Coverage Results" MODIFIED="1461549743838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/paikin_tal_solver$Puzzle_Importer_Tester.coverage" NAME="Puzzle Importer Tester Coverage Results" MODIFIED="1461243635830" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Best_Buddy_Image_Analyzer.coverage" NAME="Best Buddy Image Analyzer Coverage Results" MODIFIED="1462099492077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Solver.coverage" NAME="Paikin Tal Solver Coverage Results" MODIFIED="1462157387818" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Best_Buddy_Image_Analyzer.coverage" NAME="Best Buddy Image Analyzer Coverage Results" MODIFIED="1462099492077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Solver.coverage" NAME="Paikin Tal Solver Coverage Results" MODIFIED="1462182810352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -116,11 +34,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="solver.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="solver.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18020">
-              <caret line="1069" column="12" selection-start-line="1069" selection-start-column="12" selection-end-line="1069" selection-end-column="12" />
+            <state relative-caret-position="-255">
+              <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -129,11 +47,11 @@
       <file leaf-file-name="solver_driver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
+            <state relative-caret-position="391">
+              <caret line="25" column="35" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="35" />
               <folding>
-                <marker date="1462177077823" expanded="true" signature="10994:11463" placeholder="..." />
-                <marker date="1462177077823" expanded="true" signature="12589:12942" placeholder="..." />
+                <marker date="1462182808268" expanded="true" signature="10998:11467" placeholder="..." />
+                <marker date="1462182808268" expanded="true" signature="12593:12946" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -174,7 +92,7 @@
       <file leaf-file-name="puzzle_piece.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5062">
+            <state relative-caret-position="15113">
               <caret line="893" column="11" selection-start-line="893" selection-start-column="11" selection-end-line="894" selection-end-column="61" />
               <folding>
                 <element signature="e#60#73#0" expanded="true" />
@@ -183,11 +101,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="puzzle_importer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="puzzle_importer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22763">
-              <caret line="1339" column="63" selection-start-line="1339" selection-start-column="63" selection-end-line="1339" selection-end-column="63" />
+            <state relative-caret-position="-1671">
+              <caret line="1307" column="11" selection-start-line="1307" selection-start-column="11" selection-end-line="1307" selection-end-column="11" />
               <folding>
                 <element signature="e#28#39#0" expanded="true" />
               </folding>
@@ -241,28 +159,28 @@
         <option value="$PROJECT_DIR$/paikan_tal_solver/paikin_tal_solver.py" />
         <option value="$PROJECT_DIR$/paikan_tal_solver/inter_piece_distance.py" />
         <option value="$PROJECT_DIR$/paikan_tal_solver/simple_puzzle_piece.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_image.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/__init__.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_image.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/__init__.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/simple_puzzle_piece.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/paikan_tal_driver.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/paikan_tal_driver.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_solver.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/paikin_tal_tester.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/paikin_tal_tester.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_test.py" />
         <option value="$USER_HOME$/Miniconda2/Lib/unittest/test.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/trest.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/test/best_buddy_placed.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/best_buddy_placer.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/codernity.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_piece.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_placer.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_helper_classes.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/codernity.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
       </list>
     </option>
@@ -326,7 +244,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -358,37 +275,24 @@
               <option name="myItemId" value="paikin_tal_solver" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hammoudeh_puzzle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="paikin_tal_solver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="paikin_tal_solver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="configurable.group.tools" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/zhammoud/Desktop/Courses/Thesis/paikin_tal_solver/paikin_tal_solver/inter_piece_distance.py" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Zayd\Desktop\Courses\Thesis\paikin_tal_solver\hammoudeh_puzzle_solver" />
+      <recent name="C:\Users\Zayd\Desktop\Courses\Thesis\paikin_tal_solver\hammoudeh_puzzle" />
       <recent name="C:\Users\Zayd\Desktop\Courses\Thesis\paikin_tal_solver\paikin_tal_solver" />
     </key>
   </component>
@@ -486,7 +390,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="docutils_input_file" value="C:\Users\Zayd\Desktop\Courses\Thesis\paikin_tal_solver\hammoudeh_puzzle_solver\puzzle_importer.py" />
+      <option name="docutils_input_file" value="C:\Users\Zayd\Desktop\Courses\Thesis\paikin_tal_solver\hammoudeh_puzzle\puzzle_importer.py" />
       <option name="docutils_output_file" value="" />
       <option name="docutils_params" value="" />
       <option name="docutils_task" value="rst2html" />
@@ -644,13 +548,13 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="C:\Users\Zayd\Miniconda2\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hammoudeh_puzzle" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle_solver/best_buddy_image_analyzer.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -662,13 +566,13 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hammoudeh_puzzle_solver" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hammoudeh_puzzle" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle_solver/solver_driver.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -707,7 +611,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle_solver/puzzle_importer_tester.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py" />
       <option name="CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
       <option name="FOLDER_NAME" value="" />
@@ -807,27 +711,49 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2531983" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25586355" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32875264" sideWeight="0.50208336" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32792208" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32792208" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32034633" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="92" y="92" width="1736" height="856" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32792208" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32792208" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32034633" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32875264" sideWeight="0.50208336" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="92" y="92" width="1736" height="856" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32792208" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25586355" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32792208" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32034633" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -897,16 +823,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="350" column="53" selection-start-line="350" selection-start-column="53" selection-end-line="350" selection-end-column="53" />
-          <folding>
-            <element signature="e#28#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/enum/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1186,26 +1102,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/codernity.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="8" column="6" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/codernity.py" />
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="709">
           <caret line="428" column="91" selection-start-line="428" selection-start-column="48" selection-end-line="428" selection-end-column="91" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18020">
-          <caret line="1069" column="12" selection-start-line="1069" selection-start-column="12" selection-end-line="1069" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1265,20 +1166,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
-          <folding>
-            <marker date="1462177077823" expanded="true" signature="10994:11463" placeholder="..." />
-            <marker date="1462177077823" expanded="true" signature="12589:12942" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5062">
+        <state relative-caret-position="15113">
           <caret line="893" column="11" selection-start-line="893" selection-start-column="11" selection-end-line="894" selection-end-column="61" />
           <folding>
             <element signature="e#60#73#0" expanded="true" />
@@ -1288,11 +1178,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22763">
-          <caret line="1339" column="63" selection-start-line="1339" selection-start-column="63" selection-end-line="1339" selection-end-column="63" />
+        <state relative-caret-position="-1671">
+          <caret line="1307" column="11" selection-start-line="1307" selection-start-column="11" selection-end-line="1307" selection-end-column="11" />
           <folding>
             <element signature="e#28#39#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/pickle_files/placed_boat_100x100_type_2.pk">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="333">
+          <caret line="57" column="25" selection-start-line="57" selection-start-column="25" selection-end-line="57" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="25" column="35" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="35" />
+          <folding>
+            <marker date="1462182808268" expanded="true" signature="10998:11467" placeholder="..." />
+            <marker date="1462182808268" expanded="true" signature="12593:12946" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-255">
+          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
