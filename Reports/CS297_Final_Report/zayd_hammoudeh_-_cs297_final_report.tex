@@ -23,6 +23,10 @@
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\numbwithdegreesymbol}[1]{#1$^\circ$}
 
+% Define the packages in the Python implementation
+\newcommand{\hammoudehPuzzlePackage}{\texttt{hammoudeh\_puzzle} }
+\newcommand{\paikinTalPackage}{\texttt{paikin\_tal\_solver} }
+
 \DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
 
 % Used in the color of the table for Wrong Location
@@ -46,7 +50,10 @@
 \setcounter{secnumdepth}{5}
 \setcounter{tocdepth}{5}
 
-\title{An Enhanced Jigsaw Puzzle Solver \\[1in]
+\title{An Improved Square-Piece, 
+       \\ Multiple Simultaneous Jigsaw Puzzle 
+       \\ Solver with Missing Pieces 
+       \\[1in]
 	   CS297 Final Report}
 
 \author{
@@ -249,15 +256,13 @@ In a jig swap puzzle, a piece may have best buddies on up to four sides (since t
 
 Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. Adjacent and non-adjacent best buddies are represented by green and red isosceles triangles.  Any edge that has no best buddies is shown as a white triangle.  
 
+
 \begin{figure}
-\centering
-\fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}
-\\
-(a) Original Image
-\\ ~\\
-\fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
-\\
-(b) Best Buddy Visualization
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+     \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
+     \\~\\
+     (a) Original Image & (b) Best Buddy Visualization
+  \end{tabular}
 \caption{Visualization of Best Buddies in an Image}
 \label{fig:bestBuddyVisualization}
 \end{figure}
@@ -341,14 +346,12 @@ As mentioned previously, direct accuracy is vulnerable to shifts in the original
 Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output where the puzzle boundaries where not fixed.  Note that only a single piece is misplaced, causing all pieces to be shifted to the right one location.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error indicates that it has room for improvement.
 
 \begin{figure}
-\centering
-\fbox{\includegraphics[width=50mm]{./images/muffins_300x200.jpg}}
-\\
-(a) Original Image
-\\ ~\\
-\fbox{\includegraphics[width=54.17mm]{./images/muffins_300x200_type1}}
-\\
-(b) Solver Output
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=50.1mm]{./images/muffins_300x200_type1}}
+	\\ ~\\
+	(a) Original Image & (b) Solver Output
+	\\ ~\\
+  \end{tabular}
 \caption{Solver Output where a Single Misplaced Piece Catastrophically Affects the Direct Accuracy}
 \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
@@ -449,7 +452,7 @@ The visualization for neighbor accuracy is very similar to the techniques descri
 \caption{Coloring Definition for Puzzle Piece Sides in the Neighbor Accuracy Solver Output Visualization}\label{tab:neighborAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two images simultaneously.  Note that one of the input puzzles is a rainforest scene while the other is building exterior.  In this case the puzzle of interest was the rainforest image.  
+Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two images simultaneously.  Note that one of the input puzzles is a rainforest house while the other is the exterior of a glass and stone building.  In this case, the puzzle of interest was the image of the glass and stone building.
 
 \begin{figure}
 \centering
@@ -469,7 +472,7 @@ Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two 
 \label{fig:neigborAccuracyVisualization}
 \end{figure}
 
-All pieces that came from the building exterior image are shown as blue.  The pieces from the ''rainforest house'' image that are adjacent to the other image's pieces are shown in as red since they come from the puzzle of interest but have the wrong neighbor.
+All pieces that came from the rainforest house image are shown as blue despite being assembled correctly; this is because the image of interest is the glass and stone building.  All neighbors that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors (e.g. the rainforest image) are shown with red triangles.
 
 
 
@@ -499,7 +502,7 @@ The first stage of Paikin \& Tal's algorithm is to calculate the inter-piece dis
 
 As explained in Section~\ref{eq:paikinAsymDistance}, Paikin \& Tal normalizes all of the asymmetric distances between each possible pairing of pieces by the second best distance for each piece.  This has the effect of amplifying truly unique pairings versus pairings that arise from low variation areas of the image.  They refer to this as ``asymmetric compatibility''.  The asymmetric compatibility is then used to find the best buddies (if any) for all pieces.  
 
-The last step when calculating inter-piece distance is to calculate the mutual compatibility ($\tilde{C}$), which is defined in Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_i,x_j,s_j)$ is the asymmetric compatibility between side $s_i$ of piece $x_j$ and side $s_j$ of piece $x_j$; $C(x_j,s_j,x_i,s_i)$ is defined similarly.  It is important to note that mutual compatibility is symmetric.
+The last step is to calculate the mutual compatibility ($\tilde{C}$) between pairs of pieces (e.g. $x_i$ and $x_j$), which is defined in Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_i,x_j,s_j)$ is the asymmetric compatibility between side $s_i$ of piece $x_j$ and side $s_j$ of piece $x_j$; $C(x_j,s_j,x_i,s_i)$ is defined similarly.  It is important to note that mutual compatibility is symmetric.
 
 \begin{equation} \label{eq:mutualCompatibility}
 \tilde{C}(x_i,s_i,x_j,s_j)=\tilde{C}(x_j,s_j,x_i,s_i)=\frac{C(x_i,s_i,x_j,s_j) + C(x_j,s_j,x_i,s_i) }{2}
@@ -539,7 +542,7 @@ Whenever a piece (including the seed) is placed, all of that piece's unplaced be
 
 If the $BestBuddyPool$ is ever empty, the algorithm recalculates the asymmetric and mutual compatibilities between the unplaced pieces and any piece's open slot.  The piece that has maximum asymmetric compatibility with an open slot is then selected as the next piece for placement.
 
-\subsubsection{Solving Multiple Puzzles}\label{sec:solvingMultiplePuzzles}
+\subsubsection{Solving Multiple Puzzles}\label{sec:paikinTalSolvingMultiplePuzzles}
 
 As mentioned in Section~\ref{sec:paikinTalSolver}, the only input to the Paikin \& Tal algorithm is that number of puzzles being solved.   When solving more than one puzzle at a time, only a minor change to the placer described in Algorithm~\ref{alg:paikinTalPlacer} is required.
 
@@ -548,10 +551,70 @@ If at any time the mutual compatibility between the next piece to place and the 
 
 \subsection{A Python Implementation of Paikin \& Tal's Algorithm}\label{sec:pythonPaikinTalAlgorithm}
 
+Since no open-source implementation of the Paikin \& Tal solver exists, these thesis developed one.  It is written entirely using Python 2.7 \cite{python}.  The following subsections describe the two major Python packages that were developed.  
+
+\subsubsection{The \hammoudehPuzzlePackage Package}\label{sec:hammoudehPuzzlePackage}
+
+This package consists of two primary classes: \texttt{Puzzle} and \texttt{PuzzlePiece}.  It is a generic infrastructure that is independent of the solver used.  
+
+The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: identification number, size, type (e.g. type 1, type 2 - this is stored as an object of type ``\texttt{PuzzleType}''), piece width, and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
+
+Individual puzzle pieces are represented using the \texttt{PuzzlePiece} class.  Objects of this type have as attributes: identification number, location, width (in number of pixels), rotation (represented using class \texttt{PuzzlePieceRotation}), and image information (stored in a NumPy array \cite{walt2011}).
+
+Additional features included in the \hammoudehPuzzlePackage package include calculating EDAS, SEDAS, and ENAS as well as performing best buddy analysis on an image.
+
+\subsubsection{The \paikinTalPackage Package}\label{sec:paikinTalSolverPackage}
+
+The \paikinTalPackage package implements the Paikin \& Tal algorithm described in Section~\ref{sec:paikinTalSolver}.  The primary interface for the user is through the \texttt{PaikinTalSolver} class; objects of this type are created using a constructor that takes the following parameters: the expected number of puzzles, a set of \texttt{PuzzlePiece} objects, the asymmetric distance function, the puzzle type (class ``\texttt{PuzzleType}''), and optionally a set of fixed puzzle dimensions.  The \texttt{PaikinTalSolver} class is composed of a set of component classes, which are described in the subsequent paragraphs.
+
+The \texttt{InterPieceDistance} class calculates the asymmetric distance, asymmetric compatibility, and mutual compatibility between all pieces.  What is more, since the \texttt{PaikinTalSolver} takes a distance function in its constructor, the user is able to experiment with how different distance metrics affect the solver's performance.  While calculating the asymmetric compatibilities, the \texttt{InterPieceDistance} class also finds each piece's best buddies; this made it the natural choice to identify the starting piece(s).
+
+Paikin \& Tal do not identify the data structure used to  implement the $BestBuddyPool$ (see Algorithm~\ref{alg:paikinTalPlacer}); instead, the choice of the term ``pool'' may indicate that it is unstructured. However, the choice of data structure is critical as algorithm must be able to quickly removal of best (i.e. maximum) values from the pool and quickly insert new values into the pool.
+
+This thesis' implementation of the $BestBuddyPool$ relies on a combination three data structures.  They are:
+
+\begin{itemize}
+
+	\item \textbf{Dictionary of the Best Buddies Currently in this Pool} - This allows new best buddies to be quickly added to the list when a piece is placed and to delete the placed piece from the pool.
+	
+	\item \textbf{Dictionary of the Open Slots in the Puzzle} - Similar to the best buddy dictionary, this allows open slots in the puzzle to be quickly added and removed.
+
+	\item \textbf{Best Candidate Max Heap} - A max heap was used as it allows the best candidate to be found quickly ($O(n)$).  Each object in the pool is of type \texttt{BestBuddyHeapInfo} and represents the level of similarity between a best buddy in the pool and an open slot.  Every time a new best buddy is added, pairings between it and all open slots are added to the heap.  Similarly, whenever a new open slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are added to the heap.  
+
+\end{itemize}
+
+The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are check for validity (due to either the best buddy being already placed or the open slot in the puzzle being filled). If the heap size does get too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
+
+\subsection{Limitations of Paikin \& Tal's Algorithm}\label{sec:paikinTalLimitations}
+
+This section details some of the limitations with Paikin \& Tal's algorithm.  
+
+\subsubsection{Taking the Number of Puzzles as an Input}\label{sec:limitationNumberPuzzles}
+
+The only input to the solver other than the number of pieces is the expected number of puzzles (see Section~\ref{sec:paikinTalSolver}). Pomeranz \textit{et. al.} and Sholomon \textit{et. al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the set of input pieces; the number of puzzles could then be inferred from the best buddy accuracy.
 
 
+\subsubsection{Using Only a Single Side for Placement}\label{sec:limitationPlacementSingleSide}
+
+When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have a significant deleterious effect on the final result.  An improved placer could prioritize based off the number of best buddies a piece has with respect to an open slot.
+
+\subsubsection{Determining the Seed Piece for Multiple Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
+
+When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach for choosing seed piece.  This can lead to issues if two puzzles are spawned using seed pieces from the same input puzzle.  The most naive way to address this issue is to select multiple seed pieces when a puzzle is spawn and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
+
+\subsubsection{Determining when to Spawn a New Puzzle}\label{sec:limitationWhenToSpawnNewPuzzle}
+
+Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine where in the placement the algorithm should backtrack and spawn the new board.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                          Conclusions                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagebreak
+\section{Conclusions}\label{sec:conclusions}
+
+Significant progress was made over the course of this semester.  Major accomplishment include: a thorough review of existing solvers, building a jigsaw puzzle solver using state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  What is more, key potential improvements to existing techniques have been identified and will serve as the initial set of tasks for next semester.
 
 
 
