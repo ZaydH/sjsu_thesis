@@ -4,6 +4,7 @@
 \usepackage{indentfirst}
 \usepackage{float}
 
+\usepackage{xcolor, colortbl} % Used for coloring the cells of the table
 \usepackage{amsmath}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp} % Required for upquote.
@@ -19,6 +20,12 @@
 \newcommand{\numbwithdegreesymbol}[1]{#1$^\circ$}
 
 \DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
+
+% Used in the color of the table for Wrong Location
+\definecolor{green}{rgb}{0,0.8,0}
+\definecolor{red}{rgb}{1.0,0.0,0.0}
+\definecolor{orange}{rgb}{1.0,0.6,0.2}
+\definecolor{blue}{rgb}{0.0,0.0,1.0}
 
 
 \usepackage{mdframed}
@@ -60,6 +67,10 @@
 \addcontentsline{toc}{section}{List of Figures}
 \listoffigures
 \newpage
+
+\addcontentsline{toc}{section}{List of Tables}
+\listoftables
+\newpage
  
 \pagenumbering{arabic}
 
@@ -88,6 +99,8 @@ A significant contribution of Cho \textit{et. al.} is that they were first to us
 
 Pomeranz \textit{et. al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces and the size of the puzzle.  Pomeranz \textit{et. al.} also generalized and improved on Cho \textit{et. al.} piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et. al.} proposed the concept of ``best buddies'', which are two pieces that are more similar to each other than they are to any other pieces.  Best buddies have served as the basis for both an estimation metric for the quality of a solved image as well as the foundation of some solvers' placers \cite{paikin2015}.
 
+An additional key contribution of Pomeranz \textit{et. al.} is the creation of three image benchmarks comprised of 20 images of 805 pieces drawn from \cite{mcgillImageDatabase} as well as images composed of 2,360 and 3,300 pieces.
+
 In 2012, Gallagher \cite{gallagher2012} formalizes the different categories of jig swap problems into three primary types.  The following is Gallagher's proposed terminology, and his nomenclature is used throughout this document.
 
 \begin{itemize}
@@ -100,7 +113,26 @@ In 2012, Gallagher \cite{gallagher2012} formalizes the different categories of j
 
 \end{itemize}
 
-Sholomon \textit{et. al.} also propose a fourth type (i.e. "Type 4") puzzle whereby each puzzle piece has an image on both sides.  Each puzzle is similar to a 
+Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for type 1 puzzles.  By moving away from the greedy approached used by Pomeranz, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Their approach is able to solve puzzles of significantly larger size than previous techniques (e.g. greater than 23,000) pieces.  What is more, Sholomon \textit{et. al.} provided a new benchmark of images of varying difficulty with 5,015, 10,375, and 22,834 pieces \cite{sholomonBenchmarkImages}.
+
+Paikin \& Tal \cite{paikin2015} in 2015 published a greedy solver that can handle type 1 and type 2 images.  What is more, their solver is able to handle puzzles with missing; it can also solve multiple puzzles simultaneously.  Their solver is explored in significant depth in Section\ref{sec:paikinTalSolver}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%              Puzzle Piece Pairwise Affinity                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagebreak
 \section{Puzzle Piece Pairwise Affinity}\label{sec:piecePairwiseAffinity}
@@ -204,7 +236,7 @@ $Parts$ represents the set of all pieces in the puzzle, and $s_k$ is any of the 
 
 In most cases, it is relatively rare that two pieces are best buddies and are not actually neighbors \cite{paikin2015}.  When considering all sides of a piece, it is rarer still that a piece has more best buddies that are not its neighbor than that are its neighbor.  This makes best buddies a critical tool in many placers.
 
-\subsubsection{Visualizing Best Buddies}\label{sec:bestBuddiesLimitations}
+\subsubsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
 
 There is currently no standard for visualizing best buddy relationships in images.  This thesis proposes a format for the first time.  As a nomenclature, this thesis refers to any best buddies that are neighbors in the image as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies''.  
 
@@ -253,10 +285,21 @@ In all previous research, all best buddies (in particular best buddy errors) wer
 
 When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors higher weight.
 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        Quantifying Solver Output Quality Section              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \pagebreak
-\section{Quantifying Solver Accuracy}\label{sec:quantifyingSolverAccuracy}
+\section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
 Cho \textit{et. al.} \cite{cho2010} defined the two metrics for quantifying the accuracy of a solver result namely: Direct Accuracy and Neighbor Accuracy. These metrics have been used in subsequent work \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing metrics, the weaknesses of these metrics, and proposes enhancements to these metrics to make them more meaningful for type 2 puzzles as well as when solving multiple puzzles simultaneously.
+
+In the final subsection, tools developed to visualize the different solver quality metrics are discussed.
 
 \subsection{Direct Accuracy}\label{sec:directAccuracy}
 
@@ -275,10 +318,12 @@ This thesis proposes two modifications to the direct accuracy metric known as ``
 The standard direct accuracy metric does not account for the possibility that in the solver output there may be pieces from multiple puzzles.  For a puzzle $P_i$ in the set of input puzzles $P$ (where $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is a solved puzzle in $S$, then Equation~\ref{eq:enhancedDirectAccuracyScore} defines the Enhanced Direct Accuracy Score (EDAS).
 
 \begin{equation} \label{eq:enhancedDirectAccuracyScore}
-EDAS_{P_i} = \argmax_{s_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
+EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
 $c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation in type 2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in solved $S_j$.
+
+By dividing by the total number of pieces $n_i$ in puzzle $P_i$, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in solved puzzle $S_j$.  In addition, EDAS also penalizes any pieces not from $P_i$ that are in $S_j$ through the term $m_{k,j}$.  Hence, the combination of these two factors ensures that EDAS accounts both for extra and misplaced pieces.
 
 When solving only a single puzzle, EDAS and the standard Direct Accuracy proposed by Cho \textit{et. al.} are equivalent.  In the case of solving multiple puzzles simultaneously, EDAS considers all pieces from the input puzzle of interest ($P_i$) while penalizing for pieces that are present from other input puzzles ($P_k$). 
 
@@ -296,7 +341,7 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an act
 \\
 (a) Original Image
 \\ ~\\
-\fbox{\includegraphics[width=54.17mm]{./images/muffins_300x300_type1}}
+\fbox{\includegraphics[width=54.17mm]{./images/muffins_300x200_type1}}
 \\
 (b) Solver Output
 \caption{Solver Output where a Single Misplaced Piece Catastrophically Affects the Direct Accuracy}
@@ -306,10 +351,10 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an act
 To address the often misleadingly punitive nature of the direct accuracy measure, this thesis proposes the Shiftable Enhanced Direct Accuracy Score (SEDAS).  Let $p_n$ be the puzzle piece that is closest to the upper left corner of the solved image's boundary with a minimum Manhattan distance $d_min$.  Also let $L$ as the set of all possible puzzle piece locations that minimum distance $d_min$, then the SEDAS for a puzzle $P_i$ is defined as:
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
-SEDAS_{P_i} = \argmax_{l \in L} \Big( \argmax_{s_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})} \Big)
+SEDAS_{P_i} = \argmax_{l \in L} \Big( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \Big)
 \end{equation}
 
-Note that as reference point ($l$) for the solved is shifted, then only the number of pieces in the correct location ($c_(i,j)$) will also change.  
+Note that as reference point ($l$) for the solved is shifted, then only the number of pieces in the correct location ($c_{i,j,l}$) will also change.  
 
 Rather than defining SEDAS based off the closest puzzle to the upper left corner of the image, an alternative is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach will usually be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
 
@@ -319,11 +364,134 @@ While EDAS can be misleadingly punitive, it is not correct that EDAS should be w
 
 \subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
+Cho \textit{et. al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece's side in the ground-truth image as in the solved image over the total number of piece sides.  More formally, let $q$ be the number of sides of each puzzle piece (i.e. 4), and $n$ be the number of pieces in the original.  If $a$ is the number of puzzle piece sides adjacent in the ground-truth and solved images, then the neighbor accuracy ($NA$) is defined as shown in Equation~\eref{eq:neighborAccuracy}.
+
+\begin{equation} \label{eq:neighborAccuracy}
+NA = \frac{a}{n~q}
+\end{equation}
+
+Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the solved image since it considers a piece's neighbors and not its actual location.  However, it does not define how to handle the presence of pieces from multiple puzzles in the solved result.  Therefore, it must be amended to consider such cases.
+
+\subsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
+
+Similar to EDAS for Direct Accuracy, Enhanced Neighbor Accuracy Score (ENAS) addresses neighbor accuracy's limitations when quantifying the quality of a solver output when solving multiple puzzles simultaneously. 
+
+Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}$ be the number of puzzle piece sides in puzzle $P_i$ that are adjacent in solved puzzle $S_j$.  If $m_{k,j}$ is the number of puzzle pieces from an input puzzle $P_k$ (where $k \ne i$) in $S_j$, then the Enhanced Neighbor Accuracy Score for $P_i$ is defined in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
+
+\begin{equation} \label{eq:enhancedNeighborAccuracyScore}
+ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j})}
+\end{equation}
+
+Similar to EDAS as described in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ not in $S_j$.  What is more, by including in the summation in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as necessarily incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allow ENAS to account for extra and misplaced pieces.
+
 \subsection{Visualizing Solver Accuracy Results}\label{sec:visualizingSolverAccuracy}
+
+In images with thousands of pieces, it is often difficult to visually determine the location of pieces that are placed incorrectly.  What is more, visual tools help developers quickly detect and fix latent bugs that may be in their program.
+
+The following two subsections show the tools developed as part of this thesis for visualizing direct accuracy and neighbor accuracy.
 
 \subsubsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
 
+Regardless of whether standard direct accuracy, EDAS, or SEDAS is used, each puzzle piece is assigned a single value (e.g. correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a solid color square.  One additional refinement used is to subdivide the ``incorrect'' placements into a set of subcategories namely (in order of severity): wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
+
+\begin{table}[h]
+
+\begin{center}
+  \begin{tabular}{ | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | }
+ \hline
+    Wrong Puzzle & Wrong Location & Wrong Rotation & Correct Location  & No Piece Present  \\ \hline
+	{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+	{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~} \\
+ \hline
+  \end{tabular}
+\end{center}
+\caption{Coloring Definition for Pieces in the Direct Accuracy Solver Output Visualization}\label{tab:directAccuracyColors}
+\end{table}
+
+Figure~\ref{fig:directAccuracyVisualization} shows a solver output along with the EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that previously had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
+
+\begin{figure}
+\centering
+
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+  
+	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type2}} \\~\\
+	(a) Ground-Truth Image & (b) Type 2 Solver Output
+\\~\\
+	\fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type_EDAS.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type_SEDAS.jpg}}
+\\~\\
+	(c) EDAS Visualization & (d) SEDAS Visualization  
+  \end{tabular}
+
+\caption{Example Solver Output Visualizations for EDAS and SEDAS}
+\label{fig:directAccuracyVisualization}
+\end{figure}
+
 \subsubsection{Visualizing Neighbor Accuracy}\label{sec:visualizingNeighborAccuracy}
+
+The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies.  Each puzzle piece is divided into four equal-sized isosceles triangles (i.e. one for each side).  The triangles are assigned colors depending on whether their neighbor in the solver output matches their neighbor in the ground-truth image.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving multiple puzzles simultaneously and some of the pieces in the solved puzzle are not from the puzzle of interest (i.e. $P_i$).  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classification of puzzle piece sides for neighbor accuracy.
+
+\begin{table}[h]
+\begin{center}
+  \begin{tabular}{ | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | }
+ \hline
+    Wrong Puzzle & Wrong Neighbor & Correct Neighbor  & No Piece Present  \\ \hline
+	{\cellcolor{blue}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+	{\cellcolor{blue}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+ \hline
+  \end{tabular}
+\end{center}
+\caption{Coloring Definition for Puzzle Piece Sides in the Neighbor Accuracy Solver Output Visualization}\label{tab:neighborAccuracyColors}
+\end{table}
+
+Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two images simultaneously.  Note that one of the input puzzles is a rainforest scene while the other is building exterior.  In this case the puzzle of interest was the rainforest image.  
+
+\begin{figure}
+\centering
+
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+  
+	\fbox{\includegraphics[width=1.75in]{./images/pomeranz_3300_1.jpg}} & \fbox{\includegraphics[width=1.5in]{./images/mcgill_20.jpg}} \\~\\
+	(a) Input Image \# 1 - Rainforest House \cite{pomeranzBenchmarkImages} & (b) Input Image \# 2 - Building Exterior \cite{mcgillImageDatabase}
+\\~\\
+	\fbox{\includegraphics[width=50mm]{./images/muffins_300x200_type_SEDAS.jpg}}
+	& \fbox{\includegraphics[width=50mm]{./images/muffins_300x200_type_SEDAS.jpg}}
+\\~\\
+	(c) Solver Output & (d) ENAS Visualization  
+  \end{tabular}
+
+\caption{Example Solver Output Visualization for ENAS}
+\label{fig:neigborAccuracyVisualization}
+\end{figure}
+
+All pieces that came from the building exterior image are shown as blue.  The pieces from the ''rainforest house'' image that are adjacent to the other image's pieces are shown in as red since they come from the puzzle of interest but have the wrong neighbor.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    Paikin & Tal Solver                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagebreak
+\section{Paikin \& Tal Solver}\label{sec:paikinTalSolver}
+
+This section describes in detail the solver proposed by Paikin \& Tal.  The official source code for this solver was never made open source.  As part of this thesis, Paikin \& Tal solver was implemented in Python.  The following subsection describes the components of the Paikin \& Tal solver and is followed by a discussion concerning some of the solver's weaknesses.
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%              Bibliography and Document End                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagebreak
 \bibliographystyle{ieeetr}
