@@ -234,7 +234,7 @@
 <span class="sd">            p_i_side (PuzzlePieceSide): Side of the primary piece (p_i) where p_j will be placed</span>
 <span class="sd">            p_j (int): Secondary piece for the asymmetric distance.</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Side of the secondary piece (p_j) which is adjacent to p_i</span>
-<span class="sd">                compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.</span>
+<span class="sd">            compatibility (float): Mutual compatibility between p_i and p_j on their respective sides.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span> <span class="o">=</span> <span class="n">compatibility</span></div>

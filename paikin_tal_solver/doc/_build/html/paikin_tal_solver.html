@@ -682,8 +682,8 @@ distance between it and any other piece.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the primary piece (p_i) where p_j will be placed</li>
 <li><strong>p_j</strong> (<em>int</em>) &#8211; Secondary piece for the asymmetric distance.</li>
-<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i
-compatibility (int): Mutual compatibility between p_i and p_j on their respective sides.</li>
+<li><strong>p_j_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of the secondary piece (p_j) which is adjacent to p_i</li>
+<li><strong>compatibility</strong> (<em>float</em>) &#8211; Mutual compatibility between p_i and p_j on their respective sides.</li>
 </ul>
 </td>
 </tr>
@@ -716,8 +716,7 @@ compatibility (int): Mutual compatibility between p_i and p_j on their respectiv
 <dt id="paikin_tal_solver.solver.BestBuddyHeapInfo">
 <em class="property">class </em><code class="descclassname">paikin_tal_solver.solver.</code><code class="descname">BestBuddyHeapInfo</code><span class="sig-paren">(</span><em>bb_id</em>, <em>bb_side</em>, <em>neighbor_id</em>, <em>neighbor_side</em>, <em>location</em>, <em>mutual_compatibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#BestBuddyHeapInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.BestBuddyHeapInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>A heap is used to store the best buddy matches.  This class is used to encapsulate all the requisite
-data for the heap objects.</p>
+<p>A heap is used to store the best buddy matches.  This class encapsulates all the requisite data for the heap objects.</p>
 <p>It must implement the &#8220;__cmp__&#8221; method for sorting with the heap.  Note that cmp is used to create a
 maximum heap.</p>
 </dd></dl>

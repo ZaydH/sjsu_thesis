@@ -34,8 +34,7 @@ class BestBuddyPoolInfo(object):
 
 class BestBuddyHeapInfo(object):
     """
-    A heap is used to store the best buddy matches.  This class is used to encapsulate all the requisite
-    data for the heap objects.
+    A heap is used to store the best buddy matches.  This class encapsulates all the requisite data for the heap objects.
 
     It must implement the "__cmp__" method for sorting with the heap.  Note that cmp is used to create a
     maximum heap.
