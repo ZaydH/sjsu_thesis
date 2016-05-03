@@ -87,46 +87,67 @@
 
 \renewcommand\thesection{\arabic{section}}
 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                       Introduction                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Introduction}\label{sec:introduction}
 
-Jigsaw puzzles have been around since the 1760s when they were made from wood.  Their name derives from the fact that they were originally carved using jigsaws.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by \cite{freeman1964}, and that solver could only solve 9 piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, it has been shown by \cite{altman1990} and \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
+Jigsaw puzzles were first introduced in the 1760s when they were made from wood.  Their name derives from tool (jigsaw) used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by \cite{freeman1964}, and that solver could only solve 9 piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, it has been shown by \cite{altman1990} and \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
-A jig swap puzzles are specific type of jigsaw puzzle where  all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve than standard jigsaw puzzle as one can not consider mechanical compatibility when trying to determine affinity between pieces.  As such, one can only consider the image information on each individual piece when solving the puzzle.  
+Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape can not be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
-Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies are applicable include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.
+Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the ground-truth (i.e. original) input  is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from a bag of individual pieces.
 
-Unlike traditional jigsaw or jig swap puzzles, the ground-truth (i.e. original) image is unknown for most practical applications.  This significantly complicates solving the problem as one must determine the overall structure of the complete solution solely from a bag of individual pieces with unknown relationships.
+This thesis proposes an improved multiple simultaneously jig swap puzzle solver.  What is more, it proposes a set of new metrics for measuring the quality of solvers for multiple simultaneous puzzles.
 
-This project proposes an improved jig swap puzzle solver.  It also studies the fundamental structures within images to determine which images are easy or difficult to solve using current techniques.  This study will help guide future research by focusing on the weaknesses with state of the art approaches. 
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                       Previous Work                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pagebreak
 \section{Previous Work}\label{sec:previousWork}
 
-Computational solvers for jigsaw puzzles have been studied since the 1960s when Freeman and Garder proposed an approach that could solve jigsaw puzzles of up-to nine pieces using solely the piece shapes \cite{freeman1964}.  Since then the focus of research has shifted from traditional jigsaw puzzles to jig swap puzzles.  
+Computational solvers for jigsaw puzzles have been studied since the 1960s when Freeman and Garder proposed an approach that could solve jigsaw puzzles containing up to nine pieces that used only the piece shapes \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
 
-Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model build around a set of one or more ``anchor piece(s)''; these one or more anchor pieces were fixed in their correct location before the the solver began.  Cho \textit{et. al.} also assumed knowledge regarding the size of the puzzle dimensions.  Future solvers would on Cho \textit{et. al.}'s results while also reducing the amount of information passed to the solver beyond the set of pieces.
+Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which were fixed in their correct location before the the solver began.  Cho \textit{et. al.}'s solver was also provided the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et. al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
 
-A significant contribution of Cho \textit{et. al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK) since LAB normalizes the lightness and color variation across all three dimensions.  Cho \textit{et. al.} proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see \ref{sec:piecePairwiseAffinity} for more details).  
+A significant contribution of Cho \textit{et. al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK).  LAB was selected due to its property of normalizing the lightness and color variation across all three dimensions.  Cho \textit{et. al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
 
-Pomeranz \textit{et. al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces and the size of the puzzle.  Pomeranz \textit{et. al.} also generalized and improved on Cho \textit{et. al.} piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et. al.} proposed the concept of ``best buddies'', which are two pieces that are more similar to each other than they are to any other pieces.  Best buddies have served as the basis for both an estimation metric for the quality of a solved image as well as the foundation of some solvers' placers \cite{paikin2015}.
+Pomeranz \textit{et. al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces and the size of the puzzle.  Pomeranz \textit{et. al.} also generalized and improved on Cho \textit{et. al.} piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et. al.} introduced the concept of ``best buddies'', which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
 
-An additional key contribution of Pomeranz \textit{et. al.} is the creation of three image benchmarks comprised of 20 images of 805 pieces drawn from \cite{mcgillImageDatabase} as well as images composed of 2,360 and 3,300 pieces.
+An additional key contribution of Pomeranz \textit{et. al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images while the size of the images in the second and third benchmarks is 2,360 and 3,300 pieces respectively.
 
-In 2012, Gallagher \cite{gallagher2012} formalizes the different categories of jig swap problems into three primary types.  The following is Gallagher's proposed terminology, and his nomenclature is used throughout this document.
+In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles into three primary types.  The following is Gallagher's proposed terminology; his nomenclature is used throughout this thesis.
 
 \begin{itemize}
 
 	\item \textbf{Type 1 Puzzle}: The dimension of the puzzle (i.e. the width and height of the ground-truth image in number of pixels) is known.  What is more, the orientation of each piece is known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
 	
-	\item \textbf{Type 2 Puzzle}: This is an extension of a type 1, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g. \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}).  This change alone increases the number of possible solutions by a factor of $4^n$ (where $n$ is the number of pieces in the puzzles) in comparison to a Type 1 puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image/puzzle can be unknown.
+	\item \textbf{Type 2 Puzzle}: This is an extension of a type 1, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g. \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}).  This change alone increases the number of possible solutions by a factor of $4^n$ (where $n$ is the number of pieces in the puzzles) in comparison to a Type 1 puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image/puzzle may be unknown.
 	
 	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the puzzle pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
 
 \end{itemize}
 
-Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for type 1 puzzles.  By moving away from the greedy approached used by Pomeranz, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Their approach is able to solve puzzles of significantly larger size than previous techniques (e.g. greater than 23,000) pieces.  What is more, Sholomon \textit{et. al.} provided a new benchmark of images of varying difficulty with 5,015, 10,375, and 22,834 pieces \cite{sholomonBenchmarkImages}.
+Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for type 1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et. al.}, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et. al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g. greater than 23,000 pieces).  What is more, Sholomon \textit{et. al.} defined three new large image (e.g. 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
 
-Paikin \& Tal \cite{paikin2015} in 2015 published a greedy solver that can handle type 1 and type 2 images.  What is more, their solver is able to handle puzzles with missing; it can also solve multiple puzzles simultaneously.  Their solver is explored in significant depth in Section\ref{sec:paikinTalSolver}.
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both type 1 and type 2 puzzles.  What is more, their solver is able to handle puzzles with missing pieces; it can also solve multiple puzzles simultaneously.  Paikin \& Tal's solver is explored in significant depth in Section\ref{sec:paikinTalSolver}.
 
 
 
@@ -148,29 +169,29 @@ Paikin \& Tal \cite{paikin2015} in 2015 published a greedy solver that can handl
 \pagebreak
 \section{Puzzle Piece Pairwise Affinity}\label{sec:piecePairwiseAffinity}
 
-Pairwise affinity quantifies the similarity between the edges of two puzzle pieces.  $D(x_i, s_i, x_j, s_j)$ and $C(x_i, s_i, x_j, s_j)$ represent the distance and compatibility (i.e. similarity) between side $s_i$ of puzzle piece $x_i$ and side $s_j$ of puzzle piece $x_j$.  
+Pairwise affinity quantifies the similarity between the sides of two puzzle pieces.  $D(x_i, s_i, x_j, s_j)$ and $C(x_i, s_i, x_j, s_j)$ represent the distance and compatibility (i.e. similarity) respectively between side $s_i$ of puzzle piece $x_i$ and side $s_j$ of puzzle piece $x_j$.  
 
 \subsection{Cho \textit{et. al.} Pairwise Affinity}\label{sec:choPairwiseAffinity}
 
-As mentioned in section \ref{sec:previousWork}, Cho \textit{et. al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Their approach is shown in Equation~\eref{eq:choPairwise}, which quantifies the distance between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  $K$ is the width/height of a puzzle piece in number of pixels\footnote{Cho \textit{et. al.} used 7 for $K$.}.  
+As mentioned in section \ref{sec:previousWork}, Cho \textit{et. al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Equation~\eref{eq:choPairwise} defines the distance between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$ using Cho \textit{et. al.}'s approach.  Note that $K$ is the width/height of a puzzle piece in number of pixels\footnote{Cho \textit{et. al.} used 7 for $K$.}.  
 
 \begin{equation} \label{eq:choPairwise}
 D(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3}(x_i(k,K,d) - x_j(k,1,d))^2
 \end{equation}
 
-Since the LAB colorspace has three dimensions (e.g. lightness and A/B opponent colors), $d$ ranges between $1$ and $3$.  Similarly, $x_i(k,K,d)$ represents the LAB value in dimension $d$ of the pixel in row ``$k$'' of column $K$ in piece $x_i$.
+Since the LAB colorspace has three dimensions (e.g. lightness and A/B opponent colors), $d$ ranges between $1$ and $3$.  Similarly, $x_i(k,K,d)$ represents the LAB value in dimension ``$d$'' for the pixel at ``$k$'', column ``$K$'' in puzzle piece $x_i$.
 
 \subsection{Pomeranz \textit{et. al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
 
-One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the piece's pixel dimensions.  It is possible that superior results may be achieved by allowing the solver to modify this exponent term.  Pomeranz \textit{et. al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $L_p$ norm as shown in Equation~\eref{eq:pomeranzPairwise}\footnote{Pomeranz \textit{et. al.} used 28 for $K$.  This has generally become the standard in subsequent papers.}.
+One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the pieces' pixel values.  It is possible that superior results may be achieved by allowing the solver to modify this exponent term.  Pomeranz \textit{et. al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $(L_p)^q$ norm as shown in Equation~\eref{eq:pomeranzPairwise}\footnote{Pomeranz \textit{et. al.} used 28 for $K$.  This has generally become the standard in subsequent papers.}.
 
 \begin{equation} \label{eq:pomeranzPairwise}
 D(x_i,L,x_j,R) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\bigg)^{\frac{q}{p}}
 \end{equation}
 
-Hence, for a distance measure equivalent to that of Cho \textit{et. al.}, $p$ and $q$ are set equal to $2$.
+Hence, this measure is identical to that of Cho \textit{et. al.} when $p$ and $q$ are equal to $2$.
 
-An additional down side of the metric proposed by Cho \textit{et. al.} is that it only considers the border pixels.  Hence, if there is some gradient in the ground-truth image, two pieces may appear artificially dissimilar using this approach.  To address this issue, Pomeranz \textit{et. al.} proposed predictive compatibility.  Equation~\eref{eq:pomeranzPredCompat} shows the predictive compatibility between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  
+Another disadvantage of the metric proposed by Cho \textit{et. al.} is that it only considers the border pixels.  Hence, if there is a gradient in the ground-truth image, two pieces may appear artificially dissimilar.  To address this issue, Pomeranz \textit{et. al.} proposed predictive compatibility; equation~\eref{eq:pomeranzPredCompat} is the predictive compatibility between the left (``$L$'') side of piece $x_i$ and the right (``$R$'') side of piece $x_j$.  
 
 \begin{equation} \label{eq:pomeranzPredCompat}
 \begin{split}
@@ -178,7 +199,7 @@ C(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1,
 \end{split}
 \end{equation}
 
-Note that in Equation~\eref{eq:pomeranzPredCompat}, the difference between the column of pixels adjacent to the edge is used to account for any gradient effects.
+Since Equation~\eref{eq:pomeranzPredCompat} includes the difference between the column of pixels adjacent to each edge, predictive compatibility can adjust for local gradients in an image.
 
 \subsection{Paikin \& Tal Pairwise Affinity}\label{sec:paikinPairwiseAffinity}
 
@@ -188,16 +209,16 @@ Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et. al.}'s predictive c
 D(x_i,L,x_j,R) = \sum_{k=1}^{K}\sum_{d=1}^{3} \norm{[2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d)}
 \end{equation}
 
-Note that Paikin \& Tal set $p$ and $q$ equal to 1 as it not only increased the accuracy of the solver but also significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,L,x_j,R)$ will not equal $D(x_j,R,x_i,L)$.
+Note that Paikin \& Tal set $p$ and $q$ equal to 1 as it not only increased the accuracy of their solver, but is also significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,L,x_j,R)$ will not equal $D(x_j,R,x_i,L)$.
 
-Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining the pairwise compatibility.  In images (or areas of images) with little variation (e.g. an all white image), parts may have artificially high pairwise distances.  To account for this, Paikin \& Tal proposed asymmetric compatibility as shown in Equation~\eref{eq:paikinAsymCompatibility}.
+Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining the pairwise compatibility.  In images (or areas of images) with little variation (e.g. an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  To account for this, Paikin \& Tal proposed asymmetric compatibility as shown in Equation~\eref{eq:paikinAsymCompatibility}.
 
 \begin{equation} \label{eq:paikinAsymCompatibility}
 C(x_i,L,x_j,R)=1 - \frac{D(x_i,L,x_j,R)}{secondD(x_i,L)}
 \end{equation}
 
 \noindent
-where $secondD(x_i,L)$ is the second best asymmetric distance between the left side of piece $x_i$ and all other pieces.  By normalizing compatibility with respect to the second best match, it is possible to identify those pairings that have actually have high compatibility while at the same time removing the artificially high compatibilities between pieces from areas of the image with low variation.
+$secondD(x_i,L)$ is the second best asymmetric distance between the left side of piece $x_i$ and all other pieces.  By normalizing compatibility with respect to the second best match, pairings that have actually have high compatibility are more easily identifiable while at the same time penalizing speciously pairings high compatibility due solely to those pieces coming from areas of the image with low variation.
 
 \subsubsection{Improved Asymmetric Compatibility}\label{sec:hammoudehPairwiseAffinity}
 
@@ -247,25 +268,6 @@ $Parts$ represents the set of all pieces in the puzzle, and $s_k$ is any of the 
 
 In most cases, it is relatively rare that two pieces are best buddies and are not actually neighbors \cite{paikin2015}.  When considering all sides of a piece, it is rarer still that a piece has more best buddies that are not its neighbor than that are its neighbor.  This makes best buddies a critical tool in many placers.
 
-\subsubsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
-
-There is currently no standard for visualizing best buddy relationships in images.  This thesis proposes a format for the first time.  As a nomenclature, this thesis refers to any best buddies that are neighbors in the image as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies''.  
-
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being denoted as either adjacent or non-adjacent.  The four isosceles triangles all share a common, non-base vertex in the center of the puzzle piece.  A white border is placed around all puzzle pieces to make it easier to differentiate pieces from one another.  A black square represents a missing or unpopulated piece location.
-
-Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. Adjacent and non-adjacent best buddies are represented by green and red isosceles triangles.  Any edge that has no best buddies is shown as a white triangle.  
-
-
-\begin{figure}
-  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
-     \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
-     \\~\\
-     (a) Original Image & (b) Best Buddy Visualization
-  \end{tabular}
-\caption{Visualization of Best Buddies in an Image}
-\label{fig:bestBuddyVisualization}
-\end{figure}
-
 \subsubsection{Unique Best Buddies}\label{sec:improvedBestBuddies}
 
 As explained in Section~\ref{sec:hammoudehPairwiseAffinity}, reconstructing computer generated or computer manipulated image may introduce new challenges not found with photographs; best buddies is another example of this.
@@ -286,7 +288,26 @@ In photographs, it is generally unlikely that there will be a significant number
 \end{split}
 \end{equation}
 
-Rather than relying on best buddies being ``greater than or equal'' to all other pieces, the modified requirement is that pairings must be strictly greater than.  Hence, best buddy pairings are exclusive with cliques of size greater than two being explicitly disallowed.
+Rather than relying on best buddies being ``greater than or equal'' to all other pieces, the modified requirement is that pairings must be strictly ``greater than.''  Hence, best buddy pairings are exclusive with cliques of size greater than two being explicitly disallowed.
+
+\subsubsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
+
+There is currently no standard for visualizing best buddy relationships in images.  This thesis proposes a format for the first time.  As a nomenclature, this thesis refers to any best buddies that are neighbors in the image as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies''.  
+
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being denoted as either adjacent or non-adjacent.  The four isosceles triangles all share a common, non-base vertex in the center of the puzzle piece.  A white border is placed around all puzzle pieces to make it easier to differentiate pieces from one another.  A black square represents a missing or unpopulated piece location.
+
+Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. Adjacent and non-adjacent best buddies are represented by green and red isosceles triangles.  Any edge that has no best buddies is shown as a white triangle.  
+
+
+\begin{figure}
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+     \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
+     \\~\\
+     (a) Original Image & (b) Best Buddy Visualization
+  \end{tabular}
+\caption{Visualization of Best Buddies in an Image}
+\label{fig:bestBuddyVisualization}
+\end{figure}
 
 \subsubsection{Interior and Exterior Best Buddies}\label{sec:interiorExteriorBestBuddies}
 
@@ -312,7 +333,7 @@ In the final subsection, tools developed to visualize the different solver quali
 
 \subsection{Direct Accuracy}\label{sec:directAccuracy}
 
-Direct accuracy is the most naive accuracy measure.  It is defined as the ratio of the number of pieces placed in the same location as the ground-truth (i.e. source).  The formal definition of direct accuracy ($DA$) is shown in Equation~\eref{eq:directAccuracy} where $n$ is the number of pieces in the source puzzle and $c$ is the number of pieces placed in their correct location.
+Direct accuracy is the most na\"{\i}ve accuracy measure.  It is defined as the ratio of the number of pieces placed in the same location as the ground-truth (i.e. source).  The formal definition of direct accuracy ($DA$) is shown in Equation~\eref{eq:directAccuracy} where $n$ is the number of pieces in the source puzzle and $c$ is the number of pieces placed in their correct location.
 
 \begin{equation} \label{eq:directAccuracy}
 DA = \frac{c}{n}
@@ -365,7 +386,7 @@ Note that as reference point ($l$) for the solved is shifted, then only the numb
 
 Rather than defining SEDAS based off the closest puzzle to the upper left corner of the image, an alternative is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach will usually be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
 
-\subsubsection{Importance of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
+\subsubsection{Necessity of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
 While EDAS can be misleadingly punitive, it is not correct that EDAS should be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set of minimum distance locations ``$L$'' (as defined in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}).  Hence, there is no additional computational time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, it is often possible to detect whether there was any shifting in the original image.  This would not be possible if SEDAS was used alone.
 
@@ -379,7 +400,7 @@ NA = \frac{a}{n~q}
 
 Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the solved image since it considers a piece's neighbors and not its actual location.  However, it does not define how to handle the presence of pieces from multiple puzzles in the solved result.  Therefore, it must be amended to consider such cases.
 
-\subsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
+\subsubsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
 
 Similar to EDAS for Direct Accuracy, Enhanced Neighbor Accuracy Score (ENAS) addresses neighbor accuracy's limitations when quantifying the quality of a solver output when solving multiple puzzles simultaneously. 
 
@@ -391,7 +412,7 @@ ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j}
 
 Similar to EDAS as described in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ not in $S_j$.  What is more, by including in the summation in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as necessarily incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allow ENAS to account for extra and misplaced pieces.
 
-\subsection{Visualizing Solver Accuracy Results}\label{sec:visualizingSolverAccuracy}
+\subsection{Visualizing Solver Output Quality}\label{sec:visualizingSolverAccuracy}
 
 In images with thousands of pieces, it is often difficult to visually determine the location of pieces that are placed incorrectly.  What is more, visual tools help developers quickly detect and fix latent bugs that may be in their program.
 
@@ -412,7 +433,7 @@ Regardless of whether standard direct accuracy, EDAS, or SEDAS is used, each puz
  \hline
   \end{tabular}
 \end{center}
-\caption{Coloring Definition for Pieces in the Direct Accuracy Solver Output Visualization}\label{tab:directAccuracyColors}
+\caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
 \end{table}
 
 Figure~\ref{fig:directAccuracyVisualization} shows a solver output along with the EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that previously had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
@@ -448,7 +469,7 @@ The visualization for neighbor accuracy is very similar to the techniques descri
  \hline
   \end{tabular}
 \end{center}
-\caption{Coloring Definition for Puzzle Piece Sides in the Neighbor Accuracy Solver Output Visualization}\label{tab:neighborAccuracyColors}
+\caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
 \end{table}
 
 Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two images simultaneously.  Note that one of the input puzzles is a rainforest house while the other is the exterior of a glass and stone building.  In this case, the puzzle of interest was the image of the glass and stone building.
