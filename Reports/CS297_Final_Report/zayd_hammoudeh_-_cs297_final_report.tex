@@ -295,7 +295,7 @@ Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and it
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
      \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
      \\~\\
-     (a) Original Image & (b) Best Buddy Visualization
+     (a) Ground-Truth Image & (b) Best Buddy Visualization
   \end{tabular}
 \caption{Visualization of Best Buddies in an Image}
 \label{fig:bestBuddyVisualization}
@@ -370,15 +370,15 @@ It is important note that EDAS is a score and not a measure of accuracy. While i
 
 \subsubsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
 
-As mentioned previously, direct accuracy is vulnerable to shifts in the original image.  In many cases, direct accuracy is overly punitive when penalizing for shifts. 
+As mentioned previously, the direct accuracy decreases if there are shifts in the solved image.  In many cases, direct accuracy is overly punitive when penalizing for shifts. 
 
-Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output wen the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this caused all pieces to be shifted to the right one location.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy can be seriously flawed.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of direct accuracy. 
+Figure~\ref{fig:directAccuracyOnePieceEffect} shows a ground-truth image and an actual solver output when the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this caused all pieces to be shifted to the right one location.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy can be seriously flawed.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of direct accuracy. 
 
 \begin{figure}
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
 	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=50.1mm]{./images/muffins_300x200_type1}}
 	\\ ~\\
-	(a) Original Image & (b) Solver Output
+	(a) Ground-Truth Image & (b) Solver Output
 	\\ ~\\
   \end{tabular}
 \caption{Solver Output where a Single Misplaced Piece Catastrophically Affects the Direct Accuracy}
@@ -398,7 +398,7 @@ Rather than defining SEDAS based off the distance $d_{min}$, an alternative appr
 
 \subsubsection{Necessity of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
-While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set $L$.  Hence, there is no additional time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, it is often possible to detect whether there was any shifting in the original image.  This would not be possible if SEDAS was used alone.
+While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set $L$.  Hence, there is no additional time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, it is often possible to detect whether there was any shifting in the solved image.  This would not be possible if SEDAS was used alone.
 
 \subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
