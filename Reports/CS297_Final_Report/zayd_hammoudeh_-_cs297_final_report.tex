@@ -99,17 +99,11 @@
 
 Jigsaw puzzles were first introduced in the 1760s when they were made from wood.  Their name derives from tool (jigsaw) used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by \cite{freeman1964}, and that solver could only solve 9 piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, it has been shown by \cite{altman1990} and \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
-Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape can not be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
+Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
 Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the ground-truth (i.e. original) input  is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from a bag of individual pieces.
 
-This thesis proposes an improved multiple simultaneously jig swap puzzle solver.  What is more, it proposes a set of new metrics for measuring the quality of solvers for multiple simultaneous puzzles.
-
-
-
-
-
-
+This thesis proposes an improved multiple simultaneously jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of solvers for multiple simultaneous puzzles.  Lastly, this thesis makes modifies existing definitions of distance and best buddy metrics to make them more robust for computer generated images.
 
 
 
@@ -214,24 +208,24 @@ Note that Paikin \& Tal set $p$ and $q$ equal to 1 as it not only increased the 
 Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining the pairwise compatibility.  In images (or areas of images) with little variation (e.g. an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  To account for this, Paikin \& Tal proposed asymmetric compatibility as shown in Equation~\eref{eq:paikinAsymCompatibility}.
 
 \begin{equation} \label{eq:paikinAsymCompatibility}
-C(x_i,L,x_j,R)=1 - \frac{D(x_i,L,x_j,R)}{secondD(x_i,L)}
+C(x_i,L,x_j,R) = 1 - \frac{D(x_i,L,x_j,R)}{secondD(x_i,L)}
 \end{equation}
 
 \noindent
-$secondD(x_i,L)$ is the second best asymmetric distance between the left side of piece $x_i$ and all other pieces.  By normalizing compatibility with respect to the second best match, pairings that have actually have high compatibility are more easily identifiable while at the same time penalizing speciously pairings high compatibility due solely to those pieces coming from areas of the image with low variation.
+$secondD(x_i,L)$ is the second best asymmetric distance between the left side of piece $x_i$ and all other pieces.  By normalizing compatibility with respect to the second best match, pairings that have actually have high compatibility are more easily identifiable while simultaneously penalizing speciously high compatibility pairings from areas of the image with low variation.
 
 \subsubsection{Improved Asymmetric Compatibility}\label{sec:hammoudehPairwiseAffinity}
 
-In an image that was generated from an analog input (e.g. a photograph), it is expected that there will be some degree of natural variation across the image due to variations in brightness, the object in the photo, and the image sensor.  However, in digital images that are generated or manipulated by computers, this variation can be trivially removed.  An example of this would be an image of a solid color or object(s) in front of a white background as shown in figure~\ref{fig:objectWhiteBackground}.
+It is expected that images generated from an analog input (e.g. a photograph), will have some degree of natural variation in: brightness, the object in the photo, and the image sensor.  In contrast, this variation can be trivially removed in images generated or manipulated by computers; this includes images that a single, solid color or object(s) shown in front of a solid background.
 
 \begin{figure}
 \centering
 \fbox{\includegraphics[width=50mm]{./images/raspberry_pixabay.jpg}}
-\caption{A Computer Manipulated Image with Poor Asymmetric Compatibility}
+\caption{A Computer Manipulated Image with Misleadingly High Asymmetric Compatibility due to a White Background}
 \label{fig:objectWhiteBackground}
 \end{figure}
 
-The puzzles pieces along the border of the image as well as the pieces in the background have sides that are all white.  This entails that regardless of which of the three metrics are used, the distance between them is zero.  What is more, Paikin \& Tal do not explicitly define how to handle this case for asymmetric compatibility.  Therefore, to better handle computer generated images, this thesis proposes an enhanced definition of asymmetric compatibility as shown in Equation~\eref{eq:hammoudehAsymCompatibility}.  
+Figure~\ref{fig:objectWhiteBackground} shows an object in front of a white background; the puzzles pieces along the image border and in the background have all white borders.  Hence, regardless of which of the three previously described metrics is used, the distance between all of these pieces' side is zero.  What is more, Paikin \& Tal do not explicitly define how to handle asymmetric compatibility for such cases.  Therefore, to better handle computer generated images, this thesis proposes an enhanced definition of asymmetric compatibility shown in Equation~\eref{eq:hammoudehAsymCompatibility}.  
 
 \begin{equation} \label{eq:hammoudehAsymCompatibility}
 C(x_i,L,x_j,R)= \begin{cases} 
@@ -242,37 +236,35 @@ C(x_i,L,x_j,R)= \begin{cases}
 \end{equation}
 
 \noindent
-where $\alpha$ is a penalty term that denotes that such pairings have low compatibility.
+Note that $\alpha$ is a tunable, penalty term representing low compatibility.
 
 
 \subsection{Best Buddies}\label{sec:bestBuddies}
 
-As defined by Pomeranz \textit{et. al.}, two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_i$ and $s_j$ if they are more compatible (i.e. similar) to each other than they are to each other.  This is more formally described in Equation~\eref{eq:bestBuddyDefinition}.  This definition of best buddies applies regardless of whether the compatibility definition of Pomeranz \textit{et. al.} or Paikin \& Tal is used.
+Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_i$ and $s_j$ if and only if they are more compatible (i.e. similar) to each other than they are to any other piece.  This is shown more formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  This definition of best buddies applies regardless of whether the compatibility function of Pomeranz \textit{et. al.} or Paikin \& Tal is used.
 
-\begin{equation} \label{eq:bestBuddyDefinition}
+\begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \begin{split}
 \begin{matrix}
-\forall{x_k} \forall{s_k} \in Parts, & C(x_i, s_i, x_j, s_j) \geq C(x_i, s_i, x_k, s_k)
+\forall{x_k} \forall{s_k} \in {Pieces}, & C(x_i, s_i, x_j, s_j) \geq C(x_i, s_i, x_k, s_k)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall{x_k} \forall{s_k} \in Parts, & C(x_j, s_j, x_i, s_i) \geq C(x_j, s_j, x_k, s_k)
+\forall{x_k} \forall{s_k} \in {Pieces}, & C(x_j, s_j, x_i, s_i) \geq C(x_j, s_j, x_k, s_k)
 \end{matrix}
 \end{split}
 \end{equation}
 
 \noindent
-$Parts$ represents the set of all pieces in the puzzle, and $s_k$ is any of the four sides of piece $x_k$.
+${Pieces}$ represents the set of all pieces in the puzzle, and $s_k$ is one of the four sides of piece $x_k$.
 
-In most cases, it is relatively rare that two pieces are best buddies and are not actually neighbors \cite{paikin2015}.  When considering all sides of a piece, it is rarer still that a piece has more best buddies that are not its neighbor than that are its neighbor.  This makes best buddies a critical tool in many placers.
+It is relatively rare that two pieces are best buddies and are not actually neighbors \cite{paikin2015}.  When considering all sides of a piece, it is rarer still that a piece has more best buddies that are not its neighbor than that are its neighbor.  These attributes make best buddies a critical tool for many solvers.
 
 \subsubsection{Unique Best Buddies}\label{sec:improvedBestBuddies}
 
-As explained in Section~\ref{sec:hammoudehPairwiseAffinity}, reconstructing computer generated or computer manipulated image may introduce new challenges not found with photographs; best buddies is another example of this.
-
-In photographs, it is generally unlikely that there will be a significant number of cases where a piece has multiple best buddies on the same side.  However, computer generated images may have areas of truly solid colors, and any pieces in those areas will all be best buddies with one another, making best buddies a far less discerning indicator of compatibility.  This thesis addresses such issues by modifying the definition of best buddies as shown in Equation~\eref{eq:hammoudehBestBuddyDefinition}.
+It is relatively unlikely that there will be a meaningful number pieces that have multiple best buddies on the same side if the input to the solver is a photograph.  However, similar to phenomenon described in the Section~\ref{sec:hammoudehPairwiseAffinity}, multiple best buddies may occur in computer generated or computer manipulated images.  In such cases, best buddies become a far less discerning tool for determining piece adjacency.  This thesis addresses this by modifying the definition of best buddies as shown in Equation~\eref{eq:hammoudehBestBuddyDefinition}.
 
 \begin{equation} \label{eq:hammoudehBestBuddyDefinition}
 \begin{split}
@@ -288,15 +280,15 @@ In photographs, it is generally unlikely that there will be a significant number
 \end{split}
 \end{equation}
 
-Rather than relying on best buddies being ``greater than or equal'' to all other pieces, the modified requirement is that pairings must be strictly ``greater than.''  Hence, best buddy pairings are exclusive with cliques of size greater than two being explicitly disallowed.
+Rather than relying on best buddies being ``greater than or equal'' to all other pieces as in Equation~\eref{eq:pomeranzBestBuddyDefinition}, the modified requirement is that pairings must be strictly ``greater than.''  Hence, best buddy pairings are exclusive with cliques of size greater than two being explicitly disallowed.
 
 \subsubsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
 
-There is currently no standard for visualizing best buddy relationships in images.  This thesis proposes a format for the first time.  As a nomenclature, this thesis refers to any best buddies that are neighbors in the image as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies''.  
+There is currently no standard for visualizing an image's best buddies.  This thesis proposes such a standard for the first time.  As a nomenclature, this thesis refers to any best buddies that are neighbors in the ground-truth image as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies''.  
 
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being denoted as either adjacent or non-adjacent.  The four isosceles triangles all share a common, non-base vertex in the center of the puzzle piece.  A white border is placed around all puzzle pieces to make it easier to differentiate pieces from one another.  A black square represents a missing or unpopulated piece location.
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being denoted as either adjacent or non-adjacent.  The four isosceles triangles all share a common, non-base vertex in the center of the puzzle piece.  
 
-Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. Adjacent and non-adjacent best buddies are represented by green and red isosceles triangles.  Any edge that has no best buddies is shown as a white triangle.  
+Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and its accompanying best buddy visualization denoted as ``(b)''. The color scheme for the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
 
 
 \begin{figure}
@@ -309,11 +301,27 @@ Figure~\ref{fig:bestBuddyVisualization} shows an image denoted as ``(a)'' and it
 \label{fig:bestBuddyVisualization}
 \end{figure}
 
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
+  
+   \hline
+    No Best Buddy & Non-Adjacent Best Buddy & Adjacent Best Buddy & No Piece Present  \\ \hline
+	{\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+	{\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+ \hline
+
+  \end{tabular}
+\end{center}
+\caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}\label{tab:bestBuddyColors}
+\end{table}
+
 \subsubsection{Interior and Exterior Best Buddies}\label{sec:interiorExteriorBestBuddies}
 
-In all previous research, all best buddies (in particular best buddy errors) were treated the same.  However, pieces that are on the exterior (i.e. edge) of a puzzle or that are next to a missing piece are expected to naturally have a higher rate of non-adjacent best buddies than pieces on the interior of the puzzle.  This is because such piece sides do not have an true neighbor leaving them more likely to couple with an unrelated piece.  As an example, Figure~\ref{fig:bestBuddyVisualization} has four non-adjacent interior best buddies and 14 exterior non-adjacent best buddies despite there being despite there being 16 times more interior edges than exterior edges. 
+In previous research, all best buddies (in particular best buddy errors) were treated the same.  However, pieces that are on the exterior (i.e. edge) of a puzzle or that are next to a missing piece are expected to naturally have a higher rate of non-adjacent best buddies due to the fact that such piece sides do not have a true neighbor; this leaves them them more likely to couple with an unrelated piece.  As an example, the image in Figure~\ref{fig:bestBuddyVisualization} has 4 non-adjacent interior best buddies and 14 exterior non-adjacent best buddies despite there being 16-times more interior sides. 
 
-When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors higher weight.
+When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors a higher weight.
 
 
 
@@ -327,43 +335,44 @@ When using best buddy accuracy as an estimation metric, this thesis differentiat
 \pagebreak
 \section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Cho \textit{et. al.} \cite{cho2010} defined the two metrics for quantifying the accuracy of a solver result namely: Direct Accuracy and Neighbor Accuracy. These metrics have been used in subsequent work \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing metrics, the weaknesses of these metrics, and proposes enhancements to these metrics to make them more meaningful for type 2 puzzles as well as when solving multiple puzzles simultaneously.
+Cho \textit{et. al.} \cite{cho2010} defined two primary metrics for quantifying the accuracy of a solver result namely: direct accuracy and neighbor accuracy. These metrics have been used in subsequent work including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for type 2 puzzles as well as when solving multiple puzzles simultaneously.
 
-In the final subsection, tools developed to visualize the different solver quality metrics are discussed.
+In the final subsection, tools developed to visualize the solver output quality are discussed.
 
 \subsection{Direct Accuracy}\label{sec:directAccuracy}
 
-Direct accuracy is the most na\"{\i}ve accuracy measure.  It is defined as the ratio of the number of pieces placed in the same location as the ground-truth (i.e. source).  The formal definition of direct accuracy ($DA$) is shown in Equation~\eref{eq:directAccuracy} where $n$ is the number of pieces in the source puzzle and $c$ is the number of pieces placed in their correct location.
+Direct accuracy is the most na\"{\i}ve accuracy measure.  It is defined as the fraction of pieces placed in the same location in the ground-truth (i.e. original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in the original (i.e. correct) location.
 
 \begin{equation} \label{eq:directAccuracy}
 DA = \frac{c}{n}
 \end{equation}
 
-Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in the accuracy.  This can be particularly true when the ground-truth image's puzzle dimensions are not known/fixed as described in Section~\ref{sec:shiftableEnhancedDirectAccuracy}.
+Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in accuracy.  This can be particularly true when the ground-truth image's puzzle dimensions are not known by the solver as described in Section~\ref{sec:shiftableEnhancedDirectAccuracy}.
 
-This thesis proposes two modifications to the direct accuracy metric known as ``Enhanced Direct Accuracy Score'' and ``Shiftable Enhanced Direct Accuracy Score''.  They each described in the following two subsections; afterwards, the thesis describes why both metrics serve complementary roles.
+This thesis proposes two new direct accuracy metrics namely: ``Enhanced Direct Accuracy Score'' (EDAS) and ``Shiftable Enhanced Direct Accuracy Score'' (SEDAS).  They are described in the following two subsections; the complementary relationship between EDAS and SEDAS is described in the third subsection.
 
 \subsubsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
 
-The standard direct accuracy metric does not account for the possibility that in the solver output there may be pieces from multiple puzzles.  For a puzzle $P_i$ in the set of input puzzles $P$ (where $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is a solved puzzle in $S$, then Equation~\ref{eq:enhancedDirectAccuracyScore} defines the Enhanced Direct Accuracy Score (EDAS).
+The standard direct accuracy metric does not account for the possibility that there may be pieces from multiple puzzles in the solver output.  For a given a puzzle $P_i$ in the set of input puzzles $P$ (where $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is in $S$, Enhanced Direct Accuracy Score (EDAS) is defined as shown in Equation~\ref{eq:enhancedDirectAccuracyScore}.
 
 \begin{equation} \label{eq:enhancedDirectAccuracyScore}
 EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
-$c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation in type 2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in solved $S_j$.
+\noindent
+$c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation for type 2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in solved $S_j$.
 
-By dividing by the total number of pieces $n_i$ in puzzle $P_i$, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in solved puzzle $S_j$.  In addition, EDAS also penalizes any pieces not from $P_i$ that are in $S_j$ through the term $m_{k,j}$.  Hence, the combination of these two factors ensures that EDAS accounts both for extra and misplaced pieces.
+When solving only a single puzzle, EDAS and standard direct accuracy proposed by Cho \textit{et. al.} are equivalent.  
 
-When solving only a single puzzle, EDAS and the standard Direct Accuracy proposed by Cho \textit{et. al.} are equivalent.  In the case of solving multiple puzzles simultaneously, EDAS considers all pieces from the input puzzle of interest ($P_i$) while penalizing for pieces that are present from other input puzzles ($P_k$). 
+When solving multiple puzzles simultaneously, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, EDAS penalizes for any pieces not from $P_i$ that are in $S_j$ through the term $m_{k,j}$.  Hence, two factors enable EDAS to account for both extra and misplaced pieces.
 
-It is important note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator may be greater than the number of pieces in the solved puzzle $S_j$.
+It is important note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator may be greater than the number of pieces in the solved puzzle $P_i$ and $S_j$.
 
 \subsubsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
 
-As mentioned previously, direct accuracy is vulnerable to shifts in the original image.  At times, the degree to which direct accuracy punishes shifts can be overly punitive. 
+As mentioned previously, direct accuracy is vulnerable to shifts in the original image.  In many cases, direct accuracy is overly punitive when penalizing for shifts. 
 
-Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output where the puzzle boundaries where not fixed.  Note that only a single piece is misplaced, causing all pieces to be shifted to the right one location.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error indicates that it has room for improvement.
+Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an actual solver output wen the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this caused all pieces to be shifted to the right one location.  This single misplaced piece causes the direct accuracy score to drop to 0\%.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy can be seriously flawed.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of direct accuracy. 
 
 \begin{figure}
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
@@ -376,67 +385,67 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows an original image and an act
 \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
 
-To address the often misleadingly punitive nature of the direct accuracy measure, this thesis proposes the Shiftable Enhanced Direct Accuracy Score (SEDAS).  Let $p_n$ be the puzzle piece that is closest to the upper left corner of the solved image's boundary with a minimum Manhattan distance $d_min$.  Also let $L$ as the set of all possible puzzle piece locations that minimum distance $d_min$, then the SEDAS for a puzzle $P_i$ is defined as:
+Let $d_{min}$ be the Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece.  Also let $L$ as the set of all possible puzzle piece locations within distance$d_min$ of the upper left corner of the image.  Given $l$ a location in $L$ that is used as the reference point for determining the absolute location of each piece, then SEDAS is defined as shown in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}in Cho \textit{et. al.}'s metric, this would be the upper left corner of the image.  
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
 SEDAS_{P_i} = \argmax_{l \in L} \Big( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \Big)
 \end{equation}
 
-Note that as reference point ($l$) for the solved is shifted, then only the number of pieces in the correct location ($c_{i,j,l}$) will also change.  
+\noindent
+In standard definition of direct accuracy, $l$ would be the upper left corner of the image; SEDAS shifts this reference point around the upper left corner of the image in order to find a more meaningful value for direct accuracy. 
 
-Rather than defining SEDAS based off the closest puzzle to the upper left corner of the image, an alternative is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach will usually be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
+Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
 
 \subsubsection{Necessity of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
-While EDAS can be misleadingly punitive, it is not correct that EDAS should be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set of minimum distance locations ``$L$'' (as defined in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}).  Hence, there is no additional computational time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, it is often possible to detect whether there was any shifting in the original image.  This would not be possible if SEDAS was used alone.
+While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set $L$.  Hence, there is no additional time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, it is often possible to detect whether there was any shifting in the original image.  This would not be possible if SEDAS was used alone.
 
 \subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
-Cho \textit{et. al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece's side in the ground-truth image as in the solved image over the total number of piece sides.  More formally, let $q$ be the number of sides of each puzzle piece (i.e. 4), and $n$ be the number of pieces in the original.  If $a$ is the number of puzzle piece sides adjacent in the ground-truth and solved images, then the neighbor accuracy ($NA$) is defined as shown in Equation~\eref{eq:neighborAccuracy}.
+Cho \textit{et. al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece' side in both the ground-truth and solved image versus the total number of puzzle piece sides.  More formally, let $q$ be the number of sides of each puzzle piece (i.e. four in a jig swap puzzle), and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
 
 \begin{equation} \label{eq:neighborAccuracy}
 NA = \frac{a}{n~q}
 \end{equation}
 
-Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the solved image since it considers a piece's neighbors and not its actual location.  However, it does not define how to handle the presence of pieces from multiple puzzles in the solved result.  Therefore, it must be amended to consider such cases.
+Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the solved image since it considers only a piece's neighbors and not its absolute location.  However, it does not define how to handle the presence of pieces from multiple puzzles in the solved result.  Therefore, it must be amended to consider such cases.
 
 \subsubsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
 
-Similar to EDAS for Direct Accuracy, Enhanced Neighbor Accuracy Score (ENAS) addresses neighbor accuracy's limitations when quantifying the quality of a solver output when solving multiple puzzles simultaneously. 
+Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric's limitations by providing a framework to quantify the quality of a solver output when solving multiple puzzles simultaneously. 
 
-Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}$ be the number of puzzle piece sides in puzzle $P_i$ that are adjacent in solved puzzle $S_j$.  If $m_{k,j}$ is the number of puzzle pieces from an input puzzle $P_k$ (where $k \ne i$) in $S_j$, then the Enhanced Neighbor Accuracy Score for $P_i$ is defined in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
+Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}$ be the number of adjacent puzzle piece sides in puzzle $P_i$ that are also adjacent in solved puzzle $S_j$.  If $m_{k,j}$ is the number of puzzle pieces from an input puzzle $P_k$ (where $k \ne i$) in $S_j$, then the ENAS for $P_i$ is defined as shown in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
 
 \begin{equation} \label{eq:enhancedNeighborAccuracyScore}
 ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
-Similar to EDAS as described in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ not in $S_j$.  What is more, by including in the summation in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as necessarily incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allow ENAS to account for extra and misplaced pieces.
+Similar to the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including in summation of all $m_{k,j}$ in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as necessarily incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and misplaced pieces.
 
 \subsection{Visualizing Solver Output Quality}\label{sec:visualizingSolverAccuracy}
 
-In images with thousands of pieces, it is often difficult to visually determine the location of pieces that are placed incorrectly.  What is more, visual tools help developers quickly detect and fix latent bugs that may be in their program.
+In images with thousands of pieces, it is often difficult to visually determine the location of pieces that are incorrectly placed.  What is more, visual tools help developers quickly detect and fix latent bugs.
 
 The following two subsections show the tools developed as part of this thesis for visualizing direct accuracy and neighbor accuracy.
 
 \subsubsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
 
-Regardless of whether standard direct accuracy, EDAS, or SEDAS is used, each puzzle piece is assigned a single value (e.g. correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a solid color square.  One additional refinement used is to subdivide the ``incorrect'' placements into a set of subcategories namely (in order of severity): wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
+Regardless of whether standard direct accuracy, EDAS, or SEDAS is used, each puzzle piece is assigned a single value (i.e. correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a solid color square.  One additional refinement used is to subdivide the ``incorrect'' placements into a set of subcategories namely in order of severity: wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
 
 \begin{table}[h]
-
-\begin{center}
-  \begin{tabular}{ | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | }
+	\begin{center}
+  		\begin{tabular}{ | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | }
  \hline
-    Wrong Puzzle & Wrong Location & Wrong Rotation & Correct Location  & No Piece Present  \\ \hline
-	{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
-	{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~} \\
+    		Wrong Puzzle & Wrong Location & Wrong Rotation & Correct Location  & No Piece Present  \\ \hline
+			{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+			{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~} \\
  \hline
-  \end{tabular}
-\end{center}
+		\end{tabular}
+	\end{center}
 \caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:directAccuracyVisualization} shows a solver output along with the EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that previously had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
+Figure~\ref{fig:directAccuracyVisualization} shows a type 2 solver output along with the EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that previously had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
 
 \begin{figure}
 \centering
@@ -457,7 +466,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a solver output along with th
 
 \subsubsection{Visualizing Neighbor Accuracy}\label{sec:visualizingNeighborAccuracy}
 
-The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies.  Each puzzle piece is divided into four equal-sized isosceles triangles (i.e. one for each side).  The triangles are assigned colors depending on whether their neighbor in the solver output matches their neighbor in the ground-truth image.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving multiple puzzles simultaneously and some of the pieces in the solved puzzle are not from the puzzle of interest (i.e. $P_i$).  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classification of puzzle piece sides for neighbor accuracy.
+The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies.  Each puzzle piece is divided into four equal-sized isosceles triangles (i.e. one for each side).  The triangles are assigned colors depending on whether their neighbor in the solver output matches their neighbor in the ground-truth image.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving multiple puzzles simultaneously and some of the pieces in the solved puzzle are not from the puzzle of interest (i.e. $P_i$).  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classification of puzzle piece sides in neighbor accuracy visualization.
 
 \begin{table}[h]
 \begin{center}
@@ -472,7 +481,7 @@ The visualization for neighbor accuracy is very similar to the techniques descri
 \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two images simultaneously.  Note that one of the input puzzles is a rainforest house while the other is the exterior of a glass and stone building.  In this case, the puzzle of interest was the image of the glass and stone building.
+Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving two images simultaneously.  Note that that the puzzle of interest is the glass and stone building while the other puzzle is a rainforest house.
 
 \begin{figure}
 \centering
@@ -492,7 +501,7 @@ Figure~\ref{fig:neigborAccuracyVisualization} shows the output when solving two 
 \label{fig:neigborAccuracyVisualization}
 \end{figure}
 
-All pieces that came from the rainforest house image are shown as blue despite being assembled correctly; this is because the image of interest is the glass and stone building.  All neighbors that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors (e.g. the rainforest image) are shown with red triangles.
+All pieces that came from the rainforest house image are shown as blue despite being assembled correctly; this is because they are not from the image of interest.  All neighbors from the of interest that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are shown with red triangles.
 
 
 
