@@ -103,7 +103,7 @@ Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equal
 
 Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the ground-truth (i.e. original) input  is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from a bag of individual pieces.
 
-This thesis proposes an improved multiple simultaneously jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of solvers for multiple simultaneous puzzles.  Lastly, this thesis makes modifies existing definitions of distance and best buddy metrics to make them more robust for computer generated images.
+This thesis proposes an improved multiple simultaneous, jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of solvers for multiple simultaneous puzzles.  Lastly, this thesis  proposes enhancements to existing techniques to make them more robust for computer generated images.
 
 
 
@@ -163,7 +163,7 @@ Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles b
 \pagebreak
 \section{Puzzle Piece Pairwise Affinity}\label{sec:piecePairwiseAffinity}
 
-Pairwise affinity quantifies the similarity between the sides of two puzzle pieces.  $D(x_i, s_i, x_j, s_j)$ and $C(x_i, s_i, x_j, s_j)$ represent the distance and compatibility (i.e. similarity) respectively between side $s_i$ of puzzle piece $x_i$ and side $s_j$ of puzzle piece $x_j$.  
+Pairwise affinity quantifies the similarity between the sides of two puzzle pieces.  $D(x_i, s_a, x_j, s_b)$ and $C(x_i, s_a, x_j, s_b)$ represent the distance and compatibility (i.e. similarity) respectively between side $s_a$ of puzzle piece $x_i$ and side $s_b$ of puzzle piece $x_j$.  
 
 \subsection{Cho \textit{et. al.} Pairwise Affinity}\label{sec:choPairwiseAffinity}
 
@@ -241,18 +241,18 @@ Note that $\alpha$ is a tunable, penalty term representing low compatibility.
 
 \subsection{Best Buddies}\label{sec:bestBuddies}
 
-Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_i$ and $s_j$ if and only if they are more compatible (i.e. similar) to each other than they are to any other piece.  This is shown more formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  This definition of best buddies applies regardless of whether the compatibility function of Pomeranz \textit{et. al.} or Paikin \& Tal is used.
+Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e. similar) to each other than they are to any other piece.  This is shown more formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  This definition of best buddies applies regardless of whether the compatibility function of Pomeranz \textit{et. al.} or Paikin \& Tal is used.
 
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \begin{split}
 \begin{matrix}
-\forall{x_k} \forall{s_k} \in {Pieces}, & C(x_i, s_i, x_j, s_j) \geq C(x_i, s_i, x_k, s_k)
+\forall{x_k} \forall{s_k} \in {Pieces}, & C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_k)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall{x_k} \forall{s_k} \in {Pieces}, & C(x_j, s_j, x_i, s_i) \geq C(x_j, s_j, x_k, s_k)
+\forall{x_k} \forall{s_k} \in {Pieces}, & C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_k)
 \end{matrix}
 \end{split}
 \end{equation}
@@ -269,13 +269,13 @@ It is relatively unlikely that there will be a meaningful number pieces that hav
 \begin{equation} \label{eq:hammoudehBestBuddyDefinition}
 \begin{split}
 \begin{matrix}
-\forall{x_k} \forall{s_k} \in Parts, & C(x_i, s_i, x_j, s_j) > C(x_i, s_i, x_k, s_k)
+\forall{x_k} \forall{s_k} \in Parts, & C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_k)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall{x_k} \forall{s_k} \in Parts, & C(x_j, s_j, x_i, s_i) > C(x_j, s_j, x_k, s_k)
+\forall{x_k} \forall{s_k} \in Parts, & C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_k)
 \end{matrix}
 \end{split}
 \end{equation}
@@ -517,35 +517,35 @@ All pieces that came from the rainforest house image are shown as blue despite b
 \pagebreak
 \section{Paikin \& Tal Solver}\label{sec:paikinTalSolver}
 
-This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; their Java implementation was never open sourced.  As such, this section also describes a complete implementation of their approach developed as part of this thesis.  The section concludes with a summary of some of the weaknesses of Paikin \& Tal's approach. 
+This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; their Java implementation is not open-source.  As such, this section also describes a complete implementation of their approach that was developed as part of this thesis.  The section concludes with a summary of some of the weaknesses of Paikin \& Tal's algorithm. 
 
 \subsection{Overview of Paikin \& Tal's Algorithm}\label{sec:paikinTalAlgorithm}
 
-Paikin \& Tal's solver was inspired by the solver developed by Pomeranz \textit{et. al.} in \cite{pomeranz2011}.  However, unlike the previous work, Paikin \& Tal's is deterministic; their greedy algorithm iteratively places the puzzle piece that at each stage has the maximum confidence score. Paikin \& Tal's approach is able to handle puzzles with missing pieces where the puzzle size and piece orientation are unknown.  The only input provided to the algorithm is the expected number of output puzzles.
+Paikin \& Tal's solver was inspired by the solver developed by Pomeranz \textit{et. al.} in \cite{pomeranz2011}.  Paikin \& Tal's uses a deterministic, greedy algorithm that iteratively places the puzzle piece that has the maximum confidence score at each stage. Paikin \& Tal's approach is able to handle puzzles of unknown size with missing pieces and where piece orientation is not known.  The only required input to the algorithm is the expected number puzzles.
 
-Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selecting of the seed piece, and placement.  These are described in the following subsections.  The modification required to the algorithm to solve multiple puzzles simultaneously is describing in an additional subsection.
+Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selection of the seed piece, and placement.  These stages are described in the following subsections.  The modification required during placement to solve multiple puzzles simultaneously is described in an additional subsection.
 
 \subsubsection{Inter-Puzzle Piece Distance Calculation}\label{sec:paikinTalInterPieceDistance}
 
-The first stage of Paikin \& Tal's algorithm is to calculate the inter-piece distance between all pairs of pieces.  This is done using the asymmetric distance measure described in Section~\eref{eq:paikinAsymDistance}.  This information is stored in an $n$ by $n$ matrix (where $n$ is the number of puzzle pieces); after being calculated, the asymmetric distance never needs to be recalculated again throughout the duration of the algorithm.
+The first stage of Paikin \& Tal's algorithm is to calculate the inter-piece distance between all pieces.  This is done using the asymmetric distance measure described in Section~\ref{sec:paikinPairwiseAffinity}.  The distance information is stored in an $n$ by $n$ matrix (where $n$ is the number of puzzle pieces); after being calculated, the asymmetric distance is never recalculated throughout the duration of the algorithm.
 
-As explained in Section~\ref{eq:paikinAsymDistance}, Paikin \& Tal normalizes all of the asymmetric distances between each possible pairing of pieces by the second best distance for each piece.  This has the effect of amplifying truly unique pairings versus pairings that arise from low variation areas of the image.  They refer to this as ``asymmetric compatibility''.  The asymmetric compatibility is then used to find the best buddies (if any) for all pieces.  
+As explained in Section~\ref{sec:paikinPairwiseAffinity}, Paikin \& Tal normalize the asymmetric distances using the asymmetric compatibility function in Equation~\eref{eq:paikinAsymCompatibility}.  This has the effect of amplifying truly unique pairings while penalizing speciously similar pairings that arise from low variation areas of the image.  The asymmetric compatibility is then used to find the best buddies for each piece (if any).  
 
-The last step is to calculate the mutual compatibility ($\tilde{C}$) between pairs of pieces (e.g. $x_i$ and $x_j$), which is defined in Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_i,x_j,s_j)$ is the asymmetric compatibility between side $s_i$ of piece $x_j$ and side $s_j$ of piece $x_j$; $C(x_j,s_j,x_i,s_i)$ is defined similarly.  It is important to note that mutual compatibility is symmetric.
+The last step is to calculate the mutual compatibility ($\tilde{C}$) between pairs of pieces (e.g. $x_i$ and $x_j$), which is defined in Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_a,x_j,s_b)$ is the asymmetric compatibility between side $s_a$ of piece $x_i$ and side $s_b$ of piece $x_j$; $C(x_j,s_b,x_i,s_a)$ is defined similarly.  It is important to note that mutual compatibility is symmetric.
 
 \begin{equation} \label{eq:mutualCompatibility}
-\tilde{C}(x_i,s_i,x_j,s_j)=\tilde{C}(x_j,s_j,x_i,s_i)=\frac{C(x_i,s_i,x_j,s_j) + C(x_j,s_j,x_i,s_i) }{2}
+\tilde{C}(x_i,s_a,x_j,s_b)=\tilde{C}(x_j,s_b,x_i,s_a)=\frac{C(x_i,s_a,x_j,s_b) + C(x_j,s_b,x_i,s_a) }{2}
 \end{equation}
 
 \subsubsection{Selecting the Seed Piece}\label{sec:paikinTalSeedPiece}
 
-Similar to Pomeranz \textit{et. al.}, Paikin \& Tal is a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that initial seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant effect on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
+Similar to Pomeranz \textit{et. al.}, Paikin \& Tal used a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant, deleterious effect on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
 
-Paikin \& Tal define a seed piece as ``distinctive'' if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; ties are broken by selecting the piece that has the maximum sum of mutual compatibilities among its neighbors.
+Paikin \& Tal define a seed piece as ``distinctive'' if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; ties are broken by selecting the piece that has the maximum sum of mutual compatibilities with its neighbors.
 
 \subsubsection{Placement}\label{sec:paikinTalPlacer}
 
-Paikin \& Tal utilize an iterative, greedy placer that places pieces around an expanding seed.  Pseudocode for their algorithm is shown in Algorithm~\ref{alg:paikinTalPlacer}.  Placement continues all pieces have been placed.
+Paikin \& Tal utilized an iterative, greedy placer that places pieces around an expanding seed.  Pseudocode for their algorithm is shown in Algorithm~\ref{alg:paikinTalPlacer}.  Placement continues all pieces have been placed.
 
 \begin{algorithm}
 \caption{Paikin \& Tal Placer}\label{alg:paikinTalPlacer}
@@ -565,54 +565,54 @@ Paikin \& Tal utilize an iterative, greedy placer that places pieces around an e
 \end{algorithmic}
 \end{algorithm}
 
-The selection of the next (i.e. best) piece to place emphasizes placing pieces about which there is the highest confidence.  First, if two pieces are best buddies, then there is a very significant chance that they are best buddies.  Second, even among a set of best buddies, some best buddies have stronger pairwise affinity than others as determined by the asymmetric compatibility.
+The selection of the next (i.e. best) piece to place emphasizes placing pieces about which there is the highest confidence of correctness. As mentioned, two pieces are much more likely to be adjacent if they are best buddies.  Due to this, the algorithm keeps a pool of the already placed pieces best buddies; whenever a new piece is placed, all of that piece's unplaced best buddies are added to the $BestBuddPool$.  What is more, even among a set of best buddies, 
 
-Whenever a piece (including the seed) is placed, all of that piece's unplaced best buddies are added to the $BestBuddyPool$.  As long as the best buddy pool is not empty, candidates for placement can only come from that pool; the best candidate from the $BestBuddyPool$ is the one with the maximum asymmetric compatibility with an open slot in the puzzle.  
+As long as the $BestBuddyPool$ is not empty, candidates for placement can only come from that pool; as the best candidate from the $BestBuddyPool$ is the one with the maximum asymmetric compatibility with an open slot in the puzzle.  This prioritizes placing the the best buddy pairings upon which there is the greatest confidence.
 
-If the $BestBuddyPool$ is ever empty, the algorithm recalculates the asymmetric and mutual compatibilities between the unplaced pieces and any piece's open slot.  The piece that has maximum asymmetric compatibility with an open slot is then selected as the next piece for placement.
+If the $BestBuddyPool$ is ever empty, the algorithm recalculates the asymmetric and mutual compatibilities between the unplaced pieces and any piece's open slot.  The piece that has the maximum asymmetric compatibility with an open slot is then selected as the next piece for placement.
 
 \subsubsection{Solving Multiple Puzzles}\label{sec:paikinTalSolvingMultiplePuzzles}
 
-As mentioned in Section~\ref{sec:paikinTalSolver}, the only input to the Paikin \& Tal algorithm is that number of puzzles being solved.   When solving more than one puzzle at a time, only a minor change to the placer described in Algorithm~\ref{alg:paikinTalPlacer} is required.
+As mentioned in Section~\ref{sec:paikinTalSolver}, the only input to the Paikin \& Tal algorithm is the expected number of puzzles.   When solving more than one puzzle at a time, only a minor change to the placer described in Algorithm~\ref{alg:paikinTalPlacer} is required.
 
-If at any time the mutual compatibility between the next piece to place and the open slot drops below a predefined threshold (e.g. Paikin \& Tal use 0.5) and the current number of boards is less than the specified number of boards, then the algorithm spawns a new puzzle.  This entails clearing the $BestBuddyPool$ and selecting a seed piece using the approach previously described in Section~\ref{sec:paikinTalSeedPiece}.   Placement then continues simultaneously across all puzzles.
+If at any time the mutual compatibility between the next piece to place its associated open slot drops below a predefined threshold (e.g. Paikin \& Tal use 0.5) and the current number of puzzles is less than the expected number, the algorithm spawns a new puzzle.  This entails clearing the $BestBuddyPool$ and selecting a seed piece using the approach previously described in Section~\ref{sec:paikinTalSeedPiece}.   Placement then continues simultaneously across all puzzles.
 
 
 \subsection{A Python Implementation of Paikin \& Tal's Algorithm}\label{sec:pythonPaikinTalAlgorithm}
 
-Since no open-source implementation of the Paikin \& Tal solver exists, these thesis developed one.  It is written entirely using Python 2.7 \cite{python}.  The following subsections describe the two major Python packages that were developed.  
+Since no open-source implementation of the Paikin \& Tal solver exists, one was developed as part of this thesis.  It is written entirely using Python 2.7 \cite{python}.  The following subsections describe the implementation's two  Python packages.  
 
 \subsubsection{The \hammoudehPuzzlePackage Package}\label{sec:hammoudehPuzzlePackage}
 
 This package consists of two primary classes: \texttt{Puzzle} and \texttt{PuzzlePiece}.  It is a generic infrastructure that is independent of the solver used.  
 
-The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: identification number, size, type (e.g. type 1, type 2 - this is stored as an object of type ``\texttt{PuzzleType}''), piece width, and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
+The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: an identification number, size, type (e.g. type 1, type 2 - this is via the class \texttt{PuzzleType}), and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
 
-Individual puzzle pieces are represented using the \texttt{PuzzlePiece} class.  Objects of this type have as attributes: identification number, location, width (in number of pixels), rotation (represented using class \texttt{PuzzlePieceRotation}), and image information (stored in a NumPy array \cite{walt2011}).
+Individual puzzle pieces are represented using the \texttt{PuzzlePiece} class.  Attributes of objects of this type are: an identification number, width (in number of pixels), rotation (via the class \texttt{PuzzlePieceRotation}), image information (stored in a NumPy array \cite{walt2011}), and location in the puzzle.
 
-Additional features included in the \hammoudehPuzzlePackage package include calculating EDAS, SEDAS, and ENAS as well as performing best buddy analysis on an image.
+Additional features included in the \hammoudehPuzzlePackage package include calculating and visualizing EDAS, SEDAS, and ENAS as well as performing best buddy analysis on an image.
 
 \subsubsection{The \paikinTalPackage Package}\label{sec:paikinTalSolverPackage}
 
-The \paikinTalPackage package implements the Paikin \& Tal algorithm described in Section~\ref{sec:paikinTalSolver}.  The primary interface for the user is through the \texttt{PaikinTalSolver} class; objects of this type are created using a constructor that takes the following parameters: the expected number of puzzles, a set of \texttt{PuzzlePiece} objects, the asymmetric distance function, the puzzle type (class ``\texttt{PuzzleType}''), and optionally a set of fixed puzzle dimensions.  The \texttt{PaikinTalSolver} class is composed of a set of component classes, which are described in the subsequent paragraphs.
+The \paikinTalPackage package implements the Paikin \& Tal algorithm described in Section~\ref{sec:paikinTalAlgorithm}.  The primary interface for the user is through the \texttt{PaikinTalSolver} class; objects of this type are created using a constructor that takes as parameters: the expected number of puzzles, a set of \texttt{PuzzlePiece} objects, a distance function, the puzzle type (class ``\texttt{PuzzleType}''), and optionally a set of fixed puzzle dimensions.  A \texttt{PaikinTalSolver} object is composed of a set of component object, which are described in the subsequent paragraphs.
 
-The \texttt{InterPieceDistance} class calculates the asymmetric distance, asymmetric compatibility, and mutual compatibility between all pieces.  What is more, since the \texttt{PaikinTalSolver} takes a distance function in its constructor, the user is able to experiment with how different distance metrics affect the solver's performance.  While calculating the asymmetric compatibilities, the \texttt{InterPieceDistance} class also finds each piece's best buddies; this made it the natural choice to identify the starting piece(s).
+An object of type \texttt{InterPieceDistance} class calculates the asymmetric distance, asymmetric compatibility, and mutual compatibility between all pieces.  What is more, since the \texttt{PaikinTalSolver} takes a distance function in its constructor, the user is able to tune the solver's performance using different distance metrics.  While calculating the asymmetric compatibilities, the \texttt{InterPieceDistance} class also finds each piece's best buddies; this made the \texttt{InterPieceDistance} class the natural choice to identify the starting piece(s).
 
-Paikin \& Tal do not identify the data structure used to  implement the $BestBuddyPool$ (see Algorithm~\ref{alg:paikinTalPlacer}); instead, the choice of the term ``pool'' may indicate that it is unstructured. However, the choice of data structure is critical as algorithm must be able to quickly removal of best (i.e. maximum) values from the pool and quickly insert new values into the pool.
+Paikin \& Tal do not identify the data structure used to implement the $BestBuddyPool$ (see Algorithm~\ref{alg:paikinTalPlacer}). However, the choice of data structure is critical as the algorithm must be able to quickly remove the best (i.e. maximum) value from the pool and quickly insert new values into the pool.
 
 This thesis' implementation of the $BestBuddyPool$ relies on a combination three data structures.  They are:
 
 \begin{itemize}
 
-	\item \textbf{Dictionary of the Best Buddies Currently in this Pool} - This allows new best buddies to be quickly added to the list when a piece is placed and to delete the placed piece from the pool.
+	\item \textbf{Dictionary of the Best Buddies in this Pool} - Stores the identification numbers of best buddies currently in the pool.  \\ A dictionary enables new best buddies to be quickly add best buddies to the pool when a piece is placed and to delete the placed piece from the pool.
 	
-	\item \textbf{Dictionary of the Open Slots in the Puzzle} - Similar to the best buddy dictionary, this allows open slots in the puzzle to be quickly added and removed.
+	\item \textbf{Dictionary of the Open Slots in the Puzzle} - Stores the set of valid locations pieces can be placed.  \\ Similar to the best buddy dictionary, a dictionary enables valid locations to be quickly added and removed.
 
-	\item \textbf{Best Candidate Max Heap} - A max heap was used as it allows the best candidate to be found quickly ($O(n)$).  Each object in the pool is of type \texttt{BestBuddyHeapInfo} and represents the level of similarity between a best buddy in the pool and an open slot.  Every time a new best buddy is added, pairings between it and all open slots are added to the heap.  Similarly, whenever a new open slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are added to the heap.  
+	\item \textbf{Best Candidate Max Heap} - Used to rank the pairings of best buddies in the pool versus valid location pieces can be placed.  Each object in the pool is of type \texttt{BestBuddyHeapInfo} and represents the level of similarity between a best buddy in the pool and an open slot.  Every time a new best buddy is added, pairings between it and all open slots are added to the heap.  \\ A max heap allows the best candidate to be found quickly in time $O(log(n))$).  Similarly, whenever a new open slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are efficiently added to the heap.  
 
 \end{itemize}
 
-The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are check for validity (due to either the best buddy being already placed or the open slot in the puzzle being filled). If the heap size does get too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
+The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are check for validity (due to either the best buddy being already placed or the valid location in the puzzle being previously filled). If the heap grows too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
 
 \subsection{Limitations of Paikin \& Tal's Algorithm}\label{sec:paikinTalLimitations}
 
@@ -620,20 +620,20 @@ This section details some of the limitations with Paikin \& Tal's algorithm.
 
 \subsubsection{Taking the Number of Puzzles as an Input}\label{sec:limitationNumberPuzzles}
 
-The only input to the solver other than the number of pieces is the expected number of puzzles (see Section~\ref{sec:paikinTalSolver}). Pomeranz \textit{et. al.} and Sholomon \textit{et. al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the set of input pieces; the number of puzzles could then be inferred from the best buddy accuracy.
+The only input to the solver other than the number of pieces is the expected number of puzzles (see Section~\ref{sec:paikinTalSolver}). Pomeranz \textit{et. al.} and Sholomon \textit{et. al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the puzzles pieces; the number of puzzles could then be inferred from the best buddy accuracy.
 
 
 \subsubsection{Using Only a Single Side for Placement}\label{sec:limitationPlacementSingleSide}
 
-When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have a significant deleterious effect on the final result.  An improved placer could prioritize based off the number of best buddies a piece has with respect to an open slot.
+When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have a major, deleterious effect on the final result.  An improved placer could prioritize the placement of pieces based off the number of best buddies that piece has with respect to an open slot.
 
 \subsubsection{Determining the Seed Piece for Multiple Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
 
-When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach for choosing seed piece.  This can lead to issues if two puzzles are spawned using seed pieces from the same input puzzle.  The most naive way to address this issue is to select multiple seed pieces when a puzzle is spawn and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
+When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach for choosing the seed piece.  This can lead to issues if two puzzles are spawned using seed pieces from the same input puzzle.  The most naive way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
 
 \subsubsection{Determining when to Spawn a New Puzzle}\label{sec:limitationWhenToSpawnNewPuzzle}
 
-Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine where in the placement the algorithm should backtrack and spawn the new board.
+Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn is to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine to where in the placement the algorithm should backtrack and then spawn the new board.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
