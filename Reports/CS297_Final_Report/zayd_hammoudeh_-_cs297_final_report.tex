@@ -98,13 +98,13 @@
 
 \section{Introduction}\label{sec:introduction}
 
-Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name originated from the fact that jigsaws were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}; that solver could only solve nine piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by \cite{altman1990} and \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
+Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name originated from the fact that jigsaws were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}; that solver could only solve nine piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by Altman \cite{altman1990} and Demaine \& Demaine \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
 Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
 Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the ground-truth (i.e., original) input is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from the bag of component pieces.
 
-This thesis proposes an improved multiple simultaneous, jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of multiple simultaneous puzzle solvers.  Lastly, this thesis proposes enhancements to existing techniques to improve solver performance on computer generated images.
+This thesis proposes an improved multiple simultaneous, jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of outputs from such solvers.  Lastly, this thesis proposes enhancements to existing techniques to improve solver performance on computer generated images.
 
 
 
@@ -117,7 +117,7 @@ This thesis proposes an improved multiple simultaneous, jig swap puzzle solver. 
 
 Computational solvers for jigsaw puzzles have been studied since the 1960s when Freeman \& Gardner proposed a solver that relied only on piece shape and could puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
 
-Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et. al.}'s solver was relied on the user specifying the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et. al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
+Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et. al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et. al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
 
 A significant contribution of Cho \textit{et. al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK).  LAB was selected due to its property of normalizing the lightness and color variation across all three dimensions.  Cho \textit{et. al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
 
@@ -139,7 +139,7 @@ In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles in
 
 Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type 1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et. al.}, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et. al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et. al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
 
-Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type 1 and Type 2 puzzles, even if those puzzles with missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type 1 and Type 2 puzzles, even if those puzzles have missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
 
 Paikin \& Tal's algorithm was used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
 
@@ -246,15 +246,13 @@ Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best budd
 
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \begin{split}
-\begin{matrix}
-\forall{x_k \in \{Pieces\}}\forall{s_c} & C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
+\forall{x_{k} \in \{Pieces\}}\forall{s_c} C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall{x_k \in \{Pieces\}}\forall{s_c} & C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
-\end{matrix}
+\forall{x_{k} \in \{Pieces\}}\forall{s_c} C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
 \end{split}
 \end{equation}
 
@@ -269,15 +267,13 @@ It is relatively unlikely that there will be a meaningful number pieces that hav
 
 \begin{equation} \label{eq:hammoudehBestBuddyDefinition}
 \begin{split}
-\begin{matrix}
-\forall{x_k \in \{Pieces\}, k \ne j}\forall{s_c} & C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
+\forall{x_{k \ne j} \in \{Pieces\}}\forall{s_c} C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall{x_k \in \{Pieces\}, k \ne i}\forall{s_c} & C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
-\end{matrix}
+\forall{x_{k \ne i} \in \{Pieces\}}\forall{s_c} C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
 \end{split}
 \end{equation}
 
@@ -385,7 +381,7 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows the ground-truth image and a
 \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
 
-Let $d_{min}$ be the Manhattan distance between the upper left corner of the solved image and the nearest placed puzzle piece.  Also let $L$ as the set of all puzzle piece locations within distance $d_min$ of the upper left corner of the image.  Given that $l$ is a location in $L$ that is used as the reference point for determining the absolute location of all piece, then SEDAS is defined as shown in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  
+Let $d_{min}$ be the Manhattan distance between the upper left corner of the solved image and the nearest placed puzzle piece.  Also let $L$ as the set of all puzzle piece locations within distance $d_{min}$ of the upper left corner of the image.  Given that $l$ is a location in $L$ that is used as the reference point for determining the absolute location of all piece, then SEDAS is defined as shown in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
 SEDAS_{P_i} = \argmax_{l \in L} \Big( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \Big)
@@ -396,13 +392,13 @@ In standard definition of direct accuracy, $l$ would be the upper left corner of
 
 Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
 
-\subsubsection{Necessity of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
+\subsubsection{The Necessity to Use Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
 While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set $L$.  Hence, there is no additional time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, some shifts in the solved image may be quantified; this would not be possible if SEDAS was used alone.
 
 \subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
-Cho \textit{et al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece' side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be number of sides each piece has (i.e., four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
+Cho \textit{et al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece's side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be number of sides each piece has (i.e., four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
 
 \begin{equation} \label{eq:neighborAccuracy}
 NA = \frac{a}{n~q}
@@ -604,11 +600,11 @@ This thesis' implementation of the $BestBuddyPool$ relies on a combination three
 
 \begin{itemize}
 
-	\item \textbf{Dictionary of the Best Buddies in this Pool} - Stores the identification numbers of best buddies currently in the pool.  The dictionary enables new best buddies to be quickly added to the pool when a piece is placed and to quickly deleted a placed piece from the pool.
+	\item \textbf{Dictionary of the Best Buddies in this Pool} - This stores the identification numbers of best buddies currently in the pool.  A dictionary was use for this role as it enables new best buddies to be quickly added to the pool  and to quickly delete a placed piece from the pool.
 	
-	\item \textbf{Dictionary of the Open Slots in the Puzzle} - Stores the set of valid locations pieces can be placed.  Similar to the best buddy dictionary, a dictionary enables valid locations to be quickly added and removed.
+	\item \textbf{Dictionary of the Open Slots in the Puzzle} - It contains the the set of valid locations where pieces can be placed.  Similar to the best buddy dictionary, a dictionary enables valid locations to be quickly added and removed.
 
-	\item \textbf{Best Candidate Max Heap} - Used to rank the pairings of best buddies in the pool and open puzzle location.  It is represented using a max heap; each object in the heap is of type \texttt{BestBuddyHeapInfo}.  Every time a new best buddy is added to the pool, pairings between that piece and all open slots are added to the heap.  Similarly, whenever a new slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are efficiently added to the heap.  A max heap allows the best candidate to be found in $O(lg(n))$ time.
+	\item \textbf{Best Candidate Max Heap} - The best candidate is a pairing of a best buddy from the pool and an open puzzle location.  Every time a new best buddy is added to the pool, pairings between that new pool member and all open slots are added to the best candidate heap.  Similarly, whenever a new slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are also added to the heap.  A max heap allows the best candidate to be selected in $O(lg(n))$ time.
 	
 \end{itemize}
 
