@@ -141,7 +141,7 @@ Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorit
 
 Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type 1 and Type 2 puzzles, even if those puzzles with missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
 
-Paikin \& Tal's algorithm was used as the basis for much of this thesis and is discussed in significant depth in Section\ref{sec:paikinTalSolver}.
+Paikin \& Tal's algorithm was used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
 
 
 
@@ -247,13 +247,13 @@ Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best budd
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \begin{split}
 \begin{matrix}
-\forall_{x_k \in \{Pieces\}}\forall{s_c} & C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
+\forall{x_k \in \{Pieces\}}\forall{s_c} & C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall_{x_k \in \{Pieces\}}\forall{s_c} & C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
+\forall{x_k \in \{Pieces\}}\forall{s_c} & C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
 \end{matrix}
 \end{split}
 \end{equation}
@@ -270,13 +270,13 @@ It is relatively unlikely that there will be a meaningful number pieces that hav
 \begin{equation} \label{eq:hammoudehBestBuddyDefinition}
 \begin{split}
 \begin{matrix}
-\forall_{x_k \in \{Pieces\}, k \ne j}\forall{s_c} & C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
+\forall{x_k \in \{Pieces\}, k \ne j}\forall{s_c} & C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
 \\
 \\
 \multicolumn{2}{c}{\textnormal{and}}
 \\
 \\
-\forall_{x_k \in \{Pieces\}, k \ne i}\forall{s_c} & C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
+\forall{x_k \in \{Pieces\}, k \ne i}\forall{s_c} & C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
 \end{matrix}
 \end{split}
 \end{equation}
@@ -337,7 +337,7 @@ When using best buddy accuracy as an estimation metric, this thesis differentiat
 \pagebreak
 \section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Cho \textit{et. al.} \cite{cho2010} defined two primary metrics for quantifying the quality of a solver result namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type 2 puzzles as well as when solving multiple puzzles simultaneously.
+Cho \textit{et al.} \cite{cho2010} defined two primary metrics for quantifying the quality of a solver result namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type 2 puzzles as well as when solving multiple puzzles simultaneously.
 
 In the final subsection, the tools developed to visualize the solver output quality are discussed.
 
@@ -402,7 +402,7 @@ While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS. 
 
 \subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
-Cho \textit{et. al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece' side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be number of sides each piece has (i.e. four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
+Cho \textit{et al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece' side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be number of sides each piece has (i.e. four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
 
 \begin{equation} \label{eq:neighborAccuracy}
 NA = \frac{a}{n~q}
@@ -539,7 +539,7 @@ The last step is to calculate the mutual compatibility ($\tilde{C}$) between pai
 
 \subsubsection{Selecting the Seed Piece}\label{sec:paikinTalSeedPiece}
 
-Similar to Pomeranz \textit{et. al.}, Paikin \& Tal used a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant, deleterious impact on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
+Similar to Pomeranz \textit{et al.}, Paikin \& Tal used a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant, deleterious impact on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
 
 Paikin \& Tal define a seed piece as ``distinctive'' if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; in such cases, ties are broken by selecting the piece that has the maximum sum of mutual compatibilities with its direct neighbors.
 
@@ -620,7 +620,7 @@ This section details some of the limitations of Paikin \& Tal's algorithm.
 
 \subsubsection{Taking the Number of Puzzles as an Input}\label{sec:limitationNumberPuzzles}
 
-Other than a set of pieces, the only input to the Paikin \& Tal's solver is the expected number of puzzles (see Section~\ref{sec:paikinTalSolver}). Pomeranz \textit{et. al.} and Sholomon \textit{et. al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the puzzles pieces; the number of puzzles could then be inferred from the best buddy accuracy.
+Other than a set of pieces, the only input to the Paikin \& Tal's solver is the expected number of puzzles (see Section~\ref{sec:paikinTalSolver}). Pomeranz \textit{et al.} and Sholomon \textit{et al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the puzzles pieces; the number of puzzles could then be inferred from the best buddy accuracy.
 
 
 \subsubsection{Using Only a Single Side for Placement}\label{sec:limitationPlacementSingleSide}
