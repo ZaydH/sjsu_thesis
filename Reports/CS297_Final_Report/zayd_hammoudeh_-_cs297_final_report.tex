@@ -180,7 +180,7 @@ Since the LAB colorspace has three dimensions (e.g., lightness and A/B opponent 
 One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the pieces' pixel values.  In some cases, solver performance may improve if a different exponent is used.  Pomeranz \textit{et. al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $(L_{p})^{q}$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.\footnote{Pomeranz \textit{et. al.} used 28 for $K$.  This has become the standard in subsequent papers.}
 
 \begin{equation} \label{eq:pomeranzPairwise}
-D(x_i,R,x_j,L) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\bigg)^{\frac{q}{p}}
+D(x_i,R,x_j,L) = \Bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\Bigg)^{\frac{q}{p}}
 \end{equation}
 
 \noindent
