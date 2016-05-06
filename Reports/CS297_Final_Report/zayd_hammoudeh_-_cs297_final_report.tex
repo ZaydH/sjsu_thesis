@@ -98,13 +98,13 @@
 
 \section{Introduction}\label{sec:introduction}
 
-Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name originated from the fact that jigsaws were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}; that solver could only solve nine piece puzzles.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by Altman \cite{altman1990} and Demaine \& Demaine \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
+Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name derives from the that jigsaws that were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for almost two centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by Altman \cite{altman1990} and Demaine \& Demaine \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
 Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
-Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the original, also known as ``ground-truth,'' input is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from the bag of component pieces.
+Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the original, also known as ``ground-truth,'' input is unknown.  This significantly increases the difficulty of the problem as the structure of the complete solution must be determined solely from the bag of component pieces.
 
-This thesis proposes an improved multiple simultaneous, jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of outputs from such solvers.  Lastly, this thesis proposes enhancements to existing techniques to improve solver performance on computer generated images.
+This thesis proposes an improved jig swap puzzle solver that is able to solve multiple puzzles simultaneously.  What is more, it defines a set of new metrics for measuring the quality of outputs of such solvers.  Lastly, this thesis proposes enhancements to existing techniques to improve solver performance on computer generated images.
 
 
 
@@ -117,13 +117,13 @@ This thesis proposes an improved multiple simultaneous, jig swap puzzle solver. 
 
 Computational jigsaw puzzle solvers have been studied since the 1960s when Freeman \& Gardner proposed a solver that relied only on piece shape and could puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
 
-Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et. al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et. al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
+Cho \textit{et al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
 
-A significant contribution of Cho \textit{et. al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK).  LAB was selected due to its property of normalizing the lightness and color variation across all three dimensions.  Cho \textit{et. al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
+A significant contribution of Cho \textit{et al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK).  LAB was selected due to its property of normalizing the lightness and color variation across all three dimensions.  Cho \textit{et al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
 
-Pomeranz \textit{et. al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et. al.} also generalized and improved on Cho \textit{et. al.}'s piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et. al.} introduced the concept of ``best buddies'', which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
+Pomeranz \textit{et al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et al.} also generalized and improved on Cho \textit{et al.}'s piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et al.} introduced the concept of ``best buddies'', which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
 
-An additional key contribution of Pomeranz \textit{et. al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images; the size of the images in the second and third benchmarks is 2,360 and 3,300 pieces respectively.
+An additional key contribution of Pomeranz \textit{et al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images; the size of the images in the second and third benchmarks is 2,360 and 3,300 pieces respectively.
 
 In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles into three primary types.  The following is Gallagher's proposed terminology; his nomenclature is used throughout this thesis.
 
@@ -133,11 +133,13 @@ In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles in
 	
 	\item \textbf{Type~2 Puzzle}: This is an extension of a Type~1 puzzle, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g., \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}); in comparison to a Type~1 puzzle, this change alone increases the number of possible solutions by a factor of $4^n$, where $n$ is the number of pieces in the puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image may be unknown.
 	
-	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the puzzle pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
+	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
+	
+	\item \textbf{Mixed-Bag Puzzles}: The input set of pieces are from multiple puzzles, or there are extra pieces in the input set that belong to no puzzle.  The solver may output either a single merged puzzle or separate the input pieces into disjoint sets that ideally align the ground-truth puzzles.  This type of puzzle is the primary focus of this thesis.
 
 \end{itemize}
 
-Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type~1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et. al.}, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et. al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et. al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
+Sholomon \textit{et al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type~1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et al.}, Sholomon \textit{et al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
 
 Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
 
@@ -163,11 +165,11 @@ Paikin \& Tal's algorithm was used as the basis for much of this thesis and is d
 \pagebreak
 \section{Puzzle Piece Pairwise Affinity}\label{sec:piecePairwiseAffinity}
 
-Pairwise affinity quantifies the similarity between the sides of two puzzle pieces.  $D(x_i, s_a, x_j, s_b)$ and $C(x_i, s_a, x_j, s_b)$ represent the distance and compatibility (i.e., similarity) respectively between side $s_a$ of puzzle piece $x_i$ and side $s_b$ of puzzle piece $x_j$.  
+All jigsaw puzzle solvers require a means to measure the congruity of individual puzzle pieces.  Pairwise affinity quantifies the similarity between the sides of two puzzle pieces.  $D(x_i, s_a, x_j, s_b)$ and $C(x_i, s_a, x_j, s_b)$ represent the distance and compatibility (i.e., similarity) respectively between side $s_a$ of puzzle piece $x_i$ and side $s_b$ of puzzle piece $x_j$.  
 
-\subsection{Cho \textit{et. al.} Pairwise Affinity}\label{sec:choPairwiseAffinity}
+\subsection{Cho \textit{et al.} Pairwise Affinity}\label{sec:choPairwiseAffinity}
 
-As mentioned in section \ref{sec:previousWork}, Cho \textit{et. al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Equation~\eref{eq:choPairwise} defines the distance between the right side, $R$, of piece $x_i$ and the left side, $L$, of piece $x_j$ using Cho \textit{et. al.}'s approach.  Note that $K$ is both the width and height of a puzzle piece in number of pixels.\footnote{Cho \textit{et. al.} used 7 for $K$.}
+As mentioned in Section~\ref{sec:previousWork}, Cho \textit{et al.} \cite{cho2010} proposed one of earliest edge-based pairwise affinity measures for two puzzle pieces.  Equation~\eref{eq:choPairwise} defines the distance between the right side, $R$, of piece $x_i$ and the left side, $L$, of piece $x_j$ using Cho \textit{et al.}'s approach.  Note that $K$ is both the width and height of a puzzle piece in number of pixels.\footnote{Cho \textit{et al.} used 7 for $K$.}
 
 \begin{equation} \label{eq:choPairwise}
 D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}(x_i(k,K,d) - x_j(k,1,d))^2
@@ -175,18 +177,18 @@ D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}(x_i(k,K,d) - x_j(k,1,d))^2
 
 Since the LAB colorspace has three dimensions (e.g., lightness and A/B opponent colors), $d$ ranges between $1$ and $3$.  $x_i(k,K,d)$ represents the LAB value in dimension ``$d$'' for the pixel in row ``$k$'' and column ``$K$'' in puzzle piece $x_i$.
 
-\subsection{Pomeranz \textit{et. al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
+\subsection{Pomeranz \textit{et al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
 
-One of the disadvantages of Cho \textit{et. al.}'s metric is that it simply squares the difference between the pieces' pixel values.  In some cases, solver performance may improve if a different exponent is used.  Pomeranz \textit{et. al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $(L_{p})^{q}$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.\footnote{Pomeranz \textit{et. al.} used 28 for $K$.  This has become the standard in subsequent papers.}
+One of the disadvantages of Cho \textit{et al.}'s metric is that it simply squares the difference between the pieces' pixel values.  In some cases, solver performance may improve if a different exponent is used.  Pomeranz \textit{et al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $(L_{p})^{q}$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.\footnote{Pomeranz \textit{et al.} used 28 for $K$.  This has become the standard in subsequent papers.}
 
 \begin{equation} \label{eq:pomeranzPairwise}
 D(x_i,R,x_j,L) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\bigg)^{\frac{q}{p}}
 \end{equation}
 
 \noindent
-Equation~\eref{eq:pomeranzPairwise} is identical to that of Cho \textit{et. al.} when $p$ and $q$ are equal to $2$.
+Equation~\eref{eq:pomeranzPairwise} is identical to that of Cho \textit{et al.} when $p$ and $q$ are equal to $2$.
 
-Another disadvantage of the metric proposed by Cho \textit{et. al.} is that it only considers border pixels.  Hence, if there is a gradient in the ground-truth image, two pieces may appear artificially dissimilar.  To address this issue, Pomeranz \textit{et. al.} proposed predictive compatibility; Equation~\eref{eq:pomeranzPredCompat} is the predictive compatibility between the right side, $R$, of piece $x_i$ and the left side, $L$, of piece $x_j$.  
+Another disadvantage of the metric proposed by Cho \textit{et al.} is that it only considers border pixels.  Hence, if there is a gradient in the ground-truth image, two pieces may appear artificially dissimilar.  To address this issue, Pomeranz \textit{et al.} proposed predictive compatibility; Equation~\eref{eq:pomeranzPredCompat} is the predictive compatibility between the right side, $R$, of piece $x_i$ and the left side, $L$, of piece $x_j$.  
 
 \begin{equation} \label{eq:pomeranzPredCompat}
 \begin{split}
@@ -194,19 +196,19 @@ C(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1,
 \end{split}
 \end{equation}
 
-To predict the ideal value of the pixel on the other side of the puzzle piece boundary, this equation subtracts from the each border pixel the difference between that pixel and its neighbor in the adjacent column.  This allows Pomeranz \textit{et al.}'s predictive compatibility to account for local gradients across puzzle pieces.
+By including in Equation~\eref{eq:pomeranzPredCompat} the difference between the column of pixels adjacent to each edge, predictive compatibility adjusts for local gradients across puzzle pieces.
 
 \subsection{Paikin \& Tal Pairwise Affinity}\label{sec:paikinPairwiseAffinity}
 
-Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et. al.}'s predictive compatibility as the foundation of their asymmetric distance measure, which is shown in Equation~\eref{eq:paikinAsymDistance}.
+Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et al.}'s predictive compatibility as the foundation of their asymmetric distance measure, which is shown in Equation~\eref{eq:paikinAsymDistance}.
 
 \begin{equation} \label{eq:paikinAsymDistance}
 D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3} \norm{[2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d)}
 \end{equation}
 
-Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to 1 as this both increased the accuracy of their solver and significantly reduced time required to compute interpiece distance.  In a similar fashion to Equation~{eq:pomeranzPredCompat}, Paikin \& Tal's distance measure uses the pixels in column $K-1$ of puzzle piece $x_i$ to better predict the value of the pixels in piece $x_j$.  Since Equation~\eref{eq:paikinAsymDistance} does not consider the pixels in column $2$ of piece $x_j$, the distance is asymmetric; therefore, in most cases, $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
+Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to 1 as it both only increased the accuracy of their solver and significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
 
-Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining pairwise compatibility.  In images (or areas of images) with little variation (e.g., an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  $secondD(x_i,R)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces. 
+Pomeranz \textit{et al.} only considered the relationship between two individual pieces when determining pairwise compatibility.  In images (or areas of images) with little variation (e.g., an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  $secondD(x_i,R)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces. 
 
 \begin{equation} \label{eq:paikinAsymCompatibility}
 C(x_i,R,x_j,L) = 1 - \frac{D(x_i,R,x_j,L)}{secondD(x_i,R)}
@@ -242,7 +244,7 @@ Note that $\alpha$ is a tunable, penalty factor representing low compatibility.
 
 \subsection{Best Buddies}\label{sec:bestBuddies}
 
-Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
+Pomeranz \textit{et al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
 
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \centering
@@ -339,7 +341,7 @@ When using best buddy accuracy as an estimation metric, this thesis differentiat
 \pagebreak
 \section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Cho \textit{et al.} \cite{cho2010} defined two primary metrics for quantifying the quality of a solver result namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 puzzles as well as when solving multiple puzzles simultaneously.
+Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to compare quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 puzzles as well as when solving multiple puzzles simultaneously.
 
 In the final subsection, the tools developed to visualize the solver output quality are discussed.
 
@@ -523,7 +525,7 @@ This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; the
 
 \subsection{Overview of Paikin \& Tal's Algorithm}\label{sec:paikinTalAlgorithm}
 
-Paikin \& Tal's solver was inspired by the work of Pomeranz \textit{et. al.} in \cite{pomeranz2011}.  Paikin \& Tal's uses a deterministic, greedy algorithm that places the puzzle piece that has the maximum confidence score at each iteration. Paikin \& Tal's approach is able to handle puzzles of unknown size with missing pieces and where piece orientation is not known.  The only required input to the algorithm is the expected number puzzles.
+Paikin \& Tal's solver was inspired by the work of Pomeranz \textit{et al.} in \cite{pomeranz2011}.  Paikin \& Tal's uses a deterministic, greedy algorithm that places the puzzle piece that has the maximum confidence score at each iteration. Paikin \& Tal's approach is able to handle puzzles of unknown size with missing pieces and where piece orientation is not known.  The only required input to the algorithm is the expected number puzzles.
 
 Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selection of the seed piece, and placement.  These stages are described in the following subsections.  The modification required during placement to solve multiple puzzles simultaneously is described in an additional subsection.
 
