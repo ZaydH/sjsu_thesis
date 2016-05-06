@@ -643,11 +643,11 @@ Other than a set of pieces, the only input to the Paikin \& Tal's solver is the 
 
 \subsubsection{Using Only a Single Side for Placement}\label{sec:limitationPlacementSingleSide}
 
-When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have a serious negative effects on the final result.  An improved placer could prioritize the placement of pieces based off the number of best buddies that piece has with respect to an open slot.
+When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have serious, negative effects on the final result.  An improved placer could prioritize the placement of pieces based off the number of best buddies that piece has with respect to an open slot.
 
 \subsubsection{Determining the Seed Piece for Multiple Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
 
-When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach for choosing the seed piece.  This can lead to issues if two puzzles are spawned using seed pieces from the same ground-truth input.  The most na\"{\i}ve way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
+Whenever a new puzzle is spawned, Paikin \& Tal's algorithm always use the same approach to choose the seed piece (see Section~\ref{sec:paikinTalSeedPiece}).  This can lead to issues if multiple puzzles are spawned using seed pieces from the same ground-truth input.  The most na\"{\i}ve way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
 
 \subsubsection{Determining when to Spawn a New Puzzle}\label{sec:limitationWhenToSpawnNewPuzzle}
 
