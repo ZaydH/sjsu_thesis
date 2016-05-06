@@ -194,7 +194,7 @@ C(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1,
 \end{split}
 \end{equation}
 
-By including in Equation~\eref{eq:pomeranzPredCompat} the difference between the column of pixels adjacent to each edge, predictive compatibility adjusts for local gradients across puzzle pieces.
+To predict the ideal value of the pixel on the other side of the puzzle piece boundary, this equation subtracts from the each border pixel the difference between that pixel and its neighbor in the adjacent column.  This allows Pomeranz \textit{et al.}'s predictive compatibility to account for local gradients across puzzle pieces.
 
 \subsection{Paikin \& Tal Pairwise Affinity}\label{sec:paikinPairwiseAffinity}
 
@@ -204,7 +204,7 @@ Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et. al.}'s predictive c
 D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3} \norm{[2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d)}
 \end{equation}
 
-Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to 1 as it both only increased the accuracy of their solver and significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
+Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to 1 as this both increased the accuracy of their solver and significantly reduced time required to compute interpiece distance.  In a similar fashion to Equation~{eq:pomeranzPredCompat}, Paikin \& Tal's distance measure uses the pixels in column $K-1$ of puzzle piece $x_i$ to better predict the value of the pixels in piece $x_j$.  Since Equation~\eref{eq:paikinAsymDistance} does not consider the pixels in column $2$ of piece $x_j$, the distance is asymmetric; therefore, in most cases, $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
 
 Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining pairwise compatibility.  In images (or areas of images) with little variation (e.g., an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  $secondD(x_i,R)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces. 
 
