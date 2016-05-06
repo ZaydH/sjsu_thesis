@@ -179,7 +179,7 @@ Since the LAB colorspace has three dimensions (e.g., lightness and A/B opponent 
 
 \subsection{Pomeranz \textit{et al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
 
-One of the disadvantages of Cho \textit{et al.}'s metric is that it simply squares the difference between the pieces' pixel values.  In some cases, solver performance may improve if a different exponent is used.  Pomeranz \textit{et al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $(L_{p})^{q}$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.\footnote{Pomeranz \textit{et al.} used 28 for $K$.  This has become the standard in subsequent papers.}
+One of the disadvantages of Cho \textit{et al.}'s metric is that it simply squares the difference between the pieces' pixel values.  In some cases, solver performance may improve if a different exponent is used.  Pomeranz \textit{et al.} in \cite{pomeranz2011} generalize Equation~\eref{eq:choPairwise} using the $(L_{p})^{q}$ norm as shown in Equation~\eref{eq:pomeranzPairwise}.\footnote{Pomeranz \textit{et al.} used 28 for $K$.  This has since become the standard.}
 
 \begin{equation} \label{eq:pomeranzPairwise}
 D(x_i,R,x_j,L) = \bigg(\sum_{k=1}^{K}\sum_{d=1}^{3}(|x_i(k,K,d) - x_j(k,1,d)|)^p\bigg)^{\frac{q}{p}}
@@ -192,7 +192,7 @@ Another disadvantage of the metric proposed by Cho \textit{et al.} is that it on
 
 \begin{equation} \label{eq:pomeranzPredCompat}
 \begin{split}
-C(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d))^p \\ - ([2x_j(k, 1, d) - x_i(k, 2, d)] - x_i(k, K, d))^p\Big]^{\frac{q}{p}}
+C(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d))^p \\ - ([2x_j(k, 1, d) - x_j(k, 2, d)] - x_i(k, K, d))^p\Big]^{\frac{q}{p}}
 \end{split}
 \end{equation}
 
@@ -217,9 +217,9 @@ C(x_i,R,x_j,L) = 1 - \frac{D(x_i,R,x_j,L)}{secondD(x_i,R)}
 \noindent
 By normalizing compatibility with respect to the second best distance, pairings that have uniquely high compatibility are boosted, and speciously high compatibility pairings from areas of the image with low variation are penalized.
 
-\subsubsection{Improved Asymmetric Compatibility}\label{sec:hammoudehPairwiseAffinity}
+\subsection{An Improved Asymmetric Compatibility}\label{sec:hammoudehPairwiseAffinity}
 
-It is expected that images generated from an analog input (e.g., a photograph), will have some degree of natural variation due to: brightness, the object itself, and the capture sensor.  In contrast, such variation can be trivially removed in images generated or manipulated by computers; this includes images that are a single, solid color or object(s) shown in front of a solid background.
+It is expected that images generated from an analog input (e.g., photographs), will have some degree of natural variation due to differences in brightness, the object itself, and the capture sensor.  In contrast, such variation can be trivially removed in images generated or manipulated by computers; this could include a whole image or part of an image.
 
 \begin{figure}
 \centering
@@ -244,19 +244,19 @@ Note that $\alpha$ is a tunable, penalty factor representing low compatibility.
 
 \subsection{Best Buddies}\label{sec:bestBuddies}
 
-Pomeranz \textit{et al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
+Inter-piece distance and compatibility can be used to define specific, useful relationships between pieces.  For example, Pomeranz \textit{et al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
 
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \centering
 \begin{split}
 	\begin{matrix}
-		\forall{x_{k} \in \{Pieces\}}\forall{s_c}~C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
+		\forall{x_{k}}\forall{s_c},C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
 		\\
 		\\
 		\textnormal{and}
 		\\
 		\\
-		\forall{x_{k} \in \{Pieces\}}\forall{s_c}~C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
+		\forall{x_{k}}\forall{s_c},C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
 	\end{matrix}
 \end{split}
 \end{equation}
@@ -274,13 +274,13 @@ It is relatively unlikely that there will be a meaningful number pieces that hav
 \centering
 \begin{split}
 	\begin{matrix}
-		\forall{x_{k \ne j} \in \{Pieces\}}\forall{s_c}~C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
+		\forall{x_{k} \ne x_{j}}\forall{s_c},C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
 		\\
 		\\
 		\textnormal{and}
 		\\
 		\\
-		\forall{x_{k \ne i} \in \{Pieces\}}\forall{s_c}~C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
+		\forall{x_{k} \ne x_{j}}\forall{s_c},C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
 	\end{matrix}
 \end{split}
 \end{equation}
@@ -325,7 +325,7 @@ Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visual
 
 \subsubsection{Interior and Exterior Best Buddies}\label{sec:interiorExteriorBestBuddies}
 
-In previous research, all best buddies (in particular best buddy errors) were treated the same.  However, non-adjacent best buddies are expected to naturally occur more along pieces that are on the puzzle's edge or that are next to a missing piece since those pieces lack a true neighbor; this causes those pieces to couple with unrelated pieces at a higher rate.  As an example, the image in Figure~\ref{fig:bestBuddyVisualization} has 4 interior and 14 exterior non-adjacent best buddies despite there being 16-times more interior sides. 
+In previous research, all best buddies (in particular best buddy errors) were treated the same.  However, non-adjacent best buddies are expected to naturally occur more along pieces that are on the puzzle's edge or that are next to a missing piece since those pieces lack a true neighbor; this causes those pieces to couple with unrelated pieces at a higher rate.  For example, in Figure~\ref{fig:bestBuddyVisualization}, the image has 4 interior and 14 exterior non-adjacent best buddies despite there being 16-times more interior sides. 
 
 When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors a higher weight.
 
@@ -341,13 +341,13 @@ When using best buddy accuracy as an estimation metric, this thesis differentiat
 \pagebreak
 \section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to compare quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 puzzles as well as when solving multiple puzzles simultaneously.
+Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to compare quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 and Mixed-Bag puzzles.
 
 In the final subsection, the tools developed to visualize the solver output quality are discussed.
 
 \subsection{Direct Accuracy}\label{sec:directAccuracy}
 
-Direct accuracy is the most na\"{\i}ve accuracy measure.  It is defined as the fraction of pieces placed in the same location in the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in the original (i.e., correct) location.
+Direct accuracy is a na\"{\i}ve quality; it is defined as the fraction of pieces placed in the same location in the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in the original (i.e., correct) location.
 
 \begin{equation} \label{eq:directAccuracy}
 DA = \frac{c}{n}
@@ -355,7 +355,7 @@ DA = \frac{c}{n}
 
 Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in accuracy.  This can be particularly true when the ground-truth image's dimensions are not known by the solver as shown in Section~\ref{sec:shiftableEnhancedDirectAccuracy}.
 
-This thesis proposes two new direct accuracy metrics namely: ``Enhanced Direct Accuracy Score'' (EDAS) and ``Shiftable Enhanced Direct Accuracy Score'' (SEDAS).  They are described in the following two subsections; the complementary relationship between EDAS and SEDAS is described in the third subsection.
+This thesis proposes two new direct accuracy metrics namely: Enhanced Direct Accuracy Score (EDAS) and Shiftable Enhanced Direct Accuracy Score (SEDAS).  They are described in the following two subsections; the complementary relationship between EDAS and SEDAS is described in the third subsection.
 
 \subsubsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
 
@@ -616,7 +616,7 @@ This thesis' implementation of the $BestBuddyPool$ relies on a combination three
 	
 \end{itemize}
 
-The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are check for validity (due to either the best buddy being already placed or the valid location in the puzzle being previously filled). If the heap grows too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
+The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are checked for validity (due to either the best buddy being already placed or the valid location in the puzzle being previously filled). If the heap grows too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
 
 
 
@@ -647,11 +647,11 @@ When performing placement, Paikin \& Tal's algorithm only considers a single sid
 
 \subsubsection{Determining the Seed Piece for Multiple Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
 
-When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach for choosing the seed piece.  This can lead to issues if two puzzles are spawned using seed pieces from the same input puzzle.  The most naive way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
+When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach for choosing the seed piece.  This can lead to issues if two puzzles are spawned using seed pieces from the same ground-truth input.  The most na\"{\i}ve way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
 
 \subsubsection{Determining when to Spawn a New Puzzle}\label{sec:limitationWhenToSpawnNewPuzzle}
 
-Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn is to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine to where in the placement the algorithm should backtrack and then spawn the new board.
+Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and associated the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn is to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine to where in the placement the algorithm should backtrack and then spawn the new board.
 
 
 
