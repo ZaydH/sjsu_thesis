@@ -102,7 +102,7 @@ Jigsaw puzzles were first introduced in the 1760s when they were made from wood;
 
 Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
-Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the ground-truth (i.e., original) input is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from the bag of component pieces.
+Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the original, also known as ``ground-truth,'' input is unknown.  This significantly increases the difficulty of the problem as the overall structure of the complete solution must be determined solely from the bag of component pieces.
 
 This thesis proposes an improved multiple simultaneous, jig swap puzzle solver.  What is more, it defines a set of new metrics for measuring the quality of outputs from such solvers.  Lastly, this thesis proposes enhancements to existing techniques to improve solver performance on computer generated images.
 
@@ -115,7 +115,7 @@ This thesis proposes an improved multiple simultaneous, jig swap puzzle solver. 
 \pagebreak
 \section{Previous Work}\label{sec:previousWork}
 
-Computational solvers for jigsaw puzzles have been studied since the 1960s when Freeman \& Gardner proposed a solver that relied only on piece shape and could puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
+Computational jigsaw puzzle solvers have been studied since the 1960s when Freeman \& Gardner proposed a solver that relied only on piece shape and could puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
 
 Cho \textit{et. al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et. al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et. al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
 
@@ -139,7 +139,7 @@ In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles in
 
 Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type 1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et. al.}, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et. al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et. al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
 
-Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type 1 and Type 2 puzzles, even if those puzzles have missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type 1 and Type 2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
 
 Paikin \& Tal's algorithm was used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
 
@@ -206,7 +206,7 @@ D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3} \norm{[2x_i(k, K, d) - x_i(k, K-1,
 
 Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to 1 as it both only increased the accuracy of their solver and significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
 
-Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining pairwise compatibility.  In images (or areas of images) with little variation (e.g., an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  $secondD(x_i,L)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces. 
+Pomeranz \textit{et. al.} only considered the relationship between two individual pieces when determining pairwise compatibility.  In images (or areas of images) with little variation (e.g., an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  $secondD(x_i,R)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces. 
 
 \begin{equation} \label{eq:paikinAsymCompatibility}
 C(x_i,R,x_j,L) = 1 - \frac{D(x_i,R,x_j,L)}{secondD(x_i,R)}
@@ -245,14 +245,17 @@ Note that $\alpha$ is a tunable, penalty factor representing low compatibility.
 Pomeranz \textit{et. al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
 
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
+\centering
 \begin{split}
-\forall{x_{k} \in \{Pieces\}}\forall{s_c} C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
-\\
-\\
-\multicolumn{2}{c}{\textnormal{and}}
-\\
-\\
-\forall{x_{k} \in \{Pieces\}}\forall{s_c} C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
+	\begin{matrix}
+		\forall{x_{k} \in \{Pieces\}}\forall{s_c}~C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
+		\\
+		\\
+		\textnormal{and}
+		\\
+		\\
+		\forall{x_{k} \in \{Pieces\}}\forall{s_c}~C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
+	\end{matrix}
 \end{split}
 \end{equation}
 
@@ -266,14 +269,17 @@ It is relatively rare that two pieces are best buddies and are not actually neig
 It is relatively unlikely that there will be a meaningful number pieces that have multiple best buddies on the same side if the input to the solver is a photograph.  However, similar to the phenomenon described in Section~\ref{sec:hammoudehPairwiseAffinity}, multiple best buddies may occur in computer generated or computer manipulated images.  In such cases, best buddies become a far less discerning tool for determining piece adjacency.  This thesis addresses this by modifying the definition of best buddies as shown in Equation~\eref{eq:hammoudehBestBuddyDefinition}.
 
 \begin{equation} \label{eq:hammoudehBestBuddyDefinition}
+\centering
 \begin{split}
-\forall{x_{k \ne j} \in \{Pieces\}}\forall{s_c} C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
-\\
-\\
-\multicolumn{2}{c}{\textnormal{and}}
-\\
-\\
-\forall{x_{k \ne i} \in \{Pieces\}}\forall{s_c} C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
+	\begin{matrix}
+		\forall{x_{k \ne j} \in \{Pieces\}}\forall{s_c}~C(x_i, s_a, x_j, s_b) > C(x_i, s_a, x_k, s_c)
+		\\
+		\\
+		\textnormal{and}
+		\\
+		\\
+		\forall{x_{k \ne i} \in \{Pieces\}}\forall{s_c}~C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
+	\end{matrix}
 \end{split}
 \end{equation}
 
@@ -360,7 +366,7 @@ EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \noindent
 $c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation for Type 2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in $S_j$.
 
-When solving only a single puzzle, EDAS and standard direct accuracy in Equation~\eref{eq:directAccuracy} are equivalent.  When solving multiple puzzles simultaneously, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, EDAS penalizes for any pieces not from $P_i$ that are in $S_j$ through the term summation of $m_{k,j}$ for all $k$ not equal to $i$.  Combined, these two factors enable EDAS to account for both extra and misplaced pieces.
+When solving only a single puzzle, EDAS and standard direct accuracy in Equation~\eref{eq:directAccuracy} are equivalent.  When solving multiple puzzles simultaneously, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, the summation of $m_{k,j}$ in EDAS is used to penalize for any puzzles pieces not from $P_i$.  Combined, these two factors enable EDAS to account for both extra and misplaced pieces.
 
 It is important to note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator of Equation~\eref{eq:enhancedDirectAccuracyScore} is greater than or equal to the number of pieces in the puzzles $P_i$ and $S_j$.
 
@@ -384,7 +390,7 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows the ground-truth image and a
 Let $d_{min}$ be the Manhattan distance between the upper left corner of the solved image and the nearest placed puzzle piece.  Also let $L$ as the set of all puzzle piece locations within distance $d_{min}$ of the upper left corner of the image.  Given that $l$ is a location in $L$ that is used as the reference point for determining the absolute location of all piece, then SEDAS is defined as shown in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
-SEDAS_{P_i} = \argmax_{l \in L} \Big( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \Big)
+SEDAS_{P_i} = \argmax_{l \in L} \bigg( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \bigg)
 \end{equation}
 
 \noindent
@@ -398,7 +404,7 @@ While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS. 
 
 \subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
-Cho \textit{et al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece's side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be number of sides each piece has (i.e., four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
+Cho \textit{et al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece's side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be the number of sides each piece has (i.e., four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
 
 \begin{equation} \label{eq:neighborAccuracy}
 NA = \frac{a}{n~q}
@@ -416,7 +422,7 @@ Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}
 ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
-Similar to the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including a summation of all $m_{k,j}$ in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and misplaced pieces.
+In the same fashion as the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including a summation of all $m_{k,j}$ in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and misplaced pieces.
 
 \subsection{Visualizing Solver Output Quality}\label{sec:visualizingSolverAccuracy}
 
@@ -513,11 +519,11 @@ All pieces that came from the rainforest house image are shown as blue despite b
 \pagebreak
 \section{Paikin \& Tal Solver}\label{sec:paikinTalSolver}
 
-This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; their Java implementation is not open-source.  As such, this section also describes a complete implementation of their approach that was developed as part of this thesis.  The section concludes with a summary of some of the weaknesses of Paikin \& Tal's algorithm. 
+This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; their Java implementation is not open-source.  As such, this section also describes a complete implementation of their approach that was developed as part of this thesis.
 
 \subsection{Overview of Paikin \& Tal's Algorithm}\label{sec:paikinTalAlgorithm}
 
-Paikin \& Tal's solver was inspired by the work ofPomeranz \textit{et. al.} in \cite{pomeranz2011}.  Paikin \& Tal's uses a deterministic, greedy algorithm that places the puzzle piece that has the maximum confidence score at each iteration. Paikin \& Tal's approach is able to handle puzzles of unknown size with missing pieces and where piece orientation is not known.  The only required input to the algorithm is the expected number puzzles.
+Paikin \& Tal's solver was inspired by the work of Pomeranz \textit{et. al.} in \cite{pomeranz2011}.  Paikin \& Tal's uses a deterministic, greedy algorithm that places the puzzle piece that has the maximum confidence score at each iteration. Paikin \& Tal's approach is able to handle puzzles of unknown size with missing pieces and where piece orientation is not known.  The only required input to the algorithm is the expected number puzzles.
 
 Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selection of the seed piece, and placement.  These stages are described in the following subsections.  The modification required during placement to solve multiple puzzles simultaneously is described in an additional subsection.
 
@@ -600,15 +606,29 @@ This thesis' implementation of the $BestBuddyPool$ relies on a combination three
 
 \begin{itemize}
 
-	\item \textbf{Dictionary of the Best Buddies in this Pool} - This stores the identification numbers of best buddies currently in the pool.  A dictionary was use for this role as it enables new best buddies to be quickly added to the pool  and to quickly delete a placed piece from the pool.
+	\item \textbf{Dictionary of the Best Buddies in this Pool} -- This stores the identification numbers of best buddies currently in the pool.  A dictionary was use for this role as it enables new best buddies to be quickly added to the pool  and to quickly delete a placed piece from the pool.
 	
-	\item \textbf{Dictionary of the Open Slots in the Puzzle} - It contains the the set of valid locations where pieces can be placed.  Similar to the best buddy dictionary, a dictionary enables valid locations to be quickly added and removed.
+	\item \textbf{Dictionary of the Open Slots in the Puzzle} -- It contains the the set of valid locations where pieces can be placed.  Similar to the best buddy dictionary, a dictionary enables valid locations to be quickly added and removed.
 
-	\item \textbf{Best Candidate Max Heap} - The best candidate is a pairing of a best buddy from the pool and an open puzzle location.  Every time a new best buddy is added to the pool, pairings between that new pool member and all open slots are added to the best candidate heap.  Similarly, whenever a new slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are also added to the heap.  A max heap allows the best candidate to be selected in $O(lg(n))$ time.
+	\item \textbf{Best Candidate Max Heap} -- The best candidate is a pairing of a best buddy from the pool and an open puzzle location.  Every time a new best buddy is added to the pool, pairings between that new pool member and all open slots are added to the best candidate heap.  Similarly, whenever a new slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are also added to the heap.  A max heap allows the best candidate to be selected in $O(lg(n))$ time.
 	
 \end{itemize}
 
 The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are check for validity (due to either the best buddy being already placed or the valid location in the puzzle being previously filled). If the heap grows too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                          Conclusions                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagebreak
+\section{Conclusions}\label{sec:conclusions}
+
+Significant progress was made over the course of this semester.  Major accomplishment include: a thorough review of existing solvers, building a jigsaw puzzle solver using state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; following subsections describe some of them in depth.  The Python solver described in Section~\ref{sec:pythonPaikinTalAlgorithm} will be used as the platform where improvements to their algorithm will be implemented.
 
 \subsection{Limitations of Paikin \& Tal's Algorithm}\label{sec:paikinTalLimitations}
 
@@ -630,18 +650,6 @@ When each new puzzle is spawned, Paikin \& Tal's algorithm use the same approach
 \subsubsection{Determining when to Spawn a New Puzzle}\label{sec:limitationWhenToSpawnNewPuzzle}
 
 Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn is to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine to where in the placement the algorithm should backtrack and then spawn the new board.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                          Conclusions                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\pagebreak
-\section{Conclusions}\label{sec:conclusions}
-
-Significant progress was made over the course of this semester.  Major accomplishment include: a thorough review of existing solvers, building a jigsaw puzzle solver using state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  What is more, key potential improvements to existing techniques have been identified and will serve as the initial set of tasks for next semester.
-
-
 
 
 
