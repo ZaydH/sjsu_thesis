@@ -129,17 +129,17 @@ In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles in
 
 \begin{itemize}
 
-	\item \textbf{Type 1 Puzzle}: The dimension of the puzzle (i.e., the width and height of the ground-truth image in number of pixels) is known.  The orientation of each piece is also known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
+	\item \textbf{Type~1 Puzzle}: The dimension of the puzzle (i.e., the width and height of the ground-truth image in number of pixels) is known.  The orientation of each piece is also known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
 	
-	\item \textbf{Type 2 Puzzle}: This is an extension of a Type 1 puzzle, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g., \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}); in comparison to a Type 1 puzzle, this change alone increases the number of possible solutions by a factor of $4^n$, where $n$ is the number of pieces in the puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image may be unknown.
+	\item \textbf{Type~2 Puzzle}: This is an extension of a Type~1 puzzle, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g., \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}); in comparison to a Type~1 puzzle, this change alone increases the number of possible solutions by a factor of $4^n$, where $n$ is the number of pieces in the puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image may be unknown.
 	
 	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the puzzle pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
 
 \end{itemize}
 
-Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type 1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et. al.}, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et. al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et. al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
+Sholomon \textit{et. al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type~1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et. al.}, Sholomon \textit{et. al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et. al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et. al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
 
-Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type 1 and Type 2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
 
 Paikin \& Tal's algorithm was used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
 
@@ -339,7 +339,7 @@ When using best buddy accuracy as an estimation metric, this thesis differentiat
 \pagebreak
 \section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Cho \textit{et al.} \cite{cho2010} defined two primary metrics for quantifying the quality of a solver result namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type 2 puzzles as well as when solving multiple puzzles simultaneously.
+Cho \textit{et al.} \cite{cho2010} defined two primary metrics for quantifying the quality of a solver result namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 puzzles as well as when solving multiple puzzles simultaneously.
 
 In the final subsection, the tools developed to visualize the solver output quality are discussed.
 
@@ -364,7 +364,7 @@ EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
 \noindent
-$c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation for Type 2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in $S_j$.
+$c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation for Type~2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in $S_j$.
 
 When solving only a single puzzle, EDAS and standard direct accuracy in Equation~\eref{eq:directAccuracy} are equivalent.  When solving multiple puzzles simultaneously, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, the summation of $m_{k,j}$ in EDAS is used to penalize for any puzzles pieces not from $P_i$.  Combined, these two factors enable EDAS to account for both extra and misplaced pieces.
 
@@ -447,7 +447,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 \caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:directAccuracyVisualization} shows a Type 2 solver output along with the associated EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
+Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along with the associated EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
 
 \begin{figure}
 \centering
@@ -455,7 +455,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type 2 solver output along 
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
   
 	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type2}} \\~\\
-	(a) Ground-Truth Image & (b) Type 2 Solver Output
+	(a) Ground-Truth Image & (b) Type~2 Solver Output
 \\~\\
 	\fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type_EDAS.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type_SEDAS.jpg}}
 \\~\\
@@ -588,7 +588,7 @@ Since no open-source implementation of the Paikin \& Tal solver exists, one was 
 
 This package is a generic infrastructure that is independent of the solver used and consists of two primary classes namely: \texttt{Puzzle} and \texttt{PuzzlePiece}.  
 
-The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: an identification number, dimensions, type (e.g., Type 1, Type 2 - this is via the class \texttt{PuzzleType}), and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
+The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: an identification number, dimensions, type (e.g., Type~1, Type~2 - this is via the class \texttt{PuzzleType}), and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
 
 Individual puzzle pieces are represented using the \texttt{PuzzlePiece} class.  Each object of type \texttt{PuzzlePiece} has attributes: identification number, width (in number of pixels), rotation (via the class \texttt{PuzzlePieceRotation}), image information (stored in a NumPy array \cite{walt2011}), and location in the puzzle.
 
