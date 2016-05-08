@@ -194,19 +194,20 @@ C(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}\Big[ ([2x_i(k, K, d) - x_i(k, K-1,
 \end{split}
 \end{equation}
 
-By including in Equation~\eref{eq:pomeranzPredCompat} the difference between the column of pixels adjacent to each edge, predictive compatibility adjusts for local gradients across puzzle pieces.
+By including in Equation~\eref{eq:pomeranzPredCompat} the difference between the column of pixels adjacent to each edge (e.g., $x_i(k, K-1, d)$ and $x_j(k, 2, d)$), predictive compatibility adjusts for local gradients across puzzle pieces.
 
 \subsection{Paikin \& Tal Pairwise Affinity}\label{sec:paikinPairwiseAffinity}
 
-Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et al.}'s predictive compatibility as the foundation of their asymmetric distance measure, which is shown in Equation~\eref{eq:paikinAsymDistance}.
+Paikin \& Tal in \cite{paikin2015} used Pomeranz \textit{et al.}'s predictive compatibility as the foundation of their asymmetric distance measure, which is shown in Equation~\eref{eq:paikinAsymDistance}; it is referred to ``asymmetric'' since unlike Equation~\eref{eq:pomeranzPredCompat}, Paikin \& Tal's approach only considers the gradient on one side of the image (i.e., $x_i(k, K-1, d)$).
 
 \begin{equation} \label{eq:paikinAsymDistance}
 D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3} \norm{[2x_i(k, K, d) - x_i(k, K-1, d)] - x_j(k, 1, d)}
 \end{equation}
 
-Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to 1 as it both only increased the accuracy of their solver and significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
+\noindent
+Paikin \& Tal set $p$ and $q$ from Equation~\eref{eq:pomeranzPairwise} equal to~1 as it both only increased the accuracy of their solver and significantly reduced the computational time.  It is important to note that since this distance is asymmetric, in most cases $D(x_i,R,x_j,L)$ does not equal $D(x_j,L,x_i,R)$.
 
-Pomeranz \textit{et al.} only considered the relationship between two individual pieces when determining pairwise compatibility.  In images (or areas of images) with little variation (e.g., an all white image), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  $secondD(x_i,R)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces. 
+Pomeranz \textit{et al.}'s metric in Equation~\eref{eq:pomeranzPredCompat} only considers the relationship between two individual pieces when determining pairwise compatibility.  In images or areas of images with little variation (e.g., a cloudless sky), non-adjacent puzzle pieces may have artificially low pairwise distances.  Paikin \& Tal's asymmetric compatibility, shown in Equation~\eref{eq:paikinAsymCompatibility}, corrects for this.  Note that $secondD(x_i,R)$ is the second best asymmetric distance between the right side of piece $x_i$ and all other pieces' sides. 
 
 \begin{equation} \label{eq:paikinAsymCompatibility}
 C(x_i,R,x_j,L) = 1 - \frac{D(x_i,R,x_j,L)}{secondD(x_i,R)}
@@ -217,7 +218,7 @@ By normalizing compatibility with respect to the second best distance, pairings 
 
 \subsection{An Improved Asymmetric Compatibility}\label{sec:hammoudehPairwiseAffinity}
 
-It is expected that images generated from an analog input (e.g., photographs), will have some degree of natural variation due to differences in brightness, the object itself, and the capture sensor.  In contrast, such variation can be trivially removed in images generated or manipulated by computers; this could include a whole image or part of an image.
+It is expected that images generated from an analog input (e.g., photographs), will have some degree of natural variation due to differences in brightness, the object itself, and the image capture sensor.  In contrast, such variation can be trivially removed in images or parts of images that are computer generated or manipulated.
 
 \begin{figure}
 \centering
@@ -226,7 +227,7 @@ It is expected that images generated from an analog input (e.g., photographs), w
 \label{fig:objectWhiteBackground}
 \end{figure}
 
-Figure~\ref{fig:objectWhiteBackground} shows a berry in front of a white background; the puzzles pieces along the edge of the image and in the background have all white borders.  Hence, regardless of which of the three previously described metrics is used, the distance between all of these pieces' sides is zero.  What is more, Paikin \& Tal do not explicitly define how to handle asymmetric compatibility for such cases.  Therefore, to better handle computer generated images, this thesis proposes an enhanced definition of asymmetric compatibility shown in Equation~\eref{eq:hammoudehAsymCompatibility}.  
+Figure~\ref{fig:objectWhiteBackground} shows a berry in front of a white background; note that the puzzles pieces along the edge of the image and in the background have all white borders.  Hence, regardless of which of the three previously described metrics is used, the distance between all of these pieces' sides is zero. However, Equation~\eref{eq:paikinAsymCompatibility} is undefined when $secondD(x_i,s_a)$ is equal to zero.  Therefore, to better handle computer generated images, this thesis proposes a revised definition of asymmetric compatibility shown in Equation~\eref{eq:hammoudehAsymCompatibility}.  
 
 \begin{equation} \label{eq:hammoudehAsymCompatibility}
 C(x_i,s_a,x_j,s_b)= \begin{cases} 
@@ -242,7 +243,7 @@ Note that $\alpha$ is a tunable, penalty factor representing low compatibility.
 
 \subsection{Best Buddies}\label{sec:bestBuddies}
 
-Inter-piece distance and compatibility can be used to define specific, useful relationships between pieces.  For example, Pomeranz \textit{et al.} defined that two pieces, $x_i$ and $x_j$ are best buddies on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
+Inter-piece distance and compatibility can be used to define specific, useful relationships between pieces.  For example, Pomeranz \textit{et al.} define that two pieces, $x_i$ and $x_j$ are ``best buddies'' on their respective sides $s_a$ and $s_b$ if and only if they are more compatible (i.e., similar) to each other than they are to any other piece.  This is shown formally in Equation~\eref{eq:pomeranzBestBuddyDefinition}.  The definition of best buddies is identical irrespective of the compatibility function used.
 
 \begin{equation} \label{eq:pomeranzBestBuddyDefinition}
 \centering
@@ -260,13 +261,13 @@ Inter-piece distance and compatibility can be used to define specific, useful re
 \end{equation}
 
 \noindent
-$\{Pieces\}$ represents the set of all pieces in the puzzle, and $s_c$ is one of the four sides of piece $x_k$.
+$x_{k}$ is any puzzle piece from the set of input pieces, and $s_c$ is one of the four sides of $x_k$.
 
 It is relatively rare that two pieces are best buddies and are not actually neighbors \cite{paikin2015}.  When considering all sides of a piece, it is rarer still that a piece has more non-neighbor best buddies than neighbor best buddies.  These attributes make best buddies a critical tool for many solvers.
 
 \subsubsection{Unique Best Buddies}\label{sec:improvedBestBuddies}
 
-It is relatively unlikely that there will be a meaningful number pieces that have multiple best buddies on the same side if the input to the solver is a photograph.  However, similar to the phenomenon described in Section~\ref{sec:hammoudehPairwiseAffinity}, multiple best buddies may occur in computer generated or computer manipulated images.  In such cases, best buddies become a far less discerning tool for determining piece adjacency.  This thesis addresses this by modifying the definition of best buddies as shown in Equation~\eref{eq:hammoudehBestBuddyDefinition}.
+It is relatively unlikely that in an photograph there will be a meaningful number pieces that have multiple best buddies on the same side.  However, similar to the phenomenon described in Section~\ref{sec:hammoudehPairwiseAffinity}, multiple best buddies may occur in computer generated or computer manipulated images.  In such cases, best buddies become a far less discerning tool for determining piece adjacency.  This thesis addresses this by modifying the definition of best buddies as shown in Equation~\eref{eq:hammoudehBestBuddyDefinition}.
 
 \begin{equation} \label{eq:hammoudehBestBuddyDefinition}
 \centering
@@ -289,10 +290,9 @@ Rather than relying on best buddies being ``greater than or equal'' to all other
 
 There is currently no standard for visualizing an image's best buddies.  This thesis proposes such a standard for the first time.  As a nomenclature, any best buddies that are neighbors in the ground-truth image are referred to as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies.''
 
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece
-s center.  
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  
 
-Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization denoted as ``(b).'' The color scheme for the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
+Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization.  The color scheme used to denote the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
 
 
 \begin{figure}
@@ -339,19 +339,19 @@ When using best buddy accuracy as an estimation metric, this thesis differentiat
 \pagebreak
 \section{Quantifying the Quality of a Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to compare quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 and Mixed-Bag puzzles.
+Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 and Mixed-Bag puzzles.
 
-In the final subsection, the tools developed to visualize the solver output quality are discussed.
+In the final subsection, tools developed as part of this thesis to visualize the solver output quality are discussed.
 
 \subsection{Direct Accuracy}\label{sec:directAccuracy}
 
-Direct accuracy is a na\"{\i}ve quality; it is defined as the fraction of pieces placed in the same location in the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in the original (i.e., correct) location.
+Direct accuracy is a relatively na\"{\i}ve quality; it is defined as the fraction of pieces placed in the same location in the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in their original (i.e., correct) location.
 
 \begin{equation} \label{eq:directAccuracy}
 DA = \frac{c}{n}
 \end{equation}
 
-Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in accuracy.  This can be particularly true when the ground-truth image's dimensions are not known by the solver as shown in Section~\ref{sec:shiftableEnhancedDirectAccuracy}.
+Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in accuracy.  As shown in Section~\ref{sec:shiftableEnhancedDirectAccuracy}, this can be particularly true when the ground-truth image's dimensions are not known by the solver.
 
 This thesis proposes two new direct accuracy metrics namely: Enhanced Direct Accuracy Score (EDAS) and Shiftable Enhanced Direct Accuracy Score (SEDAS).  They are described in the following two subsections; the complementary relationship between EDAS and SEDAS is described in the third subsection.
 
@@ -366,15 +366,15 @@ EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \noindent
 $c_{ij}$ is the number of pieces from input puzzle $P_i$ correctly placed (with no rotation for Type~2 puzzles) in solved puzzle $S_j$ while $n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle $P_k$ (where $k \ne i$) that are also in $S_j$.
 
-When solving only a single puzzle, EDAS and standard direct accuracy in Equation~\eref{eq:directAccuracy} are equivalent.  When solving multiple puzzles simultaneously, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, the summation of $m_{k,j}$ in EDAS is used to penalize for any puzzles pieces not from $P_i$.  Combined, these two factors enable EDAS to account for both extra and misplaced pieces.
+When solving only a single puzzle, EDAS and standard direct accuracy as defined Equation~\eref{eq:directAccuracy} are equivalent.  When solving multiple puzzles simultaneously, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, the summation of $m_{k,j}$ in EDAS is used to penalize for any puzzle pieces not from $P_i$.  Combined, these two factors enable EDAS to penalize for both extra and misplaced pieces.
 
-It is important to note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator of Equation~\eref{eq:enhancedDirectAccuracyScore} is greater than or equal to the number of pieces in the puzzles $P_i$ and $S_j$.
+It is important to note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator of Equation~\eref{eq:enhancedDirectAccuracyScore} is greater than or equal to the number of pieces in both $P_i$ and $S_j$.
 
 \subsubsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
 
-As mentioned previously, the direct accuracy decreases if there are shifts in the solved image.  In many cases, direct accuracy is overly punitive when penalizing for shifts. 
+As mentioned previously, the direct accuracy decreases if there are shifts in the solved image.  In many cases such, direct accuracy is overly punitive. 
 
-Figure~\ref{fig:directAccuracyOnePieceEffect} shows the ground-truth image and an actual solver output when the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this shifted pieces to the right one location causing the direct accuracy to drop to zero.  Had this same piece been misplaced at either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy can be seriously flawed.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of direct accuracy. 
+Figure~\ref{fig:directAccuracyOnePieceEffect} shows a ground-truth image and an actual solver output when the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this shifted all other pieces to the right one location causing the direct accuracy to drop to zero.  Had this same piece been misplaced along either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy has a serious flaw.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of direct accuracy. 
 
 \begin{figure}
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
@@ -387,16 +387,16 @@ Figure~\ref{fig:directAccuracyOnePieceEffect} shows the ground-truth image and a
 \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
 
-Let $d_{min}$ be the Manhattan distance between the upper left corner of the solved image and the nearest placed puzzle piece.  Also let $L$ as the set of all puzzle piece locations within distance $d_{min}$ of the upper left corner of the image.  Given that $l$ is a location in $L$ that is used as the reference point for determining the absolute location of all piece, then SEDAS is defined as shown in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  
+Let $d_{min}$ be the Manhattan distance between the upper left corner of the solved image and the nearest placed puzzle piece.  Also let $L$ be the set of all puzzle piece locations within distance $d_{min}$ of the upper left corner of the image.  Given that $l$ is a location in $L$ that is used as the reference point for determining the absolute location of all pieces, then SEDAS is defined as shown in Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
 SEDAS_{P_i} = \argmax_{l \in L} \bigg( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \bigg)
 \end{equation}
 
 \noindent
-In standard definition of direct accuracy, $l$ would be the upper left corner of the image; SEDAS shifts this reference point within a radius of the upper left corner of the image in order to find a more meaningful value for direct accuracy. 
+In the standard definition of direct accuracy proposed by Cho \textit{et al.}, $l$ is fixed at the upper left corner of the image.  In contrast, SEDAS shifts this reference point within a radius of the upper left corner of the image in order to find a more meaningful value for direct accuracy. 
 
-Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can be significantly more computationally complex in particular on large puzzles of several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
+Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can be significantly more computationally complex in particular in large puzzles with several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
 
 \subsubsection{The Necessity to Use Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
@@ -414,7 +414,7 @@ Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the
 
 \subsubsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
 
-Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric by providing a framework to quantify the quality of a solver output when solving multiple puzzles simultaneously. 
+Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric by providing a framework to quantify the quality of Mixed-Bag solver outputs. 
 
 Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}$ be the number of puzzle piece sides adjacent in $P_i$ and $S_j$.  If $m_{k,j}$ is the number of puzzle pieces from an input puzzle $P_k$ (where $k \ne i$) in $S_j$, then the ENAS for $P_i$ is defined as shown in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
 
@@ -428,11 +428,11 @@ In the same fashion as the technique described for EDAS in Section~\ref{sec:enha
 
 In images with thousands of pieces, it is often difficult to visually determine the location of individual pieces that are incorrectly placed.  What is more, visual tools help developers quickly detect and fix latent bugs.
 
-The following two subsections show the tools developed as part of this thesis for visualizing direct accuracy and neighbor accuracy.
+The following two subsections describe the tools developed as part of this thesis for visualizing direct accuracy and neighbor accuracy.
 
 \subsubsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
 
-In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a single value (i.e., correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a square filled with a solid color.  One additional refinement used in this thesis is to subdivide the ``incorrect'' placements into a set of subcategories organized by decreasing severity: wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
+In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a single value (i.e., correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a square filled with a solid color.  One additional refinement used in this thesis is to subdivide the ``incorrect'' placements into a set of subcategories; they are (in order of precedence): wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
 
 \begin{table}[h]
 	\begin{center}
@@ -447,7 +447,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 \caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along with the associated EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location, but wrong rotation.  In contrast, almost all pieces had the correct location in the SEDAS representation; note that the piece that had the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
+Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along with the associated EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location but wrong rotation.  In contrast, almost all pieces have the correct location in the SEDAS representation; note that the piece in the correct location but with wrong rotation in EDAS has the wrong location in SEDAS.
 
 \begin{figure}
 \centering
@@ -468,7 +468,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along 
 
 \subsubsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
-The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies where each puzzle piece is divided into four equal-sized isosceles triangles (i.e., one for each side).  The triangles are assigned colors depending on whether their neighbor in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving multiple puzzles simultaneously and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classification of puzzle piece sides in neighbor accuracy visualization.
+The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies where each puzzle piece is divided into four equal-sized isosceles triangles (one for each side).  The triangles are assigned colors depending on whether their neighbors in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving Mixed-Big puzzles and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classifications of puzzle piece sides in neighbor accuracy visualizations.
 
 \begin{table}[h]
 \begin{center}
@@ -483,7 +483,7 @@ The visualization for neighbor accuracy is very similar to the techniques descri
 \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving two images simultaneously.  Note that that the puzzle of interest is the glass and stone building while the other puzzle is a rainforest house.
+Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  Note that that the puzzle of interest $P_i$ is the glass and stone building while the other puzzle $P_k$ is a rainforest house.
 
 \begin{figure}
 \centering
@@ -525,15 +525,15 @@ This section reviews the solver proposed by Paikin \& Tal \cite{paikin2015}; the
 
 Paikin \& Tal's solver was inspired by the work of Pomeranz \textit{et al.} in \cite{pomeranz2011}.  Paikin \& Tal's uses a deterministic, greedy algorithm that places the puzzle piece that has the maximum confidence score at each iteration. Paikin \& Tal's approach is able to handle puzzles of unknown size with missing pieces and where piece orientation is not known.  The only required input to the algorithm is the expected number puzzles.
 
-Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selection of the seed piece, and placement.  These stages are described in the following subsections.  The modification required during placement to solve multiple puzzles simultaneously is described in an additional subsection.
+Paikin \& Tal's algorithm has three distinct phases namely: inter-puzzle piece distance calculation, selection of the seed piece, and placement.  These stages are described in the following subsections.  The modification required to solve Mixed-Bag puzzles is described in an additional subsection.
 
 \subsubsection{Inter-Puzzle Piece Distance Calculation}\label{sec:paikinTalInterPieceDistance}
 
-The first stage of Paikin \& Tal's algorithm is to calculate the inter-piece distance between all pieces.  This is done using the asymmetric distance measure described in Section~\ref{sec:paikinPairwiseAffinity}.  The distance information is stored in an $n$ by $n$ matrix (where $n$ is the number of puzzle pieces); after being initially calculated, the asymmetric distances never need to be recalculated.
+The first stage of Paikin \& Tal's algorithm is to calculate the distance between all pairs of pieces.  This is done using the asymmetric distance measure described in Section~\ref{sec:paikinPairwiseAffinity}.  The distance information is stored in an $n$ by $n$ matrix (where $n$ is the number of puzzle pieces); after being initially calculated, the asymmetric distances never need to be recalculated throughout the remainder of the algorithm's execution.
 
-As explained in Section~\ref{sec:paikinPairwiseAffinity}, Paikin \& Tal normalize the asymmetric distances using the asymmetric compatibility function in Equation~\eref{eq:paikinAsymCompatibility}.  This has the effect of amplifying truly unique pairings while penalizing speciously similar pairings that arise from low variation areas of the image.  The asymmetric compatibility is then used to find the best buddies for each piece (if any).  
+As explained in Section~\ref{sec:paikinPairwiseAffinity}, Paikin \& Tal normalize the asymmetric distances using the asymmetric compatibility function in Equation~\eref{eq:paikinAsymCompatibility}.  This has the effect of amplifying truly unique pairings while penalizing speciously similar pairings that arise from low variation areas of the ground-truth image.  The asymmetric compatibility is then used to find the best buddies for each piece (if any).  
 
-The last step is to calculate the mutual compatibility ($\tilde{C}$) between pairs of pieces (e.g., $x_i$ and $x_j$), which is defined in Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_a,x_j,s_b)$ is the asymmetric compatibility between side $s_a$ of piece $x_i$ and side $s_b$ of piece $x_j$; $C(x_j,s_b,x_i,s_a)$ is defined similarly.  It is important to note that mutual compatibility is symmetric.
+The last step is to calculate the mutual compatibility ($\tilde{C}$) between pairs of pieces using Equation~\eref{eq:mutualCompatibility}.  $C(x_i,s_a,x_j,s_b)$ is the asymmetric compatibility between side $s_a$ of piece $x_i$ and side $s_b$ of piece $x_j$; $C(x_j,s_b,x_i,s_a)$ is defined similarly.  Note that mutual compatibility is symmetric.
 
 \begin{equation} \label{eq:mutualCompatibility}
 \tilde{C}(x_i,s_a,x_j,s_b)=\tilde{C}(x_j,s_b,x_i,s_a)=\frac{C(x_i,s_a,x_j,s_b) + C(x_j,s_b,x_i,s_a) }{2}
@@ -541,13 +541,13 @@ The last step is to calculate the mutual compatibility ($\tilde{C}$) between pai
 
 \subsubsection{Selecting the Seed Piece}\label{sec:paikinTalSeedPiece}
 
-Similar to Pomeranz \textit{et al.}, Paikin \& Tal used a kernel growing algorithm.  Hence, a seed piece is selected, and all pieces are placed around that seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant, deleterious impact on the final solution.  Due to this, Paikin \& Tal select a piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
+Similar to Pomeranz \textit{et al.}, Paikin \& Tal use a kernel growing algorithm.  Hence, a single seed piece is selected, and all pieces are placed around that seed.    Since the algorithm is greedy, the selection of a poor seed can have a significant, deleterious impact on the final solution.  Due to this, Paikin \& Tal select a seed piece that is itself ``distinctive'' and comes from a ``distinctive region.''  
 
 Paikin \& Tal define a seed piece as ``distinctive'' if it has best buddies on each of its sides.  To ensure that a piece comes from a distinctive region, all of the seed piece's best buddies must also have four best buddies. In a puzzle, there may be multiple pieces that satisfy the ``distinctive'' piece in a ``distinctive region'' criteria; in such cases, ties are broken by selecting the piece that has the maximum sum of mutual compatibilities with its direct neighbors.
 
 \subsubsection{Placement}\label{sec:paikinTalPlacer}
 
-Paikin \& Tal utilized an iterative, greedy placer that places pieces around an expanding seed.  Pseudocode for their placer is shown in Algorithm~\ref{alg:paikinTalPlacer}.  Placement continues all pieces have been placed.
+Paikin \& Tal utilize an iterative, greedy placer that places pieces around an expanding seed.  Pseudocode for their placer is shown in Algorithm~\ref{alg:paikinTalPlacer}.  Placement continues all pieces have been placed.
 
 \begin{algorithm}
 \caption{Paikin \& Tal Placer}\label{alg:paikinTalPlacer}
@@ -567,18 +567,17 @@ Paikin \& Tal utilized an iterative, greedy placer that places pieces around an 
 \end{algorithmic}
 \end{algorithm}
 
-The selection of the next (i.e., best) piece to place emphasizes pieces about which there is the highest confidence of correctness. As mentioned, two pieces are much more likely to be adjacent if they are best buddies.  Due to this, the algorithm keeps a pool of the already placed pieces best buddies; whenever a new piece is placed, all of that piece's unplaced best buddies are added to the $BestBuddPool$.  
+The selection of the next (i.e., best) piece to place emphasizes pieces about which there is the highest confidence of correctness. As mentioned previously, two pieces are much more likely to be adjacent if they are best buddies.  Due to this, the algorithm keeps a pool of the already placed pieces best buddies; whenever a new piece is placed, all of that piece's unplaced best buddies are added to the $BestBuddyPool$.  
 
-As long as the $BestBuddyPool$ is not empty, candidates for placement only come from that pool; the best candidate from the $BestBuddyPool$ is the one with the maximum asymmetric compatibility with an open slot in the puzzle.  This rules prioritizes placing the best buddy pairings upon which there is the greatest confidence.
+As long as the $BestBuddyPool$ is not empty, candidates for placement only come from that pool; the best candidate from the $BestBuddyPool$ is the one with the maximum mutual compatibility with an open slot in the puzzle.  This rule prioritizes placing the best buddy pairings upon which there is the greatest confidence.
 
-If the $BestBuddyPool$ is ever empty, the algorithm recalculates the asymmetric and mutual compatibilities between the unplaced pieces and any piece's open slot.  The piece that has the maximum asymmetric compatibility with an open slot is then selected as the next piece for placement.
+If the $BestBuddyPool$ is ever empty, the algorithm recalculates the asymmetric and mutual compatibilities between the unplaced pieces and the open puzzle slots.  The piece that has the maximum asymmetric compatibility with an open slot is then selected as the next piece for placement.
 
-\subsubsection{Solving Multiple Puzzles}\label{sec:paikinTalSolvingMultiplePuzzles}
+\subsubsection{Solving Mixed-Bag Puzzles}\label{sec:paikinTalSolvingMultiplePuzzles}
 
 As mentioned in Section~\ref{sec:paikinTalSolver}, the only input to the Paikin \& Tal algorithm is the expected number of puzzles.   When solving more than one puzzle at a time, only a minor change to the placer described in Algorithm~\ref{alg:paikinTalPlacer} is required.
 
-Their algorithm spawn a new puzzle any time the mutual compatibility between the next piece to place its associated open slot drops below a predefined threshold (Paikin \& Tal use 0.5); this rule applies as long the current number of puzzles is less than the specified number passed to the algorithm.  When a new puzzle is spawned, the $BestBuddyPool$ is cleared, and a seed piece is selected using the approach previously described in Section~\ref{sec:paikinTalSeedPiece}.   Placement then continues simultaneously across all puzzles.
-
+Their algorithm spawns a new puzzle any time the mutual compatibility between the next piece to place its associated open slot drops below a predefined threshold\footnote{Paikin \& Tal use 0.5 as the threshold to spawn new boards}; this rule applies as long the current number of puzzles is less than the specified number passed to the algorithm.  When a new puzzle is spawned, the $BestBuddyPool$ is cleared, and a seed piece is selected using the approach previously described in Section~\ref{sec:paikinTalSeedPiece}.   Placement then continues simultaneously across all puzzles.
 
 \subsection{A Python Implementation of Paikin \& Tal's Algorithm}\label{sec:pythonPaikinTalAlgorithm}
 
@@ -586,35 +585,33 @@ Since no open-source implementation of the Paikin \& Tal solver exists, one was 
 
 \subsubsection{The \hammoudehPuzzlePackage Package}\label{sec:hammoudehPuzzlePackage}
 
-This package is a generic infrastructure that is independent of the solver used and consists of two primary classes namely: \texttt{Puzzle} and \texttt{PuzzlePiece}.  
+This package is a generic infrastructure that is independent of the solver used; it consists of two primary classes namely: \texttt{Puzzle} and \texttt{PuzzlePiece}.  
 
-The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: an identification number, dimensions, type (e.g., Type~1, Type~2 - this is via the class \texttt{PuzzleType}), and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
+The \texttt{Puzzle} class encapsulates all attributes of a puzzle including: an identification number, dimensions, type (e.g., Type~1, Type~2 - this is an enumerated type: ``\texttt{PuzzleType}''), and all associated puzzle pieces.  A puzzle can be created either from an image file or from a set of puzzle pieces.   When parsing image files and exporting a solved puzzle, the \texttt{Puzzle} class uses the OpenCV Python package \cite{opencv_library}. 
 
-Individual puzzle pieces are represented using the \texttt{PuzzlePiece} class.  Each object of type \texttt{PuzzlePiece} has attributes: identification number, width (in number of pixels), rotation (via the class \texttt{PuzzlePieceRotation}), image information (stored in a NumPy array \cite{walt2011}), and location in the puzzle.
+Individual puzzle pieces are represented using the \texttt{PuzzlePiece} class.  Each object of type \texttt{PuzzlePiece} has attributes: identification number, width (in number of pixels), rotation (via the class \texttt{PuzzlePieceRotation}), the LAB image information (stored in a NumPy array \cite{walt2011}), and the location in the puzzle.
 
 Additional features included in the \hammoudehPuzzlePackage package include calculating and visualizing EDAS, SEDAS, and ENAS as well as performing best buddy analysis on an image.
 
 \subsubsection{The \paikinTalPackage Package}\label{sec:paikinTalSolverPackage}
 
-The \paikinTalPackage package implements the Paikin \& Tal algorithm described in Section~\ref{sec:paikinTalAlgorithm}.  The primary interface for the user is through the \texttt{PaikinTalSolver} class; objects of this type are created using a constructor that takes as parameters: the expected number of puzzles, a set of \texttt{PuzzlePiece} objects, a distance function, the puzzle type (via class ``\texttt{PuzzleType}''), and optionally a set of fixed puzzle dimensions.  A \texttt{PaikinTalSolver} object is composed of a set of component objects, which are described in the following paragraphs.
+The \paikinTalPackage package implements the Paikin \& Tal algorithm described in Section~\ref{sec:paikinTalAlgorithm}.  The primary interface for the user is through the \texttt{PaikinTalSolver} class; objects of this type are created using a constructor that takes as parameters: the expected number of puzzles, a set of \texttt{PuzzlePiece} objects, a distance function, the puzzle type (via class ``\texttt{PuzzleType}''), and optionally a single set of fixed puzzle dimensions.  A \texttt{PaikinTalSolver} object is composed of a set of component objects, which are described in the following paragraphs.
 
-An object of type \texttt{InterPieceDistance} calculates the asymmetric distance, asymmetric compatibility, and mutual compatibility between all pieces.  What is more, since the \texttt{PaikinTalSolver} takes a distance function in its constructor, the user is able to tune the solver's performance using different metrics.  While calculating the asymmetric compatibilities, the \texttt{InterPieceDistance} class also finds each piece's best buddies; this made the \texttt{InterPieceDistance} class the natural choice to identify the starting piece(s).
+An object of type \texttt{InterPieceDistance} calculates the asymmetric distance, asymmetric compatibility, and mutual compatibility between all pieces.  What is more, since the \texttt{PaikinTalSolver} takes a distance function in its constructor, the user is able to tune the solver's performance using different metrics.  While calculating the asymmetric compatibilities, the \texttt{InterPieceDistance} class also finds each piece's best buddies; this made the \texttt{InterPieceDistance} class the natural choice to identify the seed piece(s).
 
-Paikin \& Tal do not identify the data structure used to implement the $BestBuddyPool$ (see Algorithm~\ref{alg:paikinTalPlacer}). However, the choice of data structure is critical as the algorithm must be able to quickly remove the best candidates from the pool and quickly insert new candidates into the pool.
-
-This thesis' implementation of the $BestBuddyPool$ relies on a combination three data structures.  They are:
+Paikin \& Tal do not identify the data structure used to implement the $BestBuddyPool$ (see Algorithm~\ref{alg:paikinTalPlacer}). However, the choice of data structure is critical as the algorithm must be able to quickly remove the best candidates from the pool and quickly insert new candidates into the pool.  This thesis' implementation of the $BestBuddyPool$ relies on a combination three data structures.  They are:
 
 \begin{itemize}
 
-	\item \textbf{Dictionary of the Best Buddies in this Pool} -- This stores the identification numbers of best buddies currently in the pool.  A dictionary was use for this role as it enables new best buddies to be quickly added to the pool  and to quickly delete a placed piece from the pool.
+	\item \textbf{Dictionary of the Best Buddies in this Pool} -- This stores the identification numbers of best buddies currently in the pool.  A dictionary was used here as it enables new best buddies to be quickly added to the pool and for placed pieces to be quickly deleted from the pool.
 	
-	\item \textbf{Dictionary of the Open Slots in the Puzzle} -- It contains the the set of valid locations where pieces can be placed.  Similar to the best buddy dictionary, a dictionary enables valid locations to be quickly added and removed.
+	\item \textbf{Dictionary of the Open Slots in the Puzzle} -- It contains the set of valid locations where pieces can be placed.  As with the previous data structure, this dictionary enables valid locations to be quickly added and removed.
 
 	\item \textbf{Best Candidate Max Heap} -- The best candidate is a pairing of a best buddy from the pool and an open puzzle location.  Every time a new best buddy is added to the pool, pairings between that new pool member and all open slots are added to the best candidate heap.  Similarly, whenever a new slot in the puzzle is opened, pairings between that new slot and all best buddies currently in the pool are also added to the heap.  A max heap allows the best candidate to be selected in $O(lg(n))$ time.
 	
 \end{itemize}
 
-The best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are checked for validity (due to either the best buddy being already placed or the valid location in the puzzle being previously filled). If the heap grows too large (currently set to one million elements), the algorithm will periodically clean the entire heap.
+As best buddies are placed and puzzle slots are filled, items in the best buddy pool will become invalid.  However, to reduce overhead, the best candidate heap is not cleaned after each placement.  Rather, as items are popped off the heap, they are checked for validity. If the heap grows too large (currently set to one million elements), this thesis' implementation periodically cleans the entire heap.
 
 
 
@@ -628,22 +625,22 @@ The best candidate heap is not cleaned after each placement.  Rather, as items a
 \pagebreak
 \section{Conclusions}\label{sec:conclusions}
 
-Significant progress was made over the course of this semester.  Major accomplishment include: a thorough review of existing solvers, building a jigsaw puzzle solver using state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; following subsections describe some of them in depth.  The Python solver described in Section~\ref{sec:pythonPaikinTalAlgorithm} will be used as the platform where improvements to their algorithm will be implemented.
+Significant progress was made over the course of this semester.  Major accomplishments include: a thorough review of existing solvers, implementing a jigsaw puzzle solver that improves on state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; following subsections describe some of them in depth.  
 
 \subsection{Limitations of Paikin \& Tal's Algorithm}\label{sec:paikinTalLimitations}
 
-This section details some of the limitations of Paikin \& Tal's algorithm.  
+This section details some of the limitations of Paikin \& Tal's algorithm.  The Python solver described in Section~\ref{sec:pythonPaikinTalAlgorithm} will be used as the platform where improvements that address these limitations will be implemented.
 
 \subsubsection{Taking the Number of Puzzles as an Input}\label{sec:limitationNumberPuzzles}
 
-Other than a set of pieces, the only input to the Paikin \& Tal's solver is the expected number of puzzles (see Section~\ref{sec:paikinTalSolver}). Pomeranz \textit{et al.} and Sholomon \textit{et al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the puzzles pieces; the number of puzzles could then be inferred from the best buddy accuracy.
+Other than a set of pieces, the only input to the Paikin \& Tal's solver is the expected number of puzzles. Pomeranz \textit{et al.} and Sholomon \textit{et al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the puzzles pieces; the number of puzzles could then be inferred from the best buddy accuracy.
 
 
 \subsubsection{Using Only a Single Side for Placement}\label{sec:limitationPlacementSingleSide}
 
 When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have serious, negative effects on the final result.  An improved placer could prioritize the placement of pieces based off the number of best buddies that piece has with respect to an open slot.
 
-\subsubsection{Determining the Seed Piece for Multiple Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
+\subsubsection{Determining the Seed Piece for Mixed-Bag Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
 
 Whenever a new puzzle is spawned, Paikin \& Tal's algorithm always use the same approach to choose the seed piece (see Section~\ref{sec:paikinTalSeedPiece}).  This can lead to issues if multiple puzzles are spawned using seed pieces from the same ground-truth input.  The most na\"{\i}ve way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
 
