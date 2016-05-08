@@ -51,8 +51,8 @@
 \setcounter{secnumdepth}{5}
 \setcounter{tocdepth}{5}
 
-\title{   An Improved Square-Piece, Multiple
-       \\ Simultaneous Jigsaw Puzzle Solver
+\title{   An Improved Solver for Square-Piece,
+       \\ Mixed-Bag Jigsaw Puzzles
        \\[1in]
 	   CS297 Final Report}
 
@@ -98,9 +98,9 @@
 
 \section{Introduction}\label{sec:introduction}
 
-Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name derives from the that jigsaws that were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for almost two centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by Altman \cite{altman1990} and Demaine \& Demaine \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
+Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name derives from the jigsaws that were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for two centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by Altman \cite{altman1990} and Demaine \& Demaine \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
-Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more difficult to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
+Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more challenging to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
 Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the original, also known as ``ground-truth,'' input is unknown.  This significantly increases the difficulty of the problem as the structure of the complete solution must be determined solely from the bag of component pieces.
 
@@ -117,33 +117,31 @@ This thesis proposes an improved jig swap puzzle solver that is able to solve mu
 
 Computational jigsaw puzzle solvers have been studied since the 1960s when Freeman \& Gardner proposed a solver that relied only on piece shape and could puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
 
-Cho \textit{et al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s)'', which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
+Cho \textit{et al.} \citep{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s),'' which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
 
-A significant contribution of Cho \textit{et al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels (as opposed to standards such as RGB or CMYK).  LAB was selected due to its property of normalizing the lightness and color variation across all three dimensions.  Cho \textit{et al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
+A significant contribution of Cho \textit{et al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels.  LAB was selected due to its property of normalizing the lightness and color variation across all three pixel dimensions.  Cho \textit{et al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
 
-Pomeranz \textit{et al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et al.} also generalized and improved on Cho \textit{et al.}'s piece pairwise distance measure by proposing a ``predictive distance measure''.  Finally, Pomeranz \textit{et al.} introduced the concept of ``best buddies'', which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
+Pomeranz \textit{et al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et al.} also generalized and improved on Cho \textit{et al.}'s piece pairwise distance measure by proposing a ``predictive distance measure.''  Finally, Pomeranz \textit{et al.} introduced the concept of ``best buddies,'' which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
 
-An additional key contribution of Pomeranz \textit{et al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images; the size of the images in the second and third benchmarks is 2,360 and 3,300 pieces respectively.
+An additional key contribution of Pomeranz \textit{et al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images; the sizes of the images in the second and third benchmarks are 2,360 and 3,300 pieces respectively.
 
-In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles into three primary types.  The following is Gallagher's proposed terminology; his nomenclature is used throughout this thesis.
+In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles into four primary types.  The following is Gallagher's proposed terminology; his nomenclature is used throughout this thesis.
 
 \begin{itemize}
 
-	\item \textbf{Type~1 Puzzle}: The dimension of the puzzle (i.e., the width and height of the ground-truth image in number of pixels) is known.  The orientation of each piece is also known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
+	\item \textbf{Type~1 Puzzle}: The dimensions of the puzzle (i.e., the width and height of the ground-truth image in number of pixels) is known.  The orientation of each piece is also known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
 	
-	\item \textbf{Type~2 Puzzle}: This is an extension of a Type~1 puzzle, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g., \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}); in comparison to a Type~1 puzzle, this change alone increases the number of possible solutions by a factor of $4^n$, where $n$ is the number of pieces in the puzzle.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image may be unknown.
+	\item \textbf{Type~2 Puzzle}: This is an extension of a Type~1 puzzle, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g., \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}); in comparison to a Type~1 puzzle, this change alone increases the number of possible solutions by a factor of $4^n$, where $n$ is the number of puzzle pieces.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image may be unknown.
 	
-	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the pieces is unknown.  This is the least computationally complex of the three puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
+	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the pieces is unknown.  This is the least computationally complex of the puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
 	
-	\item \textbf{Mixed-Bag Puzzles}: The input set of pieces are from multiple puzzles, or there are extra pieces in the input set that belong to no puzzle.  The solver may output either a single merged puzzle or separate the input pieces into disjoint sets that ideally align the ground-truth puzzles.  This type of puzzle is the primary focus of this thesis.
+	\item \textbf{Mixed-Bag Puzzles}: The input set of pieces are from multiple puzzles, or there are extra pieces in the input set that belong to no puzzle.  The solver may output either a single, merged puzzle, or it may separate the input pieces into disjoint sets that ideally align the set of ground-truth puzzles.  This type of puzzle is the primary focus of this thesis.
 
 \end{itemize}
 
 Sholomon \textit{et al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type~1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et al.}, Sholomon \textit{et al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
 
-Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving multiple jig swap puzzles simultaneously.  This entails mixing the pieces from multiple different puzzles together into a single, merged set; hence, the algorithm has no information about the source puzzle for each piece.  The solver then attempts to reconstruct the original set of distinct puzzles from the bag of pieces.
-
-Paikin \& Tal's algorithm was used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving Mixed-Bag Puzzles. Paikin \& Tal's algorithm is used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
 
 
 
@@ -175,7 +173,7 @@ As mentioned in Section~\ref{sec:previousWork}, Cho \textit{et al.} \cite{cho201
 D(x_i,R,x_j,L) = \sum_{k=1}^{K}\sum_{d=1}^{3}(x_i(k,K,d) - x_j(k,1,d))^2
 \end{equation}
 
-Since the LAB colorspace has three dimensions (e.g., lightness and A/B opponent colors), $d$ ranges between $1$ and $3$.  $x_i(k,K,d)$ represents the LAB value in dimension ``$d$'' for the pixel in row ``$k$'' and column ``$K$'' in puzzle piece $x_i$.
+Since the LAB colorspace has three dimensions (e.g., lightness and A/B opponent color dimensions), $d$ ranges between $1$ and $3$.  $x_i(k,K,d)$ represents the LAB value in dimension ``$d$'' for the pixel in row ``$k$'' and column ``$K$'' in puzzle piece $x_i$.  Hence, Equation~\eref{eq:choPairwise} is the sum of the squares of the pixel value differences between the right side of piece $x_i$ and the left side of piece $x_j$.
 
 \subsection{Pomeranz \textit{et al.} Pairwise Affinity}\label{sec:pomeranzPairwiseAffinity}
 
@@ -294,7 +292,7 @@ There is currently no standard for visualizing an image's best buddies.  This th
 In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece
 s center.  
 
-Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization denoted as ``(b)''. The color scheme for the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
+Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization denoted as ``(b).'' The color scheme for the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
 
 
 \begin{figure}
@@ -468,7 +466,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along 
 \label{fig:directAccuracyVisualization}
 \end{figure}
 
-\subsubsection{Visualizing Neighbor Accuracy}\label{sec:visualizingNeighborAccuracy}
+\subsubsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
 The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies where each puzzle piece is divided into four equal-sized isosceles triangles (i.e., one for each side).  The triangles are assigned colors depending on whether their neighbor in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving multiple puzzles simultaneously and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classification of puzzle piece sides in neighbor accuracy visualization.
 
