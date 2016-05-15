@@ -626,11 +626,11 @@ As best buddies are placed and puzzle slots are filled, items in the best buddy 
 \pagebreak
 \section{Conclusions}\label{sec:conclusions}
 
-Significant progress was made over the course of this semester.  Major accomplishments include: a thorough review of existing solvers, implementing a jigsaw puzzle solver that improves on state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; the following subsection describe some of them in depth.  The final section outlines tasks that will be performed in the next semester (i.e., CS298) to address these limitations.
+Significant progress was made over the course of this semester.  Major accomplishments include: a thorough review of existing solvers, implementing a jigsaw puzzle solver that improves on state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; the following subsection describes some of them in depth.  The final subsection outlines tasks that will be performed in the next semester (i.e., CS298) to address these limitations.
 
 \subsection{Limitations of Paikin \& Tal's Algorithm}\label{sec:paikinTalLimitations}
 
-Despite being state-of-the-art, Paikin \& Tal's algorithm still has many shortcomings.  For example, the user must pass to the Paikin \& Tal's solver is the expected number of puzzles.  In many real world applications, this may not be known.
+Despite being state-of-the-art, Paikin \& Tal's algorithm still has many shortcomings.  For example, the user must pass to the solver the expected number of puzzles.  In many real world applications, this may not be known.
 
 Another limitation is that when performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have serious, negative effects on the final result.  
 
@@ -638,13 +638,13 @@ Paikin \& Tal's algorithm also has two significant limitations when spawning new
 
 \subsection{Next Semester Tasks to Address the Limitations of Paikin \& Tal's Algorithm}\label{sec:nextSemesterTasks}
 
-The focus of the next semester will be to use the existing infrastructure to improve on Paikin \& Tal's solver.  As explained in Section~\ref{sec:paikinTalPlacer}, only a single side is considered when placing each piece.  Rather than using that single side, the placer will consider prioritize placing pieces that have multiple best buddies first.  
+The focus of the next semester will be to use the existing infrastructure to improve on Paikin \& Tal's solver.  As explained in Section~\ref{sec:paikinTalPlacer}, only a single side is considered when placing each piece.  Rather than using that single side, the improved placer will prioritize placing pieces that have multiple best buddies first.  
 
-Currently, Paikin \& Tal's algorithm is a single pass algorithm.  While this has runtime advantages, it significantly restricts the ability of the algorithm to correct for poor decisions.  By making multiple passes, it is expected that the algorithm selection of seeds for mixed bag puzzles would improve.  The approach that will be implemented in the next semester will be to solve the puzzle first using Paikin \& Tal's existing technique.  The algorithm will then use the region growing segmentation algorithm previously used by Pomeranz \textit{et al.} and described in \cite{pitas} to select new $n$ seeds, where $n$ is the expected number of input puzzles; the solver would then be repeated with placement proceeding across multiple puzzles simultaneously.  The algorithm would terminate after either a specific number of iterations or once the maximum best buddy accuracy has stabilized.
+Currently, Paikin \& Tal's algorithm is a single pass algorithm.  While this has runtime advantages, it significantly restricts the ability of the algorithm to recover from poor decisions.  By making multiple passes, it is expected that the algorithm selection of seeds for mixed bag puzzles would improve.  The approach that will be implemented in the next semester will be to solve the puzzle first using Paikin \& Tal's existing technique.  The algorithm will then use the region growing segmentation algorithm previously used by Pomeranz \textit{et al.} and described in \cite{pitas} to select new $n$ seeds, where $n$ is the expected number of input puzzles; the solver would then be repeated with placement proceeding across multiple puzzles simultaneously.  The algorithm would terminate after either a specific number of iterations or once the maximum best buddy accuracy has stabilized.
 
 Another improvement to the solver that will be implemented next semester is to eliminate the requirement that the user specify the number of input puzzles.  The algorithm will achieve this by running the solver multiple times with different expected number of input puzzles.  The solver will then select the solution with the maximum best buddy accuracy.
 
-Lastly, the image datasets used by existing solvers are well established and include \cite{sholomonBenchmarkImages, cho2010, pomeranzBenchmarkImages}; however, these datasets are relatively small and consist of only about 100 total images.  This thesis plans to widen that set to several hundred images.  The images will be from image repositories that use the Creative Commons License including \cite{mcgillImageDatabase, pixabay}.
+Lastly, the image datasets used by existing solvers are well established and include \cite{sholomonBenchmarkImages, cho2010, pomeranzBenchmarkImages}; however, these datasets are relatively small and consist of only about 100 total images.  This thesis will widen that dataset to several hundred images.  The images will be from image repositories including \cite{mcgillImageDatabase, pixabay} that use the Creative Commons License.
 
 
 
