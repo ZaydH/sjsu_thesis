@@ -27,6 +27,7 @@
 % Define the packages in the Python implementation
 \newcommand{\hammoudehPuzzlePackage}{\texttt{hammoudeh\_puzzle} }
 \newcommand{\paikinTalPackage}{\texttt{paikin\_tal\_solver} }
+\newcommand{\ENAS}{\mbox{\textit{ENAS}}}
 
 \DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
 
@@ -279,7 +280,7 @@ It is relatively unlikely that in an photograph there will be a meaningful numbe
 		\textnormal{and}
 		\\
 		\\
-		\forall{x_{k} \ne x_{j}}\forall{s_c},C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
+		\forall{x_{k} \ne x_{i}}\forall{s_c},C(x_j, s_b, x_i, s_a) > C(x_j, s_b, x_k, s_c)
 	\end{matrix}
 \end{split}
 \end{equation}
@@ -419,7 +420,7 @@ Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric by
 Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}$ be the number of puzzle piece sides adjacent in $P_i$ and $S_j$.  If $m_{k,j}$ is the number of puzzle pieces from an input puzzle $P_k$ (where $k \ne i$) in $S_j$, then the ENAS for $P_i$ is defined as shown in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
 
 \begin{equation} \label{eq:enhancedNeighborAccuracyScore}
-ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j})}
+\ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
 In the same fashion as the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including a summation of all $m_{k,j}$ in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and misplaced pieces.
@@ -625,31 +626,25 @@ As best buddies are placed and puzzle slots are filled, items in the best buddy 
 \pagebreak
 \section{Conclusions}\label{sec:conclusions}
 
-Significant progress was made over the course of this semester.  Major accomplishments include: a thorough review of existing solvers, implementing a jigsaw puzzle solver that improves on state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; following subsections describe some of them in depth.  
+Significant progress was made over the course of this semester.  Major accomplishments include: a thorough review of existing solvers, implementing a jigsaw puzzle solver that improves on state-of-the art techniques, defining new solution quality metrics, and building visualization tools.  Paikin \& Tal's algorithm has limitations; the following subsection describe some of them in depth.  The final section outlines tasks that will be performed in the next semester (i.e., CS298) to address these limitations.
 
 \subsection{Limitations of Paikin \& Tal's Algorithm}\label{sec:paikinTalLimitations}
 
-This section details some of the limitations of Paikin \& Tal's algorithm.  The Python solver described in Section~\ref{sec:pythonPaikinTalAlgorithm} will be used as the platform where improvements that address these limitations will be implemented.
+Despite being state-of-the-art, Paikin \& Tal's algorithm still has many shortcomings.  For example, the user must pass to the Paikin \& Tal's solver is the expected number of puzzles.  In many real world applications, this may not be known.
 
-\subsubsection{Taking the Number of Puzzles as an Input}\label{sec:limitationNumberPuzzles}
+Another limitation is that when performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have serious, negative effects on the final result.  
 
-Other than a set of pieces, the only input to the Paikin \& Tal's solver is the expected number of puzzles. Pomeranz \textit{et al.} and Sholomon \textit{et al.} have both used best buddy accuracy as an estimation metric.  It is expected that a solver could be developed that takes no input from the user other than the puzzles pieces; the number of puzzles could then be inferred from the best buddy accuracy.
+Paikin \& Tal's algorithm also has two significant limitations when spawning new puzzles. First, whenever a new puzzle is spawned, Paikin \& Tal's algorithm always use the same approach to choose the seed piece (see Section~\ref{sec:paikinTalSeedPiece}).  This can lead to significant issues if multiple puzzles are spawned using seed pieces from the same ground-truth input.  What is more, Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and associated the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.
 
+\subsection{Next Semester Tasks to Address the Limitations of Paikin \& Tal's Algorithm}\label{sec:nextSemesterTasks}
 
-\subsubsection{Using Only a Single Side for Placement}\label{sec:limitationPlacementSingleSide}
+The focus of the next semester will be to use the existing infrastructure to improve on Paikin \& Tal's solver.  As explained in Section~\ref{sec:paikinTalPlacer}, only a single side is considered when placing each piece.  Rather than using that single side, the placer will consider prioritize placing pieces that have multiple best buddies first.  
 
-When performing placement, Paikin \& Tal's algorithm only considers a single side of the puzzle piece.  While this may only lead to a handful of poor placements, it is known that a single suboptimal decision in a greedy algorithm can have serious, negative effects on the final result.  An improved placer could prioritize the placement of pieces based off the number of best buddies that piece has with respect to an open slot.
+Currently, Paikin \& Tal's algorithm is a single pass algorithm.  While this has runtime advantages, it significantly restricts the ability of the algorithm to correct for poor decisions.  By making multiple passes, it is expected that the algorithm selection of seeds for mixed bag puzzles would improve.  The approach that will be implemented in the next semester will be to solve the puzzle first using Paikin \& Tal's existing technique.  The algorithm will then use the region growing segmentation algorithm previously used by Pomeranz \textit{et al.} and described in \cite{pitas} to select new $n$ seeds, where $n$ is the expected number of input puzzles; the solver would then be repeated with placement proceeding across multiple puzzles simultaneously.  The algorithm would terminate after either a specific number of iterations or once the maximum best buddy accuracy has stabilized.
 
-\subsubsection{Determining the Seed Piece for Mixed-Bag Puzzles}\label{sec:limitationSeedPieceMultiplePuzzles}
+Another improvement to the solver that will be implemented next semester is to eliminate the requirement that the user specify the number of input puzzles.  The algorithm will achieve this by running the solver multiple times with different expected number of input puzzles.  The solver will then select the solution with the maximum best buddy accuracy.
 
-Whenever a new puzzle is spawned, Paikin \& Tal's algorithm always use the same approach to choose the seed piece (see Section~\ref{sec:paikinTalSeedPiece}).  This can lead to issues if multiple puzzles are spawned using seed pieces from the same ground-truth input.  The most na\"{\i}ve way to address this issue is to select multiple seed pieces when a puzzle is spawned and perform placement using all of the seed pieces in parallel.  There may be additional techniques that can be used to identify the optimal seed piece.
-
-\subsubsection{Determining when to Spawn a New Puzzle}\label{sec:limitationWhenToSpawnNewPuzzle}
-
-Paikin \& Tal spawn a new puzzle when the mutual compatibility between the best candidate and associated the open slot falls below a preset threshold.  This can cause the algorithm to prematurely spawn boards which further complicates the process of selecting the next seed piece since there are more pieces from which to choose.  One possible approach that may be useful in selecting when to spawn is to consider when the best buddy accuracy falls below a certain threshold.  When that occurs, the algorithm can then use the trend of the best buddy accuracy to determine to where in the placement the algorithm should backtrack and then spawn the new board.
-
-
-
+Lastly, the image datasets used by existing solvers are well established and include \cite{sholomonBenchmarkImages, cho2010, pomeranzBenchmarkImages}; however, these datasets are relatively small and consist of only about 100 total images.  This thesis plans to widen that set to several hundred images.  The images will be from image repositories that use the Creative Commons License including \cite{mcgillImageDatabase, pixabay}.
 
 
 
