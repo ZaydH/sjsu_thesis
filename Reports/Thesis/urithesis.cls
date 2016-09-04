@@ -1015,7 +1015,7 @@ my {\@worktype} for scholarly purposes.
 \noindent A \projectType\\ %\MakeUppercase{\@worktype}
 Presented to\\
 The Faculty of the Department of Computer Science\\
-San Jose State University\\
+San Jose Stat\'{e} University\\
 }
 \end{center}
 
@@ -1068,7 +1068,7 @@ The Designated \projectType\ Committee Approves the \projectType\ Titled\\
 by\\
 {\@author}\\
 \vspace{24pt}
-APPROVED FOR THE DEPARTMENTS OF COMPUTER SCIENCE\\ %\vspace{-1.0em}\\
+APPROVED FOR THE DEPARTMENT OF COMPUTER SCIENCE\\ %\vspace{-1.0em}\\
 \vspace{24pt}
 SAN JOSE STATE UNIVERSITY\\
 \vspace{24pt}
