@@ -52,9 +52,11 @@ unassignedPieces <span style="color: #333333">=</span> <span style="color: #3333
 			neighbor.<span style="color: #cc6600; font-weight: bold">assignToSegment</span>( selectedPiece.<span style="color: #cc6600; font-weight: bold">getSegmentNumber</span>() )
 			queue.append( neighbor )
 </pre></div>
-
 <br/>
-<h3>Overview of Key Functions</h3>
+
+The following two subsections review some of the functions in the algorithm and discuss some of the weaknesses of the algorithm.
+
+<h3>Description of Key Functions:</h3>
 <ul>
     <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">assignToSegment</span>: Assigns the piece to the specified segment number and removes the piece from the set of unassignedPieces.</li>
     <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">isBestBuddies</span>: Returns "True" if the two specified pieces are best buddies on the specific side and "False" otherwise.</li>
@@ -65,7 +67,7 @@ unassignedPieces <span style="color: #333333">=</span> <span style="color: #3333
 
 Upon close examination of the algorithm, one can see that it is already immune to the effects of missing pieces.  However, it does have other weakness both generally and as it relates to solving multiple puzzles.
 
-<h3>Deficiencies of Pomeranz <i>et. al.</i>'s Algorithm</h3>
+<h3>Deficiencies of Pomeranz <i>et. al.</i>'s Algorithm:</h3>
 <ul>
     <li style="margin-bottom:10px;"><b>Poor Segment Seed Selection</b>: The output of the segmentation algorithm is dependent on the seed piece used to start each segment.  The "left-to-right, top-to-bottom" approach used by Pomeranz <i>et. al.</i> lacks sophistication and has room for improvement.</li>
     
@@ -76,7 +78,7 @@ Upon close examination of the algorithm, one can see that it is already immune t
 
 To address these limitations, I propose a new segmentation algorithm whose pseudocode is shown below.
 
-<div style="text-align:center"><h3>A New Proposed Segmentation Algorithm</h3></div>
+<div style="text-align:center"><h3>An Proposed Improved Segmentation Algorithm</h3></div>
 
 <div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">queue <span style="color: #333333">=</span> []
 numberOfSegments <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
@@ -107,18 +109,41 @@ unassignedPieces <span style="color: #333333">=</span> { allPieces }
 				queue.append( neighbor )
 
 	<span style="color: #888888">// Post process the segment</span>
-	<span style="color: #cc6600; font-weight: bold">unassignPiecesWithWrongBestBuddies</span>( segment, seedPiece )
-	<span style="color: #cc6600; font-weight: bold">unassignPiecesInSpursAndStringers</span>( segment, seedPiece )
+	<span style="color: #cc6600; font-weight: bold">unassignPiecesWithWrongBestBuddies</span>( segment, unassignedPieces )
+	<span style="color: #cc6600; font-weight: bold">unassignPiecesInSpurs</span>( segment, unassignedPieces )
+	<span style="color: #cc6600; font-weight: bold">unassignedUnconnectedPieces</span>( segment, unassignedPieces )
 	<span style="color: #888888">// Ensure the segment is not empty after the cleanup</span>
 	<span style="color: #008800; font-weight: bold">if</span> <span style="color: #333333">|</span>segment<span style="color: #333333">|</span> <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">then</span>
 		 seedPiece.assignToSegment( segment )
 </pre></div>
+<br />
+
+In this essentially, a set of post processing functions are after the segment is completed. The primary goal of this function is to 
+ensure that there is the maximum possible correctness for each segment, even at the expense of segment size.  Below is the new/modified functions used in my new approach:
+
+<h3>Description of New or Modified Key Functions:</h3>
+<ul>
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">selectNext</span>: Unlike Pomeranz's <i>et. al.</i>'s approach that lacked much sophistication in selecting the segment seed, I will borrow a bit from the approach of Paikin &amp; Tal and prioritize segment seeds based off their level of distinctiveness.</li>
+        
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">unassignPiecesWithWrongBestBuddies</span>: If a piece's neighbor does not match its best buddy, then one of those pieces is removed from the segment and placed back in the set of unassigned pieces.  The criteria for removal of pieces is:
+        <ol>
+            <li style="margin-bottom:10px;">If only one of the pieces has a best buddy on the mismatching edge, then that piece is prioritized.</li>
+            <li style="margin-bottom:10px;">The piece with the least number of correct adjacent best buddies in the segment.</li>
+            <li style="margin-bottom:10px;">The piece that is further away from the segment seed.</li>
+        </ol>
+    </li>
+    
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">unassignPiecesInSpurs</span>: The proposed algorithm defines a "<b>spur</b>" as any piece that does not have neighbors in the segment on at least two adjacent sides.  All pieces in spurs are removed from the segment and placed back in the set of unassigned pieces.  Completing this process may take multiple passes.</li>
+
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">unassignedUnconnectedPieces</span>: This function recursively checks for any pieces that are not connected to the seedPiece via essentially a breadth first search.  Any unconnected pieces are placed back in the set of unassigned pieces.</li>
+    
+</ul>
 
 
 <h3>Questions for Dr. Pollett:</h3>
 <ul>
-    <li style="margin-bottom:10px;"><b>Segment Coloring Algorithm:</b> Being able to visualize the segmentation output would be very helpful.  The most challenging aspect of this is how best to color the visualization.  What approach could be taken to do this as simply as possible?</li>
-    <li style="margin-bottom:10px;"><b>Access to CSS Files:</b> When updating the blog, it would be useful to make custom CSS file entries to simplify some of the formatting.  Is this possible with the existing website template?</li>
+    <li style="margin-bottom:10px;"><b>Segment Coloring Algorithm</b>: Being able to visualize the segmentation output would be very helpful.  The most challenging aspect of this is how best to color the visualization.  What approach could be taken to do this as simply as possible?</li>
+    <li style="margin-bottom:10px;"><b>Access to CSS Files</b>: When updating the blog, it would be useful to make custom CSS file entries to simplify some of the formatting.  Is this possible with the existing website template?</li>
 </ul>
 
 <br /><br /><br />
