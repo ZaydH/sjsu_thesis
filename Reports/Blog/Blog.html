@@ -1,0 +1,912 @@
+
+<h1>Zayd Hammoudeh's Thesis Blog:</h1>
+
+<ul>
+    <li><a href="#blog13">CS299 Week #1: September 06, 2016 Meeting</a></li>
+</ul>
+<ul>
+    <li><a href="#blog12">CS297 Week #12: April 26, 2016 Meeting</a></li>
+    <li><a href="#blog11">CS297 Week #11: April 19, 2016 Meeting</a></li>
+    <li><a href="#blog10">CS297 Week #10: April 12, 2016 Meeting</a></li>
+    <li><a href="#blog09">CS297 Week #9: April 5, 2016 Meeting</a></li>
+    <li><a href="#blog08">CS297 Week #8: No Meeting due to SJSU Spring Break</a></li>
+    <li><a href="#blog07">CS297 Week #7: March 22, 2016 Meeting</a></li>
+    <li><a href="#blog06">CS297 Week #6: March 15, 2016 Meeting</a></li>
+    <li><a href="#blog05">CS297 Week #5: March 8, 2016 Meeting</a></li>
+    <li><a href="#blog04">CS297 Week #4: March 1, 2016 Meeting</a></li>
+    <li><a href="#blog03">CS297 Week #3: February 23, 2016 Meeting</a></li>
+    <li><a href="#blog02">CS297 Week #2: February 16, 2016 Meeting</a></li>
+    <li><a href="#blog01">CS297 Week #1: February 9, 2016 Meeting</a></li>
+</ul><br />
+
+<h2 id="blog13">Summary of the Meeting on September 06, 2016:</h2>
+
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">queue  <span style="color: #333333">=</span> []
+nextSegmentNumber <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+<span style="color: #888888">// Greedily assign pieces to segments</span>
+<span style="color: #008800; font-weight: bold">while</span> <span style="color: #333333">|</span>unassignedPieces<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">do</span>
+
+	<span style="color: #888888">// If queue is empty, randomly select an unassigned piece</span>
+	<span style="color: #888888">// and put in a new segment</span>
+	<span style="color: #008800; font-weight: bold">if</span> <span style="color: #333333">|</span>queue<span style="color: #333333">|</span> <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">then</span>
+		nextPiece <span style="color: #333333">=</span> unassignedPieces.selectFirst()
+		nextPiece.assignToSegment( <span style="color: #333333">++</span>nextSegmentNumber )
+		queue.append( nextPiece )
+
+	<span style="color: #888888">// Select piece off the front of the queue</span>
+	selectedPiece <span style="color: #333333">=</span> queue.pop()
+
+	validNeighbors <span style="color: #333333">=</span> selectedPiece.getValidNeighbors()
+	<span style="color: #008800; font-weight: bold">for</span> each neighbor in validNeighbors <span style="color: #008800; font-weight: bold">do</span>
+		<span style="color: #888888">// Skip already assigned neighbors</span>
+		<span style="color: #008800; font-weight: bold">if</span> neighbor not in unassignedPieces <span style="color: #008800; font-weight: bold">then</span>
+		nextPiece <span style="color: #333333">=</span> unassignedPieces.selectFirst()
+			<span style="color: #008800; font-weight: bold">continue</span>
+
+		<span style="color: #888888">// If neighbor and selected piece are best buddies, make in the same segment</span>
+		<span style="color: #008800; font-weight: bold">if</span> isBestBuddies( selectedPiece, neighbor ) <span style="color: #008800; font-weight: bold">then</span>
+		nextPiece <span style="color: #333333">=</span> unassignedPieces.selectFirst()
+			neighbor.assignToSegment( selectedPiece.segmentNumber )
+			queue.append( neighbor )
+</pre></div>
+<br /> <br />
+
+
+
+<h2 id="blog12">Summary of the Meeting on April 26, 2016:</h2>
+
+Activities for this week focused on three primary tasks:
+<ul>
+    <li style="margin-bottom:10px;"><b>Best Buddy Accuracy Tool for Original (i.e. Unsolved) Images</b>: In my previous implementation, best buddy accuracy was calculated in real time as the solver was being run.  This meant that I had no way to calculate the best buddy accuracy on an unsolved image.  This week, I created a best buddy unanalyzer for original images.  This tool also provides more advanced statistics on the best buddy accuracy.</li>
+  
+    <li style="margin-bottom:10px;"><b>Best Buddy Placer</b>: Last week, I proposed placing using best buddies as highest priority.  I made a quick implementation of this feature,
+    which provided mixed results.</li>
+    
+    <li style="margin-bottom:10px;"><b>Documentation Builder</b>: Throughout the development process, I made an effort to write meaningful Python docstring comments while I was developing.  I was not previously able to get Sphinx working.  After some efforts this weekend, it is now working.</li>
+</ul>
+
+<br />
+<h3>Best Buddy Accuracy for Input Images:</h3>
+
+As mentioned previously, I added support for determining the best buddy accuracy of input images. When determining the accuracy, I determine the following statistics:
+
+<ol>
+    <li style="margin-bottom:10px;"><b>Total Number of Best Buddies:</b> Some images have lower best buddy density.  This will capture the best buddy density of the input image.</li>
+    
+    <li style="margin-bottom:10px;"><b>Density</b> This is a ratio of the total number of best buddies versus the number of possible best buddies (i.e. number of pieces multiplied by the number of sides for each piece).</li>
+    
+    <li style="margin-bottom:10px;"><b><i>Total</i> Number of Interior Best Buddies:</b> An interior side in an puzzle is any side that has an neighbor next to it.  This calculates the total number of interior best buddies (right or wrong).</li>
+    
+    <li style="margin-bottom:10px;"><b>Number of <i>Wrong</i> Interior Best Buddies:</b> A wrong interior best buddy is any interior best buddy where the best buddy is not the piece's actual neighbor.</li>
+    
+    <li style="margin-bottom:10px;"><b>Number of Wrong <i>Exterior</i> Best Buddies:</b> Any best buddy on the exterior (i.e. either on the outer edge of the puzzle or next to a missing piece) is guaranteed to be wrong.  This statistic tracks the number such pieces separately.</li>
+    
+    <li style="margin-bottom:10px;"><b>Accuracy</b> Best buddy accuracy is defined as 1 minus the ratio of wrong best buddies (i.e. sum of exterior and interior) over the total number of best buddies.</li>
+
+    <li style="margin-bottom:10px;"><b>Advanced Statistics on Per Piece Best Buddy Accuracy versus Number of Pieces:</b> A piece in the puzzle can have as many best buddies as it has sides (i.e. up to four best buddies for a four sided piece).  This statistic is stored in a 3D matrix which represents the number of best buddies (from 0 to number of sides) versus number of wrong interior best buddies versus number of wrong exterior best buddies.</li>
+    
+</ol>
+
+When the analyzer is run on an image, a best buddy visualization is created.  Below is a visualization of the duck image as a type 1 puzzle.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h3>Original Image</h3></th>
+    <th><h3>Best Buddy Accuracy Visualization</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/duck.bmp" alt="Duck - Initial" style="width:300px;height:300px;" /></div><br /></td>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/image_best_buddies_type2_duck_2016.04.26_06.05.19.bmp" alt="Duck - Best Buddy Accuracy" style="width:300px;height:300px;" /></div><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+Some of the best buddy statistics for this image are:
+
+<ol>
+    <li style="margin-bottom:10px;"><b>Number of Pieces:</b> 289</li>
+    <li style="margin-bottom:10px;"><b>Total Number of Best Buddies:</b> 488</li>
+    <li style="margin-bottom:10px;"><b>Best Buddy Density:</b> <span style="color:#FF0000;">42%</span></li>
+    <li style="margin-bottom:10px;"><b>Accuracy:</b> 94.67%</li>
+</ol>
+
+<br />
+<h3>Best Buddy Placer:</h3>
+
+As discussed in the blog last week, one idea for an improved placer is to prioritize placing a piece based off its number of best buddies rather than placing off a single side.  That would allow for information from more than a single side to be used at a time.  This placer had mixed results.  The first image below is the standard image of Muffins I use.  I have included with it the best buddy accuracy visualization as well.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h3>Original Image</h3></th>
+    <th><h3>Best Buddy Accuracy Visualization</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/muffins_300x200.jpg" alt="Muffins Original" style="width:300px;height:200px;" /></div><br /></td>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/image_best_buddies_type2_muffins_300x200_2016.04.26_06.29.47.jpg" alt="Muffins Best Buddies" style="width:300px;height:200px;" /></div><br /></td>
+  </tr>
+  <tr>
+    <th><h3>Paikin &amp; Tal Placer</h3></th>
+    <th><h3>Best Buddy Placer</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/reconstructed_type2_muffins_300x200_2016.04.26_06.26.21_standard_placer.jpg" alt="Muffins Standard Placer" /></div><br /></td>  
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/reconstructed_type2_muffins_300x200_2016.04.26_06.26.25_best_buddy_placer.jpg" alt="Muffins Best Buddy Placer" /></div><br /></td>
+  </tr>  
+</table>
+<br /><br />
+
+The best buddy statistics for Muffin's image are:
+<ol>
+    <li style="margin-bottom:10px;"><b>Number of Pieces:</b> 70</li>
+    <li style="margin-bottom:10px;"><b>Total Number of Best Buddies:</b> 206</li>
+    <li style="margin-bottom:10px;"><b>Best Buddy Density:</b> <span style="color:#0000FF;">73%</span></li>
+    <li style="margin-bottom:10px;"><b>Accuracy:</b> 97.09%</li>
+</ol>
+
+Notice that in the area of lowest best buddy density (along the bottom of the image), that is where the Paikin &amp; Tal solver had the worst performance.  Using the best buddy placer performed much better in this case.
+<br /><br />
+
+In contrast, when I used the best buddy solver on the cat with the boy image, I performed slightly worse.  Below are the images.  The incorrectly placed piece is shown in the best buddies visualization with a blue border.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h3>Original Image</h3></th>
+    <th><h3>Best Buddy Accuracy Visualization</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/cat_sleeping_boy.jpg" alt="Cat Sleeping with Boy" style="width:312px;height:234px;" /></div><br /></td>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/image_best_buddies_type2_cat_sleeping_boy_2016.04.26_06.55.51.jpg" alt="Cat Sleeping with Boy Best Buddies" style="width:312px;height:234px;" /></div><br /></td>
+  </tr>
+  <tr>
+    <th><h3>Paikin &amp; Tal Placer</h3></th>
+    <th><h3>Best Buddy Placer</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/reconstructed_type2_cat_sleeping_boy_2016.04.26_06.59.25_standard_placer.jpg" alt="Cat Sleeping with Boy - Standard Placer" style="width:312px;height:234px;" /></div><br /></td>  
+    <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog12/reconstructed_type2_cat_sleeping_boy_2016.04.26_05.08.54_best_buddy_placer.jpg" alt="Cat Sleeping with Boy - Best Buddy Placer" style="width:326px;height:234px;" /></div><br /></td>
+  </tr>  
+</table>
+<br /><br />
+
+The best buddy statistics for the boy with the cat are:
+
+<ol>
+    <li style="margin-bottom:10px;"><b>Number of Pieces:</b> 352</li>
+    <li style="margin-bottom:10px;"><b>Total Number of Best Buddies:</b> 121</li>
+    <li style="margin-bottom:10px;"><b>Best Buddy Density:</b> <b><span style="color:#0030FF;">86%</span></b></li>
+    <li style="margin-bottom:10px;"><b>Accuracy:</b> 97.09%</li>
+</ol>
+
+What happened in this case is that when using the best buddy placer, the solver prioritized a wrong best buddy and placed the piece at the edge of the board. This largely happened because the gray seat has low image density so small variations can cause incorrect matches. With tweaking, this appears to be a solvable problem.
+
+<br />
+<h3>Items Meriting Future Thought/Work:</h3>
+
+Below are items meriting more work or thought.  It includes known bugs.
+
+<ul>
+    <li style="margin-bottom:10px;"><b>Direct Accuracy Not Considering Missing Pieces:</b> In my current implementation of calculating direct accuracy, I do not consider missing pieces properly when calculating the accuracy.  This is a <b>bug</b> that needs to be fixed.</li>
+    
+    <li style="margin-bottom:10px;"><b>Histogram of Pieces by Number of Best Buddies:</b> In a given puzzle, the more best buddies the piece has, the more likely it is that it will be easily solvable.  For example, a piece with 0 best buddies is really hard to solve.  This needs to be more closely studied.</li>
+    
+</ul>
+
+<br /><br /><br />
+<h2 id="blog11">Summary of the Meeting on April 19, 2016:</h2>
+
+Before going in depth on each of the activities from this week, I want to give a quick summary of each:
+
+<ul>
+  <li style="margin-bottom:10px;"><b>Implementation Best Buddy Estimation Metric</b>: In the literature, the number of correct best buddies is the only metric that has shown substantial promise as an estimation metric for solved results that does <b>not</b> rely on the ground base image.  This feature was implemented in my solved and went through extensive testing.  The way the code is implemented, BB is found in real time.</li>
+  <li style="margin-bottom:10px;"><b>Results Data Visualization</b>: Previously, I had no effective way to visualize the placement results other than looking for errors in the solved image.  I added a new visualization component as well.</li>
+  <li style="margin-bottom:10px;"><b>Handling of Ties for Second Place Distance</b>: Paikin &amp; Tal specify that the second best distance is used to determine the asymmetric compatibility between pieces.  I modified my implementation around this and am getting much better results on computer generated images like the duck.</li>
+  <li style="margin-bottom:10px;"><b>Using the Vertical Change for Calculating Inter-Piece Distance</b>: One of the ideas Dr. Pollett and I previously discussed was using not only horizontal change to calculate interpiece distance but also vertical pixel to pixel changes.</li>
+  <li style="margin-bottom:10px;"><b>Heap Cleanup</b>: To improve placer performance, periodically clean the placement heap.</li>
+</ul>
+
+<h3>Best Buddies Estimation Metric:</h3>
+
+This was the area with the most progress this week.  As mentioned previously, best buddies is a estimation metric for determining the quality of a solved image either at the end of placement or during placement in real time.  A "correct" best buddy are when two best buddies that are placed adjacent to one another.  In contrast, a "wrong" best buddy is when two best buddies are not placed next to one another.  In the literature, this is as far as best buddy error classification goes.  I propose instead classifying "wrong" best buddies" into two separate categories namely: 
+<ul>
+  <li style="margin-bottom:10px;"><b>Border "Wrong" Best Buddies</b>: These are best buddies that are not adjacent but are on the border of an image either due to missing pieces or due to them being along the edge of an image.  These are much more common in actual images since they have no natural pair.  What is more, these are of only limited utility when understanding the quality of an image.</li>
+  <li style="margin-bottom:10px;"><b>Inner "Wrong" Best Buddies</b>: These are best buddies that are placed next to an actual piece (i.e. not on an edge).  These are generally far fewer in a puzzle and generally more meaningful.</li>
+</ul>
+
+Below is a representative solved image.  Next to it is the best buddy accuracy data visualization.  Each framed square represents a placed puzzle piece; each piece is dissected along its diagonal axes to form four acute triangles whose base is along the edge of the puzzle piece.  Each triangle represents whether on associated side of the puzzle piece there is a best buddy.  Green represents a correct best buddy while white represents no best buddy.  Red represents a best buddy error.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h3>Solved Image</h3></th>
+    <th><h3>Best Buddy Accuracy Visualization</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center"><img src="images/solver_results_2016_04_05/solved_07_with_mcgill_20.jpg" alt="Blue Design - Solver" style="width:448px;height:294px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog11/best_buddy_acc_type2_7.jpg" alt="Blue Design - Original" style="width:448px;height:294px;" /></div><br /><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+To date, I have yet to find a single puzzle piece that had more wrong best buddies than right best buddies.  
+
+<h4>An Improved Solver:</h4>
+
+Paikin and Tal place best buddies into a pool and then place from that pool the piece that has the best match.  This can lead to some poor placements in particular because the solver is greedy. 
+<br /><br />
+In the end, Paikin &amp; Tal want to prioritize placing the piece with the highest confidence first.  However, using only one side to do that is not going to always lead to very good results.  New placement priority:
+
+<ul>
+  <li style="margin-bottom:10px;"><b>Priority #1</b>: Select for placement the piece with the highest number of best buddies at any location.  Break ties based off the piece with the highest mutual compatibility.</li>
+  <li style="margin-bottom:10px;"><b>Priority #2</b>: If no piece has a best buddy at any location, place the piece from the best buddy pool with the highest mutual compatibility with any piece.</li>
+  <li style="margin-bottom:10px;"><b>Priority #3</b>: Recalculate mutual compatibility and pick the piece with the best mutual compatibility.</li>
+</ul>
+
+
+<h3>Results Visualization Tools:</h3>
+
+As mentioned previously, my ability to visually tell the quality of placement was limited to reviewing the outputted image.  This is a poor approach in particular when many pieces may appear similar to one another.  To remedy this problem, I made visualization tools that show the quality of placement results.  Excluding the best buddy visualization tool described previously, three additional visualization tools were created namely:
+
+<ul>
+  <li style="margin-bottom:10px;">Standard Direct Accuracy Visualizer</li>
+  <li style="margin-bottom:10px;">Modified Direct Accuracy Visualizer</li>
+  <li style="margin-bottom:10px;">Neighbor Accuracy Visualizer</li>
+</ul>
+
+Each of these visualizers are described below.
+
+<h3>Standard and Modified Direct Accuracy Visualizer</h3>
+
+When the accuracy of piece is determined via the "direct accuracy" approach, it falls into one of four categories:
+
+<ul>
+  <li style="margin-bottom:10px;"><b>Wrong Puzzle</b>: The piece is placed with pieces that are predominantly from a different puzzle</li>
+  <li style="margin-bottom:10px;"><b>Wrong Location</b>: The piece is placed with pieces from its original puzzle but in the wrong location.</li>
+  <li style="margin-bottom:10px;"><b>Wrong Rotation</b>: The piece is placed in the right location but with the wrong rotation (i.e. not 0 degrees).</li>
+  <li style="margin-bottom:10px;"><b>Correct Location</b>: The piece is placed with no rotation, in its correct location, and in a solved puzzle where pieces from its puzzle are the most common.</li>
+</ul>
+
+Below is a color coded grid showing the color assigned to these four categories.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h4>Wrong<br />&nbsp;&nbsp;Puzzle&nbsp;&nbsp;</h4></th>
+    <th><h4>Wrong<br />&nbsp;&nbsp;Location&nbsp;&nbsp;</h4></th>
+    <th><h4>Wrong<br />&nbsp;&nbsp;Rotation&nbsp;&nbsp;</h4></th>
+    <th><h4>Correct<br />&nbsp;&nbsp;Location&nbsp;&nbsp;</h4></th>
+  </tr>
+  <tr>
+    <td style="background-color: #0000FF"><br />&nbsp;</td>
+    <td style="background-color: #FF0000"><br />&nbsp;</td>
+    <td style="background-color: #FF9933"><br />&nbsp;</td>
+    <td style="background-color: #00CC00"><br />&nbsp;</td>
+  </tr>
+</table>
+<br /><br />
+
+Below are the standard and shiftable direct accuracy visualizations for the two-faced cat image solved as <b>type 2</b> puzzle.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><div style="margin-left:10px;margin-right:10px"><h4>Solved<br /> Image</h4></div></th>
+    <td><br /><div style="text-align:center"><img src="images/blog11/reconstructed_type2_two_faced_cat_2016.04.18_04.43.01.jpg" alt="Blue Design - Original" style="width:512px;height:262px;" /></div><br /></td>
+  </tr>
+  <tr>
+    <th><div style="margin-left:10px;margin-right:10px"><h4>Standard<br />Direct<br />Accuracy</h4></div></th>
+    <td><br /><div style="text-align:center"><img src="images/blog11/std_direct_acc_type2_two_faced_cat_2016.04.18_04.43.01.jpg" alt="Blue Design - Original" style="width:512px;height:262px;" /></div><br /></td>
+  </tr>
+  <tr>
+    <th><div style="margin-left:10px;margin-right:10px"><h4>Shiftable<br />Direct<br />Accuracy</h4></div></th>
+    <td><br /><div style="text-align:center"><img src="images/blog11/mod_direct_acc_type2_two_faced_cat_2016.04.18_04.43.01.jpg" alt="Blue Design - Original" style="width:512px;height:262px;" /></div><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+<h3>Neighbor Accuracy Visualizer:</h3>
+
+Unlike direct accuracy where a single correct/wrong designation is given to each piece, each piece is given multiple neighbor accuracy classifications (i.e. one for each side).  Hence, its case is much closer to the approach needed to visualize best buddy accuracy.  
+<br /><br />
+Each puzzle piece is assigned to one of three accuracy categories namely:
+
+<ul>
+  <li style="margin-bottom:10px;"><b>Wrong Puzzle</b>: The piece is placed adjacent to a piece from a different puzzle.  What is more, this other puzzle does not have the most pieces in the solved puzzle</li>
+  <li style="margin-bottom:10px;"><b>Wrong Neighbor</b>: The piece is not next to the same piece's side as in the original image.</li>
+  <li style="margin-bottom:10px;"><b>Correct Neighbor</b>: The side of the piece is assigned to the same side of its neighbor piece that it was in the original puzzle.</li>
+</ul>
+
+Below is a color coded grid showing the color assigned to these three categories.
+
+<br /><br />
+<div >
+ <table style="margin: 0 auto;" border="2">
+  <tr>
+    <th><h4>Wrong<br />&nbsp;&nbsp;Puzzle&nbsp;&nbsp;</h4></th>
+    <th><h4>Wrong<br />&nbsp;&nbsp;Neighbor&nbsp;&nbsp;</h4></th>
+    <th><h4>Correct<br />&nbsp;&nbsp;Neighbor&nbsp;&nbsp;</h4></th>
+  </tr>
+  <tr>
+    <td style="background-color: #0000FF"><br />&nbsp;</td>
+    <td style="background-color: #FF0000"><br />&nbsp;</td>
+    <td style="background-color: #00CC00"><br />&nbsp;</td>
+  </tr>
+</table>
+</div>
+<br /><br />
+
+
+Below is the neighbor accuracy visualizations for the two-faced cat image solved as <b>type 2</b> puzzle.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><div style="margin-left:10px;margin-right:10px"><h4>Neighbor<br />Accuracy</h4></div></th>
+    <td><br /><div style="text-align:center"><img src="images/blog11/neighbor_acc_type2_two_faced_cat_2016.04.18_04.43.01.jpg" alt="Neighbor Accuracy Two Faced Cat" style="width:512px;height:262px;" /></div><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+
+<h3>Improvements for Computer Generated Images:</h3>
+
+Due to variations in the environment as well as in the camera, it is unlikely to get areas in photographs that the same RBG value over a large number of pixels.  That is possible however in computer generated and computer manipulated images.  We saw this issue both in the Che Guevarra image and in the Duck image.  Using a very simple code modification and by disallowing multiple best buddies, I was able to drastically improve my performance on the duck image.  Below is my original code for determining the distance between two pieces.  Note that if the piece to piece distance was 0, I always set the asymmetric distance to 0, even if the second best distance was "0".  In other words, I was prioritizing 0 distance over the undefined case (i.e. divide by 0).  That was causing all sorts of problems.  
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h3>Original Code</h3></th>
+    <th><h3>Improved Code</h3></th> 
+  </tr>
+  <tr>
+    <td><code>
+<br />&nbsp;&nbsp;&nbsp;&nbsp;if piece_to_piece_distance == 0:
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;asym_compatibility = 1
+<br />&nbsp;&nbsp;&nbsp;&nbsp;elif second_best_distance == 0:
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;asym_compatibility = -sys.maxint&nbsp;&nbsp;
+<br />&nbsp;
+</code></td>
+    <td><code>
+<br />&nbsp;&nbsp;&nbsp;&nbsp;if second_best_distance == 0:
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;asym_compatibility = -sys.maxint&nbsp;&nbsp;
+<br />&nbsp;&nbsp;&nbsp;&nbsp;elif second_best_distance == 0:
+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;asym_compatibility = -sys.maxint&nbsp;&nbsp;
+<br />&nbsp;
+</code></td>
+  </tr>
+</table>
+<br /><br />
+
+When I made the change as shown on the left above, my performance on the duck image improved dramatically as shown below.  Note this is solved as a <b>type 1</b> puzzle.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h3>Previous Duck Result</h3></th>
+    <th><h3>Latest Duck Result</h3></th> 
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/duck_type_1.jpg" alt="Duck - Type 1 Solution" style="width:300px;height:250px;" /></div><br /><br /></td>
+    <td><br /><div style="text-align:center"><img src="images/blog11/reconstructed_type1_duck_2016.04.18_03.21.16.bmp" alt="Latest Solved Duck - Type 1" style="width:287px;height:312px;" /></div><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+Below is a visualization of the solved image's neighbor and best buddy accuracies.
+
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><h4>Shiftable Direct Accuracy</h4></th>
+    <th><h4>Neighbor Accuracy</h4></th>
+    <th><h4>Best Buddy Accuracy</h4></th> 
+  </tr>
+  <tr>
+    <td><br /><div style="text-align:center"><img src="images/blog11/mod_direct_acc_type1_duck_2016.04.18_03.21.16.bmp" alt="Latest Solved Duck - Shiftable Direct Accuracy Visualization" style="width:287px;height:312px;" /></div><br /></td>
+    <td><br /><div style="text-align:center"><img src="images/blog11/neighbor_acc_type1_duck_2016.04.18_03.21.16.bmp" alt="Latest Solved Duck - Neighbor Visualization" style="width:287px;height:312px;" /></div><br /></td>
+    <td><br /><div style="text-align:center"><img src="images/blog11/best_buddy_acc_type1_duck_2016.04.18_03.21.16.bmp" alt="Latest Solved Duck - Best Buddy Visualization" style="width:287px;height:312px;" /></div><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+<h3>Using Vertical Pixel Difference Information in Calculation Inter-Piece Distance:</h3> 
+
+This was an idea that originated from a meeting between Dr. Pollett and myself a few weeks back.  It was intended to find pixels of increased interested by using vertical changes in addition to horizontal changes in value.  The initial experiments this week were rather crude.  However, it merits more consideration once a better approach is devised.
+
+<h3>Placed Speed-up Via Heap Cleanup:</h3> 
+
+A max heap is used to store the candidates for placing. As pieces are placed, new elements are added to the heap.  As such, the pairings that are very poor sink to the bottom of the heap and are never removed even if that pairing becomes impossible because a piece was placed or because a slot became filled.  To speed up placement, I now added a feature to periodically clean the heap.  The algorithm for cleaning is the heap size must exceed at least a million elements and it must be at least 100 placements before teh last heap cleaning.  Tweaking of these parameters would be required to improve the performance gain from this approach.
+
+
+<br /><br /><br />
+<h2 id="blog10">Summary of the Meeting on April 12, 2016:</h2>
+
+In Cho <i>et. al.</i>, two puzzle result accuracy measures were proposed, namely "direct accuracy" and "neighbor accuracy."  Direct accuracy is defined as the number of pieces placed in the correct location with respect to the original image.  In simplified versions of the jigsaw puzzle problem, this definition has sufficient clarity.  However, it runs into issues in the following cases:
+<br /><br />
+<ul>
+  <li style="margin-bottom:10px;"><b>Multiple Puzzles</b>: When there are multiple puzzles being solved simultaneously, this metric does not define how to handle the case where there may be pieces from multiple puzzles in the solved image.  What is more, when solving multiple puzzles, some of the pieces from the original image may not be present in the "most compatible" solved image.</li>
+  <li style="margin-bottom:10px;"><b>Non-Fixed Puzzle Boundaries</b>: Direct accuracy is known to be susceptible to shifts in the input image.  This sensitivity is exacerbated the puzzle size is treated as unknown as a single misplaced piece can cause the direct accuracy to become zero.</li>
+</ul>
+
+<h3>EDAS</h3>
+To address these limitations when solving multiple puzzles with non-fixed puzzle sizes, I proposed a new metric known as the "<b>Enhanced Direct Accuracy Score</b>" (EDAS) that is defined as:
+
+<br /><br /> 
+
+<div style="auto;width:fit-content;margin-right:auto;margin-left:auto;">`EDAS_i = \max_{s_j \in S}((c_(ij))/(n_i + \sum_{k \ne i}(m_(kj))))`</div>
+<br />
+given:
+<ul>
+ <li style="margin-bottom:10px;">`P` - Set of all input (i.e. original) puzzles</li>
+ <li style="margin-bottom:10px;">`p_i` - `i^(th)` input puzzle in the set `P`</li>
+ <li style="margin-bottom:10px;">`n_i` - Number of pieces in puzzle `p_i`</li>
+ <li style="margin-bottom:10px;">`S` - Set of all solved puzzles (where `|S| &#60;= |P|`)</li>
+ <li style="margin-bottom:10px;">`s_j` - `j^(th)` input puzzle in the set `S`</li>
+ <li style="margin-bottom:10px;">`m_(kj)` - Number of pieces from input puzzle `p_k` that are in solved puzzle `s_j`</li>
+ <li style="margin-bottom:10px;">`c_(kj)` - Number of pieces from input puzzle `p_k` that are placed in their correct location in `s_j` (where `0&#60;=c_(kj)&#60;=m_(kj)`)</li>
+</ul>
+<br />
+EDAS addresses the issue of multiple puzzles by considering both pieces from other input puzzles as well as pieces from puzzles other than the puzzle of interest.  An additional benefit of EDAS is that when solving a single puzzle with a known fixed size, EDAS and the direct accuracy are equivalent.  
+<br /><br />
+One additional important note is that EDAS is score and not a measure of accuracy.  While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements (since `(n_i + \sum_{k \ne i}m_(kj))` may be greater than the number of pieces in the solved puzzle `p_j`).
+
+<h3>S-EDAS</h3>
+
+While EDAS effectively defines how to account for multiple puzzles in the accuracy score, it does not address the issue of non-fixed puzzle boundaries.  To handle that, we propose the <b><i>Shiftable</i> Enhanced Direct Accuracy Score</b> (S-EDAS).  The way this approach differs from EDAS is that EDAS always considered the top-left puzzle piece location as the reference point when determining the correct placement of pieces.  In contrast, S-EDAS allows that reference location to shift with the maximum shifting being the minimum Manhattan distance between the upper left corner of the image and any placed piece.  
+<br /><br />
+It is important to note that S-EDAS should not be considered a replacement for EDAS.  Rather, it is supplemental as high direct accuracy score indicates that the solved image has no shifting while same conclusion can not necessarily be drawn from a high S-EDAS score (for example the image with a high S-EDAS score may be shifted).  Instead S-EDAS is intended to remedy cases both EDAS and direct accuracy are misleadingly punitive.  It is also true though that as a puzzle solution improves that the both EDAS and S-EDAS should increase with both being 1 for a perfectly solved image.
+
+<h3>ENAS</h3>
+
+The second metric for measuring the quality of a solved puzzle is "neighbor accuracy" which is the "fraction of the four neighbor nodes that that are assigned the correct [piece] (i.e. [pieces] that were adjacent in the original image)." While neighbor accuracy is more immune than direct accuracy to shifts and non-fixed puzzle borders, it is still is not designed to handle solving multiple puzzles. Due to this, we propose the <b>Enhanced Neighbor Accuracy Score</b> (ENAS) defined as:
+
+<div style="auto;width:fit-content;margin-right:auto;margin-left:auto;">`ENAS_i = \max_{s_j \in S}((a_(ij))/(q*(n_i + \sum_{k \ne i}(m_(kj)))))`</div>
+
+given:
+<ul>
+ <li style="margin-bottom:10px;">`P` - Set of all input (i.e. original) puzzles</li>
+ <li style="margin-bottom:10px;">`p_i` - `i^(th)` input puzzle in the set `P`</li>
+ <li style="margin-bottom:10px;">`n_i` - Number of pieces in puzzle `p_i`</li>
+ <li style="margin-bottom:10px;">`S` - Set of all solved puzzles (where `|S| &#60;= |P|`)</li>
+ <li style="margin-bottom:10px;">`s_j` - `j^(th)` input puzzle in the set `S`</li>
+ <li style="margin-bottom:10px;">`m_(kj)` - Number of pieces from input puzzle `p_k` that are in solved puzzle `s_j`</li>
+ <li style="margin-bottom:10px;">`a_(kj)` - Number of sides of each piece from input puzzle `p_i` that is adjacent to the same neighbor side as in the original image.</li>
+ <li style="margin-bottom:10px;">`q` - Number of sides for each piece (e.g. 4).</li>
+</ul>
+<br />
+
+
+<br />
+
+<h2 id="blog09">Summary of the Meeting on April 5, 2016:</h2>
+
+There was no meeting last week due to San Jose State's Spring Break.  Over the last two weeks, I have been working on refining and improving my implementation of the Paikin &amp; Tal solver.  Significant accomplishments include:
+
+<ul>
+
+<li style="margin-bottom:10px;"><b>Placer Speedup:</b> For a board of a few hundred pieces, the placing stage would take several minutes which is much longer than it should.  In the version uploaded to fulfill the requirements of <a href="?paikin_tal_solver.html">deliverable #3</a>, the implementation uses a heap to manage the pairings of best buddy pool to open locations.  Additional speed-up may be possible if I periodically clean the pool, but that remains to be investigated.</li>
+
+<li style="margin-bottom:10px;"><b>Optional Board Dimensions Attribute:</b> In earlier attempts to solve the Jigsaw puzzle problem, the algorithm was supplied with the size of the board which constrained the placement.  This is now only an optional feature in Paikin &amp; Tal's implementation.  I have implemented this feature.</li>
+
+<li style="margin-bottom:10px;"><b>Support for Multiple Puzzles:</b> In my earlier blog posting two weeks ago, my implementation only supported a single puzzle.  This has been enhanced.</li>
+
+<li style="margin-bottom:10px;"><b>Compatibility Recalculator:</b> One of the methods for measuring the accuracy of a placement is the number of correct neighbors versus the total number of piece neighbors. Support for this feature will comprise deliverable #4 for my CS297.</li>
+
+<li style="margin-bottom:10px;"><b>Laying the Foundation for the Neighbor Based Accuracy Method:</b> One of the methods for measuring the accuracy of a placement is the number of correct neighbors versus the total number of piece neighbors. Support for this feature will comprise deliverable #4 as enumerated in my <a href="?CS297Proposal.html">CS297 proposal</a>.</li>
+
+<li style="margin-bottom:10px;"><b>General Bug Fixes:</b> Overall the solver does a good job on most images.  With that said, it does not mean the code is without bugs.  I am fixing bugs as I find them.  I expect this to be a long, ongoing process.</li>
+</ul>
+
+Below is the input and output of my implementation when solving two images at once as <a href="files/Zayd_Hammoudeh_-_Square_Jigsaw_Puzzle_Problem_Literature_Review.pdf">type-2 puzzles</a>.
+<br/><br/>
+
+<table border="2" align="center">
+  <tr>
+    <th>  </th> 
+    <th><h3>Original Image</h3></th>
+    <th><h3>Solved Image</h3></th> 
+  </tr>
+  <tr>
+    <td><div style="text-align:center"><b>Image #1:</b><br /><br />&nbsp;&nbsp;&nbsp;(672 Pieces)&nbsp;&nbsp;&nbsp;</div></td> 
+    <td><br /><br /><div style="text-align:center"><img src="images/solver_results_2016_04_05/original_07.jpg" alt="Blue Design - Original" style="width:450px;height:300px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/solver_results_2016_04_05/solved_07_with_mcgill_20.jpg" alt="Blue Design - Solver" style="width:448px;height:294px;" /></div><br /><br /></td>
+  </tr>
+  <tr>
+    <td><div style="text-align:center"><b>Image #2:</b><br /><br />&nbsp;&nbsp;&nbsp;(540 Pieces)&nbsp;&nbsp;&nbsp;</div></td> 
+    <td><br /><br /><div style="text-align:center"><img src="images/solver_results_2016_04_05/original_mcgill_20.jpg" alt="Che - Original" style="width:378px;height:280px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/solver_results_2016_04_05/solved_mcgill_20_with_07.jpg" alt="Che - Original" style="width:378px;height:280px;" /></div><br /><br /></td>
+  </tr>
+</table>
+<br /><br />
+
+Based off my experiments with Paikin and Tal's tool, below are what I see as the weak points in the algorithm:
+<ul>
+
+    <li style="margin-bottom:10px;"><b>Images with Significant Areas of Low Texture Space:</b> This weakness is mentioned by Paikin &amp; and Tal as well.  When there is low density, the tool does poorly.</li>
+
+    <li style="margin-bottom:10px;"><b>Improved Picking of the Starting Piece:</b> The start piece has a huge impact on the performance of the algorithm since it is greedy.  Perhaps use a depth search to find the area of connected components.</li>
+
+    <li style="margin-bottom:10px;"><b>Spawning New Boards:</b> Paikin &amp; Tal use a fixed value as the threshold to spawn new boards.  This approach is prone to error as on large puzzles with multiple possible starting piece candidates, you may spwan two boards with pieces from the same source image.</li>
+
+    <li style="margin-bottom:10px;"><b>Lack of Best Buddies:</b> In earlier attempts to solve the Jigsaw puzzle problem, the algorithm was supplied with the size of the board which constrained the placement.  This is now only an optional feature in Paikin &amp; Tal's implementation.  I have implemented this feature.</li>
+
+    <li style="margin-bottom:10px;"><b>Smaller Puzzle Piece Size:</b> The standard puzzle piece size for a long time has been 28 pixels by 28 pixels.  I have experimented with pieces 25 pixels by 25 pixels (about 20% smaller) and the accuracy goes down.  This would point to the need for an improved distance metric.</li>
+
+    <li style="margin-bottom:10px;"><b>Clearing the Best Buddy Pool?:</b> When a new board is spawned, all pieces in the best buddy pool are cleared.  I am not sure this is the best approach given the issue mentioned previously with the recalculation approach (whcih will be needed for any pieces in that puzzle.</li>
+</ul>
+
+Additional features my algorithm would benefit from:
+<ul>
+
+<li style="margin-bottom:10px;"><b>Multithreading:</b> The majority of the algorithms runtime is spent calculating the interpiece distances.  Since most of the calculations are independent, it could be made multithreaded in a relatively straightforward manner.</li>
+
+<li style="margin-bottom:10px;"><b>Prohibitive Interpiece Distances:</b> One of the speed-ups Paikin &amp; Tal propose is to skip calculating the interpiece distance for pieces when the distance between the average pixel weight is above a certain threshold.  This should greatly speed up execution if implemented.</li>
+
+<li style="margin-bottom:10px;"><b>Coloring of incorrectly placed Pieces:</b> It will be useful to visualize incorrectly placed pieces.  A feature will be needed to support this approach.</li>
+</ul>
+
+
+
+<br /><br />
+<h2 id="blog07">Summary of the Meeting on March 22, 2016:</h2>
+
+Significant progress on the Paikin &amp; Tal solver.  A few notes on the accomplishments:<br /><br />
+
+<ul>
+
+<li style="margin-bottom:10px;"><b>Dataset Acquisition:</b> Most of the premier papers that work on the jigsaw puzzle problem reference a handful of datasets.  Examples of datasets include: Cho <i>et. al.</i> (2010), McGill, and the Ben-Gurion University dataset from Sholomon <i>et. al.</i>.  I found some of the datasets located on the <a href="https://www.cs.bgu.ac.il/~icvl/icvl_projects/automatic-jigsaw-puzzle-solving/">website for Sholomon <i>et. al.</i>'s work</a>.  This blog post includes work from some of the images in the dataset.</li>
+
+<li style="margin-bottom:10px;"><b>Testing Architecture:</b> To ensure the correctness of the work, I implemented a testing architecture for both the puzzle importer and the inter-piece distance modules.  I also created a toy board to use to verify the proper implementation of the project.  Both are very useful for finding bugs.</li>
+
+<li style="margin-bottom:10px;"><b>Mutual Compatibility and Asymmetric Compatibility Calculators:</b> I rewrote part of the implementation from last week around asymmetric distance to make the storage more streamlined and the computation of the respective distances faster.  Using this modified approach, it calculating asymmetric distance was made more efficient.</li>
+
+<li style="margin-bottom:10px;"><b>Starting Piece Calculator:</b> This is now verified working.  It may need some efficiency improvements, but all in all, it is working sufficiently well for proof of concept.</li>
+
+<li style="margin-bottom:10px;"><b>Greedy Placer:</b> While the placer itself is not terribly complicated, a lot of backend implementation was required to make use of the vector based calculations discussed last week.  In the end, it will make the implementation far faster and more streamlined.  This is mostly working minus the caveats mentioned below.</li>
+
+</ul>
+
+The Paikin Tal Solver is not yet completed.  Tasks that remain to be implemented include:
+
+<ul>
+    <li style="margin-bottom:10px;">Support for when the compatibilities need to be recalculated</li>
+    <li style="margin-bottom:10px;">Support for multiple boards</li>
+    <li style="margin-bottom:10px;">Architecture for deletion of pieces to test for missing pieces.</li>
+    <li style="margin-bottom:10px;">Optional feature to enable board size requirements.  Whether to do this and how it would work on multiple puzzles remains to be determined.</li>
+</ul>
+
+<h3>Interesting outputs from the solver:</h3>
+
+Note in the images below the black squares represent pieces that were not placed.  These will eventually be filled in by the final solver one the feature to recalculate compatibilities is added.
+<br /><br />
+For this first image, I contrast the output from the original solver versus the Paikin Tal solver.  Note that for type 1, both performed reasonably well although the Paikin Tal did have perfect accuracy for the placed pieces.  For type 2 puzzles, Paikin Tal perform better with the exception that rather than placing the remaining pieces at the bottom of the board, it had a false positive on one end piece which caused the last few pieces to be incorrectly placed.  This indicates the algorithm definitely has room for improvement.
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th>Solver</th>
+    <th>Type 1 Puzzle</th>
+    <th>Type 2 Puzzle</th> 
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center">Original "Naive"<br />Implementation</div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/dist_metric/solved_muffins_300x200_ninth_order.bmp" alt="Muffins - Naive Type 1"/></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/naive_muffins_type_2.jpg" alt="Muffins - Naive Type 2"  /></div><br /><br /></td>
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center">My Paikin &amp; Tal<br />Implementation</div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/muffins_300x200_type_1.jpg" alt="Muffins Paikin and Tal Type 1" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/muffins_300x200_type_2.jpg" alt="Muffins Paikin and Tal Type 2"/></div><br /><br /></td>
+  </tr>
+</table>
+<br /><br />
+One of the images from the McGill image dataset is buildings with one in the foreground and another in the background.  This image is shown in Paikin and Tal's paper as a success case.  Below is the image as a type 2 image from my solver.  Note that the accuracy is quite high and only a couple of pieces are unplaced.  The solver had markedly better performance on this image.
+<br /><br />
+
+<table border="2" align="center">
+  <tr>
+    <th>McGill Image 20</th>
+  </tr>
+  <tr>
+    <td><div style="text-align:center"><img src="images/blog07/McGill_20_type_2.jpg" alt="McGill Image 20" style="width:567px;height:420px;" /></div></td>
+  </tr>
+</table>
+<br /><br />
+The current implementation of the Paikin and Tal algorithm also struggles with the Che Guevara image.  Due to the nature of the Paikin and Tal algorithm requiring multiple pieces in type 1, I decreased the puzzle piece size from 50 to 25.  It is also important to note that the original algorithm forced the board size into the right dimensions while Paikin and Tal's algorithm does not.  In Paikin and Tal's solver, most of the face is correctly assembled; what appears to have happened is the lower left corner has shifted to the top right corner.
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th>Solver</th>
+    <th>Original Image</th>
+    <th>Type 1 Puzzle</th>
+    <th>Type 2 Puzzle</th> 
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center">Original "Naive"<br />Implementation</div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/che_100x100.gif" alt="Che - Original" style="width:200px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/solved_che_100x100.gif" alt="Che - Naive Type 1" style="width:200px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/naive_che_type_2.gif" alt="Che - Naive Type 2" style="width:200px;height:200px;" /></div><br /><br /></td>
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center">My Paikin &amp; Tal<br />Implementation</div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/che_100x100.gif" alt="Che - Original" style="width:200px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/che_type_1.jpg" alt="Che - Naive Type 1" style="width:200px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/che_type_1.jpg" alt="Che - Naive Type 2" style="width:200px;height:200px;" /></div><br /><br /></td>
+  </tr>
+</table>
+<br /><br />
+For the rubber duck, the Paikin and Tal solver overemphasized the white area.  This is because the when two pieces are a direct match as the white space is, the mutual compatibility becomes irrelevant and all of them become their own best buddies.  This caused the white space to cluster in the center, even on a type 1 image.
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th>Original Image</th>
+    <th>Paikin and Tal Type 1<br /> Solver Solution</th> 
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/duck.jpg" alt="Duck - Initial" style="width:200px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/duck_type_1.jpg" alt="Duck - Type 1 Solution" style="width:300px;height:250px;" /></div><br /><br /></td>
+  </tr>
+</table>
+<br /><br />
+The last set of images I will show is the two face cat. My implementation of Paikin and Tal struggled with this image as it grew outside the bounds of the image. 
+<br /><br />
+<table border="2" align="center">
+  <tr>
+    <th><b>Original Image</b></th>
+    <th><b>Type 1 Result</b></th>
+    <th><b>Type 2 Result</b></th>
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/two_faced_cat.jpg" alt="Two Faced Cat Original" style="width:400px;height:200px;" /></div><br /><br /></td>    
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/two_faced_cat_type_1.jpg" alt="Two Faced Cat - Type 1 Solution" style="width:400px;height:300px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/blog07/two_faced_cat_type_2.jpg" alt="Two Faced Cat - Type 2 Solution" style="width:400px;height:300px;" /></div><br /><br /></td>
+  </tr>
+</table>
+
+<h3>Ideas meriting future consideration:</h3>
+
+<ul>
+<li style="margin-bottom:10px;"><b>Disallowing Multiple Best Buddies:</b> The definition of a best buddy by Pomeranz <i>et. al.</i>, Paikin &amp; Tal, as well as others use greater than or equal to define best buddies (see for example equation 4 in Paikin and Tal's paper).  However, this can give poor results in the case of images like Che Guevara and the duck, since in true solid areas, everything is everything else's best buddy.</li>
+
+<li style="margin-bottom:10px;"><b>Use the Worst Case Mutual Compatibility:</b> Paikin and Tal currently place a piece which has maximum compatibility with any open side/slot.  However, this approach has room for improvement.  For example, when placing a piece, it can have neighbors on up to four sides.  Using only the best of the four to do the placement neglects all the bad information from the other sides.  There should be some middle way in this approach.</li>
+
+<li style="margin-bottom:10px;"><b>Resetting the Best Buddies Pool:</b> If all the pieces in the best buddies pool are below a certain threshold, Paikin and Tal spawn a new board (assuming the algorithm is below the specified number of boards).  If all the boards have been spawned, consider resetting the pool to get higher probability pieces.</li>
+
+<li style="margin-bottom:10px;"><b>Focus on Documents Only:</b> Dr. Pollett and I hypothesize that reconstructing documents may in many ways be a more difficult problem than reconstructing images.  We may look into that as a possible thesis topic.</li>
+</ul>
+
+<br /><br />
+<h2 id="blog06">Summary of the Meeting on March 15, 2016:</h2>
+
+In last week's meeting, Dr. Pollett and I decided that I would implement my own version of Paikin and Tal's jigsaw puzzle solver algorithm.  In the first two weeks of the semester, I had written both a jigsaw puzzle generator and a very naive solver.  While it may have been faster initially to reuse all or most of that code, I decided against doing so for the following reasons:
+
+<ol>
+    <li style="margin-bottom:10px;"><b>Use of the PIL Library:</b> Python's PIL library does a great job for basic reading, writing, and resizing of images.  However, it runs out of steam when one wants to do more advanced image editing analysis, much less computer vision.  When considering alternatives, the two best options were either scikit-image or OpenCV.  In the end, I went with OpenCV because it appeared to be an overall more powerful package.</li>
+
+    <li style="margin-bottom:10px;"><b>Individual Pixel-Based Image Analysis:</b> My original naive implementation of both the solver and puzzle generator did most operations at the pixel level.  While the pixel level will work, it is both more complicated to implemented and slower than doing vector or matrix based operations.  What is more, it makes the code much more verbose.  Had I known the power of NumPy originally, I would have used it.  After doing some reading, I saw NumPy was a good fit here so I am now doing all of my mathematical calculations using NumPy.</li>
+
+    <li style="margin-bottom:10px;"><b>Lack of Focus on Runtime Performance:</b> In my original implementation, I focused less on implementing for speed and more for adding features.  For small puzzles, that approach worked well enough.  However, I could see it was beginning to break down as I tried to solve larger images.  In my new implementation, one of my goals is to make the tool run at speeds similar to what Taikin and Pal achieved.</li>
+
+    <li style="margin-bottom:10px;"><b>Lack of Multiple Puzzle Support:</b> My original implementation never really conceived the idea that there may be pieces from multiple puzzles at once.  When doing the implementation this time around, I made sure to include multiple puzzle support.</li>
+
+    <li style="margin-bottom:10px;"><b>Lack of Missing Piece Support:</b> My previous implementation assumed that every piece in the puzzle would always be present.  When doing the implementation this time around, I made sure that I ensured the code would be robust enough to handle missing puzzle pieces.</li>
+</ol>
+
+Another issue I ran into is that many of the core Python libraries do not run well in Windows (my primary development environment).  When I was just using PIL before, that was not a problem.  However, to use more of these advances packages, I needed to solve this problem.  My solution was to use the <a href="https://www.continuum.io/why-anaconda">Miniconda Python distribution</a>.  The libraries I am currently using are:
+
+<ul>
+<li style="margin-bottom:10px;"><b>OpenCV</b> - Version 2</li>
+<li style="margin-bottom:10px;"><b>NumPy</b></li>
+</ul>
+
+For those running Windows that would like to mimic my Python environment, I have uploaded a <a href="http://www.cs.sjsu.edu/faculty/pollett/masters/Semesters/Spring16/zayd/files/install_conda_packages.bat">Windows Batch install file (.bat)</a> that will automatically configure all needed dependencies.
+
+As mentioned before, this implementation is essentially new from the ground up.  The feature list compared to what I originally did take a step backwards.  Below are the features I worked on this week:
+
+<ul>
+    <li style="margin-bottom:10px;"><b>OpenCV Image Importer: </b> Working and Verified</li>
+    <li style="margin-bottom:10px;"><b>RBG to LAB Colorspace Conversion: </b> Appears to be working.</li>
+    <li style="margin-bottom:10px;"><b>Puzzle Piece Generator: </b> Appears to be working.</li>
+    <li style="margin-bottom:10px;"><b>Puzzle Piece Shuffler: </b> Appears to be working.</li>
+    <li style="margin-bottom:10px;"><b>Puzzle Piece Reconstructor: </b> Appears to be working.</li>
+    <li style="margin-bottom:10px;"><b>Asymmetric Distance Calculator: </b> Appears to be working but needs more verification.</li>
+    <li style="margin-bottom:10px;"><b>Best Buddy Finder: </b> Appears to be working but needs more verification.</li>
+</ul>
+
+
+<br /><br />
+<h2 id="blog05">Summary of the Meeting on March 8, 2016:</h2>
+
+This is the last scheduled week of the literature review.  I focused on two primary papers this week.  They were:
+
+<ul>
+   <li style="margin-bottom:10px;">Paikin &amp; Tal - "<a href="http://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Paikin_Solving_Multiple_Square_2015_CVPR_paper.pdf">Solving Multiple Jigsaw Puzzles with Missing Pieces - PDF</a>" (2015)</li>
+   <li style="margin-bottom:10px;">Son <i>et. al.</i> - "<a href="http://www.cc.gatech.edu/~hays/papers/puzzle_eccv14.pdf">Solving Square Jigsaw Puzzles with Loop Constraints - PDF</a>" (2014)</li>
+</ul>
+
+Paikin and Tal's work really pushed the state of the art by solving puzzles of unknown size and shape which had missing pieces. Their approach is very plausible and intuitive. I have posted my review slides for all of the papers on the <a href="?literature_review.html">literature review</a> page. I encourage anyone who is interested in working on the jigsaw puzzle solver to review this document as part of their process to become acquainted with the material.<br /><br />
+
+As outlined in my <a href="?CS297Proposal.html">proposal for CS297</a>, the next step after the literature review is to implement one puzzle solver technique.  I had previously implemented a solver as described in my <a href="#blog02">week #2 blog posting</a>.  My implementation for that solver was in retrospect rather poor as it did not incorporate many of the problem's latest techniques (and added complications).  In this new implementation, I intend to try to duplicate the results of Paikan and Tal using their algorithm.  This will eventually be used as a sort of "test bench" for new approaches and techniques.
+
+
+<h3>Ideas meriting future consideration:</h3>
+<ul>
+   <li style="margin-bottom:10px;"><b>Confident Placing of "Super Pieces"</b> - Paikin and Tal focused on <i>confidently</i> placing blocks one by one in the puzzle.  One of the important points in Son <i>et. al.</i>'s paper is the idea of building small loops.  The benefit of this over Paikin's approach is that when I place pieces one at a time, I only can make a decision based off one border (generally).  In contrast, when I place a 2 by 2 block of four pieces, I can make a decision of placement based off more borders.  This may improve the placement accuracy.</li>
+</ul>
+
+<br />
+<h2 id="blog04">Summary of the Meeting on March 1, 2016:</h2>
+
+As mentioned in last week's blog post, this week I continued the literature review of existing work done on the jigsaw puzzle problem.  I focused on two primary papers this week namely:
+
+<ul>
+   <li style="margin-bottom:10px;"> Sholomon <i>et. al.</i> - "<a href="http://www.cv-foundation.org/openaccess/content_cvpr_2013/papers/Sholomon_A_Genetic_Algorithm-Based_2013_CVPR_paper.pdf">A Genetic Algorithm-Based Solver for Very Large Jigsaw Puzzles - PDF</a>" (2013)</li>
+   <li style="margin-bottom:10px;"> Paikin &amp; Tal - "<a href="http://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Paikin_Solving_Multiple_Square_2015_CVPR_paper.pdf">Solving Multiple Jigsaw Puzzles with Missing Pieces - PDF</a>" (2015)</li>
+</ul>
+
+Additional papers I did tertiary reviews of are:
+
+<ul>
+   <li style="margin-bottom:10px;"> Wu - "<a href="http://scholarworks.sjsu.edu/etd_projects/389/">Using Probabilistic Graphical Models to Solve NPcomplete Puzzle Problems - PDF</a>" (2015)</li>
+   <li style="margin-bottom:10px;"> Son <i>et. al.</i> - "<a href="http://www.cc.gatech.edu/~hays/papers/puzzle_eccv14.pdf">Solving Square Jigsaw Puzzles with Loop Constraints - PDF</a>" (2014)</li>
+</ul>
+
+The latter of these two papers definitely merits a full read through.  I most likely will do that this coming week.
+<br /><br />
+<b>Possible Area of Future Investigation</b>: Sholomon <i>et. al.</i> mention in their paper (which is a really good read) the idea of puzzles with extra pieces that are not valid.  This is essentially the idea of a "junk" piece that must be detected and discard.  This may be a good topic for the thesis.
+
+<br /><br />
+<h2 id="blog03">Summary of the Meeting on February 23, 2016:</h2>
+
+As outlined in <a href="?CS297Proposal.html">my CS297 proposal</a>, the next three weeks will be devoted to performing a literature review of existing techniques and solutions to the jigsaw puzzle problem.  I will be regularly uploading working copies of my presentation to GitHub.  The list of papers I am looking at this week are:
+
+<ul>
+   <li style="margin-bottom:10px;"> Cho <i>et. al.</i> - "<a href="http://people.csail.mit.edu/taegsang/Documents/CVPRPatch.pdf">The Patch Transform and its Applications to Image Editing - PDF</a>" (2008)</li>
+   <li style="margin-bottom:10px;"> Cho <i>et. al.</i> - "<a href="http://people.csail.mit.edu/taegsang/Documents/JigsawSolver.pdf">A Probabilistic Image Jigsaw Puzzle Solver - PDF</a>" (2010)</li>
+   <li style="margin-bottom:10px;"> Pomeranz <i>et. al.</i> - "<a href="https://www.cs.bgu.ac.il/~obs/Publications/2011-Pomeranz_Shemesh_and_Ben_Shahar-A_Fully_Automated_Greedy_Square_Jigsaw_Puzzle_Solver.pdf">A fully automated greedy square jigsaw puzzle solver - PDF</a>" (2011)</li>
+</ul>
+
+<h3>Update on Pickle Support:</h3> As mentioned in last week's section "", one of the deficiencies of my existing implementation of the square jigsaw puzzle solver was the lack of support for Python's pickle page.  This limitation has since been fixed and Pickle seems to be fully working.
+
+<h3>Comments on my Solver from Week #2:</h3>
+
+As I read the different papers, I am compiling a list of comments on my existing solver:
+
+<ul>
+   <li style="margin-bottom:10px;"><b>Patch Size:</b> In my original work, I was using patches of size 50px by 50px.  In the literature, most patches are far smaller in size (e.g. 7px by 7px in Cho 2010).</li>
+   <li style="margin-bottom:10px;"><b>Red-Green-Blue (RGB):</b> In Python's Pillow library, the default encoding of an image pixel is in RGB.  In contrast, most of the literature uses LAB (<span style="text-decoration: underline;">L</span>ightness and <span style="text-decoration: underline;">a</span>/<span style="text-decoration: underline;">b</span> color opponent dimensions.</li>
+</ul>
+<h3>Ideas meriting future consideration:</h3>
+<ul>
+    <li style="margin-bottom:10px;"><b>Agglomerative Hierarchical Clustering</b> - Nothing in the literate I had read so far describes the jigsaw puzzle problem in terms of hierarchical clustering, and I do not yet know why that is.  When solving puzzles as I child, I would often start building many different <i>unconnected</i> groups at a time.  Why not build many parts of the puzzle at once then try shuffling them around?  This could be a type of hybrid top-down and bottom up approach.</li>
+    <li style="margin-bottom:10px;"><b>Focus Just on Maximizing Pairwise Accuracy</b> - It seems to me an entire thesis topic would be how to maximize pairwise accuracy between pieces.  As this predictor increases, the need for complex algorithms significantly decreases (to the point of being linear time if the pairwise accuracy is 1).</li>
+    <li style="margin-bottom:10px;"><b>Is patch reuse such a bad thing?</b> - If I expect to get 100% accuracy, then I can appreciate why patch re-use would be an issue.  However, if I get a better image be reusing a piece, maybe that is not su .</li>
+</ul>
+<br />
+<h2 id="blog02">Summary of the Meeting on February 16, 2016:</h2>
+
+This week I worked on a very basic bottom-up jigsaw puzzle solver; it is by no-means optimized.  It was meant more as a learning vehicle to get experience with the problem.  Below is the basic procedure:
+<ol>
+    <li style="margin-bottom:10px;">Parse the original image into the specified grid size.  Add all of the pieces to the "<b>unexplored set</b>."</li>
+    <li style="margin-bottom:10px;">Select a single piece to serve as the seed of the puzzle.  Currently I try to select a piece close to the center as a simplification of the problem.  This piece is then added the the "<b>frontier set</b>."</li>
+    <li style="margin-bottom:10px;">Compare all pieces in the unexplored set to all open sides (i.e. those where a new piece can be placed) of pieces in the frontier set.  Select the piece and side with the minimum distance.</li>
+    <li style="margin-bottom:10px;">Remove the piece with the minimum distance from the unexplored set and place it into the frontier set.  Check whether minimum distance piece and its neighbors have no open sides.  If they do not, remove them from the frontier set.</li>
+    <li style="margin-bottom:10px;">Repeat the steps #3 and #4 until all pieces have been placed</li>
+</ol>
+
+<b>Note:</b> One additional complexity I added is that I allow the entire board to be rotatable by 90 degrees.  This concession is needed because of the support for puzzle piece notation.  This actually makes solving the puzzle substantially harder since the board can grow in unpredictable ways.<br /><br />
+
+<h3>The Danger of Image Borders:</h3>
+
+Borders or solid areas around the edge of an image can be the most likely causes of an error.  Take below this puzzle of Che Guevara (just a random image I selected; no political meaning intended). 
+<br /><br />
+<div style="text-align:center"><img src="images/pre_che_100x100.gif" alt="Che Guevara Puzzle" style="width:200px;height:200px;" /></div>
+<br />
+The puzzle looks as though it should be very easy to solve.  However, when it is run through the tool, it runs into a very obvious problem as shown below.
+<br /><br />
+<div style="text-align:center"><img src="images/solved_che_100x100.gif" alt="Che Guevara Puzzle" style="width:200px;height:200px;" /></div>
+<br />
+Notice how in the image, it put all of the white borders together because obviously there was no color difference between them.  This caused the image to be split in two.  <b>This is the danger of relying only on micro-information</b>
+
+<h3>The Complication of Rotating Images:</h3>
+
+Much of the previous work on the jigsaw puzzle problem did not allow piece rotation.  I originally did not fully appreciate the great simplification that caused.  In fact, not allowing rotation reduces the number of possible permutations by over 16 times.  Takes this simple image of a large ship.  When rotation is not allow, my tool is able to correctly identify solve the puzzle as shown below:
+<br /><br />
+<div style="text-align:center"><img src="images/pre_boat_100x100.jpg" alt="Board Solved without Rotation" style="width:200px;height:200px;" /></div>
+<br /><br />
+When rotation is enabled, the solution is very different.
+<br /><br />
+<div style="text-align:center"><img src="images/solved_boat_100x100_with_rotation.jpg" alt="Boat with Rotation" style="width:200px;height:200px;" /></div>
+<br /><br />
+Notice how the two bottom pieces are placed side by side because of their similarity due to the brown ground. <b>Again, this is the danger of relying solely on micro-information and not macro information.</b>
+
+<h3>Importance of the Distance Metric:</h3>
+
+Depending on the distance metric, you may get very different puzzle solutions.  The extent to which the solutions differed actually really surprised me.  Below is the notation used to described each of the piece distance functions.
+
+<b>Notation:</b>
+<ul>
+    <li style="margin-bottom:10px;">`p_i` : Piece `i`</li>
+    <li style="margin-bottom:10px;">`w` : Width of the piece in pixels</li>
+    <li style="margin-bottom:10px;">`c_(i,j)` : Color `j` for piece `p_i` in the (Red, Blue, Green) Spectrum</li>
+    <li style="margin-bottom:10px;">`s_(i,k)` : `k^(th)` side (e.g. top, right, bottom, left) of piece `p_i`</li>
+    <li style="margin-bottom:10px;">`d(p_n,p_m,s_(n,k))`: Distance between pieces `p_n` and `p_m` when `p_m` is placed on the `k^(th)` of `p_n`</li>
+</ul>
+
+<b>Original Image:</b> The original image for this example is:
+<br /><br />
+<div style="text-align:center"><img src="images/dist_metric/pre_muffins_300x200.bmp" alt="Muffins Couch Puzzle - First Order" /></div>
+<br /><br />
+
+<b>Example #1:</b> First Order where `d(p_n,p_m,s_(n,k)) = \sum_(w) \sum_j |c_(n,j)-c_(m,j)|`
+<br /><br />
+Notice in this example, that the image has a large portion that is correct (the bottom half) and then the top half is all scrambled.  This is explained in more detail later on.
+<br /><br />
+<div style="text-align:center"><img src="images/dist_metric/solved_muffins_300x200_first_order.bmp" alt="Muffins Couch Puzzle - First Order" /></div>
+<br /><br />
+
+<b>Example #2:</b> Ninth Order where `d(p_n,p_m,s_(n,k)) = \sum_(w) \sum_j |c_(n,j)-c_(m,j)|^9`
+<br /><br />
+When the distance equation is increased to the ninth order, the image quality improves substantially overall. However, some of the pieces it got right before it now gets wrong (for example the lower right corner of the face).
+<br /><br />
+<div style="text-align:center"><img src="images/dist_metric/solved_muffins_300x200_ninth_order.bmp" alt="Muffins Couch Puzzle - Ninth Order" /></div>
+
+
+<h3>Importance of a Single Misplaced Piece:</h3>
+
+In example #1, you will notice that a single piece is highlighted in red.  This piece was the 14 piece placed.  This piece should have been placed near the bottom right corner.  Until that point, only two pieces had been misplaced (highlighted in blue), and those two were simply transposed and could have been easily cleaned later.  After piece 14 was placed, the quality of the solution dropped dramatically. Since the program does not currently fix a hard border around the board, the solution started growing vertically instead of horizontally.   
+<br /><br />
+<b>Remedy</b>: If one piece can have such a deleterious effect, we need some way to detect such problematic moves and then to backtrack.  The backtracking is the easy part; its the detection that is difficult.
+
+<h3>Bigger is Not Necessarily Harder:</h3>
+
+The difficulty of solving the puzzle seems much more to do with the texture of the image, than its size.  Take two examples.  In both, I place an the original image side by side with the puzzle solver's solution.  Notice for the duck, the solver outputs a very poor image due to the substantial amount of solid colors and the border.  The solution is so poor, one would be hard pressed to know it was a rubber duck.  In contrast, take the "two-faced cat" which is exactly twice as large as the duck.  While the solution is not ideal, most of the solution appears correct.   
+<br /><br />
+
+<table border="2" align="center">
+  <tr>
+    <th>Original Image</th>
+    <th>Solver Solution</th> 
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center"><img src="images/big_versus_small/pre_duck.bmp" alt="Duck - Initial" style="width:200px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/big_versus_small/solved_duck.bmp" alt="Duck - Solution" style="width:200px;height:200px;" /></div><br /><br /></td>
+  </tr>
+  <tr>
+    <td><br /><br /><div style="text-align:center"><img src="images/big_versus_small/pre_two_faced_cat.jpg" alt="Two-Faced Cat - Initial" style="width:400px;height:200px;" /></div><br /><br /></td>
+    <td><br /><br /><div style="text-align:center"><img src="images/big_versus_small/solved_two_faced_cat.jpg" alt="Two-Faced Cat - Solution" style="width:400px;height:200px;" /></div><br /><br /></td>
+  </tr>
+</table>
+
+
+
+
+<h3>Ideas meriting future consideration:</h3>
+<ul>
+    <li style="margin-bottom:10px;"><b>Hybrid Bottom-Up and Top-Down</b> - In a very tertiary view of the literature, I did not see any doing a hybrid bottom up and top-down approach.  However, I think this is an idea that <i>could</i> work.  It is also one of the best ways to get macro information about the picture.  One simple way to do this secondary top-down search would be a local beam search.</li>
+    <li style="margin-bottom:10px;"><b>Using More than One Edge for Edge Distance</b>: When building the puzzle, I currently treat each puzzle edge independently.  However, that is often a poor strategy as I ignore the information from neighboring adjacent edges that may be useful.  I also need to look if this is currently being done in other work.</li>
+    <li style="margin-bottom:10px;"><b>Fix Pickle Support</b> - I noticed that when exporting a puzzle to Pickle that it was not importing properly.  There have been some issues with Pillow in that regard.  Not a showstopper, but worth fixing.</li>
+</ul>
+<br /><br />
+<h2 id="blog01">Summary of the Meeting on February 9, 2016:</h2>
+
+The first deliverable as described in my proposal is a puzzle generator.  This was originally scheduled to be a two week task.  However, with some late nights and hard work, I was able to compress these activities into a single week.  I have posted a description of the deliverable <b><a href="http://www.cs.sjsu.edu/faculty/pollett/masters/Semesters/Spring16/zayd/index.shtml?deliverable1.html">here</a></b>.
+<br /><br />
+A few details:
+
+<ol>
+    <li style="margin-bottom:10px;"><b>Language:</b> Python (ver. 2.7.11)</li>
+    <li style="margin-bottom:10px;"><b>Puzzle Piece Board:</b> Supports an optional board when exporting the solved/original puzzle.</li>
+    <li style="margin-bottom:10px;"><b>Puzzle Piece Rotation:</b> Supports optional rotation of the puzzle pieces.</li>
+    <li style="margin-bottom:10px;"><b>Puzzle Piece Autosizing:</b> Autosizes the puzzle and the pieces based off the specified grid size.</li>
+</ol>
+
+<i>A Slight Change in Plans</i>: The original plan was to begin the literature review before working on building a puzzle solver.  Since I am a week ahead of schedule, we decided to work on a basic solver in the next week.
+<h3>Ideas meriting future consideration:</h3>
+<ul>
+    <li style="margin-bottom:10px;"><b>Bottom-Up versus Top Down:</b> Humans solve puzzles in a bottom-up style by placing two pieces together.  This makes sense because they already have macro information about the solution (e.g. the source image).  In the absence of such macro-information, is it better for a computer to do a top-down approach?</li>
+    <li style="margin-bottom:10px;"><b>Unique versus Non-Unique Solutions:</b> In some images (e.g. an all white picture), some pieces may be identical.  We may want to consider as part of this research focus on only one of these two types of images or compare the two types.</li>
+    <li style="margin-bottom:10px;"><b>Solution Analysis Using the Fast Fourier Transform:</b> It is anticipated that a source image <i>may</i> have a unique FFT signature. If that were the case, we may be able to use some version of the discrete fourier transform to quantify the quality of a puzzle solution.</li>
+</ul>
