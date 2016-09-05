@@ -19,41 +19,106 @@
     <li><a href="#blog01">CS297 Week #1: February 9, 2016 Meeting</a></li>
 </ul><br />
 
-<h2 id="blog13">Summary of the Meeting on September 06, 2016:</h2>
+<h2 id="blog13">Summary of the Meeting on September 6, 2016:</h2>
 
-<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">queue  <span style="color: #333333">=</span> []
-nextSegmentNumber <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+For this week, I studied primarily the theoritical foundations of the solved image segmentation.
+
+<div style="text-align:center"><h3>Segmentation Algorithm of Pomeranz <i>et. al.</i></h3></div>
+
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">queue  <span style="color: #333333">= []</span>
+numberOfSegments <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+unassignedPieces <span style="color: #333333">=</span> <span style="color: #333333">{</span> allPieces <span style="color: #333333">}</span>
 
 <span style="color: #888888">// Greedily assign pieces to segments</span>
 <span style="color: #008800; font-weight: bold">while</span> <span style="color: #333333">|</span>unassignedPieces<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">do</span>
 
-	<span style="color: #888888">// If queue is empty, randomly select an unassigned piece</span>
-	<span style="color: #888888">// and put in a new segment</span>
+	<span style="color: #888888">// If queue is empty, select an unassigned piece and make a new segment</span>
 	<span style="color: #008800; font-weight: bold">if</span> <span style="color: #333333">|</span>queue<span style="color: #333333">|</span> <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">then</span>
-		nextPiece <span style="color: #333333">=</span> unassignedPieces.selectFirst()
-		nextPiece.assignToSegment( <span style="color: #333333">++</span>nextSegmentNumber )
+		nextPiece <span style="color: #333333">=</span> unassignedPieces.<span style="color: #cc6600; font-weight: bold">selectNext</span>()
+		nextPiece.<span style="color: #cc6600; font-weight: bold">assignToSegment</span>( <span style="color: #333333">++</span>numberOfSegments )
 		queue.append( nextPiece )
 
 	<span style="color: #888888">// Select piece off the front of the queue</span>
 	selectedPiece <span style="color: #333333">=</span> queue.pop()
 
-	validNeighbors <span style="color: #333333">=</span> selectedPiece.getValidNeighbors()
-	<span style="color: #008800; font-weight: bold">for</span> each neighbor in validNeighbors <span style="color: #008800; font-weight: bold">do</span>
+	validNeighbors <span style="color: #333333">=</span> selectedPiece.<span style="color: #cc6600; font-weight: bold">getValidNeighbors</span>()
+	<span style="color: #008800; font-weight: bold">for each</span> neighbor <span style="color: #008800; font-weight: bold">in</span> validNeighbors <span style="color: #008800; font-weight: bold">do</span>
 		<span style="color: #888888">// Skip already assigned neighbors</span>
-		<span style="color: #008800; font-weight: bold">if</span> neighbor not in unassignedPieces <span style="color: #008800; font-weight: bold">then</span>
+		<span style="color: #008800; font-weight: bold">if</span> neighbor <span style="color: #008800; font-weight: bold">not in</span> unassignedPieces <span style="color: #008800; font-weight: bold">then</span>
 			<span style="color: #008800; font-weight: bold">continue</span>
 
 		<span style="color: #888888">// If neighbor and selected piece are best buddies, make in the same segment</span>
-		<span style="color: #008800; font-weight: bold">if</span> isBestBuddies( selectedPiece, neighbor ) <span style="color: #008800; font-weight: bold">then</span>
-			neighbor.assignToSegment( selectedPiece.segmentNumber )
+		<span style="color: #008800; font-weight: bold">if</span> <span style="color: #cc6600; font-weight: bold">isBestBuddies</span>( selectedPiece, neighbor ) <span style="color: #008800; font-weight: bold">then</span>
+			neighbor.<span style="color: #cc6600; font-weight: bold">assignToSegment</span>( selectedPiece.<span style="color: #cc6600; font-weight: bold">getSegmentNumber</span>() )
 			queue.append( neighbor )
 </pre></div>
 
 <br/>
 <h3>Overview of Key Functions</h3>
 <ul>
-    <li><b></b></li>
-    <li><b></b></li>
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">assignToSegment</span>: Assigns the piece to the specified segment number and removes the piece from the set of unassignedPieces.</li>
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">isBestBuddies</span>: Returns "True" if the two specified pieces are best buddies on the specific side and "False" otherwise.</li>
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">getValidNeighbors</span>: This function gets the top, bottom, left, and right neighbors of the specified piece (if they exist).</li>
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">getSegmentNumber</span>: Returns the assigned segment number for a given piece.</li>
+    <li style="margin-bottom:10px;"><span style="color: #cc6600; font-weight: bold">selectNext</span>: This function selects the first unassigned piece starting in the upper left corner of the image and proceeds in a left-to-right, top-to-bottom fashion.  As such, it searches for the left-most unassigned piece in the first row.  If it does not find it, the second row is searched and so on.</li>
+</ul>
+
+Upon close examination of the algorithm, one can see that it is already immune to the effects of missing pieces.  However, it does have other weakness both generally and as it relates to solving multiple puzzles.
+
+<h3>Deficiencies of Pomeranz <i>et. al.</i>'s Algorithm</h3>
+<ul>
+    <li style="margin-bottom:10px;"><b>Poor Segment Seed Selection</b>: The output of the segmentation algorithm is dependent on the seed piece used to start each segment.  The "left-to-right, top-to-bottom" approach used by Pomeranz <i>et. al.</i> lacks sophistication and has room for improvement.</li>
+    
+    <li style="margin-bottom:10px;"><b>Spurs and Stringing</b>: If two pieces are best buddies, they are put into the same segement regardless of any other best buddy relationships.  This can lead to "<b>spurs</b>" where a set of pieces that are each best buddies to one another on a single side are joined to the segment.  This can also lead to "<b>stringing</b>" where by two unassociated segments are merged into a single segment through the previously mentioned spur.</li>
+    
+    <li style="margin-bottom:10px;"><b>Boundary Pieces and Multiple Puzzles</b>: Previous analysis on the best buddies in images preliminarily showed that the most likely places best buddies were likely to occur were around missing pieces and border pieces.  This also matches the simple logical as those pieces do not naturally have a neighbor on that side and may have a tendency to form false best buddies relationships.  This can be further exacerbated by the stringing issue because it may causes pieces from <b>two different puzzles</b> to be put into the same puzzle based off false best buddy pairings.</li>
+</ul>
+
+To address these limitations, I propose a new segmentation algorithm whose pseudocode is shown below.
+
+<div style="text-align:center"><h3>A New Proposed Segmentation Algorithm</h3></div>
+
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">queue <span style="color: #333333">=</span> []
+numberOfSegments <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">0</span>
+unassignedPieces <span style="color: #333333">=</span> { allPieces }
+
+<span style="color: #888888">// Greedily assign pieces to segments</span>
+<span style="color: #008800; font-weight: bold">while</span> <span style="color: #333333">|</span>unassignedPieces<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">do</span>
+
+	<span style="color: #888888">// Create a new segment </span>
+	numberOfSegments<span style="color: #333333">++</span>
+	segment <span style="color: #333333">=</span> <span style="color: #cc6600; font-weight: bold">createNewSegment</span>( numberOfSegments )
+	seedPiece <span style="color: #333333">=</span> unassignedPieces.<span style="color: #cc6600; font-weight: bold">selectNext</span>()
+	queue.append( seedPiece )
+
+	<span style="color: #008800; font-weight: bold">while</span> <span style="color: #333333">|</span>queue<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">do</span>
+		selectedPiece <span style="color: #333333">=</span> queue.pop()
+		selectedPiece.<span style="color: #cc6600; font-weight: bold">assignToSegmentSegment</span>( segment )
+	
+		<span style="color: #888888">// Assign neighbors to the segment</span>
+		validNeighbors <span style="color: #333333">=</span> selectedPiece.<span style="color: #cc6600; font-weight: bold">getValidNeighbors</span>()
+		<span style="color: #008800; font-weight: bold">for each</span> neighbor <span style="color: #008800; font-weight: bold">in</span> validNeighbors <span style="color: #008800; font-weight: bold">do</span>
+			<span style="color: #888888">// Skip already assigned neighbors</span>
+			<span style="color: #008800; font-weight: bold">if</span> neighbor <span style="color: #008800; font-weight: bold">not in</span> unassignedPieces <span style="color: #008800; font-weight: bold">then</span>
+				<span style="color: #008800; font-weight: bold">continue</span>
+
+			<span style="color: #888888">// If neighbor and selected piece are best buddies, put in same segment</span>
+			<span style="color: #008800; font-weight: bold">if</span> <span style="color: #cc6600; font-weight: bold">isBestBuddies</span>( selectedPiece, neighbor ) <span style="color: #008800; font-weight: bold">then</span>
+				queue.append( neighbor )
+
+	<span style="color: #888888">// Post process the segment</span>
+	<span style="color: #cc6600; font-weight: bold">unassignPiecesWithWrongBestBuddies</span>( segment, seedPiece )
+	<span style="color: #cc6600; font-weight: bold">unassignPiecesInSpursAndStringers</span>( segment, seedPiece )
+	<span style="color: #888888">// Ensure the segment is not empty after the cleanup</span>
+	<span style="color: #008800; font-weight: bold">if</span> <span style="color: #333333">|</span>segment<span style="color: #333333">|</span> <span style="color: #333333">==</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">then</span>
+		 seedPiece.assignToSegment( segment )
+</pre></div>
+
+
+<h3>Questions for Dr. Pollett:</h3>
+<ul>
+    <li style="margin-bottom:10px;"><b>Segment Coloring Algorithm:</b> Being able to visualize the segmentation output would be very helpful.  The most challenging aspect of this is how best to color the visualization.  What approach could be taken to do this as simply as possible?</li>
+    <li style="margin-bottom:10px;"><b>Access to CSS Files:</b> When updating the blog, it would be useful to make custom CSS file entries to simplify some of the formatting.  Is this possible with the existing website template?</li>
 </ul>
 
 <br /><br /><br />
