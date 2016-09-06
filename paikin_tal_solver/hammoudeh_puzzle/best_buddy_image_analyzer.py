@@ -188,7 +188,7 @@ class ImageBestBuddyStatistics(object):
         """
 
         string_io = cStringIO.StringIO()
-        print >>string_io, "Best Buddy Results for Image:\t" + self._filename_root
+        print >>string_io, "\nBest Buddy Results for Image:\t" + self._filename_root
         print >>string_io, "\tFile Extension:\t" + self._file_extension
         print >>string_io, "\tNumber of Pieces:\t%d" % self.numb_pieces
 

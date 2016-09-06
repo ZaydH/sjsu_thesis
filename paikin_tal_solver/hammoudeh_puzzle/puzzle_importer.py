@@ -331,11 +331,9 @@ class PuzzleResultsCollection(object):
             # Print a new line to separate the results
             print >>string_io, ""
 
-            print >>string_io, "\n\n\n"
-
-            # Log the result
-            logging.info(string_io.getvalue())
-            string_io.close()
+        # Log the result
+        logging.info(string_io.getvalue())
+        string_io.close()
 
 
 class PuzzleResultsInformation(object):

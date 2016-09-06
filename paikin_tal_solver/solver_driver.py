@@ -57,7 +57,6 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     log_string = "Names of the Image Files:\n"
     for img_file in image_files:
         log_string += "\t%s\n" % Puzzle.get_filename_without_extension(img_file)
-    log_string += "\n\n"
     logging.info(log_string)
 
     # Extract the filename of the image(s)
@@ -247,12 +246,10 @@ def print_elapsed_time(elapsed_time, task_name):
     """
     # Get the current time
     ts = time.time()
-    current_time = datetime.datetime.fromtimestamp(ts).strftime('%Y.%m.%d_%H.%M.%S')
     # Print elapsed time and the current time.
     logging.info("The task \"%s\" took %d min %d sec and completed at %s." % (task_name,
                                                                               elapsed_time // 60,
-                                                                              elapsed_time % 60,
-                                                                              current_time))
+                                                                              elapsed_time % 60))
 
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
