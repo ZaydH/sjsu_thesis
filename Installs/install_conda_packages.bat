@@ -11,6 +11,7 @@ echo.
 echo.Installing Python packages.
 call:conda_basic_install anaconda-client
 call:conda_basic_install pip
+call:conda_basic_install setuptools
 call:conda_basic_install Pillow
 call:conda_basic_install enum34
 call:conda_basic_install docutils
