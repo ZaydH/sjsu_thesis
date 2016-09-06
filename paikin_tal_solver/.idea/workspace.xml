@@ -2,25 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4dfada96-1563-4bd9-ba15-692e3a39ebe7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/paikin_tal_solver.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +24,9 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Driver.coverage" NAME="Paikin_Tal_Driver Coverage Results" MODIFIED="1473129232730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hammoudeh_puzzle" />
+  </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -37,9 +35,84 @@
     <favorites_list name="paikin_tal_solver" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="solver_driver.py" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="solver_driver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="95">
+              <caret line="9" column="9" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="puzzle_piece.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+              <folding>
+                <marker date="1473129541372" expanded="true" signature="60:130" ph="import ..." />
+                <marker date="1473129541372" expanded="true" signature="156:367" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="161:275" ph="&quot;&quot;&quot;Location Object...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="315:367" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="402:1551" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="407:597" ph="&quot;&quot;&quot;Puzzle Piece PieceRotation...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="830:1262" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="839:1105" ph="&quot;&quot;&quot;All Rotation Accessor...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="1122:1261" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="1308:1551" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="1317:1485" ph="&quot;&quot;&quot;Random Rotation...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="1582:3350" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="1587:1763" ph="&quot;&quot;&quot;Puzzle Piece Side...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="1863:2082" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="1872:2065" ph="&quot;&quot;&quot;Accessor for the number of sizes for a puzzle piece....&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="2126:2443" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="2135:2337" ph="&quot;&quot;&quot;Static method to extract all the sides of a piece....&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="2492:3110" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="2501:2779" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="3150:3350" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="3159:3311" ph="&quot;&quot;&quot;Gets the name of a puzzle piece side without the class name...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="3376:3492" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="3381:3442" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="3521:37624" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="3526:3794" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="4041:4163" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="4335:6481" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="4344:4715" ph="&quot;&quot;&quot;Puzzle Piece Constructor....&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="12056:12355" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="12065:12319" ph="&quot;&quot;&quot;Actual Puzzle Identification Number...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="12724:13149" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="12733:12910" ph="&quot;&quot;&quot;Puzzle Piece ID Getter...&quot;&quot;&quot;" />
+                <marker date="1473129541372" expanded="true" signature="13211:13444" ph="..." />
+                <marker date="1473129541372" expanded="true" signature="13220:13397" ph="&quot;&quot;&quot;Piece ID Setter...&quot;&quot;&quot;" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="puzzle_segment.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="90" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="solver.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="197">
+              <caret line="186" column="0" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="best_buddy_placer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -48,10 +121,69 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="puzzle_importer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="inter_piece_distance.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="puzzle_importer_tester.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5831">
+              <caret line="355" column="117" selection-start-line="355" selection-start-column="117" selection-end-line="355" selection-end-column="117" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="solver_helper_classes.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
+        <option value="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
+      </list>
+    </option>
   </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
@@ -64,6 +196,25 @@
     <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Python</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Python</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -119,6 +270,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="paikin_tal_solver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="paikin_tal_solver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="paikin_tal_solver" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="hammoudeh_puzzle" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -131,8 +296,11 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Paikin_Tal_Driver">
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -216,6 +384,12 @@
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
@@ -335,9 +509,33 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
+    <configuration default="false" name="Paikin_Tal_Driver" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Zayd\Miniconda2\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hammoudeh_puzzle" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="paikin_tal_solver" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Python.Paikin_Tal_Driver" />
+    </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -347,44 +545,541 @@
       <option name="presentableId" value="Default" />
       <updated>1462682941311</updated>
     </task>
+    <task id="LOCAL-00001" summary="Beginning to implement the segment code for the solver.  This will allow be used for the preprocessor for multiple puzzles.">
+      <created>1473125752211</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1473125752211</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25266525" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1641791" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32936078" sideWeight="0.35980812" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.6401919" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.49573562" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Beginning to implement the segment code for the solver.  This will allow be used for the preprocessor for multiple puzzles." />
+    <option name="LAST_COMMIT_MESSAGE" value="Beginning to implement the segment code for the solver.  This will allow be used for the preprocessor for multiple puzzles." />
+  </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py</url>
+          <line>5</line>
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py</url>
+          <line>3</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="2" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="28" column="38" selection-start-line="28" selection-start-column="38" selection-end-line="28" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2550">
+          <caret line="150" column="36" selection-start-line="150" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
+          <folding>
+            <marker date="1473129541372" expanded="true" signature="60:130" ph="import ..." />
+            <marker date="1473129541372" expanded="true" signature="156:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="161:275" ph="&quot;&quot;&quot;Location Object...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="315:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="402:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="407:597" ph="&quot;&quot;&quot;Puzzle Piece PieceRotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="830:1262" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="839:1105" ph="&quot;&quot;&quot;All Rotation Accessor...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1122:1261" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1308:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1317:1485" ph="&quot;&quot;&quot;Random Rotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1582:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1587:1763" ph="&quot;&quot;&quot;Puzzle Piece Side...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1863:2082" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1872:2065" ph="&quot;&quot;&quot;Accessor for the number of sizes for a puzzle piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2126:2443" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2135:2337" ph="&quot;&quot;&quot;Static method to extract all the sides of a piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2492:3110" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2501:2779" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3150:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3159:3311" ph="&quot;&quot;&quot;Gets the name of a puzzle piece side without the class name...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3376:3492" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3381:3442" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3521:37624" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3526:3794" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="4041:4163" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4335:6481" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4344:4715" ph="&quot;&quot;&quot;Puzzle Piece Constructor....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12056:12355" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12065:12319" ph="&quot;&quot;&quot;Actual Puzzle Identification Number...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12724:13149" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12733:12910" ph="&quot;&quot;&quot;Puzzle Piece ID Getter...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="13211:13444" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="13220:13397" ph="&quot;&quot;&quot;Piece ID Setter...&quot;&quot;&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1473129541372" expanded="true" signature="60:130" ph="import ..." />
+            <marker date="1473129541372" expanded="true" signature="156:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="161:275" ph="&quot;&quot;&quot;Location Object...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="315:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="402:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="407:597" ph="&quot;&quot;&quot;Puzzle Piece PieceRotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="830:1262" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="839:1105" ph="&quot;&quot;&quot;All Rotation Accessor...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1122:1261" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1308:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1317:1485" ph="&quot;&quot;&quot;Random Rotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1582:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1587:1763" ph="&quot;&quot;&quot;Puzzle Piece Side...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1863:2082" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1872:2065" ph="&quot;&quot;&quot;Accessor for the number of sizes for a puzzle piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2126:2443" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2135:2337" ph="&quot;&quot;&quot;Static method to extract all the sides of a piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2492:3110" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2501:2779" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3150:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3159:3311" ph="&quot;&quot;&quot;Gets the name of a puzzle piece side without the class name...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3376:3492" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3381:3442" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3521:37624" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3526:3794" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="4041:4163" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4335:6481" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4344:4715" ph="&quot;&quot;&quot;Puzzle Piece Constructor....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12056:12355" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12065:12319" ph="&quot;&quot;&quot;Actual Puzzle Identification Number...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12724:13149" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12733:12910" ph="&quot;&quot;&quot;Puzzle Piece ID Getter...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="13211:13444" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="13220:13397" ph="&quot;&quot;&quot;Piece ID Setter...&quot;&quot;&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="52" selection-start-line="14" selection-start-column="52" selection-end-line="14" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1473129541372" expanded="true" signature="60:130" ph="import ..." />
+            <marker date="1473129541372" expanded="true" signature="156:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="161:275" ph="&quot;&quot;&quot;Location Object...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="315:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="402:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="407:597" ph="&quot;&quot;&quot;Puzzle Piece PieceRotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="830:1262" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="839:1105" ph="&quot;&quot;&quot;All Rotation Accessor...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1122:1261" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1308:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1317:1485" ph="&quot;&quot;&quot;Random Rotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1582:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1587:1763" ph="&quot;&quot;&quot;Puzzle Piece Side...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1863:2082" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1872:2065" ph="&quot;&quot;&quot;Accessor for the number of sizes for a puzzle piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2126:2443" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2135:2337" ph="&quot;&quot;&quot;Static method to extract all the sides of a piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2492:3110" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2501:2779" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3150:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3159:3311" ph="&quot;&quot;&quot;Gets the name of a puzzle piece side without the class name...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3376:3492" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3381:3442" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3521:37624" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3526:3794" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="4041:4163" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4335:6481" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4344:4715" ph="&quot;&quot;&quot;Puzzle Piece Constructor....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12056:12355" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12065:12319" ph="&quot;&quot;&quot;Actual Puzzle Identification Number...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12724:13149" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12733:12910" ph="&quot;&quot;&quot;Puzzle Piece ID Getter...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="13211:13444" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="13220:13397" ph="&quot;&quot;&quot;Piece ID Setter...&quot;&quot;&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="52" selection-start-line="14" selection-start-column="52" selection-end-line="14" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1473129541372" expanded="true" signature="60:130" ph="import ..." />
+            <marker date="1473129541372" expanded="true" signature="156:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="161:275" ph="&quot;&quot;&quot;Location Object...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="315:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="402:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="407:597" ph="&quot;&quot;&quot;Puzzle Piece PieceRotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="830:1262" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="839:1105" ph="&quot;&quot;&quot;All Rotation Accessor...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1122:1261" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1308:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1317:1485" ph="&quot;&quot;&quot;Random Rotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1582:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1587:1763" ph="&quot;&quot;&quot;Puzzle Piece Side...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1863:2082" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1872:2065" ph="&quot;&quot;&quot;Accessor for the number of sizes for a puzzle piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2126:2443" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2135:2337" ph="&quot;&quot;&quot;Static method to extract all the sides of a piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2492:3110" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2501:2779" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3150:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3159:3311" ph="&quot;&quot;&quot;Gets the name of a puzzle piece side without the class name...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3376:3492" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3381:3442" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3521:37624" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3526:3794" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="4041:4163" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4335:6481" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4344:4715" ph="&quot;&quot;&quot;Puzzle Piece Constructor....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12056:12355" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12065:12319" ph="&quot;&quot;&quot;Actual Puzzle Identification Number...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12724:13149" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12733:12910" ph="&quot;&quot;&quot;Puzzle Piece ID Getter...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="13211:13444" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="13220:13397" ph="&quot;&quot;&quot;Piece ID Setter...&quot;&quot;&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="52" selection-start-line="14" selection-start-column="52" selection-end-line="14" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_placer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper_classes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="90" selection-start-line="2" selection-start-column="90" selection-end-line="2" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+          <folding>
+            <marker date="1473129541372" expanded="true" signature="60:130" ph="import ..." />
+            <marker date="1473129541372" expanded="true" signature="156:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="161:275" ph="&quot;&quot;&quot;Location Object...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="315:367" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="402:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="407:597" ph="&quot;&quot;&quot;Puzzle Piece PieceRotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="830:1262" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="839:1105" ph="&quot;&quot;&quot;All Rotation Accessor...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1122:1261" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1308:1551" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1317:1485" ph="&quot;&quot;&quot;Random Rotation...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1582:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1587:1763" ph="&quot;&quot;&quot;Puzzle Piece Side...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="1863:2082" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="1872:2065" ph="&quot;&quot;&quot;Accessor for the number of sizes for a puzzle piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2126:2443" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2135:2337" ph="&quot;&quot;&quot;Static method to extract all the sides of a piece....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="2492:3110" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="2501:2779" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3150:3350" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3159:3311" ph="&quot;&quot;&quot;Gets the name of a puzzle piece side without the class name...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3376:3492" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3381:3442" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="3521:37624" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="3526:3794" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="4041:4163" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4335:6481" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="4344:4715" ph="&quot;&quot;&quot;Puzzle Piece Constructor....&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12056:12355" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12065:12319" ph="&quot;&quot;&quot;Actual Puzzle Identification Number...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="12724:13149" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="12733:12910" ph="&quot;&quot;&quot;Puzzle Piece ID Getter...&quot;&quot;&quot;" />
+            <marker date="1473129541372" expanded="true" signature="13211:13444" ph="..." />
+            <marker date="1473129541372" expanded="true" signature="13220:13397" ph="&quot;&quot;&quot;Piece ID Setter...&quot;&quot;&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5831">
+          <caret line="355" column="117" selection-start-line="355" selection-start-column="117" selection-end-line="355" selection-end-column="117" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/multiprocessing/pool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="250" column="0" selection-start-line="250" selection-start-column="0" selection-end-line="250" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="95">
+          <caret line="9" column="9" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="186" column="0" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
           <folding />
         </state>
       </provider>

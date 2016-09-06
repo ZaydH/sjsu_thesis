@@ -4,11 +4,14 @@
 """
 import numpy
 import sys
+import math  # Used for ceiling function
 
 import operator
+from multiprocessing.pool import ThreadPool
 
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
+
 
 
 class PieceDistanceInformation(object):
@@ -460,6 +463,11 @@ class InterPieceDistance(object):
     _USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     _NEIGHBOR_COMPATIBILITY_SCALAR = 4
 
+    # Items related to multithreading to improve performance
+    _MIN_NUMBER_PIECES_PER_THREAD = 50
+    _MAX_NUMBER_OF_THREADS = 4
+    _USE_MULTITHREADING = True
+
     def __init__(self, pieces, distance_function, puzzle_type):
         """
         Inter-Puzzle Piece Distance Object Constructor
@@ -522,9 +530,77 @@ class InterPieceDistance(object):
 
         """
 
-        # Calculates the piece to piece distances so we only need to do it once.
-        for p_i in range(0, self._numb_pieces):
-            self._piece_distance_info[p_i].calculate_inter_piece_distances(pieces, self._distance_function)
+        # If no speed up benefit then do the operations serially
+        if self._numb_pieces < InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD \
+                or not InterPieceDistance._USE_MULTITHREADING:
+
+            # Calculates the piece to piece distances so we only need to do it once.
+            for p_i in range(0, self._numb_pieces):
+                self._piece_distance_info[p_i].calculate_inter_piece_distances(pieces, self._distance_function)
+
+        # Calculate distance in a multithreaded environment
+        else:
+
+            # Do not always use maximum number of threads.  Base on the workload.
+            numb_threads = min(InterPieceDistance._MAX_NUMBER_OF_THREADS,
+                               self._numb_pieces / InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD)
+            max_elements_per_thread = long(math.ceil(self._numb_pieces / numb_threads))
+
+            # Populate the data for the thread pool
+            thread_elements = []
+            for i in xrange(0, numb_threads):
+                distance_calc_element = {"first": i * max_elements_per_thread,
+                                         "last": min((i+1) * max_elements_per_thread, self._numb_pieces),  # Exclusive
+                                         "all_pieces": pieces,  # Piece distance information
+                                         "distance_function": self._distance_function,
+                                         "puzzle_type": self._puzzle_type}
+                thread_elements.append(distance_calc_element)
+
+            # Build the thread pool
+            thread_pool = ThreadPool(numb_threads)
+            calculated_distances = thread_pool.map(InterPieceDistance._threaded_interpiece_distances_subfunction,
+                                                   thread_elements)
+            thread_pool.close()
+            thread_pool.join()
+
+            # Merge the data back into the main structure
+            for p_i in xrange(0, self._numb_pieces):
+                piece_dist = calculated_distances[p_i // max_elements_per_thread][p_i % max_elements_per_thread]
+                self._piece_distance_info[p_i] = piece_dist
+
+    @staticmethod
+    def _threaded_interpiece_distances_subfunction(interpiece_distance_data):
+        """
+        Allows for multi-threaded calculation of inter-piece distance
+
+        Args:
+            interpiece_distance_data (dict): Dictionary containing the distance calculation information
+             for interpiece distance.
+
+        Returns (List[PieceDistanceInformation]): Inter-piece distance between the specified indicies and
+         all other pieces.
+        """
+
+        # extract the data from the dictionary containing the input data
+        first_element_numb = interpiece_distance_data["first"]
+        last_element_numb = interpiece_distance_data["last"]  # Exclusive
+        all_pieces = interpiece_distance_data["all_pieces"]
+        distance_function = interpiece_distance_data["distance_function"]
+        puzzle_type = interpiece_distance_data["puzzle_type"]
+
+        # Calculate the number of pieces
+        numb_pieces = len(all_pieces)
+
+        # Calculate each puzzle piece's distance
+        calculated_distance_info = []
+        for i in xrange(first_element_numb, last_element_numb):
+            piece_dist_info = PieceDistanceInformation(first_element_numb, numb_pieces, puzzle_type)
+            # Calculate the distance information for this piece and append to the list
+            piece_dist_info.calculate_inter_piece_distances(all_pieces, distance_function)
+            calculated_distance_info.append(piece_dist_info)
+
+        # Return all of the calculated distances
+        return calculated_distance_info
 
     def get_total_best_buddy_count(self):
         """

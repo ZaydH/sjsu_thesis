@@ -7,6 +7,7 @@ import random
 import time
 import datetime
 
+import os
 # noinspection PyUnresolvedReferences
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleTester, PuzzleType, PuzzleResultsCollection, \
     PickleHelper
@@ -14,6 +15,8 @@ from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 # noinspection PyUnresolvedReferences
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver
+
+os.getcwd()
 
 # Select whether to display the images after reconstruction
 DISPLAY_IMAGES = False
@@ -279,7 +282,8 @@ if __name__ == "__main__":
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    #images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
     PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
