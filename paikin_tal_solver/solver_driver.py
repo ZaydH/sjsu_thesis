@@ -11,7 +11,7 @@ import os
 # noinspection PyUnresolvedReferences
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleTester, PuzzleType, PuzzleResultsCollection, \
     PickleHelper
-from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
+from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 # noinspection PyUnresolvedReferences
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver
@@ -30,6 +30,7 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
 PICKLE_DIRECTORY = ".\\pickle_files\\"
+
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     """
@@ -174,7 +175,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
         print "Inter-piece distance calculation started at: " + time.ctime()
         start_time = time.time()
         paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
-                                            PuzzlePiece.calculate_asymmetric_distance, puzzle_type,
+                                            top_level_calculate_asymmetric_distance, puzzle_type,
                                             fixed_puzzle_dimensions=puzzle_dimensions)
         elapsed_time = time.time() - start_time
         print_elapsed_time(elapsed_time, "inter-piece distance calculation")
@@ -282,7 +283,7 @@ if __name__ == "__main__":
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    #images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
     PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True

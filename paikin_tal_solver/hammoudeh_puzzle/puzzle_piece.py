@@ -1017,3 +1017,24 @@ class PuzzlePiece(object):
                 return False
         # Mark as correctly placed
         return True
+
+
+def top_level_calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side):
+    """
+    NOTE: This function merely calls the static method: <b>PuzzlePiece.calculate_asymmetric_distance</b>.  This
+    wrapper function is used because Python module "multiprocessing" requires that functions be pickle-able
+    which means they need to be visible at the top level and <b>not</b> static methods.  
+
+    Uses the Asymmetric Distance function to calculate the distance between two puzzle pieces.
+
+    Args:
+        piece_i (PuzzlePiece):
+        piece_i_side (PuzzlePieceSide):
+        piece_j (PuzzlePiece):
+        piece_j_side (PuzzlePieceSide): Side of piece j that is adjacent to piece i.
+
+    Returns (double):
+        Distance between the sides of two puzzle pieces.
+    """
+    return PuzzlePiece.calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side)
+
