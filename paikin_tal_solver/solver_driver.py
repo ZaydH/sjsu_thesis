@@ -7,7 +7,6 @@ import random
 import time
 import datetime
 
-import os
 # noinspection PyUnresolvedReferences
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleTester, PuzzleType, PuzzleResultsCollection, \
     PickleHelper
@@ -16,7 +15,6 @@ from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distanc
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver
 
-os.getcwd()
 
 # Select whether to display the images after reconstruction
 DISPLAY_IMAGES = False
@@ -30,6 +28,10 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
 PICKLE_DIRECTORY = ".\\pickle_files\\"
+
+_PERFORM_ASSERTION_CHECKS = True
+
+_ENABLE_PICKLE = True
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -53,23 +55,30 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     print "\n"
 
     # Extract the filename of the image(s)
-    pickle_root_filename = ""
-    for i in range(0, len(image_files)):
-        # Get the root of the filename (i.e. without path and file extension
-        img_root_filename = Puzzle.get_filename_without_extension(image_files[i])
-        # Append the file name to the information
-        pickle_root_filename += "_" + img_root_filename
-    pickle_root_filename += "_type_" + str(local_puzzle_type.value) + ".pk"
+    pickle_placement_start_filename = ""
+    pickle_placement_complete_filename = ""
+    if _ENABLE_PICKLE:
+        pickle_root_filename = ""
+        for i in range(0, len(image_files)):
+            # Get the root of the filename (i.e. without path and file extension
+            img_root_filename = Puzzle.get_filename_without_extension(image_files[i])
+            # Append the file name to the information
+            pickle_root_filename += "_" + img_root_filename
+        pickle_root_filename += "_type_" + str(local_puzzle_type.value) + ".pk"
 
-    # Build the filenames
-    pickle_placement_start_filename = PICKLE_DIRECTORY + "start" + pickle_root_filename
-    pickle_placement_complete_filename = PICKLE_DIRECTORY + "placed" + pickle_root_filename
+        # Build the filenames
+        pickle_placement_start_filename = PICKLE_DIRECTORY + "start" + pickle_root_filename
+        pickle_placement_complete_filename = PICKLE_DIRECTORY + "placed" + pickle_root_filename
 
     # When skipping placement, simply import the solved results.
     if PERFORM_PLACEMENT:
         paikin_tal_solver = run_paikin_tal_solver(image_files, local_puzzle_type, local_piece_width,
                                                   pickle_placement_start_filename, pickle_placement_complete_filename)
     else:
+        # Pickle must be enabled to perform placement.
+        if _PERFORM_ASSERTION_CHECKS:
+            assert _ENABLE_PICKLE
+
         print "Importing solved puzzle from pickle file: \"%s\"" % pickle_placement_complete_filename
         paikin_tal_solver = PickleHelper.importer(pickle_placement_complete_filename)
         print "Pickle import of solved puzzle complete."
@@ -128,8 +137,8 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
 
 
-def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placement_start_filename,
-                          pickle_placement_complete_filename):
+def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placement_start_filename="",
+                          pickle_placement_complete_filename=""):
     """
     Paikin & Tal Solver
 
@@ -143,7 +152,8 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
         pickle_placement_start_filename (String): Filename to export a pickle file after calculating all
          inter-piece distances and before starting placement.  If recalculating distances is disabled, then
          this serves as the filename to import calculated distances from.
-        pickle_placement_complete_filename (String): Filename to e
+        pickle_placement_complete_filename (String): Filename to export the puzzle information to after placement
+         after placement is complete.
 
     Returns (PaikinTalSolver):
         Solved Paikin & Tal result.
@@ -181,8 +191,13 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
         print_elapsed_time(elapsed_time, "inter-piece distance calculation")
         print "\n"  # Add a blank line.
         # Export the Paikin Tal Object.
-        PickleHelper.exporter(paikin_tal_solver, pickle_placement_start_filename)
+        if pickle_placement_start_filename:  # Verify the filename is not blank
+            PickleHelper.exporter(paikin_tal_solver, pickle_placement_start_filename)
     else:
+        # Verify the string is not blank
+        if _PERFORM_ASSERTION_CHECKS:
+            assert pickle_placement_start_filename
+
         print "Beginning import of pickle file: \"" + pickle_placement_start_filename + "\"\n\n"
         paikin_tal_solver = PickleHelper.importer(pickle_placement_start_filename)
         print "Pickle Import completed.\""
@@ -198,12 +213,15 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
     print_elapsed_time(elapsed_time, "placement")
 
     # Export the completed solver results
-    start_time = time.time()
-    formatted_time = datetime.datetime.fromtimestamp(start_time).strftime('%Y.%m.%d_%H.%M.%S')
-    print "Beginning pickle export of solved results at time: \"%s\"" % formatted_time
-    PickleHelper.exporter(paikin_tal_solver, pickle_placement_complete_filename)
-    print_elapsed_time(time.time() - start_time, "pickle completed solver export")
-    print "Completed pickle export of the solved puzzle."
+    if pickle_placement_complete_filename:
+        start_time = time.time()
+        formatted_time = datetime.datetime.fromtimestamp(start_time).strftime('%Y.%m.%d_%H.%M.%S')
+        print "Beginning pickle export of solved results at time: \"%s\"" % formatted_time
+        PickleHelper.exporter(paikin_tal_solver, pickle_placement_complete_filename)
+        print_elapsed_time(time.time() - start_time, "pickle completed solver export")
+        print "Completed pickle export of the solved puzzle."
+
+    # Export the solved results
     return paikin_tal_solver
 
 
@@ -227,10 +245,10 @@ def print_elapsed_time(elapsed_time, task_name):
 
 
 if __name__ == "__main__":
-    # PaikinTalSolver.use_best_buddy_placer = False
-    # images = [".\\images\\muffins_300x200.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    PaikinTalSolver.use_best_buddy_placer = False
+    images = [".\\images\\muffins_300x200.jpg"]
+    paikin_tal_driver(images, PuzzleType.type1, 25)
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     #
     # PaikinTalSolver.use_best_buddy_placer = True
     # paikin_tal_driver(images, PuzzleType.type2, 28)

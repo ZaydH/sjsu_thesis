@@ -1023,7 +1023,7 @@ def top_level_calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piec
     """
     NOTE: This function merely calls the static method: <b>PuzzlePiece.calculate_asymmetric_distance</b>.  This
     wrapper function is used because Python module "multiprocessing" requires that functions be pickle-able
-    which means they need to be visible at the top level and <b>not</b> static methods.  
+    which means they need to be visible at the top level and <b>not</b> static methods.
 
     Uses the Asymmetric Distance function to calculate the distance between two puzzle pieces.
 
