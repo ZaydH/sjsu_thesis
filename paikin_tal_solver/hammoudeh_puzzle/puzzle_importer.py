@@ -47,10 +47,12 @@ class PickleHelper(object):
         if not os.path.isdir(file_directory):
             raise ValueError("The file directory: \"" + file_directory + "\" does not appear to exist.")
 
+        logging.info("Beginning pickle IMPORT of file: \"" + filename + "\"")
         # import from the pickle file.
         f = open(filename, 'r')
         obj = pickle.load(f)
         f.close()
+        logging.info("Completed pickle EXPORT of file: \"" + filename + "\"")
         return obj
 
     @staticmethod
@@ -73,10 +75,12 @@ class PickleHelper(object):
             logging.info("Creating pickle export directory \"%s\"." % file_directory)
             os.mkdir(file_directory)
 
+        logging.info("Beginning pickle EXPORT of file: \"" + filename + "\"")
         # Dump pickle to the file.
         f = open(filename, 'w')
         pickle.dump(obj, f)
         f.close()
+        logging.info("Completed pickle EXPORT to file: \"" + filename + "\"")
 
 
 class PuzzleType(Enum):

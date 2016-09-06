@@ -187,7 +187,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
             puzzle_dimensions = puzzles[0].grid_size
 
         # Create the Paikin Tal Solver
-        logging.info("Inter-piece distance calculation started at: " + time.ctime())
+        logging.info("Inter-piece distance calculation started.")
         start_time = time.time()
         paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
                                             top_level_calculate_asymmetric_distance, puzzle_type,
@@ -202,10 +202,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
         # Verify the string is not blank
         if _PERFORM_ASSERTION_CHECKS:
             assert pickle_placement_start_filename
-
-        logging.info("Beginning import of pickle file: \"" + pickle_placement_start_filename)
         paikin_tal_solver = PickleHelper.importer(pickle_placement_start_filename)
-        logging.info("Pickle import completed.\n\n")
         # noinspection PyProtectedMember
         # This recalculate of start piece is included since how start piece is selected is configurable.
         paikin_tal_solver._inter_piece_distance.find_start_piece_candidates()
@@ -220,13 +217,8 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
     # Export the completed solver results
     if pickle_placement_complete_filename:
         start_time = time.time()
-        formatted_time = datetime.datetime.fromtimestamp(start_time).strftime('%Y.%m.%d_%H.%M.%S')
-
-        logging.info("Beginning pickle export of solved results at time: \"%s\"" % formatted_time)
-
         PickleHelper.exporter(paikin_tal_solver, pickle_placement_complete_filename)
         print_elapsed_time(time.time() - start_time, "pickle completed solver export")
-
         logging.info("Completed pickle export of the solved puzzle.")
 
     # Export the solved results
@@ -244,12 +236,8 @@ def print_elapsed_time(elapsed_time, task_name):
         task_name (string): Name of the task that was performed
 
     """
-    # Get the current time
-    ts = time.time()
     # Print elapsed time and the current time.
-    logging.info("The task \"%s\" took %d min %d sec and completed at %s." % (task_name,
-                                                                              elapsed_time // 60,
-                                                                              elapsed_time % 60))
+    logging.info("The task \"%s\" took %d min %d sec." % (task_name, elapsed_time // 60, elapsed_time % 60))
 
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
@@ -274,6 +262,7 @@ if __name__ == "__main__":
 
     # Setup the logger
     setup_logging()
+    logging.info("*********************************** New Run Beginning ***********************************")
 
     # Select the files to parse
 
@@ -338,6 +327,10 @@ if __name__ == "__main__":
     PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
+
+    InterPieceDistance._USE_MULTITHREADING = False
+    paikin_tal_driver(images, PuzzleType.type2, 28)
+    InterPieceDistance._USE_MULTITHREADING = True
     paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
