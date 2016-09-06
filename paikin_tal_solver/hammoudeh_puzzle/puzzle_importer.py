@@ -20,6 +20,8 @@ class PickleHelper(object):
     Library.
     """
 
+    _PERFORM_ASSERTION_CHECKS = True
+
     @staticmethod
     def importer(filename):
         """
@@ -313,8 +315,8 @@ class PuzzleResultsCollection(object):
             print "\tNeighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
                                                                 neighbor_count_weight,
                                                                 100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
-            numb_missing_pieces = numb_pieces_in_original_puzzle \
-                                  - neighbor_acc.numb_pieces_from_original_puzzle_in_solved_puzzle
+            numb_missing_pieces = (numb_pieces_in_original_puzzle
+                                   - neighbor_acc.numb_pieces_from_original_puzzle_in_solved_puzzle)
             print "\tNumb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
                                                                 results.numb_pieces,
                                                                 100.0 * numb_missing_pieces / results.numb_pieces)
@@ -411,7 +413,8 @@ class PuzzleResultsInformation(object):
                 neighbor_loc = neighbor_location_and_sides[side_numb][0]
                 # Check the location is invalid.  If it is, mark the location as None.
                 if (neighbor_loc[0] < 0 or neighbor_loc[1] < 0
-                       or neighbor_loc[0] >= puzzle.grid_size[0] or neighbor_loc[1] >= puzzle.grid_size[1]):
+                        or neighbor_loc[0] >= puzzle.grid_size[0]
+                        or neighbor_loc[1] >= puzzle.grid_size[1]):
 
                     placed_piece_id = None
                 # Handle dimensions that are off the edge of the board
@@ -1495,7 +1498,8 @@ class Puzzle(object):
         self._pieces = []  # Create an empty array to hold the puzzle pieces.
         for row in range(0, numb_rows):
             for col in range(0, numb_cols):
-                piece_upper_left = (row * piece_size[0], col * piece_size[1])  # No longer consider upper left since board shrunk above
+                # No longer consider upper left since board shrunk above
+                piece_upper_left = (row * piece_size[0], col * piece_size[1])
                 piece_img = Puzzle.extract_subimage(self._img_LAB, piece_upper_left, piece_size)
 
                 # Create the puzzle piece and assign to the location.

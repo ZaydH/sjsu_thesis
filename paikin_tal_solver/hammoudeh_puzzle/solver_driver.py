@@ -28,7 +28,6 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 # Defining a directory where pickle files are stored.
 PICKLE_DIRECTORY = ".\\pickle_files\\"
 
-
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     """
     Runs the Paikin and Tal image solver.

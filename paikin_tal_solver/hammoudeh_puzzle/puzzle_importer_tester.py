@@ -17,6 +17,7 @@ from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceSide, PuzzlePi
 from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
 
 
+# noinspection PyMethodMayBeStatic
 class PuzzleImporterTester(unittest.TestCase):
 
     def test_puzzle_creation(self):

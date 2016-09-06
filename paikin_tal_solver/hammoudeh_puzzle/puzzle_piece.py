@@ -184,6 +184,7 @@ class PuzzlePiece(object):
         # Store the original location of the puzzle piece and initialize a placeholder x/y location.
         self._orig_loc = location
         self._assigned_loc = None
+        self._segment_id_numb = None
 
         # Optionally calculate the identification numbers of the piece neighbors
         self._actual_neighbor_ids = None
@@ -366,6 +367,17 @@ class PuzzlePiece(object):
         """
         return self._assigned_puzzle_id
 
+    @puzzle_id.setter
+    def puzzle_id(self, new_puzzle_id):
+        """
+        Updates the puzzle ID number for the puzzle piece.
+
+        Returns (int):
+            Board identification number
+
+        """
+        self._assigned_puzzle_id = new_puzzle_id
+
     @property
     def actual_puzzle_id(self):
         """
@@ -378,17 +390,6 @@ class PuzzlePiece(object):
 
         """
         return self._orig_puzzle_id
-
-    @puzzle_id.setter
-    def puzzle_id(self, new_puzzle_id):
-        """
-        Updates the puzzle ID number for the puzzle piece.
-
-        Returns (int):
-            Board identification number
-
-        """
-        self._assigned_puzzle_id = new_puzzle_id
 
     @property
     def original_piece_id(self):
@@ -429,6 +430,34 @@ class PuzzlePiece(object):
             new_piece_id (int): Puzzle piece identification number
         """
         self._assigned_piece_id = new_piece_id
+
+    @property
+    def segment_number(self):
+        """
+        Puzzle Piece Segment Number Accessor
+
+        Gets the identification number of the segment this puzzle is assigned to.
+
+        Returns (int):
+            Identification number of the segment the puzzle piece is assigned to.
+        """
+        # Check whether the assigned piece ID is not none
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert self._segment_id_numb is not None
+        # Return the piece id number
+        return self._segment_id_numb
+
+    @segment_number.setter
+    def segment_number(self, new_segment_id):
+        """
+        Puzzle Piece Segment Number Setter
+
+        Sets the segment number the puzzle piece is assigned to.
+
+        Args:
+            new_segment_id (int): New segment number the puzzle piece is assigned to
+        """
+        self._segment_id_numb = new_segment_id
 
     @property
     def lab_image(self):
