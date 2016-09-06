@@ -1,12 +1,14 @@
 """Jigsaw Puzzle Object
 """
 import copy
+import logging
 import os
 import math
 import random
 import pickle
 import datetime
 
+import cStringIO
 import numpy
 import cv2  # OpenCV
 from enum import Enum
@@ -68,7 +70,7 @@ class PickleHelper(object):
         # If the file directory does not exist create it.
         file_directory = os.path.dirname(os.path.abspath(filename))
         if not os.path.isdir(file_directory):
-            print "Creating pickle export directory \"%s\"." % file_directory
+            logging.info("Creating pickle export directory \"%s\"." % file_directory)
             os.mkdir(file_directory)
 
         # Dump pickle to the file.
@@ -264,16 +266,17 @@ class PuzzleResultsCollection(object):
         Prints the accuracy results of a solver to the console.
         """
 
+        string_io = cStringIO.StringIO()
         # Iterate through each puzzle and print that puzzle's results
         for results in self._puzzle_results:
             # Print the header line
-            print "Original Filename: %s" % results.original_filename
-            print "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
+            print >>string_io, "Original Filename: %s" % results.original_filename
+            print >>string_io, "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
 
             # Print the standard accuracy information
             for i in xrange(0, 2):
 
-                # Select the type of direct accuracy to print.
+                # Select the type of direct accuracy to print >>string_io, .
                 if i == 0:
                     acc_name = "\tStandard"
                     direct_acc = results.standard_direct_accuracy
@@ -284,51 +287,55 @@ class PuzzleResultsCollection(object):
                 # Print the selected direct accuracy type
                 numb_pieces_in_original_puzzle = results.numb_pieces
                 piece_count_weight = direct_acc.numb_different_puzzle + numb_pieces_in_original_puzzle
-                print "\tSolved Puzzle ID #%d" % direct_acc.solved_puzzle_id
-                print acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements,
-                                                                            piece_count_weight,
-                                                                            100.0 * direct_acc.numb_correct_placements / piece_count_weight)
-                print acc_name + " Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle,
-                                                                                piece_count_weight,
-                                                                                100.0 * direct_acc.numb_different_puzzle / piece_count_weight)
-                print acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location,
-                                                                              piece_count_weight,
-                                                                              100.0 * direct_acc.numb_wrong_location / piece_count_weight)
-                print acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation,
-                                                                              piece_count_weight,
-                                                                              100.0 * direct_acc.numb_wrong_rotation / piece_count_weight)
+                print >>string_io, "\tSolved Puzzle ID #%d" % direct_acc.solved_puzzle_id
+                print >>string_io, acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements,
+                                                                                        piece_count_weight,
+                                                                                        100.0 * direct_acc.numb_correct_placements / piece_count_weight)
+                print >>string_io, acc_name + " Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle,
+                                                                                            piece_count_weight,
+                                                                                            100.0 * direct_acc.numb_different_puzzle / piece_count_weight)
+                print >>string_io, acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location,
+                                                                                          piece_count_weight,
+                                                                                          100.0 * direct_acc.numb_wrong_location / piece_count_weight)
+                print >>string_io, acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation,
+                                                                                          piece_count_weight,
+                                                                                          100.0 * direct_acc.numb_wrong_rotation / piece_count_weight)
                 # Calculate the number of missing pieces
                 numb_pieces_missing = (numb_pieces_in_original_puzzle
                                        - direct_acc.numb_pieces_from_original_puzzle_in_solved_puzzle)
-                print acc_name + " Numb Pieces Missing:\t%d/%d\t(%3.2f%%)" % (numb_pieces_missing,
-                                                                              numb_pieces_in_original_puzzle,
-                                                                              100.0 * numb_pieces_missing / numb_pieces_in_original_puzzle)
+                print >>string_io, acc_name + " Numb Pieces Missing:\t%d/%d\t(%3.2f%%)" % (numb_pieces_missing,
+                                                                                          numb_pieces_in_original_puzzle,
+                                                                                          100.0 * numb_pieces_missing / numb_pieces_in_original_puzzle)
                 # Print a new line to separate the results
-                print ""
+                print >>string_io, ""
 
             # Print the modified neighbor accuracy
             numb_pieces_in_original_puzzle = results.numb_pieces
             neighbor_acc = results.modified_neighbor_accuracy
             neighbor_count_weight = neighbor_acc.numb_pieces_in_original_puzzle + neighbor_acc.wrong_puzzle_id
             neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
-            print "\tSolved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
-            print "\tNeighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
-                                                                neighbor_count_weight,
-                                                                100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
+            print >>string_io, "\tSolved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
+            print >>string_io, "\tNeighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
+                                                                            neighbor_count_weight,
+                                                                            100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
             numb_missing_pieces = (numb_pieces_in_original_puzzle
                                    - neighbor_acc.numb_pieces_from_original_puzzle_in_solved_puzzle)
-            print "\tNumb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
-                                                                results.numb_pieces,
-                                                                100.0 * numb_missing_pieces / results.numb_pieces)
+            print >>string_io, "\tNumb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
+                                                                            results.numb_pieces,
+                                                                            100.0 * numb_missing_pieces / results.numb_pieces)
             numb_from_wrong_puzzle = neighbor_acc.wrong_puzzle_id
             numb_pieces_in_puzzle = neighbor_acc.total_numb_pieces_in_solved_puzzle
-            print "\tNumb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
-                                                                  numb_pieces_in_puzzle,
-                                                                  100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
+            print >>string_io, "\tNumb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
+                                                                              numb_pieces_in_puzzle,
+                                                                              100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
             # Print a new line to separate the results
-            print ""
+            print >>string_io, ""
 
-            print "\n\n\n"
+            print >>string_io, "\n\n\n"
+
+            # Log the result
+            logging.info(string_io.getvalue())
+            string_io.close()
 
 
 class PuzzleResultsInformation(object):
@@ -841,11 +848,16 @@ class BestBuddyResultsCollection(object):
 
     def print_results(self):
         """
-        Prints the best buddy accuracy information to the console.
+        Prints the best buddy accuracy information to the log.
         """
-        print "Best Buddy Accuracy Information:"
+        # Use a cStringIO as essentially a string buffer
+        string_io = cStringIO.StringIO()
+        print >>string_io, "Best Buddy Accuracy Information:"
         for bb_acc in self._best_buddy_accuracy:
-            print str(bb_acc) + "\n"
+            print >>string_io, str(bb_acc) + "\n"
+        # Write the to log.
+        logging.debug(string_io.getvalue())
+        string_io.close()
 
     def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
         """

@@ -4,6 +4,7 @@
 """
 import copy
 import heapq
+import logging
 
 import numpy
 
@@ -105,8 +106,8 @@ class PaikinTalSolver(object):
     # Used to simplify debugging without affecting test time by enabling assertion checks
     _PERFORM_ASSERTION_CHECK = True
 
-    # Prints progress messages while the puzzle is running
-    _PRINT_PROGRESS_MESSAGES = True
+    # # Prints progress messages while the puzzle is running
+    # _PRINT_PROGRESS_MESSAGES = True
 
     # Select whether to clear the BB heap on completion
     _CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
@@ -118,6 +119,9 @@ class PaikinTalSolver(object):
     _ENABLE_BEST_BUDDY_HEAP_HOUSEKEEPING = True
     _MINIMUM_CLEAN_HEAP_SIZE = 1 * (10 ** 6)
     _MINIMUM_CLEAN_HEAP_FREQUENCY = 100
+
+    # Defines how many often the number of remaining pieces to be placed is logged
+    _PIECE_COUNT_LOGGING_FREQUENCY = 50
 
     # Select whether to use the best_buddy_placer
     use_best_buddy_placer = False
@@ -180,14 +184,12 @@ class PaikinTalSolver(object):
         self._numb_puzzles = 0
         self._last_best_buddy_heap_housekeeping = None
 
-        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "\tStarting to calculate inter-piece distances"
+        logging.info("Starting to calculate inter-piece distances")
 
         # Calculate the inter-piece distances.
         self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function, self._puzzle_type)
 
-        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "\tFinished calculating inter-piece distances"
+        logging.info("Finished calculating inter-piece distances")
 
         # Release the Inter-piece distance function to allow pickling.
         self._distance_function = None
@@ -208,8 +210,9 @@ class PaikinTalSolver(object):
         # Place pieces until no pieces left to be placed.
         while self._numb_unplaced_pieces > 0:
 
-            if PaikinTalSolver._PRINT_PROGRESS_MESSAGES and self._numb_unplaced_pieces % 50 == 0:
-                print str(self._numb_unplaced_pieces) + " remain to be placed."
+            # Log the remaining piece count at some frequency
+            if self._numb_unplaced_pieces % PaikinTalSolver._PIECE_COUNT_LOGGING_FREQUENCY == 0:
+                logging.debug(str(self._numb_unplaced_pieces) + " remain to be placed.")
                 self._best_buddy_accuracy.print_results()
 
             # if len(self._best_buddies_pool) == 0:
@@ -227,20 +230,19 @@ class PaikinTalSolver(object):
                 # Place the next piece
                 self._place_normal_piece(next_piece)
 
-        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "Placement complete.\n\n"
+        logging.info("Placement complete.\n\n")
 
-            # If no pieces left to place, clean the heap to reduce the size for pickling.
-            if self._numb_unplaced_pieces == 0:
-                self._initialize_best_buddy_pool_and_heap()
-                self._best_buddy_accuracy.print_results()
-                total_numb_bb_in_dataset = self._inter_piece_distance.get_total_best_buddy_count()
-                print "Total number of Best Buddies: %d" % total_numb_bb_in_dataset
-                # Once all pieces have been placed verify that no best buddies remain unaccounted for.
-                if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
-                    for best_buddy_acc in self._best_buddy_accuracy:
-                        assert best_buddy_acc.numb_open_best_buddies == 0
-                    assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset
+        # If no pieces left to place, clean the heap to reduce the size for pickling.
+        if self._numb_unplaced_pieces == 0:
+            self._initialize_best_buddy_pool_and_heap()
+            self._best_buddy_accuracy.print_results()
+            total_numb_bb_in_dataset = self._inter_piece_distance.get_total_best_buddy_count()
+            logging.info("Total number of Best Buddies: %d" % total_numb_bb_in_dataset)
+            # Once all pieces have been placed verify that no best buddies remain unaccounted for.
+            if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                for best_buddy_acc in self._best_buddy_accuracy:
+                    assert best_buddy_acc.numb_open_best_buddies == 0
+                assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset
 
     def get_solved_puzzles(self):
         """
@@ -404,8 +406,8 @@ class PaikinTalSolver(object):
             return next_piece
 
         else:
-            print "Need to recalculate the compatibilities.  Number of pieces left: " \
-                  + str(self._numb_unplaced_pieces) + "\n"
+            logging.debug("Need to recalculate the compatibilities.  Number of pieces left: "
+                          + str(self._numb_unplaced_pieces) + "\n")
 
             placed_and_open_pieces = copy.copy(self._piece_placed)
             for open_location in self._open_locations:
@@ -561,8 +563,8 @@ class PaikinTalSolver(object):
         Returns (bool):
             True of the location in the specified puzzle is open and false otherwise.
         """
-        return self._piece_locations[slot_location.puzzle_id][slot_location.location] == PaikinTalSolver._UNPLACED_PIECE_ID \
-               and self._check_board_dimensions(slot_location)
+        return (self._piece_locations[slot_location.puzzle_id][slot_location.location] == PaikinTalSolver._UNPLACED_PIECE_ID
+                and self._check_board_dimensions(slot_location))
 
     def _check_if_perform_best_buddy_heap_housecleaning(self):
         """
@@ -586,8 +588,7 @@ class PaikinTalSolver(object):
         in particular when there are a lot of pieces.
         """
 
-        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "Cleaning best buddy heap..."
+        logging.debug("Cleaning best buddy heap...")
 
         elements_deleted = 0  # Stores the number of elements in the heap removed
         new_bb_heap = []
@@ -608,9 +609,8 @@ class PaikinTalSolver(object):
         self._best_buddy_open_slot_heap = new_bb_heap
 
         # Print the number of elements deleted
-        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            total_numb_elements = elements_deleted + len(new_bb_heap)
-            print "%d out of %d elements removed in the heap cleanup.\n\n" % (elements_deleted, total_numb_elements)
+        total_numb_elements = elements_deleted + len(new_bb_heap)
+        logging.debug("%d out of %d elements removed in the heap cleanup." % (elements_deleted, total_numb_elements))
 
     def _check_board_dimensions(self, puzzle_location):
         """
@@ -737,8 +737,7 @@ class PaikinTalSolver(object):
         # Increment the number of puzzles
         self._numb_puzzles += 1
 
-        if PaikinTalSolver._PRINT_PROGRESS_MESSAGES:
-            print "\n\nBoard #" + str(self._numb_puzzles) + " was created.\n\n"
+        logging.debug("Board #" + str(self._numb_puzzles) + " was created.")
 
         # Account for placed piece when calculating starting piece candidates.
         if self._numb_puzzles > 1:

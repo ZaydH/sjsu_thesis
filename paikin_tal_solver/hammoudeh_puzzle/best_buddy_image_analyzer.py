@@ -1,9 +1,10 @@
 """
 Best Buddy Analyzer for Normal Images
 """
-
+import cStringIO
 import numpy
 import sys
+import logging
 
 # noinspection PyUnresolvedReferences
 import time
@@ -185,19 +186,25 @@ class ImageBestBuddyStatistics(object):
         """
         Prints the best buddy results to the console.
         """
-        print "Best Buddy Results for Image:\t" + self._filename_root
-        print "\tFile Extension:\t" + self._file_extension
-        print "\tNumber of Pieces:\t%d" % self.numb_pieces
+
+        string_io = cStringIO.StringIO()
+        print >>string_io, "Best Buddy Results for Image:\t" + self._filename_root
+        print >>string_io, "\tFile Extension:\t" + self._file_extension
+        print >>string_io, "\tNumber of Pieces:\t%d" % self.numb_pieces
 
         # Total number of best buddies
-        print "\tTotal Number of Best Buddies:\t%d" % self.total_number_of_best_buddies
-        print "\tTotal Best Buddy Accuracy:\t\t%1.2f%%" % (100 * self.total_accuracy)
+        print >>string_io, "\tTotal Number of Best Buddies:\t%d" % self.total_number_of_best_buddies
+        print >>string_io, "\tTotal Best Buddy Accuracy:\t\t%1.2f%%" % (100 * self.total_accuracy)
 
-        print "\tBest Buddy Density:\t\t\t\t%1.2f%%" % (100 * self.density)
-        print "\tInterior Best Buddy Accuracy:\t%1.2f%%" % (100 * self.interior_accuracy)
-        print ""
-        print "\tNumber of Wrong Interior Best Buddies:\t%d" % self._numb_wrong_interior_bb
-        print "\tNumber of Wrong Exterior Best Buddies:\t%d" % self._numb_wrong_exterior_bb
+        print >>string_io, "\tBest Buddy Density:\t\t\t\t%1.2f%%" % (100 * self.density)
+        print >>string_io, "\tInterior Best Buddy Accuracy:\t%1.2f%%" % (100 * self.interior_accuracy)
+        print >>string_io, ""
+        print >>string_io, "\tNumber of Wrong Interior Best Buddies:\t%d" % self._numb_wrong_interior_bb
+        print >>string_io, "\tNumber of Wrong Exterior Best Buddies:\t%d" % self._numb_wrong_exterior_bb
+
+        # log the result
+        logging.info(string_io.getvalue())
+        string_io.close()
 
     @property
     def density(self):
@@ -283,7 +290,6 @@ def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
     bb_results = PickleHelper.importer(pickle_file)
     bb_results.calculate_results()
     bb_results.print_results()
-    print "\n\n"
 
 
 if __name__ == '__main__':
