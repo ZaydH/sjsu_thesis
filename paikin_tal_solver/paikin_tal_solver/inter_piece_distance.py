@@ -553,8 +553,12 @@ class InterPieceDistance(object):
 
             # Populate the data for the thread pool
             process_elements = []
-            first_elements = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
-                                                                                                   numb_processes)
+            # first_elements = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
+            #                                                                                        numb_processes)
+            first_elements = []
+            for i in xrange(0, numb_processes):
+                first_elements.append(int(1.0 * self._numb_pieces * i / numb_processes))
+
             for i in xrange(0, numb_processes):
                 # Calculate the last element
                 if i + 1 < numb_processes:
