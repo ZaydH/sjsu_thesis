@@ -550,49 +550,28 @@ class InterPieceDistance(object):
             # Do not always use maximum number of threads.  Base on the workload.
             numb_processes = min(InterPieceDistance._MAX_NUMBER_OF_PARALLEL_PROCESSES,
                                  self._numb_pieces / InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD)
+            max_elements_per_thread = long(math.ceil(1.0 * self._numb_pieces / numb_processes))
 
             # Populate the data for the thread pool
-            process_elements = []
-            # first_elements = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
-            #                                                                                        numb_processes)
-            first_elements = []
+            thread_elements = []
             for i in xrange(0, numb_processes):
-                first_elements.append(int(1.0 * self._numb_pieces * i / numb_processes))
-
-            for i in xrange(0, numb_processes):
-                # Calculate the last element
-                if i + 1 < numb_processes:
-                    # First element in next process is last element in prev process (assuming not the last process)
-                    last_element = first_elements[i + 1]
-                else:
-                    # Last process so use the number of pieces so all are processed
-                    last_element = self._numb_pieces
-
-                distance_calc_element = {"first": first_elements[i],
-                                         "last": last_element,  # Exclusive
+                distance_calc_element = {"first": i * max_elements_per_thread,
+                                         "last": min((i+1) * max_elements_per_thread, self._numb_pieces),  # Exclusive
                                          "all_pieces": pieces,  # Piece distance information
                                          "puzzle_type": self._puzzle_type,
                                          "distance_function": self._distance_function}
-                process_elements.append(distance_calc_element)
+                thread_elements.append(distance_calc_element)
 
             # Build the thread pool
             process_pool = mp.Pool(numb_processes)
             calculated_distances = process_pool.map(_multiprocess_interpiece_distances_calc,
-                                                    process_elements)
+                                                    thread_elements)
             process_pool.close()
             process_pool.join()
 
             # Merge the data back into the main structure
-            process_cnt = 0  # Represents the process number containing piece p_i
-            element_cnt = 0  # Index within the process representing piece p_i
             for p_i in xrange(0, self._numb_pieces):
-                # Check if all elements for this process have been exhausted
-                if element_cnt == process_elements[process_cnt]["last"]:
-                    process_cnt += 1
-                    element_cnt = 0
-
-                # Get the results from the thread pool output
-                piece_dist = calculated_distances[process_cnt][element_cnt]
+                piece_dist = calculated_distances[p_i // max_elements_per_thread][p_i % max_elements_per_thread]
                 self._piece_distance_info[p_i] = piece_dist
 
         logging.info("Inter-distance calculation completed.")
