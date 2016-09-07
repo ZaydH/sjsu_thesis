@@ -5,16 +5,16 @@
 # noinspection PyUnresolvedReferences
 import random
 import time
-import datetime
 import logging
 
 # noinspection PyUnresolvedReferences
 import sys
 
-from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleTester, PuzzleType, PuzzleResultsCollection, \
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection, \
     PickleHelper
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 # noinspection PyUnresolvedReferences
+from hammoudeh_puzzle.solver_helper_classes import print_elapsed_time
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver
 
@@ -35,8 +35,6 @@ PICKLE_DIRECTORY = ".\\pickle_files\\"
 _PERFORM_ASSERTION_CHECKS = True
 
 _ENABLE_PICKLE = True
-
-
 
 
 def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
@@ -187,13 +185,12 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
             puzzle_dimensions = puzzles[0].grid_size
 
         # Create the Paikin Tal Solver
-        logging.info("Inter-piece distance calculation started.")
+        logging.info("Beginning calculating of all inter-piece distance information")
         start_time = time.time()
         paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
                                             top_level_calculate_asymmetric_distance, puzzle_type,
                                             fixed_puzzle_dimensions=puzzle_dimensions)
-
-        print_elapsed_time(start_time, "inter-piece distance calculation")
+        print_elapsed_time(start_time, "all inter-piece distance calculations")
 
         # Export the Paikin Tal Object.
         if pickle_placement_start_filename:  # Verify the filename is not blank
@@ -222,23 +219,6 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
 
     # Export the solved results
     return paikin_tal_solver
-
-
-def print_elapsed_time(start_time, task_name):
-    """
-    Elapsed Time Printer
-
-    Prints the elapsed time for a task in nice formatting.
-
-    Args:
-        start_time (int): Start time in seconds
-        task_name (string): Name of the task that was performed
-
-    """
-    elapsed_time = time.time() - start_time
-
-    # Print elapsed time and the current time.
-    logging.info("The task \"%s\" took %d min %d sec." % (task_name, elapsed_time // 60, elapsed_time % 60))
 
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):

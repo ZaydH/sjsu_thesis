@@ -184,12 +184,8 @@ class PaikinTalSolver(object):
         self._numb_puzzles = 0
         self._last_best_buddy_heap_housekeeping = None
 
-        logging.info("Starting to calculate inter-piece distances")
-
         # Calculate the inter-piece distances.
         self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function, self._puzzle_type)
-
-        logging.info("Finished calculating inter-piece distances")
 
         # Release the Inter-piece distance function to allow pickling.
         self._distance_function = None

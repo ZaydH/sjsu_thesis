@@ -2,6 +2,9 @@
 This module contains classes that would be helpful to any solver largely irrespective of the technique
 used by the solver.
 """
+import logging
+
+import time
 
 
 class NextPieceToPlace(object):
@@ -138,3 +141,20 @@ class NeighborSidePair(object):
 
         """
         return self._neighbor_side
+
+
+def print_elapsed_time(start_time, task_name):
+    """
+    Elapsed Time Printer
+
+    Prints the elapsed time for a task in nice formatting.
+
+    Args:
+        start_time (int): Start time in seconds
+        task_name (string): Name of the task that was performed
+
+    """
+    elapsed_time = time.time() - start_time
+
+    # Print elapsed time and the current time.
+    logging.info("The task \"%s\" took %d min %d sec." % (task_name, elapsed_time // 60, elapsed_time % 60))

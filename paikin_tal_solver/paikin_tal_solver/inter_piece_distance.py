@@ -10,8 +10,11 @@ import operator
 import multiprocessing as mp
 import logging
 
+import time
+
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
+from hammoudeh_puzzle.solver_helper_classes import print_elapsed_time
 
 
 class PieceDistanceInformation(object):
@@ -507,12 +510,7 @@ class InterPieceDistance(object):
         self.calculate_inter_piece_distances(pieces)
 
         # Calculate the piece to piece mutual compatibility
-        start_time = time.time()
-        logging.info("Starting mutual compatibility calculations.")
         self.calculate_mutual_compatibility()
-        logging.info("Mutual compatibility calculations completed.")
-        print_elapsed_time(start_time, "mutual compatibility calculation")
-
 
         # Calculate the best buddies using the inter-distance information.
         self.find_best_buddies()
@@ -535,6 +533,9 @@ class InterPieceDistance(object):
 
         """
 
+        start_time = time.time()
+        logging.info("Starting inter-piece distance calculations.")
+
         # If no speed up benefit then do the operations serially
         if self._numb_pieces < InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD \
                 or not InterPieceDistance._USE_MULTITHREADING:
@@ -551,7 +552,7 @@ class InterPieceDistance(object):
                                  self._numb_pieces / InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD)
 
             # Populate the data for the thread pool
-            thread_elements = []
+            process_elements = []
             first_elements = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
                                                                                                    numb_processes)
             for i in xrange(0, numb_processes):
@@ -568,12 +569,12 @@ class InterPieceDistance(object):
                                          "all_pieces": pieces,  # Piece distance information
                                          "puzzle_type": self._puzzle_type,
                                          "distance_function": self._distance_function}
-                thread_elements.append(distance_calc_element)
+                process_elements.append(distance_calc_element)
 
             # Build the thread pool
             process_pool = mp.Pool(numb_processes)
             calculated_distances = process_pool.map(_multiprocess_interpiece_distances_calc,
-                                                    thread_elements)
+                                                    process_elements)
             process_pool.close()
             process_pool.join()
 
@@ -581,14 +582,17 @@ class InterPieceDistance(object):
             process_cnt = 0  # Represents the process number containing piece p_i
             element_cnt = 0  # Index within the process representing piece p_i
             for p_i in xrange(0, self._numb_pieces):
-
-                if element_cnt == distance_calc_element["last"]:
+                # Check if all elements for this process have been exhausted
+                if element_cnt == process_elements[process_cnt]["last"]:
                     process_cnt += 1
                     element_cnt = 0
 
                 # Get the results from the thread pool output
                 piece_dist = calculated_distances[process_cnt][element_cnt]
                 self._piece_distance_info[p_i] = piece_dist
+
+        logging.info("Inter-distance calculation completed.")
+        print_elapsed_time(start_time, "inter-piece distance calculation")
 
     @staticmethod
     def calculate_elements_per_process_for_diagonal_matrix(numb_pieces, numb_processes):
@@ -615,8 +619,8 @@ class InterPieceDistance(object):
         first_element_for_each_process = [0]
 
         for i in xrange(1, numb_processes):
-            triangle_base = 0.5 * i / numb_processes  # This is like assuming base and height of whole triange = 1
-            first_element = long(numb_pieces * math.sqrt(triangle_base))
+            percentage_of_area = 1.0 * i / numb_processes
+            first_element = int(numb_pieces * math.sqrt(percentage_of_area))
             first_element_for_each_process.append(first_element)
         return first_element_for_each_process
 
@@ -645,6 +649,9 @@ class InterPieceDistance(object):
         Args:
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
+        start_time = time.time()
+        logging.info("Starting mutual compatibility calculations.")
+
         for p_i in range(0, self._numb_pieces):
 
             # Go through all the valid sides
@@ -674,6 +681,9 @@ class InterPieceDistance(object):
                         # Store the mutual compatibility for BOTH p_i and p_j
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
+
+        logging.info("Mutual compatibility calculations completed.")
+        print_elapsed_time(start_time, "mutual compatibility calculation")
 
     def recalculate_remaining_piece_compatibilities(self, is_piece_placed,
                                                     is_piece_placed_with_no_open_neighbors):
@@ -780,6 +790,8 @@ class InterPieceDistance(object):
         Args:
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
+        start_time = time.time()
+        logging.info("Starting finding of best buddies.")
 
         # Go through each piece to find its best buddies.
         for p_i in range(0, self._numb_pieces):
@@ -798,6 +810,9 @@ class InterPieceDistance(object):
                     if (p_i, p_i_side) in piece_dist_info.best_buddy_candidates(p_j_side):
                         self._piece_distance_info[p_i].add_best_buddy(p_i_side, p_j, p_j_side)
 
+        logging.info("Finding best buddies completed.")
+        print_elapsed_time(start_time, "finding best buddies")
+
     def find_start_piece_candidates(self, is_piece_placed=None):
         """
         Creates a list of starter puzzle pieces.  This is based off the criteria defined by Paikin and Tal
@@ -808,6 +823,8 @@ class InterPieceDistance(object):
         Args:
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
+        start_time = time.time()
+        logging.info("Finding start piece candidates")
 
         # Calculate each pieces best buddy count for each piece
         all_best_buddy_info = []
@@ -889,6 +906,9 @@ class InterPieceDistance(object):
         # Sort by number of best buddy neighbors (1) then by total compatibility if there is a tie (2)
         # See here for more information: http://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
         self._start_piece_ordering.sort(key=operator.itemgetter(1, 2), reverse=True)
+
+        logging.info("Finding best buddies completed.")
+        print_elapsed_time(start_time, "finding start pieces")
 
     def next_starting_piece(self, placed_pieces=None):
         """
