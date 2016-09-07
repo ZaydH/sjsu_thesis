@@ -890,7 +890,7 @@ class InterPieceDistance(object):
         # See here for more information: http://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes
         self._start_piece_ordering.sort(key=operator.itemgetter(1, 2), reverse=True)
 
-        logging.info("Finding best buddies completed.")
+        logging.info("Finding the start pieces completed.")
         print_elapsed_time(start_time, "finding start pieces")
 
     def next_starting_piece(self, placed_pieces=None):
