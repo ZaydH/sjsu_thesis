@@ -8,6 +8,7 @@ import math  # Used for ceiling function
 
 import operator
 import multiprocessing as mp
+import logging
 
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
@@ -506,7 +507,12 @@ class InterPieceDistance(object):
         self.calculate_inter_piece_distances(pieces)
 
         # Calculate the piece to piece mutual compatibility
+        start_time = time.time()
+        logging.info("Starting mutual compatibility calculations.")
         self.calculate_mutual_compatibility()
+        logging.info("Mutual compatibility calculations completed.")
+        print_elapsed_time(start_time, "mutual compatibility calculation")
+
 
         # Calculate the best buddies using the inter-distance information.
         self.find_best_buddies()
@@ -543,13 +549,22 @@ class InterPieceDistance(object):
             # Do not always use maximum number of threads.  Base on the workload.
             numb_processes = min(InterPieceDistance._MAX_NUMBER_OF_PARALLEL_PROCESSES,
                                  self._numb_pieces / InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD)
-            max_elements_per_thread = long(math.ceil(1.0 * self._numb_pieces / numb_processes))
 
             # Populate the data for the thread pool
             thread_elements = []
+            first_elements = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
+                                                                                                   numb_processes)
             for i in xrange(0, numb_processes):
-                distance_calc_element = {"first": i * max_elements_per_thread,
-                                         "last": min((i+1) * max_elements_per_thread, self._numb_pieces),  # Exclusive
+                # Calculate the last element
+                if i + 1 < numb_processes:
+                    # First element in next process is last element in prev process (assuming not the last process)
+                    last_element = first_elements[i + 1]
+                else:
+                    # Last process so use the number of pieces so all are processed
+                    last_element = self._numb_pieces
+
+                distance_calc_element = {"first": first_elements[i],
+                                         "last": last_element,  # Exclusive
                                          "all_pieces": pieces,  # Piece distance information
                                          "puzzle_type": self._puzzle_type,
                                          "distance_function": self._distance_function}
@@ -563,9 +578,47 @@ class InterPieceDistance(object):
             process_pool.join()
 
             # Merge the data back into the main structure
+            process_cnt = 0  # Represents the process number containing piece p_i
+            element_cnt = 0  # Index within the process representing piece p_i
             for p_i in xrange(0, self._numb_pieces):
-                piece_dist = calculated_distances[p_i // max_elements_per_thread][p_i % max_elements_per_thread]
+
+                if element_cnt == distance_calc_element["last"]:
+                    process_cnt += 1
+                    element_cnt = 0
+
+                # Get the results from the thread pool output
+                piece_dist = calculated_distances[process_cnt][element_cnt]
                 self._piece_distance_info[p_i] = piece_dist
+
+    @staticmethod
+    def calculate_elements_per_process_for_diagonal_matrix(numb_pieces, numb_processes):
+        """
+        The calculation of the data for the inter-piece distance diagonal matrix can be spread across multiple
+        processes.  This function enumerates how many elements to assign to the different processes to ensure each
+        process is assigned a comparable amount of work to reduce the overall execution time.
+
+        The design of this function uses the concept that the number of elements in a diagonal matrix is essentially
+        the same as calculating the area of a triangle.
+
+        Args:
+            numb_pieces (int): Number of pieces in the puzzle
+            numb_processes (int): Number of processes to be spawned.
+
+        Returns (List(int)):
+            Number of the first element that will be calculated for each of the processes.
+        """
+
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            assert numb_pieces >= 1 and numb_processes >= 1
+
+        # Stores the first element to be processed for each process
+        first_element_for_each_process = [0]
+
+        for i in xrange(1, numb_processes):
+            triangle_base = 0.5 * i / numb_processes  # This is like assuming base and height of whole triange = 1
+            first_element = long(numb_pieces * math.sqrt(triangle_base))
+            first_element_for_each_process.append(first_element)
+        return first_element_for_each_process
 
     def get_total_best_buddy_count(self):
         """

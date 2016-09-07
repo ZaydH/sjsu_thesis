@@ -192,8 +192,8 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
         paikin_tal_solver = PaikinTalSolver(len(image_files), combined_pieces,
                                             top_level_calculate_asymmetric_distance, puzzle_type,
                                             fixed_puzzle_dimensions=puzzle_dimensions)
-        elapsed_time = time.time() - start_time
-        print_elapsed_time(elapsed_time, "inter-piece distance calculation")
+
+        print_elapsed_time(start_time, "inter-piece distance calculation")
 
         # Export the Paikin Tal Object.
         if pickle_placement_start_filename:  # Verify the filename is not blank
@@ -211,31 +211,32 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
     logging.info("Placer started")
     start_time = time.time()
     paikin_tal_solver.run()
-    elapsed_time = time.time() - start_time
-    print_elapsed_time(elapsed_time, "placement")
+    print_elapsed_time(start_time, "placement")
 
     # Export the completed solver results
     if pickle_placement_complete_filename:
         start_time = time.time()
         PickleHelper.exporter(paikin_tal_solver, pickle_placement_complete_filename)
-        print_elapsed_time(time.time() - start_time, "pickle completed solver export")
+        print_elapsed_time(start_time, "pickle completed solver export")
         logging.info("Completed pickle export of the solved puzzle.")
 
     # Export the solved results
     return paikin_tal_solver
 
 
-def print_elapsed_time(elapsed_time, task_name):
+def print_elapsed_time(start_time, task_name):
     """
     Elapsed Time Printer
 
     Prints the elapsed time for a task in nice formatting.
 
     Args:
-        elapsed_time (int): Elapsed time in seconds
+        start_time (int): Start time in seconds
         task_name (string): Name of the task that was performed
 
     """
+    elapsed_time = time.time() - start_time
+
     # Print elapsed time and the current time.
     logging.info("The task \"%s\" took %d min %d sec." % (task_name, elapsed_time // 60, elapsed_time % 60))
 
@@ -266,10 +267,10 @@ if __name__ == "__main__":
 
     # Select the files to parse
 
-    PaikinTalSolver.use_best_buddy_placer = False
-    images = [".\\images\\muffins_300x200.jpg"]
-    paikin_tal_driver(images, PuzzleType.type1, 25)
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # PaikinTalSolver.use_best_buddy_placer = False
+    # images = [".\\images\\muffins_300x200.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type1, 25)
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
     #
     # PaikinTalSolver.use_best_buddy_placer = True
     # paikin_tal_driver(images, PuzzleType.type2, 28)
@@ -328,9 +329,9 @@ if __name__ == "__main__":
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
 
-    InterPieceDistance._USE_MULTITHREADING = False
-    paikin_tal_driver(images, PuzzleType.type2, 28)
     InterPieceDistance._USE_MULTITHREADING = True
+    paikin_tal_driver(images, PuzzleType.type2, 28)
+    InterPieceDistance._USE_MULTITHREADING = False
     paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
