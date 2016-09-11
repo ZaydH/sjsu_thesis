@@ -680,7 +680,7 @@ class InterPieceDistance(object):
         if not is_piece_placed or not InterPieceDistance._USE_MULTIPLE_PROCESSES:
             self._calculate_mutual_compatibility_single_process(is_piece_placed)
         else:
-            self._calculate_mutual_compatibility_multiprocess()
+            self._calculate_mutual_compatibility_multiprocess(is_piece_placed)
 
         logging.info("Mutual compatibility calculations completed.")
         print_elapsed_time(start_time, "mutual compatibility calculation")
@@ -714,19 +714,14 @@ class InterPieceDistance(object):
         for p_i in xrange(0, self._numb_pieces):
             # Go through all the valid sides
             for p_i_side in PuzzlePieceSide.get_all_sides():
-                for process_cnt in xrange(0, numb_processes):
-                    # Starting point is p_i + 1 for each process
-                    # Skip this process if that is in the next section
-                    if p_i + 1 >= first_elem_per_process[process_cnt + 1]:
-                        continue
-                    # Check if the result begins halfway through this segment
-                    elif p_i + 1 > first_elem_per_process[process_cnt]:
-                        first_p_j = p_i + 1
-                    # Use the whole result from that process so use its first element
-                    else:
-                        first_p_j = first_elem_per_process[process_cnt]
+
+                    process_id = 0  # Used to select from which process to read the calculated results
                     # Iterate through all p_j calculated in this segment
-                    for p_j in xrange(first_p_j, first_elem_per_process[process_cnt + 1]):
+                    for p_j in xrange(p_i + 1, self._numb_pieces):
+
+                        # Go to the process that contains the results for this pairing of p_i and p_j
+                        while first_elem_per_process[process_id + 1] <= p_j:
+                            process_id += 1
 
                         # Skip placed pieces
                         # No Need to check p_i == p_j since doing a diagonal calculation
@@ -738,7 +733,7 @@ class InterPieceDistance(object):
                         # Check all valid p_j sides depending on the puzzle type.
                         for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
                             # Extract the mutual compatiblity from the results
-                            mutual_compat = new_piece_distance[process_cnt][p_i, p_i_side.value, p_j, p_j_side.value]
+                            mutual_compat = new_piece_distance[process_id][p_i, p_i_side.value, p_j, p_j_side.value]
                             # Make sure a value is present
                             if InterPieceDistance._PERFORM_ASSERT_CHECKS:
                                 assert mutual_compat != numpy.NAN
