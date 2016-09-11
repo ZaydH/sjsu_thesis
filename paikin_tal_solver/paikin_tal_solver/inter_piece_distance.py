@@ -5,6 +5,7 @@
 import numpy
 import sys
 import math  # Used for ceiling function
+import copy
 
 import operator
 import multiprocessing as mp
@@ -504,6 +505,7 @@ class InterPieceDistance(object):
             self._piece_distance_info.append(PieceDistanceInformation(p_i, self._numb_pieces, self._puzzle_type))
 
         # Define the start piece ordering
+        self._initial_start_piece_ordering = None  # The starting piece ordering before any modification during runtime
         self._start_piece_ordering = []
 
         # Calculate the best buddies using the inter-distance information.
@@ -517,6 +519,7 @@ class InterPieceDistance(object):
 
         # Find the set of valid starter pieces.
         self.find_start_piece_candidates()
+        self._initial_start_piece_ordering = copy.deepcopy(self._start_piece_ordering)
 
         # Clear the distance function for pickling purposes
         self._distance_function = None
@@ -686,6 +689,13 @@ class InterPieceDistance(object):
         print_elapsed_time(start_time, "mutual compatibility calculation")
 
     def _calculate_mutual_compatibility_multiprocess(self, is_piece_placed=None):
+        """
+
+        Args:
+            is_piece_placed (Optional List[Bool]): List indicating whether each puzzle piece is already placed and
+              should be ignored in the mutual compatibility calculation.
+
+        """
         # Calculate the information passed to
         numb_processes = self._calculate_numb_parallel_calculation_processes()
         first_elem_per_process = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
@@ -1004,6 +1014,15 @@ class InterPieceDistance(object):
                 i += 1
             return self._start_piece_ordering[i][0]
 
+    def get_initial_starting_piece_order(self):
+        """
+        Access the initial starting piece ordering for pieces.
+
+        Returns (List[int]): Descending order of the pieces from best candidate to be a seed piece
+          to worst candidate to be a seed piece.
+        """
+        return copy.deepcopy(self._initial_start_piece_ordering)
+
     def best_buddies(self, p_i, p_i_side):
         """
         Gets the best buddy information (if any) for a specified piece's side
@@ -1170,6 +1189,21 @@ class InterPieceDistance(object):
             return True
         else:
             return False
+
+    def is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
+        """
+        Checks whether two pieces pieces are best buddies on the specified sides.
+
+        Args:
+            first_piece (PuzzlePiece): A puzzle piece
+            first_piece_side (PuzzlePieceSide):  The side of the first puzzle piece
+            second_piece (PuzzlePiece): A second puzzle piece
+            second_piece_side (PuzzlePieceSide): The side of the second piece being compared
+
+        Returns (Bool): True if the two pieces are best buddies on their respective sides and False otherwise.
+        """
+        distance_info = self._piece_distance_info[first_piece.id_number]
+        return (second_piece.id_number, second_piece_side) in distance_info[first_piece_side]
 
 
 # Functions are only pickable if defined at the top level of a module.

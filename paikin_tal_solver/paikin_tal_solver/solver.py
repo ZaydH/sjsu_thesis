@@ -2,6 +2,7 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
+import Queue
 import copy
 import heapq
 import logging
@@ -11,6 +12,7 @@ import numpy
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
+from hammoudeh_puzzle.puzzle_segment import PuzzleSegment
 from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -189,6 +191,8 @@ class PaikinTalSolver(object):
 
         # Release the Inter-piece distance function to allow pickling.
         self._distance_function = None
+
+        self._segments = []
 
     def run(self, skip_initial=False):
         """
@@ -561,6 +565,25 @@ class PaikinTalSolver(object):
         """
         return (self._piece_locations[slot_location.puzzle_id][slot_location.location] == PaikinTalSolver._UNPLACED_PIECE_ID
                 and self._check_board_dimensions(slot_location))
+
+    def _get_piece_in_puzzle_location(self, puzzle_location):
+        """
+        Puzzle Piece Accessor via a Location
+
+        Returns the puzzle piece at the specified location.
+
+        Args:
+            puzzle_location (PuzzleLocation): Location in the puzzle from which to get a piece
+
+        Returns (PuzzlePiece): Puzzle piece at the specified location
+
+        """
+
+        # Optionally verify the piece exists in the specified location
+        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+            assert not self._is_slot_open(puzzle_location)
+
+        return self._piece_locations[puzzle_location.puzzle_id][puzzle_location.location]
 
     def _check_if_perform_best_buddy_heap_housecleaning(self):
         """
@@ -1052,6 +1075,142 @@ class PaikinTalSolver(object):
                                                          open_slot_info.location, mutual_compat)
                         # Push the best buddy onto the heap
                         heapq.heappush(self._best_buddy_open_slot_heap, bb_heap_info)
+
+    def segment(self, perform_segment_cleaning=False):
+        """
+
+        Args:
+            perform_segment_cleaning (Optional bool): If True, perform additional steps to improve the accuracy
+             of the segments.  This will result in smaller segments overall.
+
+        """
+        logging.info("Beginning segmentation.")
+
+        # Create a dictionary containing all of the unsegmented pieces
+        unassigned_pieces = {}
+        for piece in self._pieces:
+            key = str(piece.id_numb)
+            unassigned_pieces[key] = piece.id_numb
+
+        # Use the seed priority to determine the order pieces are added to segments.
+        piece_segment_priority = self._inter_piece_distance.get_initial_starting_piece_order()
+
+        # Initialize the segment placeholder
+        self._segments = []
+        while len(self._segments) < self._numb_puzzles:
+            self._segments.append([])
+
+        # Initialize the seed and segment building information
+        priority_cnt = 0
+        segment_piece_queue = Queue.Queue()
+        # Continue segmenting
+        while unassigned_pieces:
+            # Find the next seed piece
+            while str(piece_segment_priority[priority_cnt]) not in unassigned_pieces:
+                priority_cnt += 1
+
+            # Add the next highest priority piece to the queue
+            seed_piece_id_number = piece_segment_priority[priority_cnt]
+            seed_piece = self._pieces[seed_piece_id_number]
+            seed_piece_puzzle = seed_piece.puzzle_id
+
+            # Create a new segment
+            new_segment = PuzzleSegment(seed_piece.puzzle_id, len(self._segments[seed_piece_puzzle]))
+            segment_piece_queue.put(seed_piece)
+
+            # Add pieces to the segment
+            while not segment_piece_queue.empty():
+
+                # Add the next piece in the queue and keep looping
+                queue_piece = segment_piece_queue.get()
+
+                # Add the piece to the segment
+                queue_piece.segment = new_segment.id_number
+                new_segment.add_piece(queue_piece.id_number, queue_piece.location)
+
+                # Iterate through all the sides and determine if should be added
+                for (puzzle_loc, queue_piece_side) in queue_piece.get_neighbor_puzzle_location_and_sides():
+                    # If no neighbor is present, go to next side
+                    if self._is_slot_open(puzzle_loc):
+                        continue
+
+                    # Get the neighbor piece
+                    neighbor_piece = self._get_piece_in_puzzle_location(puzzle_loc)
+
+                    # Verify the puzzle identification numbers match
+                    if self._PERFORM_ASSERTION_CHECK:
+                        assert neighbor_piece.puzzle_id == new_segment.puzzle_id
+
+                    # If piece already assigned a segment go to next piece
+                    if str(neighbor_piece.id_number) not in unassigned_pieces:
+                        continue
+
+                    neighbor_piece_side = neighbor_piece.side_adjacent_to_location()
+
+                    # Add the piece to the queue if they are best buddies
+                    if self._is_pieces_best_buddies(queue_piece, queue_piece_side, neighbor_piece, neighbor_piece_side):
+                        segment_piece_queue.put(neighbor_piece)
+
+            if perform_segment_cleaning:  # Not yet supported.
+                assert False
+
+            # Add the segment to the list of segments
+            self._segments[new_segment.puzzle_id].append(new_segment)
+
+        # Mark which segments are physically adjacent to each other
+        self._update_segment_neighbors()
+        logging.info("Segmentation completed.")
+
+    def _update_segment_neighbors(self):
+        """
+        A segment will have one or more neighbors.  This function updates the segments to reflect their neighboring
+        segments.
+        """
+        # Iterate through all pieces
+        for piece in self._pieces:
+            piece_puzzle_id = piece.puzzle_id
+            piece_segment_id = piece.segment_number
+
+            for (neighbor_loc, ) in piece.get_neighbor_puzzle_location_and_sides():
+                # Verify the
+                if self._is_slot_open(neighbor_loc):
+                    continue
+                # Get the neighbor piece
+                neighbor_piece = self._get_piece_in_puzzle_location(neighbor_loc)
+
+                # Verify the pieces are from the same puzzle
+                if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                    assert piece_puzzle_id == neighbor_piece.puzzle_id
+
+                # If the pieces are from different segments, then mark them as adjacent
+                neighbor_segment_id = neighbor_piece.segment_number
+                if piece_segment_id != neighbor_segment_id:
+                    self._segments[piece_puzzle_id][piece_segment_id].add_neighboring_segment(neighbor_segment_id)
+                    self._segments[piece_puzzle_id][neighbor_segment_id].add_neighboring_segment(piece_segment_id)
+
+    def color_segments(self):
+        """
+        This function colors each of the segments.  This allows for the generation of a visualization where
+        no two adjacent segments have the same color.
+        """
+        for puzzle_id in xrange(0, self._numb_puzzles):
+            # Sort the
+            sorted(self._segments[puzzle_id], PuzzleSegment.sort_by_degree)
+
+    def _is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
+        """
+        Checks whether two pieces pieces are best buddies on the specified sides.
+
+        Args:
+            first_piece (PuzzlePiece): A puzzle piece
+            first_piece_side (PuzzlePieceSide):  The side of the first puzzle piece
+            second_piece (PuzzlePiece): A second puzzle piece
+            second_piece_side (PuzzlePieceSide): The side of the second piece being compared
+
+        Returns (Bool): True if the two pieces are best buddies on their respective sides and False otherwise.
+        """
+        return self._inter_piece_distance.is_pieces_best_buddies(first_piece, first_piece_side,
+                                                                 second_piece, second_piece_side)
 
     @property
     def puzzle_type(self):

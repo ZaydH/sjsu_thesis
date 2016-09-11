@@ -1,4 +1,22 @@
 import copy
+from enum import Enum
+
+
+class SegmentColor(Enum):
+
+    Red = (0x0, 0x0, 0x0)
+    Blue = (0xFF, 0x0, 0x0)
+    Green = (0x0, 0xFF, 0x0)
+    Yellow = (0x00, 0xFF, 0xFF)
+
+    @staticmethod
+    def get_all_colors():
+        """
+        Accessor for all of the valid segment colors.
+
+        Returns (List[SegmentColors]): All the valid segment colors
+        """
+        return [SegmentColor.Red, SegmentColor.Blue, SegmentColor.Green, SegmentColor.Yellow]
 
 
 class PuzzleSegment(object):
@@ -22,6 +40,8 @@ class PuzzleSegment(object):
         self._pieces = {}
         self._seed_piece = None
         self._neighbor_segment_ids = {}
+
+        self._color = None
 
     @property
     def puzzle_id(self):
@@ -152,3 +172,37 @@ class PuzzleSegment(object):
         Returns (String): Key associated with the puzzle segment identification number.
         """
         return str(segment_id)
+
+    @property
+    def color(self):
+        """
+        Gets the color assigned to this segment.
+
+        Returns (SegmentColor): Color assigned to this segment
+        """
+        return self._color
+
+    @color.setter
+    def color(self, segment_color):
+        """
+        Updates the segment color
+
+        Args:
+            segment_color (SegmentColor): New color for the segment
+
+        """
+        self._color = segment_color
+
+    @staticmethod
+    def sort_by_degree(primary, other):
+        """
+        Sort puzzle segments ascending based off the degree (i.e. number of neighbors).
+
+        Args:
+            primary(PuzzleSegment): First piece to be compared.
+            other(PuzzleSegment): Other piece to be compared
+
+        Returns (int): -1 if primary has more neighboring segments than other.  0 if both segments have the same
+            number of segments.  1 if other has more neighboring segments.
+        """
+        return cmp(other.neighbor_degree, primary.neighbor_degree)

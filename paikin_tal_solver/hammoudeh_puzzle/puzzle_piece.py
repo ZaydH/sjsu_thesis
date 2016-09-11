@@ -7,6 +7,8 @@ from enum import Enum
 import numpy
 import cv2  # OpenCV
 
+from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
+
 
 class Location(object):
     """
@@ -341,13 +343,22 @@ class PuzzlePiece(object):
         """
         return self._assigned_loc
 
+    @property
+    def puzzle_location(self):
+        """
+
+        Returns (PuzzleLocation): Puzzle location using the Puzzle Location class.
+
+        """
+        return PuzzleLocation(self.puzzle_id, self._assigned_loc[0], self._assigned_loc[1])
+
     @location.setter
     def location(self, new_loc):
         """
         Updates the puzzle piece location.
 
         Args:
-            new_loc ([int]): New puzzle piece location.
+            new_loc (List[int]): New puzzle piece location.
 
         """
         if len(new_loc) != 2:
@@ -495,10 +506,12 @@ class PuzzlePiece(object):
         for (loc, side) in loc_and_side:
             if loc == location:
                 return side
-        raise ValueError("Specified Location: \"(%s,%s)\" is not adjacent this piece's location \"(%s, %s)\"" % (location[0],
-                                                                                                                 location[1],
-                                                                                                                 self.location[0],
-                                                                                                                 self.location[1]))
+        # If you reached here, something went wrong
+        err = "Specified Location: \"(%s,%s)\" is not adjacent this piece's location \"(%s, %s)\"" % (location[0],
+                                                                                                      location[1],
+                                                                                                      self.location[0],
+                                                                                                      self.location[1])
+        raise ValueError(err)
 
     @property
     def results_image_coloring(self):
@@ -539,12 +552,36 @@ class PuzzlePiece(object):
         """
         self._results_image_coloring.append((side, color.value))
 
+    def get_neighbor_puzzle_location_and_sides(self):
+        """
+        Neighbor Puzzle Location and Sides
+
+        This function replaces the previously used "get_neighbor_locations_and_sides".  Rather than returning the
+        location as a list, it now uses the PuzzleLocation class.
+
+        Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
+        puzzle piece that corresponds to those locations so that it can be added to the open slot list.
+
+        Returns (List[Tuple(PuzzleLocation, PuzzlePieceSide)]: A list of puzzle piece locations and their
+           accompanying side.
+        """
+
+        location_side_tuple = self.get_neighbor_locations_and_sides()
+
+        # Build the structure to use puzzle locations
+        output_loc_and_side = []
+        for (temp_loc, side) in location_side_tuple:
+            output_loc_and_side.append((PuzzleLocation(self._assigned_puzzle_id, temp_loc[0], temp_loc[1]), side))
+        return output_loc_and_side
+
     def get_neighbor_locations_and_sides(self):
         """
         Neighbor Locations and Sides
 
         Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
         puzzle piece that corresponds to those locations so that it can be added to the open slot list.
+
+        DEPRECATED.
 
         Returns ([([int], PuzzlePieceSide)]):
             Valid puzzle piece locations and the respective puzzle piece side.

@@ -1,6 +1,5 @@
 """Jigsaw Puzzle Object
 """
-import Queue
 import copy
 import logging
 import os
@@ -15,7 +14,6 @@ import cv2  # OpenCV
 from enum import Enum
 
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
-from hammoudeh_puzzle.puzzle_segment import PuzzleSegment
 
 
 class PickleHelper(object):
@@ -295,23 +293,23 @@ class PuzzleResultsCollection(object):
                 piece_count_weight = direct_acc.numb_different_puzzle + numb_pieces_in_original_puzzle
                 print >>string_io, "\tSolved Puzzle ID #%d" % direct_acc.solved_puzzle_id
                 print >>string_io, acc_name + " Direct Accuracy:\t\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_correct_placements,
-                                                                                        piece_count_weight,
-                                                                                        100.0 * direct_acc.numb_correct_placements / piece_count_weight)
+                                                                                         piece_count_weight,
+                                                                                         100.0 * direct_acc.numb_correct_placements / piece_count_weight)
                 print >>string_io, acc_name + " Numb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_different_puzzle,
-                                                                                            piece_count_weight,
-                                                                                            100.0 * direct_acc.numb_different_puzzle / piece_count_weight)
+                                                                                             piece_count_weight,
+                                                                                             100.0 * direct_acc.numb_different_puzzle / piece_count_weight)
                 print >>string_io, acc_name + " Numb Wrong Location:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_location,
-                                                                                          piece_count_weight,
-                                                                                          100.0 * direct_acc.numb_wrong_location / piece_count_weight)
+                                                                                           piece_count_weight,
+                                                                                           100.0 * direct_acc.numb_wrong_location / piece_count_weight)
                 print >>string_io, acc_name + " Numb Wrong Rotation:\t%d/%d\t(%3.2f%%)" % (direct_acc.numb_wrong_rotation,
-                                                                                          piece_count_weight,
-                                                                                          100.0 * direct_acc.numb_wrong_rotation / piece_count_weight)
+                                                                                           piece_count_weight,
+                                                                                           100.0 * direct_acc.numb_wrong_rotation / piece_count_weight)
                 # Calculate the number of missing pieces
                 numb_pieces_missing = (numb_pieces_in_original_puzzle
                                        - direct_acc.numb_pieces_from_original_puzzle_in_solved_puzzle)
                 print >>string_io, acc_name + " Numb Pieces Missing:\t%d/%d\t(%3.2f%%)" % (numb_pieces_missing,
-                                                                                          numb_pieces_in_original_puzzle,
-                                                                                          100.0 * numb_pieces_missing / numb_pieces_in_original_puzzle)
+                                                                                           numb_pieces_in_original_puzzle,
+                                                                                           100.0 * numb_pieces_missing / numb_pieces_in_original_puzzle)
                 # Print a new line to separate the results
                 print >>string_io, ""
 
@@ -322,18 +320,18 @@ class PuzzleResultsCollection(object):
             neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
             print >>string_io, "\tSolved Puzzle ID #%d" % neighbor_acc.solved_puzzle_id
             print >>string_io, "\tNeighbor Accuracy:\t\t%d/%d\t(%3.2f%%)" % (neighbor_acc.correct_neighbor_count,
-                                                                            neighbor_count_weight,
-                                                                            100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
+                                                                             neighbor_count_weight,
+                                                                             100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight)
             numb_missing_pieces = (numb_pieces_in_original_puzzle
                                    - neighbor_acc.numb_pieces_from_original_puzzle_in_solved_puzzle)
             print >>string_io, "\tNumb Missing Pieces:\t%d/%d\t(%3.2f%%)" % (numb_missing_pieces,
-                                                                            results.numb_pieces,
-                                                                            100.0 * numb_missing_pieces / results.numb_pieces)
+                                                                             results.numb_pieces,
+                                                                             100.0 * numb_missing_pieces / results.numb_pieces)
             numb_from_wrong_puzzle = neighbor_acc.wrong_puzzle_id
             numb_pieces_in_puzzle = neighbor_acc.total_numb_pieces_in_solved_puzzle
             print >>string_io, "\tNumb from Diff Puzzle:\t%d/%d\t(%3.2f%%)" % (numb_from_wrong_puzzle,
-                                                                              numb_pieces_in_puzzle,
-                                                                              100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
+                                                                               numb_pieces_in_puzzle,
+                                                                               100.0 * numb_from_wrong_puzzle / numb_pieces_in_puzzle)
             # Print a new line to separate the results
             print >>string_io, ""
 
@@ -1440,7 +1438,7 @@ class Puzzle(object):
 
         # No pieces for the puzzle yet.
         self._pieces = []
-        self._id_number_to_index_map = {}
+        # self._id_number_to_index_map = {}
 
         if image_filename is None:
             self._filename = ""
@@ -1619,62 +1617,25 @@ class Puzzle(object):
 
         return output_puzzle
 
-    def segment(self, piece_segment_priority, starting_segment_numb=0):
-        """
-
-        Args:
-            piece_segment_priority ():
-            starting_segment_numb ():
-
-        """
-        # Create a dictionary containing all of the unsegmented pieces
-        unassigned_pieces = {}
-        for piece in self._pieces:
-            key = str(piece.id_numb)
-            unassigned_pieces[key] = piece.id_numb
-
-        priority_cnt = 0
-        segment_piece_queue = Queue.Queue()
-        # Continue segmenting
-        while unassigned_pieces:
-            new_segment = PuzzleSegment(self._id, starting_segment_numb + len(self._segments))
-
-            # Find the next seed piece
-            while str(piece_segment_priority[priority_cnt]) not in unassigned_pieces:
-                priority_cnt += 1
-
-            # Add the next highest priority piece to the queue
-            seed_piece_id_number = piece_segment_priority[priority_cnt]
-            segment_piece_queue.put(self._get_piece_by_id_number(seed_piece_id_number))
-
-            while not segment_piece_queue.empty():
-                # Add the next piece in the queue and keep looping
-                next_piece = segment_piece_queue.get()
-                new_segment.add_piece(next_piece.id_number, piece.location)
-
-
-            # Increment the segment number
-            self._segments.append(new_segment)
-
-    def _get_piece_by_id_number(self, piece_id_number):
-        """
-        Pieces in a puzzle are stored in a list.  This function allows for constant time look up
-        of a puzzle piece based off its identification number.
-
-        Args:
-            piece_id_number (int): Identification number of the puzzle piece
-
-        Returns (PuzzlePiece): Puzzle piece with the specified identification number.
-        """
-
-        # Build the indexing of piece
-        if not self._id_number_to_index_map:
-            for i in xrange(0, self.numb_pieces):
-                self._id_number_to_index_map[str(self._pieces[i].id_numb)] = i
-
-        # Return the piece with the specified index number.
-        pieces_array_index = self._id_number_to_index_map[str(piece_id_number)]
-        return self._pieces[pieces_array_index]
+    # def _get_piece_by_id_number(self, piece_id_number):
+    #     """
+    #     Pieces in a puzzle are stored in a list.  This function allows for constant time look up
+    #     of a puzzle piece based off its identification number.
+    #
+    #     Args:
+    #         piece_id_number (int): Identification number of the puzzle piece
+    #
+    #     Returns (PuzzlePiece): Puzzle piece with the specified identification number.
+    #     """
+    #
+    #     # Build the indexing of piece
+    #     if not self._id_number_to_index_map:
+    #         for i in xrange(0, self.numb_pieces):
+    #             self._id_number_to_index_map[str(self._pieces[i].id_numb)] = i
+    #
+    #     # Return the piece with the specified index number.
+    #     pieces_array_index = self._id_number_to_index_map[str(piece_id_number)]
+    #     return self._pieces[pieces_array_index]
 
     def build_puzzle_image(self, use_results_coloring=False):
         """
