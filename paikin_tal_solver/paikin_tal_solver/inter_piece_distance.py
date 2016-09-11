@@ -1216,11 +1216,29 @@ def _multiprocess_mutual_compatibility_calc(params):
     Calculates the mutual compatibility as defined by Paikin and Tal.  This supports the use of multiprocessing so
     additional analysis of the data is required.
 
+    A basic diagram of how this function iterates over the diagonal matrix is shown below.  Note that along the
+    rows of the matrix, all elements from the first row to the "last_piece" row (exclusive) are traversed.  In
+    contrast, only the columns between "first_piece" (inclusive) and "last_piece" (exclusive" are traversed.
+    
+    -----------
+    \   ***   |
+     \  ***   |
+      \ ***   |
+       \ **   |
+        \ *   |
+         \    |
+          \   |
+           \  |
+            \ |
+             \|
+
     Args:
         params (Dict): Dictionary containing the input parameters to the function.  This must be pickle-able
         to work with the multiprocessing Python class.
 
-    Returns (Numpy[float]):
+    Returns (Numpy[float]): This contains the mutual compatibility data calculated by this process.  The size of the
+        NumPy array return is [total_numb_pieces x total_numb_pieces].  However, only the values actually calculated by
+        this process are populated.
     """
 
     first_piece = params["first_piece"]
@@ -1234,11 +1252,13 @@ def _multiprocess_mutual_compatibility_calc(params):
                                       last_piece, PuzzlePieceSide.get_numb_sides()], numpy.float32)
     mutual_compat_data[:] = numpy.NAN
 
-    for p_i in range(first_piece, last_piece):
+    # For the given section, calculate all pieces that fall in that sliver of a region.
+    # Hence, must start from 0 as shown in the figure below:
+    for p_i in range(0, last_piece):
 
         # Go through all the valid sides
         for p_i_side in PuzzlePieceSide.get_all_sides():
-            for p_j in range(p_i + 1, last_piece):
+            for p_j in range(first_piece, last_piece):
 
                 # Skip placed pieces
                 # No Need to check p_i == p_j since doing a diagonal calculation
@@ -1260,5 +1280,4 @@ def _multiprocess_mutual_compatibility_calc(params):
 
                     # Store the mutual compatibility for BOTH p_i and p_j
                     mutual_compat_data[p_i, p_i_side.value, p_j, p_j_side.value] = mutual_compat
-
     return mutual_compat_data
