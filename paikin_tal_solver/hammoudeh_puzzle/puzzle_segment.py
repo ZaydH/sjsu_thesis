@@ -2,7 +2,7 @@ import copy
 from enum import Enum
 
 
-class SegmentColor(Enum):
+class PuzzleSegmentColor(Enum):
 
     Red = (0x0, 0x0, 0x0)
     Blue = (0xFF, 0x0, 0x0)
@@ -16,7 +16,7 @@ class SegmentColor(Enum):
 
         Returns (List[SegmentColors]): All the valid segment colors
         """
-        return [SegmentColor.Red, SegmentColor.Blue, SegmentColor.Green, SegmentColor.Yellow]
+        return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green, PuzzleSegmentColor.Yellow]
 
 
 class PuzzleSegment(object):
@@ -188,10 +188,21 @@ class PuzzleSegment(object):
         Updates the segment color
 
         Args:
-            segment_color (SegmentColor): New color for the segment
+            segment_color (PuzzleSegmentColor): New color for the segment
 
         """
+        # A given segment should only be assigned to a color once
+        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+            assert self._color is not None
         self._color = segment_color
+
+    def is_colored(self):
+        """
+        Determine whether the segment has already been colored.
+
+        Returns (bool): True if the segment has been assigned a color and False otherwise.
+        """
+        return self._color is not None
 
     @staticmethod
     def sort_by_degree(primary, other):

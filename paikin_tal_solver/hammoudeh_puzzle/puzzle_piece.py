@@ -186,7 +186,10 @@ class PuzzlePiece(object):
         # Store the original location of the puzzle piece and initialize a placeholder x/y location.
         self._orig_loc = location
         self._assigned_loc = None
+
+        # Store the segment information
         self._segment_id_numb = None
+        self._segment_color = None
 
         # Optionally calculate the identification numbers of the piece neighbors
         self._actual_neighbor_ids = None
@@ -456,6 +459,43 @@ class PuzzlePiece(object):
             new_segment_id (int): New segment number the puzzle piece is assigned to
         """
         self._segment_id_numb = new_segment_id
+
+        # Reset the segment color
+        self._segment_color = None
+
+    @property
+    def segment_color(self):
+        """
+        Puzzle Piece Segment Color Accessor
+
+        Each segment is assigned a color.  This is stored as part of the individual puzzle pieces.  This property
+        access the color assigned to each puzzle piece.
+
+        Returns (PuzzleSegmentColor): Segment color for this puzzle piece.
+        """
+        # Check whether the assigned piece ID is not none
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert self._segment_color is not None
+
+        # Return the piece id number
+        return self._segment_color
+
+    @segment_color.setter
+    def segment_color(self, new_segment_color):
+        """
+        Puzzle Piece Segment Color Setter
+
+        Sets the color for the segment this piece belongs to.
+
+        Args:
+            new_segment_color (PuzzleSegmentColor): New segment color assigned to this piece.
+        """
+
+        # For a given segment assignment, the puzzle piece should only have a color set once.
+        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            assert self._segment_id_numb is None
+
+        self._segment_color = new_segment_color
 
     @property
     def lab_image(self):
