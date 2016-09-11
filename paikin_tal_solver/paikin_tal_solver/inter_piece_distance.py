@@ -712,6 +712,8 @@ class InterPieceDistance(object):
 
         # Transfer the data from the data structures calculated by each process to the master data structure.
         for p_i in xrange(0, self._numb_pieces):
+            if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed):
+                continue
             # Go through all the valid sides
             for p_i_side in PuzzlePieceSide.get_all_sides():
 
@@ -725,9 +727,7 @@ class InterPieceDistance(object):
 
                         # Skip placed pieces
                         # No Need to check p_i == p_j since doing a diagonal calculation
-                        if p_i == p_j or \
-                                (InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed)
-                                 and InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed)):
+                        if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed):
                             continue
 
                         # Check all valid p_j sides depending on the puzzle type.
@@ -1256,14 +1256,16 @@ def _multiprocess_mutual_compatibility_calc(params):
     # Hence, must start from 0 as shown in the figure below:
     for p_i in range(0, last_piece):
 
+        if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed):
+            continue
+
         # Go through all the valid sides
         for p_i_side in PuzzlePieceSide.get_all_sides():
             for p_j in range(first_piece, last_piece):
 
                 # Skip placed pieces
                 # No Need to check p_i == p_j since doing a diagonal calculation
-                if p_i == p_j or (InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed)
-                                  and InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed)):
+                if p_i == p_j or InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed):
                     continue
 
                 # Check all valid p_j sides depending on the puzzle type.
