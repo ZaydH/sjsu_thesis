@@ -379,24 +379,11 @@ class PuzzlePiece(object):
         self._assigned_puzzle_id = new_puzzle_id
 
     @property
-    def actual_puzzle_id(self):
-        """
-        Actual Puzzle Identification Number
-
-        Gets the actual (i.e. correct) puzzle identification number of the puzzle.
-
-        Returns (int):
-            Actual (correct) puzzle identification number this piece originated from.
-
-        """
-        return self._orig_puzzle_id
-
-    @property
     def original_piece_id(self):
         """
         Original Piece ID Number
 
-        Gets the original piece identification number
+        Gets the original (i.e., correct) piece identification number
 
         Returns (int):
             Original identification number assigned to the piece at its creation.  Should be globally unique.
@@ -1037,4 +1024,3 @@ def top_level_calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piec
         Distance between the sides of two puzzle pieces.
     """
     return PuzzlePiece.calculate_asymmetric_distance(piece_i, piece_i_side, piece_j, piece_j_side)
-
