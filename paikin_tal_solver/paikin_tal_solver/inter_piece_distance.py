@@ -469,7 +469,7 @@ class InterPieceDistance(object):
     # Items related to multithreading to improve performance
     _MIN_NUMBER_PIECES_PER_THREAD = 10
     _MAX_NUMBER_OF_PARALLEL_PROCESSES = 5
-    _USE_MULTITHREADING = True
+    _USE_MULTIPLE_PROCESSES = True
 
     def __init__(self, pieces, distance_function, puzzle_type):
         """
@@ -538,7 +538,7 @@ class InterPieceDistance(object):
 
         # If no speed up benefit then do the operations serially
         if self._numb_pieces < InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD \
-                or not InterPieceDistance._USE_MULTITHREADING:
+                or not InterPieceDistance._USE_MULTIPLE_PROCESSES:
 
             # Calculates the piece to piece distances so we only need to do it once.
             for p_i in range(0, self._numb_pieces):
@@ -548,8 +548,7 @@ class InterPieceDistance(object):
         else:
 
             # Do not always use maximum number of threads.  Base on the workload.
-            numb_processes = min(InterPieceDistance._MAX_NUMBER_OF_PARALLEL_PROCESSES,
-                                 self._numb_pieces / InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD)
+            numb_processes = self._calculate_numb_parallel_calculation_processes()
             max_elements_per_thread = long(math.ceil(1.0 * self._numb_pieces / numb_processes))
 
             # Populate the data for the thread pool
@@ -605,6 +604,7 @@ class InterPieceDistance(object):
             percentage_of_area = 1.0 * i / numb_processes
             first_element = int(numb_pieces * math.sqrt(percentage_of_area))
             first_element_for_each_process.append(first_element)
+
         return first_element_for_each_process
 
     def get_total_best_buddy_count(self):
@@ -623,18 +623,17 @@ class InterPieceDistance(object):
                 bb_total_count += len(piece_dist_info.best_buddies(side))
         return bb_total_count
 
-    def calculate_mutual_compatibility(self, is_piece_placed=None):
+    def _calculate_mutual_compatibility_single_process(self, is_piece_placed=None):
         """
-        Mutual Compatibility Calculator
+        Single Process Mutual Compatibility Calculator
 
         Calculates the mutual compatibility as defined by Paikin and Tal.
+
+        <b>Note:</b> This is done in a single process only.  Hence, it operates on the results datastructures directly.
 
         Args:
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
         """
-        start_time = time.time()
-        logging.info("Starting mutual compatibility calculations.")
-
         for p_i in range(0, self._numb_pieces):
 
             # Go through all the valid sides
@@ -643,8 +642,8 @@ class InterPieceDistance(object):
 
                     # Skip placed pieces
                     # No Need to check p_i == p_j since doing a diagonal calculation
-                    if p_i == p_j or (InterPieceDistance._skip_piece(p_i, is_piece_placed)
-                                      and InterPieceDistance._skip_piece(p_j, is_piece_placed)):
+                    if p_i == p_j or (InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed)
+                                      and InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed)):
                         continue
 
                     # Check all valid p_j sides depending on the puzzle type.
@@ -665,8 +664,100 @@ class InterPieceDistance(object):
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
 
+    def calculate_mutual_compatibility(self, is_piece_placed=None):
+        """
+        Mutual Compatibility Calculator
+
+        Calculates the mutual compatibility as defined by Paikin and Tal.
+
+        Args:
+            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
+        """
+        start_time = time.time()
+        logging.info("Starting mutual compatibility calculations.")
+
+        # Optionally run the single process version
+        if not is_piece_placed or not InterPieceDistance._USE_MULTIPLE_PROCESSES:
+            self._calculate_mutual_compatibility_single_process(is_piece_placed)
+        else:
+            self._calculate_mutual_compatibility_multiprocess()
+
         logging.info("Mutual compatibility calculations completed.")
         print_elapsed_time(start_time, "mutual compatibility calculation")
+
+    def _calculate_mutual_compatibility_multiprocess(self, is_piece_placed=None):
+        # Calculate the information passed to
+        numb_processes = self._calculate_numb_parallel_calculation_processes()
+        first_elem_per_process = InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix(self._numb_pieces,
+                                                                                                       numb_processes)
+        # For simplified calculation append number of pieces
+        first_elem_per_process.append(self._numb_pieces)
+
+        # Build the data structure to be pickled and shared with each process
+        calc_process_input_elements = []
+        for i in xrange(0, numb_processes):
+            mutual_compat_process_data = {"first_piece": first_elem_per_process[i],
+                                          "last_piece": first_elem_per_process[i + 1],  # Exclusive
+                                          "puzzle_type": self._puzzle_type,
+                                          "is_piece_placed": is_piece_placed,
+                                          "piece_distance_info": self._piece_distance_info}
+            calc_process_input_elements.append(mutual_compat_process_data)
+
+        # Build the thread pool
+        process_pool = mp.Pool(numb_processes)
+        new_piece_distance = process_pool.map(_multiprocess_mutual_compatibility_calc,
+                                              calc_process_input_elements)
+        process_pool.close()
+        process_pool.join()
+
+        # Transfer the data from the data structures calculated by each process to the master data structure.
+        for p_i in xrange(0, self._numb_pieces):
+            # Go through all the valid sides
+            for p_i_side in PuzzlePieceSide.get_all_sides():
+                for process_cnt in xrange(0, numb_processes):
+                    # Starting point is p_i + 1 for each process
+                    # Skip this process if that is in the next section
+                    if p_i + 1 >= first_elem_per_process[process_cnt + 1]:
+                        continue
+                    # Check if the result begins halfway through this segment
+                    elif p_i + 1 > first_elem_per_process[process_cnt]:
+                        first_p_j = p_i + 1
+                    # Use the whole result from that process so use its first element
+                    else:
+                        first_p_j = first_elem_per_process[process_cnt]
+                    # Iterate through all p_j calculated in this segment
+                    for p_j in xrange(first_p_j, first_elem_per_process[process_cnt + 1]):
+
+                        # Skip placed pieces
+                        # No Need to check p_i == p_j since doing a diagonal calculation
+                        if p_i == p_j or \
+                                (InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed)
+                                 and InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed)):
+                            continue
+
+                        # Check all valid p_j sides depending on the puzzle type.
+                        for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
+                            # Extract the mutual compatiblity from the results
+                            mutual_compat = new_piece_distance[process_cnt][p_i, p_i_side.value, p_j, p_j_side.value]
+                            # Make sure a value is present
+                            if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+                                assert mutual_compat != numpy.NAN
+
+                            # Store the mutual compatibility for BOTH p_i and p_j
+                            self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
+                            self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
+
+    # Do not always use maximum number of threads.  Base on the workload.
+    def _calculate_numb_parallel_calculation_processes(self):
+        """
+        Used to calculate based on the number of pieces in the puzzle the ideal number of parallel processes
+        that will be used.
+
+        Returns (int): Number of processes to be used to perform parallel calculations.
+
+        """
+        return min(InterPieceDistance._MAX_NUMBER_OF_PARALLEL_PROCESSES,
+                   self._numb_pieces / InterPieceDistance._MIN_NUMBER_PIECES_PER_THREAD)
 
     def recalculate_remaining_piece_compatibilities(self, is_piece_placed,
                                                     is_piece_placed_with_no_open_neighbors):
@@ -713,7 +804,7 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
 
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed_with_no_open_neighbors):
+            if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed_with_no_open_neighbors):
                 continue
 
             # If these change, it means asymmetric distance or mutual compatibility need to be recalculated
@@ -758,7 +849,7 @@ class InterPieceDistance(object):
         # Iterate through all pieces skipping placed ones.
         for p_i in range(0, self._numb_pieces):
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, min_or_second_best_distance_unchanged):
+            if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, min_or_second_best_distance_unchanged):
                 continue
 
             # Recalculate the
@@ -780,7 +871,7 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
 
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+            if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed):
                 continue
 
             # Find the best buddies of all sides.
@@ -814,7 +905,7 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
 
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+            if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed):
                 all_best_buddy_info.append(([], 0))
                 continue
 
@@ -829,7 +920,7 @@ class InterPieceDistance(object):
                 # Iterate through best buddies to pick the best one
                 for (p_j, p_j_side) in self._piece_distance_info[p_i].best_buddies(p_i_side):
 
-                    if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+                    if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed):
                         continue
 
                     compatibility = self._piece_distance_info[p_i].get_mutual_compatibility(p_i_side, p_j, p_j_side)
@@ -866,7 +957,7 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
 
             # Skip placed pieces
-            if InterPieceDistance._skip_piece(p_i, is_piece_placed):
+            if InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed):
                 continue
 
             this_piece_bb_info = all_best_buddy_info[p_i]
@@ -1068,14 +1159,14 @@ class InterPieceDistance(object):
             assert(p_i_side.complementary_side == p_j_side)
 
     @staticmethod
-    def _skip_piece(p_i, is_piece_placed_with_no_open_neighbors):
+    def skip_piece_mutual_compatibility_calc(p_i, is_piece_placed_with_no_open_neighbors=None):
         """
         Piece Skip Checker
 
         Checks whether a puzzle piece should be skipped based off whether it is placed.
         Args:
             p_i (int): Identification number of the puzzle piece
-            is_piece_placed_with_no_open_neighbors ([Bool]):  List indicating whether each piece is placed
+            is_piece_placed_with_no_open_neighbors (Optional [Bool]):  List indicating whether each piece is placed
 
         Returns (bool):
             True if piece p_i should be skipped and False otherwise
@@ -1121,3 +1212,58 @@ def _multiprocess_interpiece_distances_calc(interpiece_distance_data):
 
     # Return all of the calculated distances
     return calculated_distance_info
+
+
+def _multiprocess_mutual_compatibility_calc(params):
+    """
+    Multiprocess Mutual Compatibility Calculator
+
+    Calculates the mutual compatibility as defined by Paikin and Tal.  This supports the use of multiprocessing so
+    additional analysis of the data is required.
+
+    Args:
+        params (Dict): Dictionary containing the input parameters to the function.  This must be pickle-able
+        to work with the multiprocessing Python class.
+
+    Returns (Numpy[float]):
+    """
+
+    first_piece = params["first_piece"]
+    last_piece = params["last_piece"]
+    puzzle_type = params["puzzle_type"]
+    piece_distance_info = params["piece_distance_info"]
+    is_piece_placed = params["is_piece_placed"]
+
+    # Build an array to store the results.  Initialize to NaN
+    mutual_compat_data = numpy.empty([last_piece, PuzzlePieceSide.get_numb_sides(),
+                                      last_piece, PuzzlePieceSide.get_numb_sides()], numpy.float32)
+    mutual_compat_data[:] = numpy.NAN
+
+    for p_i in range(first_piece, last_piece):
+
+        # Go through all the valid sides
+        for p_i_side in PuzzlePieceSide.get_all_sides():
+            for p_j in range(p_i + 1, last_piece):
+
+                # Skip placed pieces
+                # No Need to check p_i == p_j since doing a diagonal calculation
+                if p_i == p_j or (InterPieceDistance.skip_piece_mutual_compatibility_calc(p_i, is_piece_placed)
+                                  and InterPieceDistance.skip_piece_mutual_compatibility_calc(p_j, is_piece_placed)):
+                    continue
+
+                # Check all valid p_j sides depending on the puzzle type.
+                for p_j_side in InterPieceDistance.get_valid_neighbor_sides(puzzle_type, p_i_side):
+
+                    p_i_to_p_j = piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j, p_j_side)
+                    p_j_to_p_i = piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i, p_i_side)
+                    # Check if the calculation can be skipped for speed-up
+                    if p_i_to_p_j == -sys.maxint or p_j_to_p_i == -sys.maxint:
+                        mutual_compat = -sys.maxint
+                    else:
+                        # Get the compatibility from p_i to p_j
+                        mutual_compat = (p_i_to_p_j + p_j_to_p_i) / 2
+
+                    # Store the mutual compatibility for BOTH p_i and p_j
+                    mutual_compat_data[p_i, p_i_side.value, p_j, p_j_side.value] = mutual_compat
+
+    return mutual_compat_data
