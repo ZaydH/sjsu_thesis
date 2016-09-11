@@ -1,5 +1,6 @@
 """Jigsaw Puzzle Object
 """
+import Queue
 import copy
 import logging
 import os
@@ -14,6 +15,7 @@ import cv2  # OpenCV
 from enum import Enum
 
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
+from hammoudeh_puzzle.puzzle_segment import PuzzleSegment
 
 
 class PickleHelper(object):
@@ -1438,6 +1440,7 @@ class Puzzle(object):
 
         # No pieces for the puzzle yet.
         self._pieces = []
+        self._id_number_to_index_map = {}
 
         if image_filename is None:
             self._filename = ""
@@ -1446,6 +1449,8 @@ class Puzzle(object):
         # Stores the image file and then loads it.
         self._filename = image_filename
         self._load_puzzle_image()
+
+        self._segments = []
 
         # Make image pieces.
         self.make_pieces(starting_piece_id)
@@ -1613,6 +1618,63 @@ class Puzzle(object):
             Puzzle.display_image(output_puzzle._img)
 
         return output_puzzle
+
+    def segment(self, piece_segment_priority, starting_segment_numb=0):
+        """
+
+        Args:
+            piece_segment_priority ():
+            starting_segment_numb ():
+
+        """
+        # Create a dictionary containing all of the unsegmented pieces
+        unassigned_pieces = {}
+        for piece in self._pieces:
+            key = str(piece.id_numb)
+            unassigned_pieces[key] = piece.id_numb
+
+        priority_cnt = 0
+        segment_piece_queue = Queue.Queue()
+        # Continue segmenting
+        while unassigned_pieces:
+            new_segment = PuzzleSegment(self._id, starting_segment_numb + len(self._segments))
+
+            # Find the next seed piece
+            while str(piece_segment_priority[priority_cnt]) not in unassigned_pieces:
+                priority_cnt += 1
+
+            # Add the next highest priority piece to the queue
+            seed_piece_id_number = piece_segment_priority[priority_cnt]
+            segment_piece_queue.put(self._get_piece_by_id_number(seed_piece_id_number))
+
+            while not segment_piece_queue.empty():
+                # Add the next piece in the queue and keep looping
+                next_piece = segment_piece_queue.get()
+                new_segment.add_piece(next_piece.id_number, piece.location)
+
+
+            # Increment the segment number
+            self._segments.append(new_segment)
+
+    def _get_piece_by_id_number(self, piece_id_number):
+        """
+        Pieces in a puzzle are stored in a list.  This function allows for constant time look up
+        of a puzzle piece based off its identification number.
+
+        Args:
+            piece_id_number (int): Identification number of the puzzle piece
+
+        Returns (PuzzlePiece): Puzzle piece with the specified identification number.
+        """
+
+        # Build the indexing of piece
+        if not self._id_number_to_index_map:
+            for i in xrange(0, self.numb_pieces):
+                self._id_number_to_index_map[str(self._pieces[i].id_numb)] = i
+
+        # Return the piece with the specified index number.
+        pieces_array_index = self._id_number_to_index_map[str(piece_id_number)]
+        return self._pieces[pieces_array_index]
 
     def build_puzzle_image(self, use_results_coloring=False):
         """

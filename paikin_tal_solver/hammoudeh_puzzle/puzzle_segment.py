@@ -19,7 +19,8 @@ class PuzzleSegment(object):
         self._puzzle_id = puzzle_id
         self._segment_id_number = segment_id_number
         self._numb_pieces = 0
-        self._piece_ids = {}
+        self._pieces = {}
+        self._seed_piece = None
         self._neighbor_segment_ids = {}
 
     @property
@@ -59,8 +60,13 @@ class PuzzleSegment(object):
             piece_id (int): Identification if the puzzle piece to be added to the segment
             piece_location (Location): Location of the puzzle piece
         """
+        # Store the seed piece special
+        if len(self._pieces) == 0:
+            self._seed_piece = (piece_id, piece_location)
+
+        # Store all pieces in the piece dictionary
         key = PuzzleSegment._get_piece_key(piece_id)
-        self._piece_ids[key] = (piece_id, piece_location)
+        self._pieces[key] = (piece_id, piece_location)
 
     def remove_piece(self, piece_id):
         """
@@ -73,8 +79,8 @@ class PuzzleSegment(object):
         key = PuzzleSegment._get_piece_key(piece_id)
         # Optionally ensure the key exists before trying to remove it
         if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
-            assert key in self._piece_ids
-        del self._piece_ids[key]
+            assert key in self._pieces
+        del self._pieces[key]
 
     def add_neighboring_segment(self, neighbor_segment_id):
         """
