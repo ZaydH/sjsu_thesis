@@ -12,7 +12,7 @@ import numpy
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
-from hammoudeh_puzzle.puzzle_segment import PuzzleSegment
+from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, PuzzleSegmentColor
 from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -1192,10 +1192,73 @@ class PaikinTalSolver(object):
         """
         This function colors each of the segments.  This allows for the generation of a visualization where
         no two adjacent segments have the same color.
+
+        This function uses the Welsh-Powell Algorithm to color the graph.  For more information, see:
+
+                 http://graphstream-project.org/doc/Algorithms/Welsh-Powell/
         """
         for puzzle_id in xrange(0, self._numb_puzzles):
-            # Sort the
-            sorted(self._segments[puzzle_id], PuzzleSegment.sort_by_degree)
+            # build a list that allows for sorting the segments by degree (i.e., number of neighbors)
+            segment_degree_priority = []
+            for i in xrange(0, len(self._segments[puzzle_id])):
+                segment_degree_priority.append((i, self._segments[puzzle_id][i].degree))
+            # Perform an inplace sort using the degree of each segment.
+            segment_degree_priority.sort(key=lambda x: x[1])
+
+            # Get all the colors
+            segment_colors = PuzzleSegmentColor.get_all_colors()
+            color_cnt = 0
+
+            # Go through all the segment
+            segment_cnt = 0
+            while segment_cnt < len(segment_degree_priority):
+                # if the segment is already colored, go to the next segment
+                if self._segments[puzzle_id][segment_cnt].is_colored():
+                    continue
+
+                # Get the next color
+                next_color = segment_colors[color_cnt]
+
+                # Color the segment
+                self.color_segments(puzzle_id, segment_cnt, next_color)
+                for neighbor_cnt in xrange(segment_cnt + 1, len(segment_degree_priority)):
+                    if not self._segments[puzzle_id][neighbor_cnt].is_colored() \
+                            and self._segments[puzzle_id][neighbor_cnt].has_neighbor_color(neighbor_cnt):
+                        self._segments[puzzle_id][neighbor_cnt].color(next_color)
+
+                # Increment the color counter
+                color_cnt = (color_cnt + 1) % len(segment_colors)
+
+
+    def _color_segment(self, puzzle_id, segment_id, new_segment_color):
+        """
+        Colors a segment in the puzzle.  It also marks all neighbors of this segment that they have a neighbor
+        with the specified color.
+
+        Args:
+            puzzle_id (int): Puzzle identification where the segment is located.
+            segment_id (int): Number for the segment to be colored
+            new_segment_color (PuzzleSegmentColor): Color to set the segment
+        """
+        # Color the segment
+        self._segments[puzzle_id][segment_id].color = new_segment_color
+
+        # For all parts adjacent to this segment, add this as a neighbor color
+        neighbor_segment_ids = self._segments[puzzle_id][segment_id].get_neighbor_segment_ids()
+        for neighbor_id in neighbor_segment_ids:
+            self._segments[puzzle_id][neighbor_id].add_neighbor_color(new_segment_color)
+
+    def _assign_segment_color_to_pieces(self):
+        """
+        After the segments have been colored, this function will color the individual pieces in the segment.
+        """
+        for puzzle_id in xrange(0, self._numb_puzzles):
+            for segment_id in xrange(0, self._segments[puzzle_id]):
+                # Get the segment color
+                segment_color = self._segments[puzzle_id].color
+                # Assign the segments to each piece in the segment
+                for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
+                    self._pieces[piece_id].segment_color = segment_color
 
     def _is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
         """

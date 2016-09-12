@@ -3,11 +3,16 @@ from enum import Enum
 
 
 class PuzzleSegmentColor(Enum):
-
-    Red = (0x0, 0x0, 0x0)
+    """
+    Valid segment colors.  These are represented in BGR format.
+    """
+    # Red = (0x0, 0x0, 0x0)
+    Red = (0x22, 0x22, 0xB2)
     Blue = (0xFF, 0x0, 0x0)
     Green = (0x0, 0xFF, 0x0)
     Yellow = (0x00, 0xFF, 0xFF)
+    Pink = (0x93, 0x14, 0xFF)
+
 
     @staticmethod
     def get_all_colors():
@@ -16,7 +21,17 @@ class PuzzleSegmentColor(Enum):
 
         Returns (List[SegmentColors]): All the valid segment colors
         """
-        return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green, PuzzleSegmentColor.Yellow]
+        return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green, \
+                PuzzleSegmentColor.Yellow, PuzzleSegmentColor.Pink]
+
+    def key(self):
+        """
+        Generates a key for the color for using the color in a dictionary.
+
+        Returns (string): A string key for use of the segment color in a dictionary.
+
+        """
+        return str(self.value)
 
 
 class PuzzleSegment(object):
@@ -39,7 +54,9 @@ class PuzzleSegment(object):
         self._numb_pieces = 0
         self._pieces = {}
         self._seed_piece = None
+
         self._neighbor_segment_ids = {}
+        self._neighbor_colors = {}  # This is used for coloring the graph to quickly determine neighbor colors
 
         self._color = None
 
@@ -71,6 +88,17 @@ class PuzzleSegment(object):
         Returns (int): Number of pieces in the segment (minimum one)
         """
         return self._numb_pieces
+
+    def get_piece_ids(self):
+        """
+        Gets the identification number of the pieces that are in this segment.
+
+        Returns (List[int]): The identification number of the pieces in this segment.
+        """
+        piece_ids = []
+        for piece_info in self._pieces.values():
+            piece_ids.append(piece_info[0])
+        return piece_ids
 
     def add_piece(self, piece_id, piece_location):
         """
@@ -173,6 +201,42 @@ class PuzzleSegment(object):
         """
         return str(segment_id)
 
+    def add_neighbor_color(self, neighbor_color):
+        """
+        Adds a color for a single neighboring segment.  This allows for quick tracking of what colors the neighbors
+        of this segment have.
+
+        Args:
+            neighbor_color (PuzzleSegmentColor): Color for a neighboring segment
+        """
+        # Probably not needed, but include just as a sanity check for now
+        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+            assert neighbor_color != self._color
+
+        # If color does not already exist, then add it to the dictionary
+        if not self.has_neighbor_color(neighbor_color):
+            self._neighbor_colors[neighbor_color.key()] = neighbor_color
+
+    def has_neighbor_color(self, neighbor_color):
+        """
+        Checks whether this segment already has a neighbor of the specified color.
+
+        Args:
+            neighbor_color (PuzzleSegmentColor): A possible color for a neighbor
+
+        Returns (bool): True if this segment already has a neighbor with the specified color and False
+           otherwise.
+        """
+        return neighbor_color.key() in self._neighbor_colors
+
+    def is_colored(self):
+        """
+        Checks whether the segment is already colored.
+
+        Returns (bool): True if the segment has been assigned a color and False otherwise.
+        """
+        return self._color is not None
+
     @property
     def color(self):
         """
@@ -194,15 +258,8 @@ class PuzzleSegment(object):
         # A given segment should only be assigned to a color once
         if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
             assert self._color is not None
+            assert not self.has_neighbor_color(segment_color) # Make sure no neighbor has this color
         self._color = segment_color
-
-    def is_colored(self):
-        """
-        Determine whether the segment has already been colored.
-
-        Returns (bool): True if the segment has been assigned a color and False otherwise.
-        """
-        return self._color is not None
 
     @staticmethod
     def sort_by_degree(primary, other):
