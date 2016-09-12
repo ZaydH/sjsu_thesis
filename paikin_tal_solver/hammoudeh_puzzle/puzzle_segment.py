@@ -39,7 +39,7 @@ class PuzzleSegment(object):
     This class is used to store a puzzle the information associated with a puzzle segment.
     """
 
-    _PERFORM_ASSERTION_CHECKS = True
+    _PERFORM_ASSERT_CHECKS = True
 
     def __init__(self, puzzle_id, segment_id_number):
         """
@@ -126,7 +126,7 @@ class PuzzleSegment(object):
 
         key = PuzzleSegment._get_piece_key(piece_id)
         # Optionally ensure the key exists before trying to remove it
-        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert key in self._pieces
         del self._pieces[key]
 
@@ -141,7 +141,7 @@ class PuzzleSegment(object):
         segment_key = PuzzleSegment._get_segment_key(neighbor_segment_id)
 
         # Verify that the neighbor ID does not match its own ID
-        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert self._segment_id_number != neighbor_segment_id
 
         # If neighbor does not exist in the list, add the neighbor to the list
@@ -155,7 +155,7 @@ class PuzzleSegment(object):
         Returns (Dict[int]): The identification numbers of all segments that are adjacent to this segment.
         """
         # When getting the neighbor ids in the normal flow, this should not be blank
-        if self._PERFORM_ASSERTION_CHECKS:
+        if self._PERFORM_ASSERT_CHECKS:
             assert self.neighbor_degree > 0
 
         return copy.deepcopy(self._neighbor_segment_ids)
@@ -170,7 +170,7 @@ class PuzzleSegment(object):
         numb_neighbors = len(self._neighbor_segment_ids)
 
         # Verify the degree is greater than 0
-        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert numb_neighbors > 0
 
         return numb_neighbors
@@ -210,7 +210,7 @@ class PuzzleSegment(object):
             neighbor_color (PuzzleSegmentColor): Color for a neighboring segment
         """
         # Probably not needed, but include just as a sanity check for now
-        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert neighbor_color != self._color
 
         # If color does not already exist, then add it to the dictionary
@@ -256,7 +256,7 @@ class PuzzleSegment(object):
 
         """
         # A given segment should only be assigned to a color once
-        if PuzzleSegment._PERFORM_ASSERTION_CHECKS:
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert self._color is not None
             assert not self.has_neighbor_color(segment_color) # Make sure no neighbor has this color
         self._color = segment_color

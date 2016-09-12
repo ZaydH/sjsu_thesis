@@ -8,12 +8,14 @@ import heapq
 import logging
 
 import numpy
+import time
 
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
 from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, PuzzleSegmentColor
-from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair
+from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair, \
+    print_elapsed_time
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
 
@@ -1076,7 +1078,7 @@ class PaikinTalSolver(object):
                         # Push the best buddy onto the heap
                         heapq.heappush(self._best_buddy_open_slot_heap, bb_heap_info)
 
-    def segment(self, perform_segment_cleaning=False):
+    def segment(self, perform_segment_cleaning=False, color_segments=True):
         """
 
         Args:
@@ -1084,13 +1086,13 @@ class PaikinTalSolver(object):
              of the segments.  This will result in smaller segments overall.
 
         """
+        start_time = time.time()
         logging.info("Beginning segmentation.")
 
         # Create a dictionary containing all of the unsegmented pieces
         unassigned_pieces = {}
         for piece in self._pieces:
-            key = str(piece.id_numb)
-            unassigned_pieces[key] = piece.id_numb
+            unassigned_pieces[piece.key()] = piece.id_number
 
         # Use the seed priority to determine the order pieces are added to segments.
         piece_segment_priority = self._inter_piece_distance.get_initial_starting_piece_order()
@@ -1160,6 +1162,11 @@ class PaikinTalSolver(object):
         # Mark which segments are physically adjacent to each other
         self._update_segment_neighbors()
         logging.info("Segmentation completed.")
+        print_elapsed_time(start_time, "segmentation")
+
+        # Color all segments
+        if color_segments:
+            self.color_segments()
 
     def _update_segment_neighbors(self):
         """
@@ -1197,6 +1204,9 @@ class PaikinTalSolver(object):
 
                  http://graphstream-project.org/doc/Algorithms/Welsh-Powell/
         """
+        start_time = time.time()
+        logging.info("Beginning coloring of segments.")
+
         for puzzle_id in xrange(0, self._numb_puzzles):
             # build a list that allows for sorting the segments by degree (i.e., number of neighbors)
             segment_degree_priority = []
@@ -1220,7 +1230,7 @@ class PaikinTalSolver(object):
                 next_color = segment_colors[color_cnt]
 
                 # Color the segment
-                self.color_segments(puzzle_id, segment_cnt, next_color)
+                self._assign_color_to_segment(puzzle_id, segment_cnt, next_color)
                 for neighbor_cnt in xrange(segment_cnt + 1, len(segment_degree_priority)):
                     if not self._segments[puzzle_id][neighbor_cnt].is_colored() \
                             and self._segments[puzzle_id][neighbor_cnt].has_neighbor_color(neighbor_cnt):
@@ -1229,11 +1239,15 @@ class PaikinTalSolver(object):
                 # Increment the color counter
                 color_cnt = (color_cnt + 1) % len(segment_colors)
 
+        logging.info("Coloring of segments completed.")
+        print_elapsed_time(start_time, "segment coloring")
 
-    def _color_segment(self, puzzle_id, segment_id, new_segment_color):
+    def _assign_color_to_segment(self, puzzle_id, segment_id, new_segment_color):
         """
         Colors a segment in the puzzle.  It also marks all neighbors of this segment that they have a neighbor
         with the specified color.
+
+        The last stage in this function is to color the pieces that are part of the segment to be colored.
 
         Args:
             puzzle_id (int): Puzzle identification where the segment is located.
@@ -1248,17 +1262,9 @@ class PaikinTalSolver(object):
         for neighbor_id in neighbor_segment_ids:
             self._segments[puzzle_id][neighbor_id].add_neighbor_color(new_segment_color)
 
-    def _assign_segment_color_to_pieces(self):
-        """
-        After the segments have been colored, this function will color the individual pieces in the segment.
-        """
-        for puzzle_id in xrange(0, self._numb_puzzles):
-            for segment_id in xrange(0, self._segments[puzzle_id]):
-                # Get the segment color
-                segment_color = self._segments[puzzle_id].color
-                # Assign the segments to each piece in the segment
-                for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
-                    self._pieces[piece_id].segment_color = segment_color
+        # Color the pieces that belong to this segment.
+        for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
+            self._pieces[piece_id].segment_color = new_segment_color
 
     def _is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
         """

@@ -32,7 +32,7 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 # Defining a directory where pickle files are stored.
 PICKLE_DIRECTORY = ".\\pickle_files\\"
 
-_PERFORM_ASSERTION_CHECKS = True
+_PERFORM_ASSERT_CHECKS = True
 
 _ENABLE_PICKLE = True
 
@@ -79,7 +79,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
                                                   pickle_placement_start_filename, pickle_placement_complete_filename)
     else:
         # Pickle must be enabled to perform placement.
-        if _PERFORM_ASSERTION_CHECKS:
+        if _PERFORM_ASSERT_CHECKS:
             assert _ENABLE_PICKLE
 
         logging.info("Importing solved puzzle from pickle file: \"%s\"" % pickle_placement_complete_filename)
@@ -87,6 +87,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         logging.info("Pickle import of solved puzzle complete.")
 
     # Get the results
+    paikin_tal_solver.segment(color_segments=True)
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
     # Create a time stamp for the results
@@ -119,6 +120,14 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
                                               paikin_tal_solver.puzzle_type, timestamp,
                                               orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
         new_puzzle.save_to_file(filename)
+
+        # Save the segmented file image
+        filename_descriptor = "segmented"
+        segment_filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                      paikin_tal_solver.puzzle_type, timestamp,
+                                                      orig_img_filename=orig_img_filename,
+                                                      puzzle_id=puzzle_id_filename)
+        new_puzzle.save(segment_filename)
 
         # Append the puzzle to the list
         output_puzzles.append(new_puzzle)
@@ -197,7 +206,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
             PickleHelper.exporter(paikin_tal_solver, pickle_placement_start_filename)
     else:
         # Verify the string is not blank
-        if _PERFORM_ASSERTION_CHECKS:
+        if _PERFORM_ASSERT_CHECKS:
             assert pickle_placement_start_filename
         paikin_tal_solver = PickleHelper.importer(pickle_placement_start_filename)
         # noinspection PyProtectedMember

@@ -150,7 +150,7 @@ class PuzzlePiece(object):
     # Represents L-A-B dimensions in the LAB color space
     NUMB_LAB_COLORSPACE_DIMENSIONS = 3
 
-    _PERFORM_ASSERTION_CHECKS = True
+    _PERFORM_ASSERT_CHECKS = True
 
     # Use predicted values for edge borders for speed up
     _USE_STORED_PREDICTED_VALUE_SPEED_UP = True
@@ -318,7 +318,7 @@ class PuzzlePiece(object):
 
         """
         # Verify that the array containing the neighbor id numbers is not none
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert self._actual_neighbor_ids is not None
 
         # Return the piece's neighbor identification numbers
@@ -415,7 +415,7 @@ class PuzzlePiece(object):
             Puzzle piece identification number
         """
         # Check whether the assigned piece ID is not none
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert self._assigned_piece_id is not None
         # Return the piece id number
         return self._assigned_piece_id
@@ -443,7 +443,7 @@ class PuzzlePiece(object):
             Identification number of the segment the puzzle piece is assigned to.
         """
         # Check whether the assigned piece ID is not none
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert self._segment_id_numb is not None
         # Return the piece id number
         return self._segment_id_numb
@@ -474,7 +474,7 @@ class PuzzlePiece(object):
         Returns (PuzzleSegmentColor): Segment color for this puzzle piece.
         """
         # Check whether the assigned piece ID is not none
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert self._segment_color is not None
 
         # Return the piece id number
@@ -492,7 +492,7 @@ class PuzzlePiece(object):
         """
 
         # For a given segment assignment, the puzzle piece should only have a color set once.
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert self._segment_id_numb is None
 
         self._segment_color = new_segment_color
@@ -627,7 +627,7 @@ class PuzzlePiece(object):
             Valid puzzle piece locations and the respective puzzle piece side.
         """
 
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert self.location is not None
             assert self.rotation is not None
 
@@ -872,7 +872,7 @@ class PuzzlePiece(object):
         # noinspection PyUnresolvedReferences
         placed_rotation_val %= PuzzlePieceRotation.degree_360.value
         # Check if a valid rotation value.
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert placed_rotation_val % 90 == 0
         # noinspection PyUnresolvedReferences
         return PuzzlePieceRotation(placed_rotation_val % PuzzlePieceRotation.degree_360.value)
@@ -921,7 +921,7 @@ class PuzzlePiece(object):
         col_dist = placed_piece_loc[1] - neighbor_piece_loc[1]
 
         # Perform some checking on the pieces
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             # Verify the pieces are in the same puzzle
             assert abs(row_dist) + abs(col_dist) == 1
 
@@ -982,6 +982,14 @@ class PuzzlePiece(object):
                       thickness=PuzzlePiece._WHITE_BORDER_THICKNESS)
         return image
 
+    def key(self):
+        """
+        Standardized method for using puzzle pieces as keys to a dictionary.
+
+        Returns (string): Object key to be used for dictionaries
+        """
+        return str(self.id_number)
+
     @staticmethod
     def create_side_polygon_image(bgr_color_by_side, width, height=None):
         """
@@ -1003,7 +1011,7 @@ class PuzzlePiece(object):
             height = width
 
         # Verify each side is accounted for.
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert len(bgr_color_by_side) == PuzzlePieceSide.get_numb_sides()
 
         # Define the center point of the image.
@@ -1035,7 +1043,7 @@ class PuzzlePiece(object):
             vector_points.append(center_point)
 
             # Add drawn sides to the assertion checks
-            if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+            if PuzzlePiece._PERFORM_ASSERT_CHECKS:
                 # Ensure no side is drawn twice
                 assert side not in sides_drawn
                 # Add the side tot he list.
@@ -1046,7 +1054,7 @@ class PuzzlePiece(object):
             cv2.fillConvexPoly(image, polygon, color)
 
         # Verify that all sides are drawn
-        if PuzzlePiece._PERFORM_ASSERTION_CHECKS:
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
             assert len(sides_drawn) == PuzzlePieceSide.get_numb_sides()
 
         # Draw an "X" to clearly demarcate the triangles

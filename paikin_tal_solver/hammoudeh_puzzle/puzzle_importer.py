@@ -6,6 +6,7 @@ import os
 import math
 import random
 import pickle
+import time
 import datetime
 
 import cStringIO
@@ -14,6 +15,7 @@ import cv2  # OpenCV
 from enum import Enum
 
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
+from hammoudeh_puzzle.solver_helper_classes import print_elapsed_time
 
 
 class PickleHelper(object):
@@ -22,7 +24,7 @@ class PickleHelper(object):
     Library.
     """
 
-    _PERFORM_ASSERTION_CHECKS = True
+    _PERFORM_ASSERT_CHECKS = True
 
     @staticmethod
     def importer(filename):
@@ -41,6 +43,7 @@ class PickleHelper(object):
             The object serialized in the specified filename.
 
         """
+        start_time = time.time()
 
         # Check the file directory exists
         file_directory = os.path.dirname(os.path.abspath(filename))
@@ -52,7 +55,9 @@ class PickleHelper(object):
         f = open(filename, 'r')
         obj = pickle.load(f)
         f.close()
-        logging.info("Completed pickle EXPORT of file: \"" + filename + "\"")
+
+        logging.info("Completed pickle IMPORT of file: \"" + filename + "\"")
+        print_elapsed_time(start_time, "pickle IMPORT of file: \"" + filename + "\"" )
         return obj
 
     @staticmethod
@@ -69,10 +74,12 @@ class PickleHelper(object):
             filename (str):     Name of the Pickle file.
 
         """
+        start_time = time.time()
+
         # If the file directory does not exist create it.
         file_directory = os.path.dirname(os.path.abspath(filename))
         if not os.path.isdir(file_directory):
-            logging.info("Creating pickle export directory \"%s\"." % file_directory)
+            logging.debug("Creating pickle export directory \"%s\"." % file_directory)
             os.mkdir(file_directory)
 
         logging.info("Beginning pickle EXPORT of file: \"" + filename + "\"")
@@ -80,7 +87,9 @@ class PickleHelper(object):
         f = open(filename, 'w')
         pickle.dump(obj, f)
         f.close()
+
         logging.info("Completed pickle EXPORT to file: \"" + filename + "\"")
+        print_elapsed_time(start_time, "pickle EXPORT of file: \"" + filename + "\"")
 
 
 class PuzzleType(Enum):
@@ -1637,7 +1646,19 @@ class Puzzle(object):
     #     pieces_array_index = self._id_number_to_index_map[str(piece_id_number)]
     #     return self._pieces[pieces_array_index]
 
-    def build_puzzle_image(self, use_results_coloring=False):
+    def save_segment_color_image(self, filename):
+        """
+        Saves a copy of the image segments to the specified output file.
+
+        Args:
+            filename (string): Filename and path the image will be output to.
+        """
+        # Build the output image using the segment coloring
+        self.build_puzzle_image(use_segment_coloring=True)
+        # Save the image to a file.
+        Puzzle._save_to_file(filename, self._img)
+
+    def build_puzzle_image(self, use_results_coloring=False, use_segment_coloring=False):
         """
         Makes a puzzle image.
 
@@ -1648,12 +1669,15 @@ class Puzzle(object):
         Returns (Puzzle):
             Puzzle constructed from the pieces.
         """
+        if Puzzle._PERFORM_ASSERT_CHECKS:
+            assert not use_results_coloring or not use_segment_coloring
+
         # noinspection PyTypeChecker
         self._img = PuzzlePiece.create_solid_image(SolidColor.black, self._img_width, self._img_height)
 
         # Insert the pieces into the puzzle
         for piece in self._pieces:
-            self.insert_piece_into_image(piece, use_results_coloring)
+            self.insert_piece_into_image(piece, use_results_coloring, use_segment_coloring)
 
     def reset_upper_left_location(self):
         """
@@ -1893,7 +1917,7 @@ class Puzzle(object):
         # Return the sub image.
         return img[upper_left[0]:img_end[0], upper_left[1]:img_end[1], :]
 
-    def insert_piece_into_image(self, piece, use_results_coloring=False):
+    def insert_piece_into_image(self, piece, use_results_coloring=False, use_segment_coloring=False):
         """
         Takes a puzzle piece and converts its image into BGR then adds it to the master image.
 
@@ -1901,7 +1925,11 @@ class Puzzle(object):
             piece (PuzzlePiece): Puzzle piece to be inserted into the puzzle's image.
             use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
               image but what was stored based off the results.
+            use_segment_coloring (Optional bool): Use the segment colors when generating the image
         """
+        if Puzzle._PERFORM_ASSERT_CHECKS:
+            assert not use_results_coloring or not use_segment_coloring
+
         piece_loc = piece.location
 
         # Define the upper left corner of the piece to insert
@@ -1910,10 +1938,8 @@ class Puzzle(object):
         # Determine whether to use the image or something based off the results
         puzzle_img = self._img
 
-        # Get the piece's image
-        if not use_results_coloring:
-            piece_img = piece.bgr_image()
-        else:
+        # Use the result coloring
+        if use_results_coloring:
             results_coloring = piece.results_image_coloring
             # Verify the piece has actual results information.
             if Puzzle._PERFORM_ASSERT_CHECKS:
@@ -1923,6 +1949,12 @@ class Puzzle(object):
                 piece_img = PuzzlePiece.create_solid_image(results_coloring, piece.width)
             else:
                 piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width)
+        # Use the segment coloring.
+        elif use_segment_coloring:
+            piece_img = PuzzlePiece.create_solid_image(piece.segment_color, piece.width)
+        # Use the piece's actual image
+        else:
+            piece_img = piece.bgr_image()
 
         # Select whether to display the image rotated
         if piece.rotation is None or piece.rotation == PuzzlePieceRotation.degree_0:
