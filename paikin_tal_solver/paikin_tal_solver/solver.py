@@ -1220,7 +1220,7 @@ class PaikinTalSolver(object):
             for i in xrange(0, len(self._segments[puzzle_id])):
                 segment_degree_priority.append((i, self._segments[puzzle_id][i].neighbor_degree))
             # Perform an inplace sort using the degree of each segment.
-            segment_degree_priority.sort(key=lambda x: x[1])
+            segment_degree_priority.sort(key=lambda x: x[1], reverse=True)  # Use reverse so descending
 
             # Get all the colors
             segment_colors = PuzzleSegmentColor.get_all_colors()
@@ -1229,22 +1229,26 @@ class PaikinTalSolver(object):
             # Go through all the segment
             segment_cnt = 0
             while segment_cnt < len(segment_degree_priority):
-                # if the segment is already colored, go to the next segment
-                if self._segments[puzzle_id][segment_cnt].is_colored():
-                    continue
 
-                # Get the next color
+                # Determine if next segment is colored.  If so, increment and retry
+                next_segment_id = segment_degree_priority[segment_cnt][0]
+                # if the segment is already colored, go to the next segment
+                if self._segments[puzzle_id][next_segment_id].is_colored():
+                    segment_cnt += 1
+                    continue  # Use continue to prevent overflowing the list
+
+                # Get the next color and then increment the color counter
                 next_color = segment_colors[color_cnt]
+                color_cnt = (color_cnt + 1) % len(segment_colors)
 
                 # Color the segment
-                self._assign_color_to_segment(puzzle_id, segment_cnt, next_color)
-                for neighbor_cnt in xrange(segment_cnt + 1, len(segment_degree_priority)):
-                    if not self._segments[puzzle_id][neighbor_cnt].is_colored() \
-                            and self._segments[puzzle_id][neighbor_cnt].has_neighbor_color(neighbor_cnt):
-                        self._segments[puzzle_id][neighbor_cnt].color(next_color)
-
-                # Increment the color counter
-                color_cnt = (color_cnt + 1) % len(segment_colors)
+                self._assign_color_to_segment(puzzle_id, next_segment_id, next_color)
+                for other_segment_cnt in xrange(segment_cnt + 1, len(segment_degree_priority)):
+                    other_segment_id = segment_degree_priority[other_segment_cnt][0]
+                    # Check if not colored and does not have a neighbor with the specified color
+                    if not self._segments[puzzle_id][other_segment_id].is_colored() \
+                            and not self._segments[puzzle_id][other_segment_id].has_neighbor_color(next_color):
+                        self._assign_color_to_segment(puzzle_id, other_segment_id, next_color)
 
         logging.info("Coloring of segments completed.")
         print_elapsed_time(start_time, "segment coloring")

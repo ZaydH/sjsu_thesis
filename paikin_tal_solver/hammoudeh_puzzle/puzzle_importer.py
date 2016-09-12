@@ -150,15 +150,15 @@ class PuzzleResultsCollection(object):
                 puzzle_exists = False
                 for i in range(0, len(self._puzzle_results)):
                     # Check if the puzzle ID matches this set of results information.
-                    if piece.actual_puzzle_id == self._puzzle_results[i].puzzle_id:
+                    if piece.puzzle_id == self._puzzle_results[i].puzzle_id:
                         puzzle_exists = True
                         self._puzzle_results[i].numb_pieces += 1
                         continue
 
                 # If the puzzle does not exist, then create a results information
                 if not puzzle_exists:
-                    new_puzzle = PuzzleResultsInformation(piece.actual_puzzle_id,
-                                                          image_filepaths[piece.actual_puzzle_id])
+                    new_puzzle = PuzzleResultsInformation(piece.puzzle_id,
+                                                          image_filepaths[piece.puzzle_id])
                     new_puzzle.numb_pieces = 1
                     self._puzzle_results.append(new_puzzle)
 
@@ -422,7 +422,7 @@ class PuzzleResultsInformation(object):
                 side = PuzzlePieceSide(side_numb)
 
                 # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
-                if piece.actual_puzzle_id != self.puzzle_id:
+                if piece.puzzle_id != self.puzzle_id:
                     # neighbor_accuracy_info.wrong_puzzle_id += 1
                     neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side)
                     continue
@@ -1665,6 +1665,7 @@ class Puzzle(object):
         Args:
             use_results_coloring (Optional bool): If set to true, each piece's image is not based off the original
               image but what was stored based off the results.
+            use_segment_coloring (Optional bool): Use the segment coloring scheme to build the puzzle image
 
         Returns (Puzzle):
             Puzzle constructed from the pieces.
@@ -1732,7 +1733,7 @@ class Puzzle(object):
         for piece in self._pieces:
 
             # Ensure that the puzzle ID matches the requirement
-            if piece.actual_puzzle_id != expected_puzzle_id:
+            if piece.puzzle_id != expected_puzzle_id:
                 accuracy_info.add_different_puzzle(piece)
 
             # Ensure that the puzzle piece is in the correct location
@@ -1951,6 +1952,10 @@ class Puzzle(object):
                 piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width)
         # Use the segment coloring.
         elif use_segment_coloring:
+            # Verify the piece actually has a segment color
+            if Puzzle._PERFORM_ASSERT_CHECKS:
+                assert piece.has_segment_color()
+            # Use the segment color as the piece image.
             piece_img = PuzzlePiece.create_solid_image(piece.segment_color, piece.width)
         # Use the piece's actual image
         else:

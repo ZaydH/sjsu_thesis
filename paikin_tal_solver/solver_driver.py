@@ -126,7 +126,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
                                                       paikin_tal_solver.puzzle_type, timestamp,
                                                       orig_img_filename=orig_img_filename,
                                                       puzzle_id=puzzle_id_filename)
-        new_puzzle.save(segment_filename)
+        new_puzzle.save_segment_color_image(segment_filename)
 
         # Append the puzzle to the list
         output_puzzles.append(new_puzzle)

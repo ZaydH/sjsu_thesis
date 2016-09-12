@@ -13,7 +13,6 @@ class PuzzleSegmentColor(Enum):
     Yellow = (0x00, 0xFF, 0xFF)
     Pink = (0x93, 0x14, 0xFF)
 
-
     @staticmethod
     def get_all_colors():
         """
@@ -21,7 +20,7 @@ class PuzzleSegmentColor(Enum):
 
         Returns (List[SegmentColors]): All the valid segment colors
         """
-        return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green, \
+        return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green,
                 PuzzleSegmentColor.Yellow, PuzzleSegmentColor.Pink]
 
     def key(self):
@@ -151,13 +150,17 @@ class PuzzleSegment(object):
         """
         Accessor for the segments neighboring this segment.
 
-        Returns (Dict[int]): The identification numbers of all segments that are adjacent to this segment.
+        Returns (List[int]): The identification numbers of all segments that are adjacent to this segment.
         """
         # When getting the neighbor ids in the normal flow, this should not be blank
         if self._PERFORM_ASSERT_CHECKS:
             assert self.neighbor_degree > 0
 
-        return copy.deepcopy(self._neighbor_segment_ids)
+        # Convert to a list then return the list.
+        neighbor_ids = []
+        for val in self._neighbor_segment_ids.values():
+            neighbor_ids.append(val)
+        return neighbor_ids
 
     @property
     def neighbor_degree(self):
@@ -256,8 +259,8 @@ class PuzzleSegment(object):
         """
         # A given segment should only be assigned to a color once
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
-            assert self._color is not None
-            assert not self.has_neighbor_color(segment_color) # Make sure no neighbor has this color
+            assert self._color is None
+            assert not self.has_neighbor_color(segment_color)  # Make sure no neighbor has this color
         self._color = segment_color
 
     @staticmethod

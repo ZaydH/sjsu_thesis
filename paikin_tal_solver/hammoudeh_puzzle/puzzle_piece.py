@@ -463,6 +463,14 @@ class PuzzlePiece(object):
         # Reset the segment color
         self._segment_color = None
 
+    def has_segment_color(self):
+        """
+        Checks whether the puzzle piece has a segment color.
+
+        Returns (bool): True if the piece has a segment color and False otherwise.
+        """
+        return self._segment_color is not None
+
     @property
     def segment_color(self):
         """
@@ -493,7 +501,7 @@ class PuzzlePiece(object):
 
         # For a given segment assignment, the puzzle piece should only have a color set once.
         if PuzzlePiece._PERFORM_ASSERT_CHECKS:
-            assert self._segment_id_numb is None
+            assert self._segment_id_numb is not None
 
         self._segment_color = new_segment_color
 
