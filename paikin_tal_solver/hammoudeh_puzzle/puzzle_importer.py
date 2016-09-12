@@ -57,7 +57,7 @@ class PickleHelper(object):
         f.close()
 
         logging.info("Completed pickle IMPORT of file: \"" + filename + "\"")
-        print_elapsed_time(start_time, "pickle IMPORT of file: \"" + filename + "\"" )
+        print_elapsed_time(start_time, "pickle IMPORT of file: \"" + filename + "\"")
         return obj
 
     @staticmethod
@@ -138,7 +138,7 @@ class PuzzleResultsCollection(object):
 
     _PERFORM_ASSERT_CHECKS = True
 
-    def __init__(self, pieces_partitioned_by_puzzle, image_filepaths):
+    def __init__(self, pieces_partitioned_by_puzzle, image_file_paths):
         self._puzzle_results = []
 
         # Iterate through all the solved puzzles
@@ -158,7 +158,7 @@ class PuzzleResultsCollection(object):
                 # If the puzzle does not exist, then create a results information
                 if not puzzle_exists:
                     new_puzzle = PuzzleResultsInformation(piece.puzzle_id,
-                                                          image_filepaths[piece.puzzle_id])
+                                                          image_file_paths[piece.puzzle_id])
                     new_puzzle.numb_pieces = 1
                     self._puzzle_results.append(new_puzzle)
 

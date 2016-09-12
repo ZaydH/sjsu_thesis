@@ -413,7 +413,7 @@ class PieceDistanceInformation(object):
 
     def _skip_piece(self, skip_piece, p_j=None):
         """
-        Deetermine if a piece should be skilled during placement
+        Determine if a piece should be skilled during placement
 
         Args:
             skip_piece (Optional [Bool]):
@@ -467,7 +467,7 @@ class InterPieceDistance(object):
     _USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     _NEIGHBOR_COMPATIBILITY_SCALAR = 4
 
-    # Items related to multithreading to improve performance
+    # Items related to multi-process computation to improve performance
     _MIN_NUMBER_PIECES_PER_THREAD = 10
     _MAX_NUMBER_OF_PARALLEL_PROCESSES = 5
     _USE_MULTIPLE_PROCESSES = True
@@ -632,7 +632,7 @@ class InterPieceDistance(object):
 
         Calculates the mutual compatibility as defined by Paikin and Tal.
 
-        <b>Note:</b> This is done in a single process only.  Hence, it operates on the results datastructures directly.
+        <b>Note:</b> This is done in a single process only.  Hence, it operates on the results data structures directly.
 
         Args:
             is_piece_placed (Optional [Bool]): List indicating whether each piece is placed
@@ -742,7 +742,7 @@ class InterPieceDistance(object):
 
                         # Check all valid p_j sides depending on the puzzle type.
                         for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
-                            # Extract the mutual compatiblity from the results
+                            # Extract the mutual compatibility from the results
                             mutual_compat = new_piece_distance[process_id][p_i, p_i_side.value, p_j, p_j_side.value]
                             # Make sure a value is present
                             if InterPieceDistance._PERFORM_ASSERT_CHECKS:
@@ -1034,7 +1034,7 @@ class InterPieceDistance(object):
 
         Args:
             p_i (int): Identification number of the piece who best buddy information is to be retrieved
-            p_i_side  (PuzzlePieceSide): Side of piece whose best buddy is being retriefed
+            p_i_side  (PuzzlePieceSide): Side of piece whose best buddy is being retrieved
 
         Returns (List[int]):
             List of best buddy piece id numbers
@@ -1211,18 +1211,18 @@ class InterPieceDistance(object):
         return (second_piece.id_number, second_piece_side) in distance_info.best_buddies(first_piece_side)
 
 
-# Functions are only pickable if defined at the top level of a module.
+# Functions are only pickle-able if defined at the top level of a module.
 # Pickle-ability is needed to make the function passable to a multiprocess pool.
 def _multiprocess_interpiece_distances_calc(interpiece_distance_data):
     """
-    Allows for multi-prcess calculation of inter-piece distance.  Needs to be declared at top level
+    Allows for multi-process calculation of inter-piece distance.  Needs to be declared at top level
     otherwise the
 
     Args:
         interpiece_distance_data (dict): Dictionary containing the distance calculation information
          for interpiece distance.
 
-    Returns (List[PieceDistanceInformation]): Inter-piece distance between the specified indicies and
+    Returns (List[PieceDistanceInformation]): Inter-piece distance between the specified indices and
      all other pieces.
     """
 

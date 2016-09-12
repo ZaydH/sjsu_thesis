@@ -1,4 +1,3 @@
-import copy
 from enum import Enum
 
 
@@ -82,7 +81,7 @@ class PuzzleSegment(object):
     @property
     def numb_pieces(self):
         """
-        Property that access the nuymber of pieces in the puzzle
+        Property that access the number of pieces in the puzzle
 
         Returns (int): Number of pieces in the segment (minimum one)
         """

@@ -23,11 +23,11 @@ class ImageBestBuddyStatistics(object):
     # Location to export pickle files to.
     PICKLE_DIRECTORY = ".\\pickle_files\\"
 
-    def __init__(self, image_filepath, piece_width, puzzle_type, distance_function):
+    def __init__(self, image_file_path, piece_width, puzzle_type, distance_function):
 
         # Store the information about the input image
-        self._filename_root = Puzzle.get_filename_without_extension(image_filepath)
-        self._file_extension = Puzzle.get_file_extension(image_filepath)
+        self._filename_root = Puzzle.get_filename_without_extension(image_file_path)
+        self._file_extension = Puzzle.get_file_extension(image_file_path)
         # File extension should not include the period
         assert "." not in self._file_extension
 
@@ -39,7 +39,7 @@ class ImageBestBuddyStatistics(object):
         self._numb_wrong_interior_bb = 0
 
         # Build a puzzle
-        self._puzzle = Puzzle(0, image_filepath, piece_width)
+        self._puzzle = Puzzle(0, image_file_path, piece_width)
 
         self.numb_pieces = self._puzzle.numb_pieces
 
@@ -210,7 +210,7 @@ class ImageBestBuddyStatistics(object):
     def density(self):
         """
         Calculates the best buddy density for the original image.  It is defined as the total number of best
-        buddies divided by the total number of possible best buddies (i.e. number of pieces multipled by the number
+        buddies divided by the total number of possible best buddies (i.e. number of pieces multiplied by the number
         of sides per piece).
 
         Returns (float):
@@ -218,6 +218,7 @@ class ImageBestBuddyStatistics(object):
 
         """
         return 1.0 * self.total_number_of_best_buddies / (self.numb_pieces * PuzzlePieceSide.get_numb_sides())
+
     @property
     def total_number_of_best_buddies(self):
         """
@@ -268,6 +269,7 @@ class ImageBestBuddyStatistics(object):
         self._puzzle.build_puzzle_image(use_results_coloring=True)
         self._puzzle.save_to_file(output_filename)
 
+
 def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
     """
     Runs the Best Buddy Analyzer on an image and outputs the best buddy results and generates a results image.
@@ -308,4 +310,3 @@ if __name__ == '__main__':
     run_best_buddies_analyzer(".\\images\\primula_pixabay.jpg", 28, PuzzleType.type2)
 
     run_best_buddies_analyzer(".\\images\\small_pink_flowers_pixabay.jpg", 28, PuzzleType.type2)
-

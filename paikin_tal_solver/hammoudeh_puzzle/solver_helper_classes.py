@@ -110,7 +110,7 @@ class PuzzleLocation(object):
         Args:
             other (PuzzleLocation): Puzzle location being compared for adjacency
 
-        Returns (bool): True if the piece is adjcent to the other and False otherwise.
+        Returns (bool): True if the piece is adjacent to the other and False otherwise.
         """
         diff = abs(self.row - other.row) + abs(self.column - other.column)
         return diff == 1 and self.puzzle_id == other.puzzle_id

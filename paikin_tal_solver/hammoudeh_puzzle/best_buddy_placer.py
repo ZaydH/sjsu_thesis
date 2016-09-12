@@ -70,8 +70,8 @@ class BestBuddyPlacerCollection(object):
         self._open_locations[loc_key] = open_slot.numb_neighbors
 
         # Delete the entry from the lower level open slot list
-        if(self._multiside_open_slots_lists[open_slot.numb_neighbors - 2] is not None and
-               self._multiside_open_slots_lists[open_slot.numb_neighbors - 2].get(loc_key, None) is not None):
+        if self._multiside_open_slots_lists[open_slot.numb_neighbors - 2] is not None \
+                and self._multiside_open_slots_lists[open_slot.numb_neighbors - 2].get(loc_key, None) is not None:
             del self._multiside_open_slots_lists[open_slot.numb_neighbors - 2][loc_key]
 
         # Add the entry to the next level open slot list

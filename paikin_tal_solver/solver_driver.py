@@ -238,6 +238,7 @@ def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
         log_level (int): Logger level (e.g. DEBUG, INFO, WARNING)
 
     """
+    # noinspection SpellCheckingInspection
     logging.basicConfig(filename=filename, level=log_level,
                         format='%(asctime)s -- %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')  # Example Time Format - 12/12/2010 11:46:36 AM
 
@@ -317,9 +318,9 @@ if __name__ == "__main__":
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
 
-    InterPieceDistance._USE_MULTITHREADING = True
+    InterPieceDistance._USE_MULTIPLE_PROCESSES = True
     paikin_tal_driver(images, PuzzleType.type2, 28)
-    InterPieceDistance._USE_MULTITHREADING = False
+    InterPieceDistance._USE_MULTIPLE_PROCESSES = False
     paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
