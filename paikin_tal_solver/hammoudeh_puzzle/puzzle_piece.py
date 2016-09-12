@@ -369,6 +369,15 @@ class PuzzlePiece(object):
         self._assigned_loc = new_loc
 
     @property
+    def original_puzzle_id(self):
+        """
+        Accessor for the puzzle piece's original puzzle identification number.
+
+        Returns (int): Identification number of the puzzle when it was created.
+        """
+        return self._orig_puzzle_id
+
+    @property
     def puzzle_id(self):
         """
         Assigned Puzzle Identification Number

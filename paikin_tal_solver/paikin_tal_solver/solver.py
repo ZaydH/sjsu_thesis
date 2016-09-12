@@ -1170,6 +1170,10 @@ class PaikinTalSolver(object):
         logging.info("Segmentation completed.")
         print_elapsed_time(start_time, "segmentation")
 
+        # Print the number of segments per puzzle
+        for puzzle_id in xrange(0, self._numb_puzzles):
+            logging.info("Reconstructed puzzle %d has %d segments." % (puzzle_id, len(self._segments[puzzle_id])))
+
         # Color all segments
         if color_segments:
             self.color_segments()

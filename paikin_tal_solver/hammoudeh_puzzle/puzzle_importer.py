@@ -150,15 +150,15 @@ class PuzzleResultsCollection(object):
                 puzzle_exists = False
                 for i in range(0, len(self._puzzle_results)):
                     # Check if the puzzle ID matches this set of results information.
-                    if piece.puzzle_id == self._puzzle_results[i].puzzle_id:
+                    if piece.original_puzzle_id == self._puzzle_results[i].puzzle_id:
                         puzzle_exists = True
                         self._puzzle_results[i].numb_pieces += 1
                         continue
 
                 # If the puzzle does not exist, then create a results information
                 if not puzzle_exists:
-                    new_puzzle = PuzzleResultsInformation(piece.puzzle_id,
-                                                          image_file_paths[piece.puzzle_id])
+                    new_puzzle = PuzzleResultsInformation(piece.original_puzzle_id,
+                                                          image_file_paths[piece.original_puzzle_id])
                     new_puzzle.numb_pieces = 1
                     self._puzzle_results.append(new_puzzle)
 
@@ -356,12 +356,12 @@ class PuzzleResultsInformation(object):
 
     _PERFORM_ASSERT_CHECK = True
 
-    def __init__(self, puzzle_id, original_filename):
+    def __init__(self, puzzle_id, original_img_filename):
 
         # Store the number of pieces and the puzzle id
         self.puzzle_id = puzzle_id
         self._numb_pieces = 0
-        self._original_filename = original_filename
+        self._original_img_filename = original_img_filename
 
         # Define the attributes for the standard accuracy.
         self.standard_direct_accuracy = None
@@ -383,7 +383,7 @@ class PuzzleResultsInformation(object):
     def numb_pieces(self, value):
         self._numb_pieces = value
 
-    def resolve_neighbor_accuracies(self, puzzle):
+    def resolve_neighbor_accuracies(self, solved_puzzle):
         """
         Neighbor Accuracy Resolved
 
@@ -391,18 +391,18 @@ class PuzzleResultsInformation(object):
         the results of previously calculated accuracies to select the best one.
 
         Args:
-            puzzle (Puzzle): A solved Puzzle
+            solved_puzzle (Puzzle): A solved Puzzle
 
         """
 
         # Placed piece array
-        placed_piece_matrix, rotation_matrix = puzzle.build_placed_piece_info()
+        placed_piece_matrix, rotation_matrix = solved_puzzle.build_placed_piece_info()
 
         # Create a temporary neighbor accuracy info
-        neighbor_accuracy_info = ModifiedNeighborAccuracy(self.puzzle_id, puzzle.id_number, self.numb_pieces)
+        neighbor_accuracy_info = ModifiedNeighborAccuracy(self.puzzle_id, solved_puzzle.id_number, self.numb_pieces)
 
         # Iterate through the set of pieces
-        for piece in puzzle.pieces:
+        for piece in solved_puzzle.pieces:
 
             original_neighbor_id_and_sides = piece.original_neighbor_id_numbers_and_sides
             # Sort the sides of the neighbor location to match the original order.
@@ -422,7 +422,7 @@ class PuzzleResultsInformation(object):
                 side = PuzzlePieceSide(side_numb)
 
                 # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
-                if piece.puzzle_id != self.puzzle_id:
+                if piece.original_puzzle_id != self.puzzle_id:
                     # neighbor_accuracy_info.wrong_puzzle_id += 1
                     neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side)
                     continue
@@ -431,8 +431,8 @@ class PuzzleResultsInformation(object):
                 neighbor_loc = neighbor_location_and_sides[side_numb][0]
                 # Check the location is invalid.  If it is, mark the location as None.
                 if (neighbor_loc[0] < 0 or neighbor_loc[1] < 0
-                        or neighbor_loc[0] >= puzzle.grid_size[0]
-                        or neighbor_loc[1] >= puzzle.grid_size[1]):
+                        or neighbor_loc[0] >= solved_puzzle.grid_size[0]
+                        or neighbor_loc[1] >= solved_puzzle.grid_size[1]):
 
                     placed_piece_id = None
                 # Handle dimensions that are off the edge of the board
@@ -548,7 +548,7 @@ class PuzzleResultsInformation(object):
             Original filename of the input image
 
         """
-        return self._original_filename
+        return self._original_img_filename
 
 
 class PieceDirectAccuracyResult(Enum):
@@ -1733,7 +1733,7 @@ class Puzzle(object):
         for piece in self._pieces:
 
             # Ensure that the puzzle ID matches the requirement
-            if piece.puzzle_id != expected_puzzle_id:
+            if piece.original_puzzle_id != expected_puzzle_id:
                 accuracy_info.add_different_puzzle(piece)
 
             # Ensure that the puzzle piece is in the correct location
