@@ -2,6 +2,7 @@
 <h1>Zayd Hammoudeh's Thesis Blog:</h1>
 
 <ul>
+    <li><a href="#blog14">CS299 Week #1: September 13, 2016 Meeting</a></li>
     <li><a href="#blog13">CS299 Week #1: September 06, 2016 Meeting</a></li>
 </ul>
 <ul>
@@ -19,6 +20,18 @@
     <li><a href="#blog01">CS297 Week #1: February 9, 2016 Meeting</a></li>
 </ul><br />
 
+<h2 id="blog14">Summary of the Meeting on September 13, 2016:</h2>
+
+The work for these week was divided into three primary areas, name:
+<ul>
+   <li style="margin-bottom:10px;">Speed-up of the mutual compatibility.</li>
+   <li style="margin-bottom:10px;">Implementation of the segmenter</li>
+   <li style="margin-bottom:10px;">Implementation of the visualization functionality of using five colors</li>
+</ul>
+
+<h3>Five Coloring Algorithm:</h3>
+
+<br /><br /><br />
 <h2 id="blog13">Summary of the Meeting on September 6, 2016:</h2>
 
 For this week, I studied primarily the theoritical foundations of the solved image segmentation.
@@ -139,6 +152,11 @@ ensure that there is the maximum possible correctness for each segment, even at 
     
 </ul>
 
+<h3>Additional Work this Week:</h3>
+<ul>
+    <li style="margin-bottom:10px;"><b>Inter-piece Distance Calculation Spped-up</b>: As previousl.y mentioned, one of the most time consuming aspects of Paikin and Tal's algorithm is the interpiece distance calculation.  In the latest code, I have modified the implementation to now use multiple process to parallelize the computation.  This approach is multi-process and not multi-threaded due to the issues associated with Python's GIL.  As an example of the speed-up, a calculation that used to take 13min 14s now takes 5min 16s (an ~60% speed-up).  With some additional minor changes, more sppedup is expected.</li>
+    <li style="margin-bottom:10px;"><b>Logging</b>: In previous versions of the program, the implementation of loggin was to put it mildly poorly implemented.  All mesages were printed to the console.  No log messages were assigned priorities (e.g. "info", "debug", "critical", etc.).  This has totally be rewritten and is now much more flexible and scalable.</li>
+</ul>
 
 <h3>Questions for Dr. Pollett:</h3>
 <ul>
