@@ -775,7 +775,7 @@ class DirectAccuracyPuzzleResults(object):
         best_accuracy = current_best_direct_accuracy.weighted_accuracy
 
         # Get the information on the new direct accuracy result
-        new_numb_included_pieces = current_best_direct_accuracy.numb_pieces_from_original_puzzle_in_solved_puzzle
+        new_numb_included_pieces = new_direct_accuracy.numb_pieces_from_original_puzzle_in_solved_puzzle
         new_accuracy = new_direct_accuracy.weighted_accuracy
 
         # Update the standard direct accuracy if applicable
