@@ -25,8 +25,8 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-PERFORM_PLACEMENT = True
-RECALCULATE_DISTANCES = True
+PERFORM_PLACEMENT = False
+RECALCULATE_DISTANCES = False
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
@@ -82,9 +82,8 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
         if _PERFORM_ASSERT_CHECKS:
             assert _ENABLE_PICKLE
 
-        logging.info("Importing solved puzzle from pickle file: \"%s\"" % pickle_placement_complete_filename)
+        logging.info("Importing solved puzzle from pickle file.")
         paikin_tal_solver = PickleHelper.importer(pickle_placement_complete_filename)
-        logging.info("Pickle import of solved puzzle complete.")
 
     # Get the results
     paikin_tal_solver.segment(color_segments=True)

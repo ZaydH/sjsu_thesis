@@ -100,21 +100,20 @@ class PuzzleSegment(object):
             piece_ids.append(piece_info[0])
         return piece_ids
 
-    def add_piece(self, piece_id, piece_location):
+    def add_piece(self, piece):
         """
-        Adds a puzzle piece (as defined by the piece's identification number) to the puzzle segment.
+        Adds a puzzle piece to the puzzle segment.
 
         Args:
-            piece_id (int): Identification if the puzzle piece to be added to the segment
-            piece_location (Location): Location of the puzzle piece
+            piece (PuzzlePiece): Puzzle piece to be added
         """
+
         # Store the seed piece special
         if len(self._pieces) == 0:
-            self._seed_piece = (piece_id, piece_location)
+            self._seed_piece = (piece.id_number, piece.puzzle_location)
 
         # Store all pieces in the piece dictionary
-        key = PuzzleSegment._get_piece_key(piece_id)
-        self._pieces[key] = (piece_id, piece_location)
+        self._pieces[piece.key()] = (piece.id_number, piece.puzzle_location)
 
     def remove_piece(self, piece_id):
         """

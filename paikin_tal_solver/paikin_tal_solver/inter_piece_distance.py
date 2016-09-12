@@ -1021,7 +1021,12 @@ class InterPieceDistance(object):
         Returns (List[int]): Descending order of the pieces from best candidate to be a seed piece
           to worst candidate to be a seed piece.
         """
-        return copy.deepcopy(self._initial_start_piece_ordering)
+        # return copy.deepcopy(self._initial_start_piece_ordering)  # Seems to take a long time
+        piece_ordering = []
+        # Remove everything but the piece ID number
+        for piece_info in self._initial_start_piece_ordering:
+            piece_ordering.append(piece_info[0])
+        return piece_ordering
 
     def best_buddies(self, p_i, p_i_side):
         """

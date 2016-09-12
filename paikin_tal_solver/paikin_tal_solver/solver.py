@@ -1092,7 +1092,7 @@ class PaikinTalSolver(object):
         # Create a dictionary containing all of the unsegmented pieces
         unassigned_pieces = {}
         for piece in self._pieces:
-            unassigned_pieces[piece.key()] = piece.id_number
+            unassigned_pieces[str(piece.id_number)] = piece.id_number
 
         # Use the seed priority to determine the order pieces are added to segments.
         piece_segment_priority = self._inter_piece_distance.get_initial_starting_piece_order()
@@ -1114,10 +1114,9 @@ class PaikinTalSolver(object):
             # Add the next highest priority piece to the queue
             seed_piece_id_number = piece_segment_priority[priority_cnt]
             seed_piece = self._pieces[seed_piece_id_number]
-            seed_piece_puzzle = seed_piece.puzzle_id
 
             # Create a new segment
-            new_segment = PuzzleSegment(seed_piece.puzzle_id, len(self._segments[seed_piece_puzzle]))
+            new_segment = PuzzleSegment(seed_piece.puzzle_id, len(self._segments[seed_piece.puzzle_id]))
             segment_piece_queue.put(seed_piece)
 
             # Add pieces to the segment
@@ -1128,7 +1127,7 @@ class PaikinTalSolver(object):
 
                 # Add the piece to the segment
                 queue_piece.segment = new_segment.id_number
-                new_segment.add_piece(queue_piece.id_number, queue_piece.location)
+                new_segment.add_piece(queue_piece)
 
                 # Iterate through all the sides and determine if should be added
                 for (puzzle_loc, queue_piece_side) in queue_piece.get_neighbor_puzzle_location_and_sides():
