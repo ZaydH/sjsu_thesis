@@ -536,13 +536,20 @@ class PuzzlePiece(object):
         Given an adjacent puzzle location, this function returns the side that is touching that adjacent location.
 
         Args:
-            location (Tuple[int]): A puzzle piece location adjacent to this piece.
+            location : A puzzle piece location adjacent to this piece.  This can either be a Tuple[Int]
+              or PuzzleLocation.
 
         Returns (PuzzlePieceSide):
             Side of this piece that is touching the adjacent location
 
         """
-        loc_and_side = self.get_neighbor_locations_and_sides()
+        # Support multiple types either PuzzleLocation or Tuple
+        if type(location) is PuzzleLocation:
+            loc_and_side = self.get_neighbor_puzzle_location_and_sides()
+        else:
+            loc_and_side = self.get_neighbor_locations_and_sides()
+
+        # Iterate through the possibilities and return if the location matches
         for (loc, side) in loc_and_side:
             if loc == location:
                 return side

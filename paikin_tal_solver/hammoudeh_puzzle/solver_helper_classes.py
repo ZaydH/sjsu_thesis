@@ -103,6 +103,17 @@ class PuzzleLocation(object):
             self._key = str(self.puzzle_id) + "_" + str(self.row) + "_" + str(self.column)
         return self._key
 
+    def __eq__(self, other):
+        """
+        Compares whether two puzzle pieces are equal
+
+        Args:
+            other (PuzzleLocation): Puzzle piece being compared against.
+
+        Returns (True): If the pieces point to the same location and False otherwise.
+        """
+        return self.puzzle_id == other.puzzle_id and self.row == other.row and self.column == other.column
+
 
 class NeighborSidePair(object):
     """

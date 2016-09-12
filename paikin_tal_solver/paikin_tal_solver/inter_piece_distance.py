@@ -1208,7 +1208,7 @@ class InterPieceDistance(object):
         Returns (Bool): True if the two pieces are best buddies on their respective sides and False otherwise.
         """
         distance_info = self._piece_distance_info[first_piece.id_number]
-        return (second_piece.id_number, second_piece_side) in distance_info[first_piece_side]
+        return (second_piece.id_number, second_piece_side) in distance_info.best_buddies(first_piece_side)
 
 
 # Functions are only pickable if defined at the top level of a module.
