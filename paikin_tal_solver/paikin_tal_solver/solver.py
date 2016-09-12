@@ -1194,6 +1194,7 @@ class PaikinTalSolver(object):
                 # Verify the pieces are from the same puzzle
                 if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                     assert piece_puzzle_id == neighbor_piece.puzzle_id
+                    assert PuzzleLocation.are_adjacent(piece.puzzle_location, neighbor_loc)
 
                 # If the pieces are from different segments, then mark them as adjacent
                 neighbor_segment_id = neighbor_piece.segment_number
@@ -1217,7 +1218,7 @@ class PaikinTalSolver(object):
             # build a list that allows for sorting the segments by degree (i.e., number of neighbors)
             segment_degree_priority = []
             for i in xrange(0, len(self._segments[puzzle_id])):
-                segment_degree_priority.append((i, self._segments[puzzle_id][i].degree))
+                segment_degree_priority.append((i, self._segments[puzzle_id][i].neighbor_degree))
             # Perform an inplace sort using the degree of each segment.
             segment_degree_priority.sort(key=lambda x: x[1])
 

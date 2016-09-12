@@ -103,6 +103,31 @@ class PuzzleLocation(object):
             self._key = str(self.puzzle_id) + "_" + str(self.row) + "_" + str(self.column)
         return self._key
 
+    def is_adjacent_to(self, other):
+        """
+        Checks whether two the other puzzle location is adjacent to this PuzzleLocation.
+
+        Args:
+            other (PuzzleLocation): Puzzle location being compared for adjacency
+
+        Returns (bool): True if the piece is adjcent to the other and False otherwise.
+        """
+        diff = abs(self.row - other.row) + abs(self.column - other.column)
+        return diff == 1 and self.puzzle_id == other.puzzle_id
+
+    @staticmethod
+    def are_adjacent(first_loc, second_loc):
+        """
+        Checks for whether two puzzle locations are adjacent.
+
+        Args:
+            first_loc (PuzzleLocation): A puzzle location being checked for adjacency
+            second_loc (PuzzleLocation): Other puzzle location being checked for adjacency
+
+        Returns (bool): True if the two pieces are adjacent and False otherwise.
+        """
+        return first_loc.is_adjacent_to(second_loc)
+
     def __eq__(self, other):
         """
         Compares whether two puzzle pieces are equal
