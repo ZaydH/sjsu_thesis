@@ -153,7 +153,7 @@ class PuzzleSegment(object):
         """
         # When getting the neighbor ids in the normal flow, this should not be blank
         if self._PERFORM_ASSERT_CHECKS:
-            assert self.neighbor_degree > 0
+            assert self.neighbor_degree >= 0
 
         # Convert to a list then return the list.
         neighbor_ids = []
@@ -172,7 +172,7 @@ class PuzzleSegment(object):
 
         # Verify the degree is greater than 0
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
-            assert numb_neighbors > 0
+            assert numb_neighbors >= 0
 
         return numb_neighbors
 

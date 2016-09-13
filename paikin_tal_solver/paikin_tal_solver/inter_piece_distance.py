@@ -680,7 +680,7 @@ class InterPieceDistance(object):
         logging.info("Starting mutual compatibility calculations.")
 
         # Optionally run the single process version
-        if is_piece_placed or not InterPieceDistance._USE_MULTIPLE_PROCESSES:
+        if True and (is_piece_placed or not InterPieceDistance._USE_MULTIPLE_PROCESSES):
             self._calculate_mutual_compatibility_single_process(is_piece_placed)
         else:
             self._calculate_mutual_compatibility_multiprocess(is_piece_placed)
