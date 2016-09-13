@@ -7,6 +7,7 @@ import copy
 import heapq
 import logging
 
+import cStringIO
 import numpy
 import time
 
@@ -759,7 +760,7 @@ class PaikinTalSolver(object):
         # Increment the number of puzzles
         self._numb_puzzles += 1
 
-        logging.debug("Board #" + str(self._numb_puzzles) + " was created.")
+        logging.info("Board #" + str(self._numb_puzzles) + " was created.")
 
         # Account for placed piece when calculating starting piece candidates.
         if self._numb_puzzles > 1:
@@ -771,9 +772,21 @@ class PaikinTalSolver(object):
 
         # Set the first piece's puzzle id
         seed.puzzle_id = self._numb_puzzles - 1
-
         # Mark the last heap clear as now
         self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
+
+        # Print information about the seed
+        string_io = cStringIO.StringIO()
+        print >> string_io, "Seed Piece Information for new Board #%d" % seed.puzzle_id
+        print >> string_io, "\tOriginal Puzzle ID:\t%d" % seed.original_puzzle_id
+        print >> string_io, "\tOriginal Piece ID:\t%d" % seed.original_piece_id
+        # Print the original location information
+        original_location = seed.original_puzzle_location
+        print >>string_io, "\tOriginal Location:\t(%d, %d)" % (original_location.row, original_location.column)
+        print >> string_io, "\n\tSolver Piece ID:\t%d\n" % seed.id_number
+        # log the result
+        logging.info(string_io.getvalue())
+        string_io.close()
 
         # Initialize the piece locations list
         shape = (len(self._pieces), len(self._pieces))

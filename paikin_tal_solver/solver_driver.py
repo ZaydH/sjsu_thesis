@@ -25,8 +25,8 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-PERFORM_PLACEMENT = False
-RECALCULATE_DISTANCES = False
+RECALCULATE_DISTANCES = True
+PERFORM_PLACEMENT = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 # Defining a directory where pickle files are stored.
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
     # Select the files to parse
 
-    # PaikinTalSolver.use_best_buddy_placer = False
+    # # PaikinTalSolver.use_best_buddy_placer = False
     # images = [".\\images\\muffins_300x200.jpg"]
     # paikin_tal_driver(images, PuzzleType.type1, 25)
     # paikin_tal_driver(images, PuzzleType.type2, 28)
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    # # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
     PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
@@ -323,9 +323,9 @@ if __name__ == "__main__":
     InterPieceDistance._USE_MULTIPLE_PROCESSES = False
     paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    InterPieceDistance._USE_MULTIPLE_PROCESSES = True
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    # InterPieceDistance._USE_MULTIPLE_PROCESSES = True
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True

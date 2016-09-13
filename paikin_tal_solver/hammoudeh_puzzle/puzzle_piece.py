@@ -336,6 +336,25 @@ class PuzzlePiece(object):
         return self._width
 
     @property
+    def original_puzzle_location(self):
+        """
+        Accessor for the Original Puzzle Location
+
+        Returns (PuzzleLocation): Original puzzle location using the PuzzleLocation class.
+        """
+        return PuzzleLocation(self.original_puzzle_id, self._orig_loc[0], self._orig_loc[1])
+
+    @property
+    def puzzle_location(self):
+        """
+        Property to access the Solved Puzzle Location
+
+        Returns (PuzzleLocation): Puzzle location using the PuzzleLocation class.  This is the location in the solved
+           puzzle.
+        """
+        return PuzzleLocation(self.puzzle_id, self._assigned_loc[0], self._assigned_loc[1])
+
+    @property
     def location(self):
         """
         Gets the location of the puzzle piece on the board.
@@ -345,15 +364,6 @@ class PuzzlePiece(object):
 
         """
         return self._assigned_loc
-
-    @property
-    def puzzle_location(self):
-        """
-
-        Returns (PuzzleLocation): Puzzle location using the Puzzle Location class.
-
-        """
-        return PuzzleLocation(self.puzzle_id, self._assigned_loc[0], self._assigned_loc[1])
 
     @location.setter
     def location(self, new_loc):
