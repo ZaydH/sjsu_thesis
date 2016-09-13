@@ -1184,8 +1184,13 @@ class PaikinTalSolver(object):
         print_elapsed_time(start_time, "segmentation")
 
         # Print the number of segments per puzzle
+        string_io = cStringIO.StringIO()
+        print >> string_io, "Segments Per Output Puzzle"
         for puzzle_id in xrange(0, self._numb_puzzles):
-            logging.info("Reconstructed puzzle %d has %d segments." % (puzzle_id, len(self._segments[puzzle_id])))
+            print >> string_io, "\tSolved Puzzle #%d:\t%d" % (puzzle_id, len(self._segments[puzzle_id]))
+        print >> string_io, ""
+        logging.info(string_io.getvalue())
+        string_io.close()
 
         # Color all segments
         if color_segments:
