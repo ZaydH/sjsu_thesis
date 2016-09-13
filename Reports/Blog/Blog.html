@@ -2,8 +2,8 @@
 <h1>Zayd Hammoudeh's Thesis Blog:</h1>
 
 <ul>
-    <li><a href="#blog14">CS299 Week #1: September 13, 2016 Meeting</a></li>
-    <li><a href="#blog13">CS299 Week #1: September 06, 2016 Meeting</a></li>
+    <li><a href="#blog14">CS299 Week #14: September 13, 2016 Meeting</a></li>
+    <li><a href="#blog13">CS299 Week #13: September 06, 2016 Meeting</a></li>
 </ul>
 <ul>
     <li><a href="#blog12">CS297 Week #12: April 26, 2016 Meeting</a></li>
@@ -27,9 +27,173 @@ The work for these week was divided into three primary areas, name:
    <li style="margin-bottom:10px;">Speed-up of the mutual compatibility.</li>
    <li style="margin-bottom:10px;">Implementation of the segmenter</li>
    <li style="margin-bottom:10px;">Implementation of the visualization functionality of using five colors</li>
+   <li style="margin-bottom:10px;">Fixed bugs in the calculation of the solver accuracy</li>
+   <li style="margin-bottom:10px;">Improving logging of the seed piece information for duplicate seed piece tracking</li>
 </ul>
 
+<h3>Segmenter:</h3>
+
+The implementation of the segmenter for this week matches the description of the segmenter proposed last week.  The only difference is that the post process cleanup is not yet performed.  This will be decided after further discussion with Dr. Pollett.
+
 <h3>Five Coloring Algorithm:</h3>
+
+The Five Color Theorem states that on a planar graph, the verticies can be colored with five colors such that no two veriticies have the same color.  This week, I implemented the <a href="http://graphstream-project.org/doc/Algorithms/Welsh-Powell/">Welsh-Powell Algorithm</a> to assign colors to different segments in the solved image.  Below is a summarized version of the algorithm:<br /><br />
+
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">unassigned_segments <span style="color: #333333">=</span> { all_segements }
+<span style="color: #888888">// Prioritize segments with most neighbors </span>
+sort unassigned_segments by degree 
+
+<span style="color: #888888">// Use a buffer to get colors sequentially</span>
+C <span style="color: #333333">=</span> { all valid colors} 
+
+<span style="color: #888888">// Continue until all segments are assigned a color</span>
+<span style="color: #008800; font-weight: bold">while</span> <span style="color: #333333">|</span>unassigned_segments<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span> <span style="color: #008800; font-weight: bold">do</span><span style="color: #333333">:</span>
+    next_segment <span style="color: #333333">=</span> unassigned_segments.next()
+    
+    next_color <span style="color: #333333">=</span> C.next()
+    next_segment.assign_color(next_color)
+    
+    <span style="color: #888888">// Assign the color to all other segments with no</span>
+    <span style="color: #888888">// neighbor of the same color</span>
+    <span style="color: #008800; font-weight: bold">for</span> other_segment in unassigned_segments<span style="color: #333333"> <span style="color: #008800; font-weight: bold">do</span>:</span>
+        <span style="color: #008800; font-weight: bold">if</span> other_segment has no neighbor with color next_color <span style="color: #008800; font-weight: bold">then</span><span style="color: #333333">:</span>
+            other_segment.assign_color(next_color)
+            unassigned_segments.remove(other_segment)
+</pre></div>
+
+<br />
+Below is a table of two three input puzzles, the solved images, the best buddy visualizations, and the segmented images.
+
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Images&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_3300_1.jpg" alt="Two Houses Original" style="width:308px;height:233px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_bgu_805_08.jpg" alt="Lady by Water" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_mcgill_20.jpg" alt="Glass Building" style="width:151px;height:112px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Solved<br />&nbsp;&nbsp;Puzzles&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_3300_bgu08_mcgill20_0000_2016.09.13_04.04.29.jpg" alt="Solved Image #0" style="width:340px;height:204px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_3300_bgu08_mcgill20_0001_2016.09.13_04.04.29.jpg" alt="Solved Image #1" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_3300_bgu08_mcgill20_0002_2016.09.13_04.04.29.jpg" alt="Solved Image #2" style="width:264px;height:176px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Best Buddy<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_3300_bgu08_mcgill20_0000_2016.09.13_04.04.29.jpg" alt="Solved Image #0" style="width:340px;height:204px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_3300_bgu08_mcgill20_0001_2016.09.13_04.04.29.jpg" alt="Solved Image #1" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_3300_bgu08_mcgill20_0002_2016.09.13_04.04.29.jpg" alt="Solved Image #2" style="width:264px;height:176px;" /></div><br /></td>
+    </tr>  
+    <tr>
+        <th><h3>Segmenter<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/segmented_type2_3300_bgu08_mcgill20_0000_2016.09.13_04.04.29.jpg" alt="Solved Image #0" style="width:340px;height:204px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/segmented_type2_3300_bgu08_mcgill20_0001_2016.09.13_04.04.29.jpg" alt="Solved Image #1" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/segmented_type2_3300_bgu08_mcgill20_0002_2016.09.13_04.04.29.jpg" alt="Solved Image #2" style="width:264px;height:176px;" /></div><br /></td>
+    </tr>  
+  </table>
+</div>
+<br /><br />
+
+<h3>Muffins Couch Image Segmentation</h3>
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Image&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/original_muffins_300x200.jpg" alt="Muffins Original"/></div><br /></td>
+    </tr>  
+  </table>
+</div>
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+     <tr>
+        <th></th>
+        <th><h3>Type 1</h3></th>
+        <th><h3>Type 2</h3></th>
+    </tr>
+    <tr>
+        <th><h3>Solved<br />&nbsp;&nbsp;Output&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/reconstructed_type1_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 1 Solved"/></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/reconstructed_type2_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 2 Solved"/></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Best Buddy<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/best_buddy_acc_type1_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 1 Best Buddies"/></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/best_buddy_acc_type2_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 2 Best Buddies"/></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Segmented<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/segmented_type1_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 1 Segmented"></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/segmented_type2_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 2 Segmented"></div><br /></td>    </tr>  
+  </table>
+</div>
+<br /><br />
+
+<b>Note</b>: In the best buddy visualization for the type 2 image, there is chaining of the main correctly assembled upper section and the incorrectly assembled lower segment.  This could be fixed with the segmenter post-processing proposed previously.
+
+<h3>Two Image Segmentation</h3>
+
+For this puzzle, the image with the two tropical style houses were removed and only the beach and building images were passed to the solver.
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Images&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_bgu_805_08.jpg" alt="Lady by Water" style="width:392;height:258px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_mcgill_20.jpg" alt="Glass Building" style="width:302px;height:224px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Solved<br />&nbsp;&nbsp;Puzzles&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_bgu08_mcgill20_0000_2016.09.13_05.28.26.jpg" alt="Solved Image #0" style="width:392px;height:202px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_bgu08_mcgill20_0001_2016.09.13_05.28.26.jpg" alt="Solved Image #1" style="width:364px;height:271px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Best Buddy<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_bgu08_mcgill20_0000_2016.09.13_05.28.26.jpg" alt="Best Buddies Solved Image #0" style="width:392px;height:202px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_bgu08_mcgill20_0001_2016.09.13_05.28.26.jpg" alt="Best Buddies Solved Image #1" style="width:364px;height:271px;" /></div><br /></td>
+    </tr>  
+    <tr>
+        <th><h3>Segmenter<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/segmented_type2_bgu08_mcgill20_0000_2016.09.13_05.28.26.jpg" alt="Segmented Solved Image #0" style="width:392px;height:202px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/segmented_type2_bgu08_mcgill20_0001_2016.09.13_05.28.26.jpg" alt="Segmented Solved Image #1" style="width:364px;height:271px;" /></div><br /></td>
+    </tr>  
+  </table>
+</div>
+<br /><br />
+
+
+<h3>Logging of Seed Piece Information:</h3>
+
+As mentioned in the last blog post, I worked extensively last week on improving the messaging logging for the program as it executes.  This week, I added a feature to actually log the seed piece information so I can more easily determine if a poor seed piece was selected.  For example, below is the logging that shows the solver used the seed piece from the same input puzzle for two output puzzles:
+<br /><br /> 
+
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">Placer started
+Board #1 was created.
+Seed Piece Information for new Board #0
+	Original Puzzle ID:	0
+	Original Piece ID:	438
+	Original Location:	(12, 18)
+
+	Solver Piece ID:	438
+
+
+Board #2 was created.
+Finding start piece candidates
+Finding the start pieces completed.
+The task &quot;finding start pieces&quot; took 0 min 0 sec.
+Seed Piece Information for new Board #1
+	Original Puzzle ID:	0
+	Original Piece ID:	582
+	Original Location:	(16, 22)
+
+	Solver Piece ID:	582
+</pre></div>
+
 
 <br /><br /><br />
 <h2 id="blog13">Summary of the Meeting on September 6, 2016:</h2>
