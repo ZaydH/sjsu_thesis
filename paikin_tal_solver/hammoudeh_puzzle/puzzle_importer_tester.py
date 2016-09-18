@@ -6,7 +6,7 @@ import math
 import random
 import unittest
 
-import numpy
+import numpy as np
 
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleTester, PuzzleResultsCollection, \
     PieceDirectAccuracyResult
@@ -93,13 +93,13 @@ class PuzzleImporterTester(unittest.TestCase):
                 # Test the extraction of pixel values.
                 test_arr = PuzzleTester.build_pixel_list(first_dim_val, True)
                 row_val = piece.get_row_pixels(row)
-                assert(numpy.array_equal(row_val, test_arr))  # Verify the two arrays are equal.
+                assert(np.array_equal(row_val, test_arr))  # Verify the two arrays are equal.
 
                 # Test the reversing
                 reverse_list = True
                 test_arr = PuzzleTester.build_pixel_list(first_dim_val, True, reverse_list)
                 row_val = piece.get_row_pixels(row, reverse_list)
-                assert(numpy.array_equal(row_val, test_arr))
+                assert(np.array_equal(row_val, test_arr))
 
             for col in range(0, PuzzleTester.PIECE_WIDTH):
                 first_dim_val = upper_left_dim + col * PuzzleTester.NUMB_PIXEL_DIMENSIONS
@@ -108,13 +108,13 @@ class PuzzleImporterTester(unittest.TestCase):
                 is_col = False
                 test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col)
                 col_val = piece.get_column_pixels(col)
-                assert(numpy.array_equal(col_val, test_arr))  # Verify the two arrays are equal.
+                assert(np.array_equal(col_val, test_arr))  # Verify the two arrays are equal.
 
                 # Test the reversing
                 reverse_list = True
                 test_arr = PuzzleTester.build_pixel_list(first_dim_val, is_col, reverse_list)
                 col_val = piece.get_column_pixels(col, reverse_list)
-                assert(numpy.array_equal(col_val, test_arr))
+                assert(np.array_equal(col_val, test_arr))
 
         # Calculate the asymmetric distance for two neighboring pieces on ADJACENT SIDES
         asym_dist = PuzzlePiece.calculate_asymmetric_distance(pieces[0], PuzzlePieceSide.right,

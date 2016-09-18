@@ -10,7 +10,7 @@ import time
 import datetime
 
 import cStringIO
-import numpy
+import numpy as np
 import cv2  # OpenCV
 from enum import Enum
 
@@ -1894,7 +1894,7 @@ class Puzzle(object):
             NumPy array representing a BGR image of the specified solid color
         """
         dimensions = (size[0], size[1], Puzzle.NUMBER_BGR_DIMENSIONS)
-        return numpy.zeros(dimensions, numpy.uint8)
+        return np.zeros(dimensions, np.uint8)
 
     @staticmethod
     def extract_subimage(img, upper_left, size):
@@ -1902,12 +1902,12 @@ class Puzzle(object):
         Given an image (in the form of a Numpy array) extract a subimage.
 
         Args:
-            img : Image in the form of a numpy array.
+            img : Image in the form of a Numpy array.
             upper_left ([int]): upper left location of the image to extract
             size ([int]): Size of the of the sub
 
         Returns (Numpy[int]):
-            Sub image as a numpy array
+            Sub image as a Numpy array
         """
 
         # Calculate the lower right of the image
@@ -1965,7 +1965,7 @@ class Puzzle(object):
         if piece.rotation is None or piece.rotation == PuzzlePieceRotation.degree_0:
             Puzzle.insert_subimage(puzzle_img, upper_left, piece_img)
         else:
-            rotated_img = numpy.rot90(piece_img, (PuzzlePieceRotation.degree_360.value - piece.rotation.value) / 90)
+            rotated_img = np.rot90(piece_img, (PuzzlePieceRotation.degree_360.value - piece.rotation.value) / 90)
             # Puzzle.display_image(piece_img)
             # Puzzle.display_image(rotated_img)
             Puzzle.insert_subimage(puzzle_img, upper_left, rotated_img)
@@ -2051,7 +2051,7 @@ class Puzzle(object):
             subimage ([int]): Sub-image to be inserted into the master image.
 
         Returns (Numpy[int]):
-            Sub image as a numpy array
+            Sub image as a NumPy array
         """
 
         # Verify the upper left input value is valid.
@@ -2088,7 +2088,7 @@ class Puzzle(object):
         """
         Save Image to a File
 
-        Saves any numpy array to an image file.
+        Saves any NumPy array to an image file.
 
         Args:
             filename (str): Filename and path to save the OpenCV image.
@@ -2137,16 +2137,16 @@ class Puzzle(object):
         if Puzzle._PERFORM_ASSERT_CHECKS:
             assert self._upper_left == (0, 0)
 
-        # Build a numpy array that is by default "None" for each cell.
-        placed_piece_matrix = numpy.full(self._grid_size, -1, numpy.int32)
-        placed_piece_rotation = numpy.full(self._grid_size, -1, numpy.int32)
+        # Build a NumPy array that is by default "None" for each cell.
+        placed_piece_matrix = np.full(self._grid_size, -1, np.int32)
+        placed_piece_rotation = np.full(self._grid_size, -1, np.int32)
 
         # For each element in the array,
         for piece in self._pieces:
             placed_piece_matrix[piece.location] = piece.original_piece_id
             placed_piece_rotation[piece.location] = piece.rotation.value
 
-        # Return the built numpy array
+        # Return the built NumPy array
         return placed_piece_matrix, placed_piece_rotation
 
     @staticmethod
@@ -2237,7 +2237,7 @@ class PuzzleTester(object):
             pixel_offset = PuzzleTester.row_to_row_step_size()
 
         # Build the list of pixel values
-        pixels = numpy.zeros((PuzzleTester.PIECE_WIDTH, PuzzleTester.NUMB_PIXEL_DIMENSIONS))
+        pixels = np.zeros((PuzzleTester.PIECE_WIDTH, PuzzleTester.NUMB_PIXEL_DIMENSIONS))
         for i in range(0, PuzzleTester.PIECE_WIDTH):
             pixel_start = start_value + i * pixel_offset
             for j in range(0, PuzzleTester.NUMB_PIXEL_DIMENSIONS):
@@ -2301,9 +2301,9 @@ class PuzzleTester(object):
         numb_dim = PuzzleTester.NUMB_PIXEL_DIMENSIONS
 
         # Define the array
-        dummy_img = numpy.zeros((int(round(piece_width * math.sqrt(numb_pieces))),
-                                 int(round(piece_width * math.sqrt(numb_pieces))),
-                                 numb_dim))
+        dummy_img = np.zeros((int(round(piece_width * math.sqrt(numb_pieces))),
+                              int(round(piece_width * math.sqrt(numb_pieces))),
+                              numb_dim))
         # populate the array
         val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE
         img_shape = dummy_img.shape

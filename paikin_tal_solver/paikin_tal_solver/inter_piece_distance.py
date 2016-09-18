@@ -2,7 +2,7 @@
 
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
-import numpy
+import numpy as np
 import sys
 import math  # Used for ceiling function
 import copy
@@ -225,11 +225,8 @@ class PieceDistanceInformation(object):
                                                                                  PuzzlePieceSide.get_all_sides()[0]))
 
         # Build an empty array to store the piece to piece distances
-        self._asymmetric_distances = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                 numb_possible_pairings), numpy.uint32)
-        fill_value = 2 ** 31 - 1
-        self._asymmetric_distances.fill(fill_value)
-
+        self._asymmetric_distances = np.full((PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings),
+                                             fill_value=sys.maxint, dtype=np.uint32)
         # Reset the piece's important distance values.
         self._reset_min_and_second_best_distances()
 
@@ -369,12 +366,12 @@ class PieceDistanceInformation(object):
         numb_possible_pairings = len(InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type,
                                                                                  PuzzlePieceSide.get_all_sides()[0]))
 
-        # Regenerate the numpy array only if it has not already been generated
+        # Regenerate the np array only if it has not already been generated
         if self._asymmetric_compatibilities is None:
             # Build an empty array to store the piece to piece distances
-            self._asymmetric_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                           numb_possible_pairings), numpy.float32)
-            self._asymmetric_compatibilities.fill(float('inf'))
+            self._asymmetric_compatibilities = np.full((PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings),
+                                                       fill_value=np.finfo(np.float32).max,
+                                                       dtype=np.float32)
 
         # Calculate the asymmetric compatibility
         for p_j in range(0, self._numb_pieces):
@@ -407,9 +404,8 @@ class PieceDistanceInformation(object):
                     self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
 
         # Build an empty array to store the piece to piece distances
-        self._mutual_compatibilities = numpy.zeros((PuzzlePieceSide.get_numb_sides(), self._numb_pieces,
-                                                    numb_possible_pairings), numpy.float32)
-        self._mutual_compatibilities.fill(float('inf'))
+        self._mutual_compatibilities = np.full((PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings),
+                                               fill_value=np.finfo(np.float32).max, dtype=np.float32)
 
     def _skip_piece(self, skip_piece, p_j=None):
         """
@@ -746,7 +742,7 @@ class InterPieceDistance(object):
                             mutual_compat = new_piece_distance[process_id][p_i, p_i_side.value, p_j, p_j_side.value]
                             # Make sure a value is present
                             if InterPieceDistance._PERFORM_ASSERT_CHECKS:
-                                assert mutual_compat != numpy.NAN
+                                assert mutual_compat != np.NAN
 
                             # Store the mutual compatibility for BOTH p_i and p_j
                             self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
@@ -1287,9 +1283,9 @@ def _multiprocess_mutual_compatibility_calc(params):
     is_piece_placed = params["is_piece_placed"]
 
     # Build an array to store the results.  Initialize to NaN
-    mutual_compat_data = numpy.empty([last_piece, PuzzlePieceSide.get_numb_sides(),
-                                      last_piece, PuzzlePieceSide.get_numb_sides()], numpy.float32)
-    mutual_compat_data[:] = numpy.NAN
+    mutual_compat_data = np.empty([last_piece, PuzzlePieceSide.get_numb_sides(),
+                                   last_piece, PuzzlePieceSide.get_numb_sides()], np.float32)
+    mutual_compat_data[:] = np.NAN
 
     # For the given section, calculate all pieces that fall in that sliver of a region.
     # Hence, must start from 0 as shown in the figure below:

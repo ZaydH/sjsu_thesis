@@ -4,7 +4,7 @@ Created by Zayd Hammoudeh (zayd.hammoudeh@sjsu.edu)
 import random
 
 from enum import Enum
-import numpy
+import numpy as np
 import cv2  # OpenCV
 
 from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
@@ -167,7 +167,7 @@ class PuzzlePiece(object):
         Args:
             puzzle_id (int): Puzzle identification number
             location ([int]): (row, column) location of this piece.
-            lab_img: Image data in the form of a numpy array.
+            lab_img: Image data in the form of a NumPy array.
             piece_id (int): Piece identification number.
             puzzle_grid_size ([int]): Grid size of the puzzle
         """
@@ -277,13 +277,13 @@ class PuzzlePiece(object):
         """
         # Top side border sum
         # noinspection PyListCreation
-        border_color = [numpy.sum(self.get_row_pixels(0))]
+        border_color = [np.sum(self.get_row_pixels(0))]
         # Right side
-        border_color.append(numpy.sum(self.get_column_pixels(self._width - 1)))
+        border_color.append(np.sum(self.get_column_pixels(self._width - 1)))
         # Bottom side
-        border_color.append(numpy.sum(self.get_row_pixels(self._width - 1)))
+        border_color.append(np.sum(self.get_row_pixels(self._width - 1)))
         # Left side
-        border_color.append(numpy.sum(self.get_column_pixels(0)))
+        border_color.append(np.sum(self.get_column_pixels(0)))
 
         # convert to average
         for i in xrange(0, len(border_color)):
@@ -848,17 +848,17 @@ class PuzzlePiece(object):
         # If needed, recalculate the side value.
         if piece_i._predicted_border_values[piece_i_side.value] is None or not PuzzlePiece._USE_STORED_PREDICTED_VALUE_SPEED_UP:
             # Calculate the value of pixels on piece j's edge.
-            piece_i._predicted_border_values[piece_i_side.value] = (2 * (i_border.astype(numpy.int32))
-                                                                    - i_second_to_last.astype(numpy.int32))
+            piece_i._predicted_border_values[piece_i_side.value] = (2 * (i_border.astype(np.int32))
+                                                                    - i_second_to_last.astype(np.int32))
         # Get the predicated stored value
         predicted_j = piece_i._predicted_border_values[piece_i_side.value]
 
         # noinspection PyUnresolvedReferences
-        pixel_diff = predicted_j.astype(numpy.int32) - j_border.astype(numpy.int32)
+        pixel_diff = predicted_j.astype(np.int32) - j_border.astype(np.int32)
 
         # Return the sum of the absolute values.
-        pixel_diff = numpy.absolute(pixel_diff)
-        return numpy.sum(pixel_diff, dtype=numpy.int32)
+        pixel_diff = np.absolute(pixel_diff)
+        return np.sum(pixel_diff, dtype=np.int32)
 
     def set_placed_piece_rotation(self, placed_side, neighbor_piece_side, neighbor_piece_rotation):
         """
@@ -989,7 +989,7 @@ class PuzzlePiece(object):
         if height is None:
             height = width
         # Create a black image
-        image = numpy.zeros((height, width, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
+        image = np.zeros((height, width, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
         # Fill with the bgr color
         image[:] = bgr_color.value
         # Optionally add a border around the pieces before returning
@@ -1061,7 +1061,7 @@ class PuzzlePiece(object):
         bottom_right = [height - 1, width - 1]
 
         # Create a black image
-        image = numpy.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), numpy.uint8)
+        image = np.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
         # For each side, fill with a polygon.
         for (side, color) in bgr_color_by_side:
 
@@ -1084,7 +1084,7 @@ class PuzzlePiece(object):
                 sides_drawn.append(side)
 
             # Build a polygon
-            polygon = numpy.array([vector_points], numpy.int32)
+            polygon = np.array([vector_points], np.int32)
             cv2.fillConvexPoly(image, polygon, color)
 
         # Verify that all sides are drawn

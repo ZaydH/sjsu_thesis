@@ -2,7 +2,7 @@
 Best Buddy Analyzer for Normal Images
 """
 import cStringIO
-import numpy
+import numpy as np
 import sys
 import logging
 
@@ -52,10 +52,10 @@ class ImageBestBuddyStatistics(object):
         self._interpiece_distance = InterPieceDistance(self._puzzle.pieces, distance_function, puzzle_type)
 
         # Get the link between number of test buddies and accuracy
-        self._numb_best_buddies_versus_accuracy = numpy.zeros((PuzzlePieceSide.get_numb_sides() + 1,
-                                                               PuzzlePieceSide.get_numb_sides() + 1,
-                                                               PuzzlePieceSide.get_numb_sides() + 1),
-                                                              numpy.uint32)
+        self._numb_best_buddies_versus_accuracy = np.zeros((PuzzlePieceSide.get_numb_sides() + 1,
+                                                            PuzzlePieceSide.get_numb_sides() + 1,
+                                                            PuzzlePieceSide.get_numb_sides() + 1),
+                                                           np.uint32)
         # Store the location of each piece
         self._piece_locations, _ = self._puzzle.build_placed_piece_info()
 

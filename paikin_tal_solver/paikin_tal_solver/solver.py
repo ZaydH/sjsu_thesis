@@ -8,7 +8,7 @@ import heapq
 import logging
 
 import cStringIO
-import numpy
+import numpy as np
 import time
 
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
@@ -790,8 +790,7 @@ class PaikinTalSolver(object):
 
         # Initialize the piece locations list
         shape = (len(self._pieces), len(self._pieces))
-        self._piece_locations.append(numpy.zeros(shape, numpy.int32))
-        self._piece_locations[seed.puzzle_id].fill(PaikinTalSolver._UNPLACED_PIECE_ID)
+        self._piece_locations.append(np.full(shape, fill_value=PaikinTalSolver._UNPLACED_PIECE_ID, dtype=np.int32))
 
         # Place the piece unrotated in the center of the board.
         board_center = (int(shape[0] / 2), int(shape[1]) / 2)
