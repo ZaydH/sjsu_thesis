@@ -1296,7 +1296,7 @@ class PaikinTalSolver(object):
 
         # Color the pieces that belong to this segment.
         for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
-            self._pieces[piece_id].segment_color = new_segment_color
+            self._pieces[piece_id].segment_color = self._segments[puzzle_id][segment_id].get_piece_color(piece_id)
 
     def _is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
         """

@@ -73,6 +73,8 @@ class PuzzleLocation(object):
     Structure for formalizing a puzzle location
     """
 
+    _PERFORM_ASSERT_CHECKS = True
+
     def __init__(self, puzzle_id, row, column):
         self.puzzle_id = puzzle_id
         self.row = row
@@ -127,6 +129,41 @@ class PuzzleLocation(object):
         Returns (bool): True if the two pieces are adjacent and False otherwise.
         """
         return first_loc.is_adjacent_to(second_loc)
+
+    def get_adjacent_locations(self, board_dim=None):
+        """
+        Find the valid locations adjacent to a Puzzle Location.
+
+        Args:
+            board_dim (List[int]): Size of the puzzle in the format [number_of_rows, number_of_columns].  If a NumPy
+                array is used to represent the board, this can be found using the "shape" method.  If this is not
+                specified, then it is ignored.
+
+        Returns (List[PuzzleLocation]): The valid puzzle locations in the order: top, right, bottom, left (if valid).
+
+        """
+        adjacent_locations = []
+        # Make sure not off the edge of the board
+        if self.row > 0:
+            adjacent_locations.append(PuzzleLocation(self.puzzle_id, self.row - 1, self.column))
+
+        # Make sure not off the edge of the board if a board dimension is passed
+        if board_dim is None or self.column < board_dim[1] - 1:
+            adjacent_locations.append(PuzzleLocation(self.puzzle_id, self.row, self.column + 1))
+
+        # Make sure not off the edge of the board if a board dimension is passed
+        if board_dim is None or self.row < board_dim[0] - 1:
+            adjacent_locations.append(PuzzleLocation(self.puzzle_id, self.row + 1, self.column))
+
+        # Make sure not off the edge of the board
+        if self.column > 0:
+            adjacent_locations.append(PuzzleLocation(self.puzzle_id, self.row, self.column - 1))
+
+        # Verify the length of the adajcents makes sense
+        if board_dim is None or (board_dim[0] > 1 and board_dim[1] > 1):
+            assert len(adjacent_locations) >= 2
+
+        return adjacent_locations
 
     def __eq__(self, other):
         """

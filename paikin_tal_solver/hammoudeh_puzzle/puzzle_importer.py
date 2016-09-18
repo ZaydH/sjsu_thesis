@@ -2237,7 +2237,7 @@ class PuzzleTester(object):
             pixel_offset = PuzzleTester.row_to_row_step_size()
 
         # Build the list of pixel values
-        pixels = np.zeros((PuzzleTester.PIECE_WIDTH, PuzzleTester.NUMB_PIXEL_DIMENSIONS))
+        pixels = np.zeros((PuzzleTester.PIECE_WIDTH, PuzzleTester.NUMB_PIXEL_DIMENSIONS), np.int8)
         for i in range(0, PuzzleTester.PIECE_WIDTH):
             pixel_start = start_value + i * pixel_offset
             for j in range(0, PuzzleTester.NUMB_PIXEL_DIMENSIONS):
@@ -2303,7 +2303,8 @@ class PuzzleTester(object):
         # Define the array
         dummy_img = np.zeros((int(round(piece_width * math.sqrt(numb_pieces))),
                               int(round(piece_width * math.sqrt(numb_pieces))),
-                              numb_dim))
+                              numb_dim),
+                             dtype=np.int8)
         # populate the array
         val = PuzzleTester.TEST_ARRAY_FIRST_PIXEL_VALUE
         img_shape = dummy_img.shape
