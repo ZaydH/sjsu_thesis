@@ -13,11 +13,17 @@ class PuzzleSegmentColor(Enum):
     """
     Valid segment colors.  These are represented in BGR format.
     """
-    # Red = (0x22, 0x22, 0xB2)
+    # Dark_Red = (0x22, 0x22, 0xB2)
+    Dark_Red = (0x0, 0x0, 0x80)
+    Dark_Green = (0x0, 0x34, 0x0)
+    Dark_Blue = (0x80, 0x0, 0x0)
+    Dark_Yellow = (0x00, 0x33, 0x66)
+
     Red = (0x0, 0x0, 0xFF)
     Blue = (0xFF, 0x0, 0x0)
     Green = (0x0, 0xFF, 0x0)
     Yellow = (0x00, 0xFF, 0xFF)
+
     # Pink = (0x93, 0x14, 0xFF)
 
     @staticmethod
@@ -27,8 +33,12 @@ class PuzzleSegmentColor(Enum):
 
         Returns (List[SegmentColors]): All the valid segment colors
         """
-        return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green,
-                PuzzleSegmentColor.Yellow]  # , PuzzleSegmentColor.Pink]
+        if PuzzleSegment.USE_DISTANCE_FROM_EDGE_BASED_COLORING:
+            return [PuzzleSegmentColor.Dark_Red, PuzzleSegmentColor.Dark_Blue, PuzzleSegmentColor.Dark_Green,
+                    PuzzleSegmentColor.Dark_Yellow]
+        else:
+            return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green,
+                    PuzzleSegmentColor.Yellow]
 
     def key(self):
         """
@@ -42,6 +52,8 @@ class PuzzleSegmentColor(Enum):
 
 class PuzzleSegmentPieceInfo(object):
 
+    _PERFORM_ASSERT_CHECKS = True
+
     DISTANCE_FROM_EDGE_DEFAULT_VALUE = sys.maxint
 
     def __init__(self, piece_id, location):
@@ -52,7 +64,7 @@ class PuzzleSegmentPieceInfo(object):
             location (PuzzleLocation): Location of the puzzle piece
         """
 
-        self._id_numb = piece_id
+        self._piece_id = piece_id
         self._location = location
 
         self._is_segment_similarity_piece = False
@@ -65,13 +77,13 @@ class PuzzleSegmentPieceInfo(object):
         self._distance_based_color = None
 
     @property
-    def id_number(self):
+    def piece_id(self):
         """
         Accessor for the associated puzzle piece's identification number.
 
         Returns (int): Piece identification
         """
-        return self._id_numb
+        return self._piece_id
 
     @property
     def key(self):
@@ -118,6 +130,9 @@ class PuzzleSegmentPieceInfo(object):
             new_default_color (PuzzleSegmentColor): Default color assigned to all pieces in the segment to
                 also be assigned to this piece.
         """
+        if PuzzleSegmentPieceInfo._PERFORM_ASSERT_CHECKS:
+            assert new_default_color is not None
+
         if new_default_color != self._default_color:
             # Need a new distance based color
             self._distance_based_color = None
@@ -154,7 +169,7 @@ class PuzzleSegmentPieceInfo(object):
             # Need a new distance based color
             self._distance_based_color = None
 
-        self.distance_from_open_space = new_distance
+        self._distance_from_open_space = new_distance
 
     def get_color_based_on_distance_from_an_open(self):
         """
@@ -168,27 +183,26 @@ class PuzzleSegmentPieceInfo(object):
         if self._distance_based_color is not None:
             return self._distance_based_color
 
-        max_lightness = 225  # Done to prevent just white sections in the image
-        lightness_increase_per_distance_from_open = 5
-
         # Create an image to use the
-        color_img = np.empty(1, 1, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS)
-        for i in xrange(0, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS):
-            color_img[0, 0, i] = self._default_color.value[i]
+        color_img = np.uint8([[self._default_color.value]])
 
         # Convert color to lab
-        lab_color = cv2.cvtColor(color_img, cv2.COLOR_BGR2LAB)
+        lab_color = cv2.cvtColor(color_img, cv2.COLOR_BGR2HLS)
 
         # Calculate a new lightness but do not let it be too light
-        new_lightness = lab_color[0, 0, 0] + self._distance_from_open_space * lightness_increase_per_distance_from_open
+        lightness_increase_per_distance_from_open = 35
+        lightness_index = 1
+        lightness_increase = self._distance_from_open_space * lightness_increase_per_distance_from_open
+        new_lightness = lab_color[0, 0, lightness_index] + lightness_increase
+
+        # Ensure the lightness calculated is valid
+        max_lightness = 225  # Done to prevent just white sections in the image
         new_lightness = min(max_lightness, new_lightness)
-        lab_color[0, 0, 0] = new_lightness
+        lab_color[0, 0, lightness_index] = np.uint8(new_lightness)
 
         # Calculate a new BGR that is lightened and then return it
-        new_bgr = cv2.cvtColor(lab_color, cv2.COLOR_LAB2BGR)
-        self._distance_based_color = [0, 0, 0]
-        for i in PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS:
-            self._distance_based_color[i] = new_bgr[0, 0, i]
+        new_bgr = cv2.cvtColor(lab_color, cv2.COLOR_HLS2BGR)
+        self._distance_based_color = new_bgr[0, 0, :]
         return self._distance_based_color
 
     @staticmethod
@@ -210,7 +224,7 @@ class PuzzleSegment(object):
 
     _EMPTY_PIECE_MAP_VALUE = -1
 
-    _USE_DISTANCE_FROM_EDGE_BASED_COLORING = True
+    USE_DISTANCE_FROM_EDGE_BASED_COLORING = True
 
     def __init__(self, puzzle_id, segment_id_number):
         """
@@ -368,8 +382,8 @@ class PuzzleSegment(object):
 
         # Build a list of unused pieces
         frontier_pieces = {}
-        for piece in self._pieces:
-            frontier_pieces[piece.key] = piece.id_number
+        for piece_info in self._pieces.values():
+            frontier_pieces[piece_info.key] = piece_info.piece_id
 
         explored_pieces = {}  # As pieces' minimum distance is found, mark as explored
         previous_generation_locations = self._find_open_spaces_adjacent_to_piece(piece_map)
@@ -399,7 +413,8 @@ class PuzzleSegment(object):
 
                         # Update the piece's distance
                         self._update_piece_distance_to_open(piece_id, distance_to_open)
-                        current_generation_locations.append(PuzzleLocation(puzzle_id=-1, row=adjacent_loc.row, column=adjacent_loc.col))
+                        current_generation_locations.append(PuzzleLocation(puzzle_id=-1, row=adjacent_loc.row,
+                                                                           column=adjacent_loc.column))
 
             # Store the previous generation locations
             previous_generation_locations = current_generation_locations
@@ -444,7 +459,7 @@ class PuzzleSegment(object):
         for row in xrange(0, numb_rows):
             for col in xrange(0, numb_cols):
                 # If the location is blank, then definitely empty
-                if not is_map_loc_empty(piece_map, row, col):
+                if not is_map_loc_empty(row, col):
                     continue
 
                 # Check above, below, left, and right locations (in that order) for a piece
@@ -507,7 +522,7 @@ class PuzzleSegment(object):
         [top_left, bottom_right] = self._find_top_left_and_bottom_right_corner_of_segment_map(border_padding=1)
 
         # Get the width and height of the board
-        segment_map_width = bottom_right.col - top_left.col + 1
+        segment_map_width = bottom_right.column - top_left.column + 1
         segment_map_height = bottom_right.row - top_left.row + 1
 
         # Build the piece map
@@ -515,7 +530,7 @@ class PuzzleSegment(object):
                             dtype=np.int32)
 
         # Put the pieces into their respective slot
-        for piece_info in self._pieces:
+        for piece_info in self._pieces.values():
             row = piece_info.location.row - top_left.row
             column = piece_info.location.column - top_left.column
             piece_map[row, column] = piece_info.piece_id
@@ -552,14 +567,14 @@ class PuzzleSegment(object):
             # Check top left
             if top_left_corner.row > piece_loc.row:
                 top_left_corner.row = piece_loc.row
-            if top_left_corner.column > piece_loc.col:
-                top_left_corner.column = piece_loc.col
+            if top_left_corner.column > piece_loc.column:
+                top_left_corner.column = piece_loc.column
 
             # Check bottom right
             if bottom_right_corner.row < piece_loc.row:
                 bottom_right_corner.row = piece_loc.row
-            if bottom_right_corner.column < piece_loc.col:
-                bottom_right_corner.column = piece_loc.col
+            if bottom_right_corner.column < piece_loc.column:
+                bottom_right_corner.column = piece_loc.column
 
         # Add the padding
         top_left_corner.row -= border_padding
@@ -641,7 +656,13 @@ class PuzzleSegment(object):
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert self._color is None
             assert not self.has_neighbor_color(segment_color)  # Make sure no neighbor has this color
+
         self._color = segment_color
+
+        # Modify in place the piece colors
+        for key, piece_info in self._pieces.items():
+            piece_info.default_color = self._color
+            self._pieces[key] = piece_info
 
     @staticmethod
     def sort_by_degree(primary, other):
@@ -668,7 +689,7 @@ class PuzzleSegment(object):
         Returns (List[int]): BGR representation of the color for the piece in the segment.
         """
         # If not using distance based color, no need to get the piece specific information
-        if not PuzzleSegment._USE_DISTANCE_FROM_EDGE_BASED_COLORING:
+        if not PuzzleSegment.USE_DISTANCE_FROM_EDGE_BASED_COLORING:
             return self._color.value
 
         # If piece distance to open data is not valid, then calculate it.

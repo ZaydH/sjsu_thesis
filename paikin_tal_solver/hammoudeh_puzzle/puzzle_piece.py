@@ -991,7 +991,10 @@ class PuzzlePiece(object):
         # Create a black image
         image = np.zeros((height, width, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
         # Fill with the bgr color
-        image[:] = bgr_color.value
+        if isinstance(bgr_color, Enum):
+            image[:] = bgr_color.value
+        else:
+            image[:] = bgr_color
         # Optionally add a border around the pieces before returning
         if PuzzlePiece._ADD_RESULTS_IMAGE_BORDER:
             return PuzzlePiece.add_results_image_border(image)
