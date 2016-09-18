@@ -1,4 +1,9 @@
+import sys
+
+import numpy as np
 from enum import Enum
+
+from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
 
 
 class PuzzleSegmentColor(Enum):
@@ -30,6 +35,125 @@ class PuzzleSegmentColor(Enum):
 
         """
         return str(self.value)
+
+
+class PuzzleSegmentPieceInfo(object):
+
+    DISTANCE_FROM_EDGE_DEFAULT_VALUE = sys.maxint
+
+    def __init__(self, piece_id, location):
+        """
+
+        Args:
+            piece_id (int): Identification number of the piece
+            location (PuzzleLocation): Location of the puzzle piece
+        """
+
+        self._id_numb = piece_id
+        self._location = location
+
+        self._is_segment_similarity_piece = False
+        self._key = PuzzleSegmentPieceInfo.create_key(piece_id)
+
+        self._distance_from_edge = PuzzleSegmentPieceInfo.DISTANCE_FROM_EDGE_DEFAULT_VALUE
+
+        # color information for the piece
+        self._default_color = None
+        self._final_color = None
+
+
+    @property
+    def id_number(self):
+        """
+        Accessor for the associated puzzle piece's identification number.
+
+        Returns (int): Piece identification
+        """
+        return self._id_numb
+
+    @property
+    def key(self):
+        """
+        Dictionary key associated with this puzzle piece
+
+        Returns (str): Puzzle piece key
+        """
+        return self._key
+
+    @property
+    def location(self):
+        """
+        Accesses the puzzle piece information's location
+
+        Returns (PuzzleLocation): Puzzle piece's location
+        """
+        return self._location
+
+    @property
+    def is_segment_similarity_piece(self):
+        """
+        Returns whether the piece is a segment piece informaton
+
+        Returns (bool): True if the piece is a segment similarity piece, and False otherwise
+
+        """
+        return self._is_segment_similarity_piece
+
+    @property
+    def default_color(self):
+        """
+
+        Returns (PuzzleSegmentColor): Default color assigned to all pieces in the segment
+        """
+        return self._default_color
+
+    @default_color.setter
+    def default_color(self, new_default_color):
+        """
+        Assigns the piece a default color
+
+        Args:
+            new_default_color (PuzzleSegmentColor): Default color assigned to all pieces in the segment to
+                also be assigned to this piece.
+        """
+        self._default_color = new_default_color
+
+    @property
+    def distance_from_edge(self):
+        """
+        Access the distance (as measured using the Manhattan distance) of this piece to the edge of the segment
+
+        Returns (int): Distance from the segment to the edge of the segment
+        """
+        return self._distance_from_edge
+
+    @property
+    def distance_from_edge(self):
+        """
+        Access the distance (as measured using the Manhattan distance) of this piece to the edge of the segment
+
+        Returns (int): Distance from the segment to the edge of the segment
+        """
+        return self._distance_from_edge
+
+    @distance_from_edge.setter
+    def distance_from_edge(self, new_distance):
+        """
+        Updates the distance from the edge of the segment (as measured by Manhattan distance)
+
+        Args:
+            new_distance (int): Manhattan distance from the edge
+        """
+        self._distance_from_edge = new_distance
+
+    @staticmethod
+    def create_key(piece_id):
+        """
+        Creates a key for a PuzzleSegmentPieceInfo object.
+        Args:
+            piece_id (int): Puzzle piece identification number
+        """
+        return str(piece_id)
 
 
 class PuzzleSegment(object):
@@ -95,7 +219,7 @@ class PuzzleSegment(object):
         """
         piece_ids = []
         for piece_info in self._pieces.values():
-            piece_ids.append(piece_info[0])
+            piece_ids.append(piece_info.piece_id)
         return piece_ids
 
     def add_piece(self, piece):
@@ -105,13 +229,14 @@ class PuzzleSegment(object):
         Args:
             piece (PuzzlePiece): Puzzle piece to be added
         """
+        new_piece = PuzzleSegmentPieceInfo(piece.id_number, piece.puzzle_location)
 
         # Store the seed piece special
         if len(self._pieces) == 0:
-            self._seed_piece = (piece.id_number, piece.puzzle_location)
+            self._seed_piece = new_piece
 
         # Store all pieces in the piece dictionary
-        self._pieces[piece.key()] = (piece.id_number, piece.puzzle_location)
+        self._pieces[new_piece.key] = new_piece
 
     def remove_piece(self, piece_id):
         """
@@ -121,10 +246,12 @@ class PuzzleSegment(object):
             piece_id (int): Identification if the puzzle piece to be removed from the segment
         """
 
-        key = PuzzleSegment._get_piece_key(piece_id)
+        key = PuzzleSegmentPieceInfo.create_key(piece_id)
         # Optionally ensure the key exists before trying to remove it
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
-            assert key in self._pieces
+            assert key in self._pieces          # verify the piece to be deleted actually exists
+            assert key != self._seed_piece.key  # Cannot delete the seed piece
+
         del self._pieces[key]
 
     def add_neighboring_segment(self, neighbor_segment_id):
@@ -176,18 +303,78 @@ class PuzzleSegment(object):
 
         return numb_neighbors
 
-    @staticmethod
-    def _get_piece_key(piece_id):
+    def assign_distance_from_edge(self):
         """
-        Puzzle piece identification numbers are stored in a Python dictionary.  As such, a key is needed to insert
-        and remove elements from the dictionary.  This function is used to generate said key.
+
+        Returns:
+
+        """
+
+    def _build_segment_piece_map(self):
+
+        # Find the two extreme corners of the
+        [top_left, bottom_right] = self._find_top_left_and_bottom_right_corner_of_segment_map(border_padding=1)
+
+        # Get the width and height of the board
+        segment_map_width = bottom_right.col - top_left.col + 1
+        segment_map_height = bottom_right.row - top_left.row + 1
+
+        # Build the piece map
+        piece_map = np.empty((segment_map_height, segment_map_width))
+
+        # Put the pieces into their respective slot
+        for piece_info in self._pieces:
+            row = piece_info.location.row - top_left.row
+            column = piece_info.location.column - top_left.column
+            piece_map[row, column] = piece_info.piece_id
+
+    def _find_top_left_and_bottom_right_corner_of_segment_map(self, border_padding=0):
+        """
+        Determines the puzzle width and length based on the information in the puzzle piece information objects.
+
+        All information in this function is rebuilt when called so if the user plans to reuse this information they
+        should store the values.
 
         Args:
-            piece_id (int): Puzzle piece identification number.
+            border_padding (int): Number of additional padding location around the segment to allow for a blank
+                border
 
-        Returns (String): Key associated with the puzzle piece that is used by the PuzzleSegment class.
+        Returns (Tuple[PuzzleLocation]): Tuple in the format (top_left, bottom_right) PuzzleLocation objects with
+            the optionally specified padding.
+
         """
-        return str(piece_id)
+
+        if border_padding < 0:
+            raise ValueError("Border padding must be greater than 0.  %d was specified." % border_padding)
+
+        top_left_corner = PuzzleLocation(self._puzzle_id, sys.maxint, sys.maxint)
+        bottom_right_corner = PuzzleLocation(self._puzzle_id, -sys.maxint, -sys.maxint)
+
+        # Get the pieces in the puzzle
+        for piece_info in self._pieces.values():
+            # Get the piece location
+            piece_loc = piece_info.location
+
+            # Check top left
+            if top_left_corner.row > piece_loc.row:
+                top_left_corner.row = piece_loc.row
+            if top_left_corner.column > piece_loc.col:
+                top_left_corner.column = piece_loc.col
+
+            # Check bottom right
+            if bottom_right_corner.row < piece_loc.row:
+                bottom_right_corner.row = piece_loc.row
+            if bottom_right_corner.column < piece_loc.col:
+                bottom_right_corner.column = piece_loc.col
+
+        # Add the padding
+        top_left_corner.row -= border_padding
+        top_left_corner.column -= border_padding
+
+        bottom_right_corner.row += border_padding
+        bottom_right_corner.column += border_padding
+
+        return [top_left_corner, bottom_right_corner]
 
     @staticmethod
     def _get_segment_key(segment_id):
