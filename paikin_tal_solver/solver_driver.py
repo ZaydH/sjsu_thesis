@@ -257,9 +257,9 @@ if __name__ == "__main__":
     # Select the files to parse
 
     # # PaikinTalSolver.use_best_buddy_placer = False
-    # images = [".\\images\\muffins_300x200.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    images = [".\\images\\muffins_300x200.jpg"]
+    paikin_tal_driver(images, PuzzleType.type1, 25)
+    paikin_tal_driver(images, PuzzleType.type2, 28)
     #
     # PaikinTalSolver.use_best_buddy_placer = True
     # paikin_tal_driver(images, PuzzleType.type2, 28)

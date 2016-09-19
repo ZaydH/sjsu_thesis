@@ -176,7 +176,7 @@ class PuzzleLocation(object):
         if self.puzzle_id != other.puzzle_id:
             raise ValueError("To calculate manhattan distance between two puzzle locations, they must be in the same puzzle.")
 
-        distance = abs(self.row + other.row) + abs(self.column + other.column)
+        distance = abs(self.row - other.row) + abs(self.column - other.column)
         if self._PERFORM_ASSERT_CHECKS:
             assert distance >= 0
         return distance

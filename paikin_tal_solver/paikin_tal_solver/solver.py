@@ -14,7 +14,7 @@ import time
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
-from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, PuzzleSegmentColor
+from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, SegmentColor
 from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair, \
     print_elapsed_time
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
@@ -1100,6 +1100,22 @@ class PaikinTalSolver(object):
              of the segments.  This will result in smaller segments overall.
             color_segments (Optional bool): Optionally color the individual segments.
         """
+        self._perform_segmentation(perform_segment_cleaning)
+
+        self._finding_stitching_pieces()
+
+        # Color all segments
+        if color_segments:
+            self.color_segments()
+
+    def _perform_segmentation(self, perform_segment_cleaning):
+        """
+        Performs the actual segmentation of the solved images.  Each segment is disjoint.
+
+        Args:
+            perform_segment_cleaning (Optional bool): If True, perform additional steps to improve the accuracy
+             of the segments.  This will result in smaller segments overall.
+        """
         start_time = time.time()
         logging.info("Beginning segmentation.")
 
@@ -1181,7 +1197,27 @@ class PaikinTalSolver(object):
         self._update_segment_neighbors()
         logging.info("Segmentation completed.")
         print_elapsed_time(start_time, "segmentation")
+        self._log_segment_information()
 
+
+    def _finding_stitching_pieces(self):
+        """
+        This function finds the stitching pieces in each of the solved segments.
+        """
+        start_time = time.time()
+        logging.info("Starting to find stitching pieces.")
+
+        for puzzle_id in xrange(0, self._numb_puzzles):
+            for segment_id in xrange(0, len(self._segments[puzzle_id])):
+                self._segments[puzzle_id][segment_id].select_pieces_for_segment_stitching()
+
+        logging.info("Completed finding stitching pieces.")
+        print_elapsed_time(start_time, "finding stitching pieces")
+
+    def _log_segment_information(self):
+        """
+        Helper function to log information regarding the segment.
+        """
         # Print the number of segments per puzzle
         string_io = cStringIO.StringIO()
         print >> string_io, "Segments Per Output Puzzle"
@@ -1190,10 +1226,6 @@ class PaikinTalSolver(object):
         print >> string_io, ""
         logging.info(string_io.getvalue())
         string_io.close()
-
-        # Color all segments
-        if color_segments:
-            self.color_segments()
 
     def _update_segment_neighbors(self):
         """
@@ -1244,7 +1276,7 @@ class PaikinTalSolver(object):
             segment_degree_priority.sort(key=lambda x: x[1], reverse=True)  # Use reverse so descending
 
             # Get all the colors
-            segment_colors = PuzzleSegmentColor.get_all_colors()
+            segment_colors = SegmentColor.get_all_colors()
             color_cnt = 0
 
             # Go through all the segment
@@ -1284,7 +1316,7 @@ class PaikinTalSolver(object):
         Args:
             puzzle_id (int): Puzzle identification where the segment is located.
             segment_id (int): Number for the segment to be colored
-            new_segment_color (PuzzleSegmentColor): Color to set the segment
+            new_segment_color (SegmentColor): Color to set the segment
         """
         # Color the segment
         self._segments[puzzle_id][segment_id].color = new_segment_color
@@ -1297,6 +1329,7 @@ class PaikinTalSolver(object):
         # Color the pieces that belong to this segment.
         for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
             self._pieces[piece_id].segment_color = self._segments[puzzle_id][segment_id].get_piece_color(piece_id)
+            self._pieces[piece_id].has_stitching_piece = self._segments[puzzle_id][segment_id].is_piece_used_for_stitching(piece_id)
 
     def _is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
         """

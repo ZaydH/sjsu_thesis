@@ -1949,14 +1949,19 @@ class Puzzle(object):
             if not isinstance(results_coloring, list):
                 piece_img = PuzzlePiece.create_solid_image(results_coloring, piece.width)
             else:
-                piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width)
+                piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width, )
         # Use the segment coloring.
         elif use_segment_coloring:
             # Verify the piece actually has a segment color
             if Puzzle._PERFORM_ASSERT_CHECKS:
                 assert piece.has_segment_color()
             # Use the segment color as the piece image.
-            piece_img = PuzzlePiece.create_solid_image(piece.segment_color, piece.width)
+            if not piece.is_stitching_piece:
+                piece_img = PuzzlePiece.create_solid_image(piece.segment_color, piece.width)
+            else:
+
+                piece_img = PuzzlePiece.create_solid_piece_with_identification_mark(piece.segment_color, piece.width)
+
         # Use the piece's actual image
         else:
             piece_img = piece.bgr_image()

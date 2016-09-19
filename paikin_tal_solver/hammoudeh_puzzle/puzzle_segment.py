@@ -10,7 +10,7 @@ from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
 
 
-class PuzzleSegmentColor(Enum):
+class SegmentColor(Enum):
     """
     Valid segment colors.  These are represented in BGR format.
     """
@@ -35,11 +35,9 @@ class PuzzleSegmentColor(Enum):
         Returns (List[SegmentColors]): All the valid segment colors
         """
         if PuzzleSegment.USE_DISTANCE_FROM_EDGE_BASED_COLORING:
-            return [PuzzleSegmentColor.Dark_Red, PuzzleSegmentColor.Dark_Blue, PuzzleSegmentColor.Dark_Green,
-                    PuzzleSegmentColor.Dark_Yellow]
+            return [SegmentColor.Dark_Red, SegmentColor.Dark_Blue, SegmentColor.Dark_Green, SegmentColor.Dark_Yellow]
         else:
-            return [PuzzleSegmentColor.Red, PuzzleSegmentColor.Blue, PuzzleSegmentColor.Green,
-                    PuzzleSegmentColor.Yellow]
+            return [SegmentColor.Red, SegmentColor.Blue, SegmentColor.Green, SegmentColor.Yellow]
 
     def key(self):
         """
@@ -64,7 +62,7 @@ class SegmentGridLocation(object):
         self.grid_column = grid_column
 
 
-class SegmentGridCellInfo(object):
+class SegmentGridCell(object):
     _PERFORM_ASSERT_CHECKS = True
     
     def __init__(self, grid_location, grid_center):
@@ -128,16 +126,16 @@ class SegmentGridCellInfo(object):
         """
         # Calculate the row information first
         row_center = piece_map_top_left.row + PuzzleSegment.PIECE_MAP_BORDER_WIDTH
-        row_center += grid_location.grid_row * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH
+        row_center += int((grid_location.grid_row + 0.5) * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH)
 
         # Calculate column center
-        col_center = piece_map_top_left.row + PuzzleSegment.PIECE_MAP_BORDER_WIDTH
-        col_center += grid_location.grid_column * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH
+        col_center = piece_map_top_left.column + PuzzleSegment.PIECE_MAP_BORDER_WIDTH
+        col_center += int((grid_location.grid_column + 0.5) * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH)
 
         return PuzzleLocation(piece_map_top_left.puzzle_id, row_center, col_center)
 
     @property
-    def is_stitching_piece(self):
+    def has_stitching_piece(self):
         """
         Gets whether the specified piece is a stitching piece
 
@@ -145,8 +143,8 @@ class SegmentGridCellInfo(object):
         """
         return self._is_stitching_piece
 
-    @is_stitching_piece.setter
-    def is_stitching_piece(self, value):
+    @has_stitching_piece.setter
+    def has_stitching_piece(self, value):
         """
         Sets whether the specified piece is a stitching piece
 
@@ -175,7 +173,7 @@ class SegmentGridCellInfo(object):
             self.has_cell_next_to_open = True
 
         # Add blank cells at the specified distance (if needed)
-        while len(self._piece_id_at_distance):
+        while len(self._piece_id_at_distance) < distance_from_open + 1:  # Add 1 since this is the index to use
             self._piece_id_at_distance.append([])
 
         self._piece_id_at_distance[distance_from_open].append((piece_id, piece_location))
@@ -191,26 +189,30 @@ class SegmentGridCellInfo(object):
 
         Returns (int): Identification number of the piece to be used as the stitching piece for this grid cell
         """
-        if SegmentGridCellInfo._PERFORM_ASSERT_CHECKS:
+        if SegmentGridCell._PERFORM_ASSERT_CHECKS:
             assert self.has_cell_next_to_open
 
         # Find the distance that will be used as the baseline for the stitching piece
-        stitching_dist = -1
-        for dist in xrange(PuzzleSegment.MAXIMUM_DISTANCE_FROM_OPEN_FOR_STITCHING_PIECE, 0, -1):
-            if len(self._piece_id_at_distance[dist]) > 0:
-                stitching_dist = dist
+        starting_dist = min(PuzzleSegment.MAXIMUM_DISTANCE_FROM_OPEN_FOR_STITCHING_PIECE,
+                            len(self._piece_id_at_distance) - 1)
+        for stitching_dist in xrange(starting_dist, 0, -1):
+            if len(self._piece_id_at_distance[stitching_dist]) > 0:
                 break
 
         # Select the piece closest to the center of the grid cell
         best_distance = None
         stitching_piece = None
+        # noinspection PyUnboundLocalVariable
         for piece_id, piece_loc in self._piece_id_at_distance[stitching_dist]:
-            if best_distance is None or best_distance > self._grid_center.calculate_manhattan_distance_from(piece_loc):
+            piece_dist = self._grid_center.calculate_manhattan_distance_from(piece_loc)
+            if best_distance is None or best_distance > piece_dist:
                 stitching_piece = piece_id
+                best_distance = piece_dist
 
         if self._PERFORM_ASSERT_CHECKS:
             assert stitching_piece is not None
         return stitching_piece
+
 
 class SegmentPieceInfo(object):
     _PERFORM_ASSERT_CHECKS = True
@@ -232,7 +234,7 @@ class SegmentPieceInfo(object):
         self._piece_id = piece_id
         self._location = location
 
-        self._is_segment_similarity_piece = False
+        self._is_segment_stitching_piece = False
         self._key = SegmentPieceInfo.create_key(piece_id)
 
         self._distance_from_open_space = SegmentPieceInfo.DISTANCE_FROM_EDGE_DEFAULT_VALUE
@@ -272,14 +274,14 @@ class SegmentPieceInfo(object):
         return self._location
 
     @property
-    def is_segment_similarity_piece(self):
+    def is_segment_stitching_piece(self):
         """
         Returns whether the piece is a segment piece information
 
         Returns (bool): True if the piece is a segment similarity piece, and False otherwise
 
         """
-        return self._is_segment_similarity_piece
+        return self._is_segment_stitching_piece
 
     @property
     def default_color(self):
@@ -295,7 +297,7 @@ class SegmentPieceInfo(object):
         Assigns the piece a default color
 
         Args:
-            new_default_color (PuzzleSegmentColor): Default color assigned to all pieces in the segment to
+            new_default_color (SegmentColor): Default color assigned to all pieces in the segment to
                 also be assigned to this piece.
         """
         if SegmentPieceInfo._PERFORM_ASSERT_CHECKS:
@@ -389,8 +391,7 @@ class SegmentPieceInfo(object):
         lab_color = cv2.cvtColor(color_img, cv2.COLOR_BGR2HLS)
 
         # Subtract one since each piece is a minimum of 1 away from open (otherwise it is open)
-        lightness_increase = (
-                             self._distance_from_open_space - 1) * SegmentPieceInfo.LIGHTNESS_INCREASE_PER_PIECE_AWAY_FROM_OPEN
+        lightness_increase = (self._distance_from_open_space - 1) * SegmentPieceInfo.LIGHTNESS_INCREASE_PER_PIECE_AWAY_FROM_OPEN
 
         lightness_index = 1  # Index in the NumPy array corresponding to the lightness dimension
         new_lightness = lab_color[0, 0, lightness_index] + lightness_increase
@@ -429,7 +430,7 @@ class PuzzleSegment(object):
 
     NEIGHBOR_SEGMENT_GRID_CELL_WIDTH = 10
 
-    MAXIMUM_DISTANCE_FROM_OPEN_FOR_STITCHING_PIECE = 2
+    MAXIMUM_DISTANCE_FROM_OPEN_FOR_STITCHING_PIECE = 3
 
     def __init__(self, puzzle_id, segment_id_number):
         """
@@ -728,7 +729,7 @@ class PuzzleSegment(object):
 
     def _build_segment_piece_map(self):
         """
-        Creates a relative mapping of puzzle pieces in the segment to each other.  THis is used for determining
+        Creates a relative mapping of puzzle pieces in the segment to each other.  This is used for determining
         each piece's distance from an open location.
 
         Returns (Numpy[int]): Map of all puzzle pieces in their relative locations
@@ -815,7 +816,7 @@ class PuzzleSegment(object):
         of this segment have.
 
         Args:
-            neighbor_color (PuzzleSegmentColor): Color for a neighboring segment
+            neighbor_color (SegmentColor): Color for a neighboring segment
         """
         # Probably not needed, but include just as a sanity check for now
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
@@ -830,7 +831,7 @@ class PuzzleSegment(object):
         Checks whether this segment already has a neighbor of the specified color.
 
         Args:
-            neighbor_color (PuzzleSegmentColor): A possible color for a neighbor
+            neighbor_color (SegmentColor): A possible color for a neighbor
 
         Returns (bool): True if this segment already has a neighbor with the specified color and False
            otherwise.
@@ -860,7 +861,7 @@ class PuzzleSegment(object):
         Updates the segment color
 
         Args:
-            segment_color (PuzzleSegmentColor): New color for the segment
+            segment_color (SegmentColor): New color for the segment
 
         """
         # A given segment should only be assigned to a color once
@@ -909,12 +910,29 @@ class PuzzleSegment(object):
         key = SegmentPieceInfo.create_key(piece_id)
         return self._pieces[key].determine_color_based_on_distance_from_an_open()
 
+    def is_piece_used_for_stitching(self, piece_id):
+        """
+        Gets whether the specified piece is used for stitching in this segment
+
+        Args:
+            piece_id (int): Identification number of the piece
+
+        Returns (bool): True if it is a stitching piece and False otherwise.
+        """
+        key = SegmentPieceInfo.create_key(piece_id)
+        return self._pieces[key].is_segment_stitching_piece
+
     def select_pieces_for_segment_stitching(self):
         """
         This function returns the pieces to be used as stitching pieces for this segment.
 
         Returns (List[int]): Identification number of the pieces in this segment to be used as stitching pieces.
         """
+
+        # If piece distance to open data is not valid, then calculate it.
+        if not self._piece_distance_from_open_space_up_to_date:
+            self._calculate_piece_distances_to_open_location()
+
         self._determine_pieces_grid_locations()
 
         # Calculate the grid size
@@ -932,14 +950,15 @@ class PuzzleSegment(object):
             self._neighbor_grid_cell_info.append([])
             for grid_col in xrange(0, grid_size[column_index]):
                 grid_cell_location = SegmentGridLocation(grid_row, grid_col)
-                grid_cell_center = SegmentGridCellInfo.calculate_grid_cell_center(self._top_left, grid_cell_location)
-                self._neighbor_grid_cell_info[grid_row].append(SegmentGridCellInfo(grid_cell_location, grid_cell_center))
+                grid_cell_center = SegmentGridCell.calculate_grid_cell_center(self._top_left, grid_cell_location)
+                self._neighbor_grid_cell_info[grid_row].append(SegmentGridCell(grid_cell_location, grid_cell_center))
 
-        # Start from 1 since 0 is the open spaces
-        for dist in xrange(1, len(self._piece_groupings_by_distance_from_open)):
-            for relative_loc in xrange(0, len(self._piece_groupings_by_distance_from_open[dist])):
+        # Assign each piece to a grid cell
+        for dist in xrange(1, len(self._piece_groupings_by_distance_from_open)):  # Start from 1 since 0 is open spaces
+            for relative_loc in self._piece_groupings_by_distance_from_open[dist]:
+                piece_id = self._piece_map[relative_loc.row, relative_loc.column]
                 # Get the key for the piece
-                key = SegmentPieceInfo.create_key(self._piece_map[relative_loc.row, relative_loc.col])
+                key = SegmentPieceInfo.create_key(piece_id)
                 self._add_piece_to_grid_cell(dist, self._pieces[key])
 
         # Gets all of the stitching pieces
@@ -948,12 +967,12 @@ class PuzzleSegment(object):
             for grid_col in xrange(0, grid_size[column_index]):
 
                 if self._neighbor_grid_cell_info[grid_row][grid_col].has_cell_next_to_open:
-                    stitching_piece_id = self._neighbor_grid_cell_info[grid_row][grid_col].get_stitching_piece_id()
+                    stitching_piece_id = self._neighbor_grid_cell_info[grid_row][grid_col].determine_stitching_piece_id()
                     self._stitching_piece_ids.append(stitching_piece_id)
 
                     # Mark the piece as a stitching piece
                     key = SegmentPieceInfo.create_key(stitching_piece_id)
-                    self._pieces[key].is_stitching_piece = True
+                    self._pieces[key].has_stitching_piece = True
 
         return self._stitching_piece_ids
 

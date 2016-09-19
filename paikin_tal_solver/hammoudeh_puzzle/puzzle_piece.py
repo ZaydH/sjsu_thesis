@@ -1052,7 +1052,28 @@ class PuzzlePiece(object):
         return str(self.id_number)
 
     @staticmethod
-    def create_side_polygon_image(bgr_color_by_side, width, height=None):
+    def create_solid_piece_with_identification_mark(bgr_color, width):
+        """
+        Creates a solid color piece but with an identification mark (i.e., "x") to differentia
+        Args:
+            bgr_color ():
+            width ():
+
+        Returns:
+
+        """
+        if isinstance(bgr_color, Enum):
+            color = bgr_color.value
+        else:
+            color = bgr_color
+
+        color_by_side = [(PuzzlePieceSide.top, color), (PuzzlePieceSide.right, color),
+                         (PuzzlePieceSide.bottom, color), (PuzzlePieceSide.left, color)]
+
+        return PuzzlePiece.create_side_polygon_image(color_by_side, width, background_color=SolidColor.white)
+
+    @staticmethod
+    def create_side_polygon_image(bgr_color_by_side, width, height=None, background_color=None):
         """
         Create a solid image for displaying in output images.
 
@@ -1062,6 +1083,7 @@ class PuzzlePiece(object):
             width (int): Width of the image in pixels.
             height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
               is a square.
+            background_color (Tuple[int]): Background color used for the "x".
 
         Returns (Numpy[int]):
             Image in the form of a NumPy matrix of size: (length by width by 3)
@@ -1088,7 +1110,10 @@ class PuzzlePiece(object):
         bottom_right = [height - 1, width - 1]
 
         # Create a black image
-        image = np.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
+        if background_color is None:
+            image = np.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
+        else:
+            image = PuzzlePiece.create_solid_image(background_color, width, height)
         # For each side, fill with a polygon.
         for (side, color) in bgr_color_by_side:
 
