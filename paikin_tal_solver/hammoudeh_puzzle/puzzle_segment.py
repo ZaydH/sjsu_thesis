@@ -114,25 +114,41 @@ class SegmentGridCell(object):
         self._has_cell_next_to_open = value
 
     @staticmethod
-    def calculate_grid_cell_center(piece_map_top_left, grid_location):
+    def calculate_grid_cell_center(piece_map_top_left, grid_location, piece_map_shape, grid_size):
         """
-        Calculates the center of the grid cell relative to the solved puzzle.
+        Calculates the center of the grid cell relative to the solved puzzle.  This allows for calculation of the
+        distance of each piece to the center of the segment cell.
 
         Args:
             piece_map_top_left (PuzzleLocation):
             grid_location (SegmentGridLocation): Grid cell location in the segment
+            piece_map_shape (Tuple[int]): Dimension of the piece map (piece rows by piece columns)
+            grid_size (Tuple[int]): Dimension of the segment grid (cell rows by cell columns)
 
         Returns (PuzzleLocation): Puzzle location at the center of the grid cell
         """
-        # Calculate the row information first
-        row_center = piece_map_top_left.row + PuzzleSegment.PIECE_MAP_BORDER_WIDTH
-        row_center += int((grid_location.grid_row + 0.5) * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH)
+        top_left_dim = (piece_map_top_left.row, piece_map_top_left.column)
+        grid_dim = (grid_location.grid_row, grid_location.grid_column)
 
-        # Calculate column center
-        col_center = piece_map_top_left.column + PuzzleSegment.PIECE_MAP_BORDER_WIDTH
-        col_center += int((grid_location.grid_column + 0.5) * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH)
+        # Calculate row center first then column center second
+        center_values = []
+        for i in xrange(0, len(grid_dim)):
 
-        return PuzzleLocation(piece_map_top_left.puzzle_id, row_center, col_center)
+            if grid_size[i] - 1 == grid_dim[i]:
+                # Find actual center if dimension is smaller than normal width
+                length_grid = (piece_map_shape[i] - 2 * PuzzleSegment.PIECE_MAP_BORDER_WIDTH)
+                length_grid -= grid_dim[i] * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH
+                center = int(length_grid / 2)
+            else:
+                # Use middle of the dimension
+                center = int(0.5 * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH)
+
+            # Add the top left offset and the offset for the location in the grid
+            center += top_left_dim[i] + PuzzleSegment.PIECE_MAP_BORDER_WIDTH
+            center += (grid_dim[i] * PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH)
+            center_values.append(center)
+
+        return PuzzleLocation(piece_map_top_left.puzzle_id, center_values[0], center_values[1])
 
     @property
     def has_stitching_piece(self):
@@ -611,10 +627,12 @@ class PuzzleSegment(object):
             assert numb_neighbors >= 0
         return numb_neighbors
 
-    def _calculate_piece_distances_to_open_location(self):
+    def _determine_piece_distances_to_open_location(self):
         """
-        Updates the segment's puzzle piece information to mark the number of pieces that are within a specified
-        distance of an open segment location.
+        Determines the distance each piece in the segment is from an open space.
+
+        Once this distance is found for each piece, the SegmentPieceInfo of each is updated to store this distance
+        for future analysis.
         """
         self._piece_map = self._build_segment_piece_map()
 
@@ -929,7 +947,7 @@ class PuzzleSegment(object):
 
         # If piece distance to open data is not valid, then calculate it.
         if not self._piece_distance_from_open_space_up_to_date:
-            self._calculate_piece_distances_to_open_location()
+            self._determine_piece_distances_to_open_location()
 
         key = SegmentPieceInfo.create_key(piece_id)
         return self._pieces[key].determine_color_based_on_distance_from_an_open()
@@ -955,7 +973,7 @@ class PuzzleSegment(object):
 
         # If piece distance to open data is not valid, then calculate it.
         if not self._piece_distance_from_open_space_up_to_date:
-            self._calculate_piece_distances_to_open_location()
+            self._determine_piece_distances_to_open_location()
 
         self._determine_pieces_grid_locations()
 
@@ -974,7 +992,8 @@ class PuzzleSegment(object):
             self._neighbor_grid_cell_info.append([])
             for grid_col in xrange(0, grid_size[column_index]):
                 grid_cell_location = SegmentGridLocation(grid_row, grid_col)
-                grid_cell_center = SegmentGridCell.calculate_grid_cell_center(self._top_left, grid_cell_location)
+                grid_cell_center = SegmentGridCell.calculate_grid_cell_center(self._top_left, grid_cell_location,
+                                                                              self._piece_map.shape, grid_size)
                 self._neighbor_grid_cell_info[grid_row].append(SegmentGridCell(grid_cell_location, grid_cell_center))
 
         # Assign each piece to a grid cell
