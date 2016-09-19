@@ -1931,10 +1931,10 @@ class Puzzle(object):
         if Puzzle._PERFORM_ASSERT_CHECKS:
             assert not use_results_coloring or not use_segment_coloring
 
-        piece_loc = piece.location
+        piece_loc = piece.puzzle_location
 
         # Define the upper left corner of the piece to insert
-        upper_left = (piece_loc[0] * piece.width, piece_loc[1] * piece.width)
+        upper_left = (piece_loc.row * piece.width, piece_loc.column * piece.width)
 
         # Determine whether to use the image or something based off the results
         puzzle_img = self._img
@@ -1949,7 +1949,7 @@ class Puzzle(object):
             if not isinstance(results_coloring, list):
                 piece_img = PuzzlePiece.create_solid_image(results_coloring, piece.width)
             else:
-                piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width, )
+                piece_img = PuzzlePiece.create_side_polygon_image(results_coloring, piece.width)
         # Use the segment coloring.
         elif use_segment_coloring:
             # Verify the piece actually has a segment color

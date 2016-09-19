@@ -1292,10 +1292,11 @@ class PaikinTalSolver(object):
 
                 # Get the next color and then increment the color counter
                 next_color = segment_colors[color_cnt]
-                color_cnt = (color_cnt + 1) % len(segment_colors)
+                color_cnt += 1
 
-                # Color the segment
+                # Color the highest priority segment
                 self._assign_color_to_segment(puzzle_id, next_segment_id, next_color)
+                # Color any other segments that have no neighbor with the same color
                 for other_segment_cnt in xrange(segment_cnt + 1, len(segment_degree_priority)):
                     other_segment_id = segment_degree_priority[other_segment_cnt][0]
                     # Check if not colored and does not have a neighbor with the specified color
@@ -1329,7 +1330,7 @@ class PaikinTalSolver(object):
         # Color the pieces that belong to this segment.
         for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
             self._pieces[piece_id].segment_color = self._segments[puzzle_id][segment_id].get_piece_color(piece_id)
-            self._pieces[piece_id].has_stitching_piece = self._segments[puzzle_id][segment_id].is_piece_used_for_stitching(piece_id)
+            self._pieces[piece_id].is_stitching_piece = self._segments[puzzle_id][segment_id].is_piece_used_for_stitching(piece_id)
 
     def _is_pieces_best_buddies(self, first_piece, first_piece_side, second_piece, second_piece_side):
         """

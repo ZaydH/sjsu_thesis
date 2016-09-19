@@ -1052,38 +1052,59 @@ class PuzzlePiece(object):
         return str(self.id_number)
 
     @staticmethod
-    def create_solid_piece_with_identification_mark(bgr_color, width):
+    def create_solid_piece_with_identification_mark(bgr_color, width, height=None, mark_color=SolidColor.white):
         """
-        Creates a solid color piece but with an identification mark (i.e., "x") to differentia
+        Creates a solid color piece but with an identification mark (i.e., a cross) to specially mark some pieces.
+
         Args:
-            bgr_color ():
-            width ():
+            bgr_color: Primary color
+            width (int): Width of the image in pixels.
+            height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
+              is a square.
+            mark_color (): Color to be used for the identification mark.  Must be in BGR format.
 
-        Returns:
-
+        Returns (Numpy[int]):
+            Image in the form of a NumPy matrix of size: (length by width by 3)
         """
-        if isinstance(bgr_color, Enum):
-            color = bgr_color.value
+        # Handle the case when no height is specified.
+        if height is None:
+            height = width
+        image = PuzzlePiece.create_solid_image(bgr_color, width)
+
+        if isinstance(mark_color, Enum):
+            color = mark_color.value
         else:
-            color = bgr_color
+            color = mark_color
 
-        color_by_side = [(PuzzlePieceSide.top, color), (PuzzlePieceSide.right, color),
-                         (PuzzlePieceSide.bottom, color), (PuzzlePieceSide.left, color)]
+        # Draw a vertical line
+        middle_of_width = int(width / 2)
+        top_middle = (0, middle_of_width)
+        bottom_middle = (height - 1, middle_of_width)
+        cv2.line(image, top_middle, bottom_middle, color, thickness=1)
 
-        return PuzzlePiece.create_side_polygon_image(color_by_side, width, background_color=SolidColor.white)
+        # Draw a horizontal line
+        middle_of_height = int(height / 2)
+        left_middle = (middle_of_height, 0)
+        right_middle = (middle_of_height, width - 1)
+        cv2.line(image, left_middle, right_middle, color, thickness=1)
+
+        # Optionally add a border around the pieces before returning
+        if PuzzlePiece._ADD_RESULTS_IMAGE_BORDER:
+            return PuzzlePiece.add_results_image_border(image)
+        else:
+            return image
 
     @staticmethod
-    def create_side_polygon_image(bgr_color_by_side, width, height=None, background_color=None):
+    def create_side_polygon_image(bgr_color_by_side, width, height=None):
         """
         Create a solid image for displaying in output images.
 
         Args:
-            bgr_color_by_side (Tuple[(Tuple[int], PuzzlePieceSide)]): Color in BLUE, GREEN, RED notation for each
-              specified puzzle piece side.  Draws four triangles based off the
+            bgr_color_by_side (List[Tuple[PuzzlePieceSide, Tuple[int]]]): Color in BLUE, GREEN, RED notation for each
+              specified puzzle piece side.  Draws four triangles based off the value of the BGR representation.
             width (int): Width of the image in pixels.
             height (Optional int): Height of the image in number of pixels.  If it is not specified, then the image
               is a square.
-            background_color (Tuple[int]): Background color used for the "x".
 
         Returns (Numpy[int]):
             Image in the form of a NumPy matrix of size: (length by width by 3)
@@ -1110,10 +1131,7 @@ class PuzzlePiece(object):
         bottom_right = [height - 1, width - 1]
 
         # Create a black image
-        if background_color is None:
-            image = np.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
-        else:
-            image = PuzzlePiece.create_solid_image(background_color, width, height)
+        image = np.zeros((width, height, PuzzlePiece.NUMB_LAB_COLORSPACE_DIMENSIONS), np.uint8)
         # For each side, fill with a polygon.
         for (side, color) in bgr_color_by_side:
 
@@ -1135,7 +1153,7 @@ class PuzzlePiece(object):
                 # Add the side tot he list.
                 sides_drawn.append(side)
 
-            # Build a polygon
+            # Represent the polygon vertex points as a NumPy matrix
             polygon = np.array([vector_points], np.int32)
             cv2.fillConvexPoly(image, polygon, color)
 

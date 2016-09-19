@@ -78,7 +78,7 @@ class SegmentGridCell(object):
 
         self._has_cell_next_to_open = False
 
-        self._is_stitching_piece = False
+        self._has_stitching_piece = False
 
         self._piece_id_at_distance = []
 
@@ -141,7 +141,7 @@ class SegmentGridCell(object):
 
         Returns (bool): True if the associated piece is a stitching piece and False otherwise.
         """
-        return self._is_stitching_piece
+        return self._has_stitching_piece
 
     @has_stitching_piece.setter
     def has_stitching_piece(self, value):
@@ -153,7 +153,7 @@ class SegmentGridCell(object):
         """
         if not isinstance(value, bool):
             raise ValueError("value must be of type boolean.")
-        self._is_stitching_piece = value
+        self._has_stitching_piece = value
 
     def add_piece_at_distance_from_open(self, distance_from_open, piece_id, piece_location):
         """
@@ -234,7 +234,7 @@ class SegmentPieceInfo(object):
         self._piece_id = piece_id
         self._location = location
 
-        self._is_segment_stitching_piece = False
+        self._is_stitching_piece = False
         self._key = SegmentPieceInfo.create_key(piece_id)
 
         self._distance_from_open_space = SegmentPieceInfo.DISTANCE_FROM_EDGE_DEFAULT_VALUE
@@ -274,14 +274,26 @@ class SegmentPieceInfo(object):
         return self._location
 
     @property
-    def is_segment_stitching_piece(self):
+    def is_stitching_piece(self):
         """
-        Returns whether the piece is a segment piece information
+        Gets whether the piece is a stitching piece for its segment
 
-        Returns (bool): True if the piece is a segment similarity piece, and False otherwise
+        Returns (bool): True if the piece is a stitching piece, and False otherwise
 
         """
-        return self._is_segment_stitching_piece
+        return self._is_stitching_piece
+
+    @is_stitching_piece.setter
+    def is_stitching_piece(self, stitching_piece_value):
+        """
+        Sets whether the piece is a stitching piece for its segment
+
+        Args:
+            stitching_piece_value (bool): Indicates whether the piece is a stitching piece
+        """
+        if not isinstance(stitching_piece_value, bool):
+            raise ValueError("stitching_piece_value must be of type bool")
+        self._is_stitching_piece = stitching_piece_value
 
     @property
     def default_color(self):
@@ -402,7 +414,13 @@ class SegmentPieceInfo(object):
 
         # Calculate a new BGR that is lightened and then return it
         new_bgr = cv2.cvtColor(lab_color, cv2.COLOR_HLS2BGR)
-        self._distance_based_color = new_bgr[0, 0, :]
+
+        # Change color from a NumPy matrix to a tuple of integers so it plays nice with OpenCV
+        output_color = []
+        for i in xrange(0, new_bgr.shape[2]):
+            output_color.append(int(new_bgr[0, 0, i]))
+        self._distance_based_color = tuple(output_color)
+
         return self._distance_based_color
 
     @staticmethod
@@ -444,6 +462,7 @@ class PuzzleSegment(object):
         self._segment_id_number = segment_id_number
         self._numb_pieces = 0
         self._pieces = {}
+        self._piece_id_list = None
         self._seed_piece = None
 
         self._neighbor_segment_ids = {}
@@ -496,10 +515,13 @@ class PuzzleSegment(object):
 
         Returns (List[int]): The identification number of the pieces in this segment.
         """
-        piece_ids = []
-        for piece_info in self._pieces.values():
-            piece_ids.append(piece_info.piece_id)
-        return piece_ids
+        # Rebuild piece ID list if needed
+        if self._piece_id_list is None:
+            self._piece_id_list = []
+            for piece_info in self._pieces.values():
+                self._piece_id_list.append(piece_info.piece_id)
+
+        return self._piece_id_list
 
     def add_piece(self, piece):
         """
@@ -514,8 +536,9 @@ class PuzzleSegment(object):
         if len(self._pieces) == 0:
             self._seed_piece = new_piece
 
-        # Since a piece was removed, piece distance information no longer up to date
+        # Since a piece was added, piece distance information no longer up to date
         self._piece_distance_from_open_space_up_to_date = False
+        self._piece_id_list = None
 
         # Store all pieces in the piece dictionary
         self._pieces[new_piece.key] = new_piece
@@ -536,6 +559,7 @@ class PuzzleSegment(object):
 
         # Since a piece was removed, piece distance information no longer up to date
         self._piece_distance_from_open_space_up_to_date = False
+        self._piece_id_list = None
 
         del self._pieces[key]
 
@@ -920,7 +944,7 @@ class PuzzleSegment(object):
         Returns (bool): True if it is a stitching piece and False otherwise.
         """
         key = SegmentPieceInfo.create_key(piece_id)
-        return self._pieces[key].is_segment_stitching_piece
+        return self._pieces[key].is_stitching_piece
 
     def select_pieces_for_segment_stitching(self):
         """
@@ -972,7 +996,7 @@ class PuzzleSegment(object):
 
                     # Mark the piece as a stitching piece
                     key = SegmentPieceInfo.create_key(stitching_piece_id)
-                    self._pieces[key].has_stitching_piece = True
+                    self._pieces[key].is_stitching_piece = True
 
         return self._stitching_piece_ids
 
