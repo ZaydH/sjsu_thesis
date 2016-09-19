@@ -190,6 +190,7 @@ class PuzzlePiece(object):
         # Store the segment information
         self._segment_id_numb = None
         self._segment_color = None
+        self._is_stitching_piece = None
 
         # Optionally calculate the identification numbers of the piece neighbors
         self._actual_neighbor_ids = None
@@ -523,6 +524,29 @@ class PuzzlePiece(object):
             assert self._segment_id_numb is not None
 
         self._segment_color = new_segment_color
+
+    @property
+    def is_stitching_piece(self):
+        """
+        Gets whether the piece is a stitching piece
+
+        Returns (bool): True if the piece is a stitching piece and False otherwise.
+        """
+        if PuzzlePiece._PERFORM_ASSERT_CHECKS:
+            assert self._is_stitching_piece is not None
+        return self._is_stitching_piece
+
+    @is_stitching_piece.setter
+    def is_stitching_piece(self, value):
+        """
+        Sets whether the piece is a stitching piece
+
+        Args:
+            value (bool): True if the piece is a stitching piece and False otherwise.
+        """
+        if not isinstance(value, bool):
+            raise ValueError("value must be of type bool.")
+        self._is_stitching_piece = value
 
     @property
     def lab_image(self):

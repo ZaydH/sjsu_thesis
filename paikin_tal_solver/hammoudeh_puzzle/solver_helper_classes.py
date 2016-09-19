@@ -165,6 +165,22 @@ class PuzzleLocation(object):
 
         return adjacent_locations
 
+    def calculate_manhattan_distance_from(self, other):
+        """
+        Calculates the manhattan distance between two puzzle location
+        Args:
+            other (PuzzleLocation): Second puzzle location between compared
+
+        Returns (int): Manhattan distance between the piece locations
+        """
+        if self.puzzle_id != other.puzzle_id:
+            raise ValueError("To calculate manhattan distance between two puzzle locations, they must be in the same puzzle.")
+
+        distance = abs(self.row + other.row) + abs(self.column + other.column)
+        if self._PERFORM_ASSERT_CHECKS:
+            assert distance >= 0
+        return distance
+
     def __eq__(self, other):
         """
         Compares whether two puzzle pieces are equal
