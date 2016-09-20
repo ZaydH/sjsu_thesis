@@ -635,18 +635,13 @@ class PuzzleSegment(object):
         """
         self._piece_map = self._build_piece_map()
 
-        # Build a list of unused pieces
-        frontier_pieces = {}
-        for piece_info in self._pieces.values():
-            frontier_pieces[piece_info.key] = piece_info.piece_id
-
         explored_pieces = {}  # As pieces' minimum distance is found, mark as explored
         open_locations_next_to_piece = self._find_open_spaces_adjacent_to_piece(self._piece_map)
         self._piece_groupings_by_distance_from_open.append(open_locations_next_to_piece)
 
         distance_to_open = 1  # If not a blank space, minimum of distance 1 away
         # Continue looping until all pieces have a distance found
-        while len(frontier_pieces) > 0:
+        while len(explored_pieces) < len(self._pieces):
             current_generation_locations = []
             # The previous generation locations are used to find the distance for the next generation
             for prev_gen_location in self._piece_groupings_by_distance_from_open[distance_to_open - 1]:
@@ -664,9 +659,8 @@ class PuzzleSegment(object):
                     piece_id = self._piece_map[adjacent_loc.row, adjacent_loc.column]
                     key = SegmentPieceInfo.create_key(piece_id)
                     # The piece is in the frontier, mark its distance
-                    if key in frontier_pieces:
+                    if key not in explored_pieces:
                         # Delete piece from the frontier and add to the explored pieces
-                        del frontier_pieces[key]
                         explored_pieces[key] = piece_id
 
                         # Update the piece's distance
