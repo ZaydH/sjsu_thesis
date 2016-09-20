@@ -197,12 +197,38 @@ class PaikinTalSolver(object):
 
         self._segments = []
 
-    def run(self, skip_initial=False):
+    # def run_stitching_piece_solver(self):
+    #
+    #     self._run_configurable(allow_new_puzzle_puzzle_spawn=False)
+
+    def run_standard(self, skip_initial=False):
         """
-        Runs the Paikin and Tal Solver.
+        Runs the Paikin and Tal solver normally.
 
         Args:
+            skip_initial (): Used with Pickling.  Skips initial setup of running
+        """
+        self._run_configurable(max_numb_output_puzzles=self._actual_numb_puzzles,
+                               max_numb_pieces_to_place=self._numb_pieces,
+                               skip_initial=skip_initial)
+
+    def _run_configurable(self, max_numb_output_puzzles, max_numb_pieces_to_place, skip_initial=False,
+                          stop_solver_if_need_to_respawn=True):
+        """
+        Runs the Paikin and Tal Solver.  This function is called by other "run" functions based on the configuration
+        required by the solver.
+
+        If the maximum number of output puzzles is ever reached, the solver runs normally and continues placing pieces.
+        The only change in the execution is that no new puzzles can be spawned.
+
+        Args:
+            max_numb_output_puzzles (int): Maximum number of possible output puzzles.  Actual number of output puzzles
+                may be less than this number.
+
             skip_initial (Optional bool): Used with Pickling.  Skips initial setup.
+
+            stop_solver_if_need_to_respawn (bool): If True, whenever the solver would otherwise spawn a new puzzle,
+                the solver will stop.
         """
         if not skip_initial:
             # Place the initial seed piece
@@ -210,8 +236,8 @@ class PaikinTalSolver(object):
             # Mark the last heap clear as now
             self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
 
-        # Place pieces until no pieces left to be placed.
-        while self._numb_unplaced_pieces > 0:
+        # Continue placing pieces until the maximum number has been placed
+        while self._numb_placed_pieces < max_numb_pieces_to_place:
 
             # Log the remaining piece count at some frequency
             if self._numb_unplaced_pieces % PaikinTalSolver._PIECE_COUNT_LOGGING_FREQUENCY == 0:
@@ -224,20 +250,29 @@ class PaikinTalSolver(object):
             # Get the next piece to place
             next_piece = self._find_next_piece()
 
-            if self._numb_puzzles < self._actual_numb_puzzles \
-                    and next_piece.mutual_compatibility < self._new_board_mutual_compatibility:
+            # Handle the case when ordinarily would spawn a new board.
+            if next_piece.mutual_compatibility < self._new_board_mutual_compatibility:
                 # PickleHelper.exporter(self, "paikin_tal_board_spawn.pk")
                 # return
-                self._spawn_new_board()
-            else:
-                # Place the next piece
-                self._place_normal_piece(next_piece)
+
+                # Spawning new boards is prevent so break and do not place more pieces
+                if stop_solver_if_need_to_respawn:
+                    break
+
+                if self._numb_puzzles < max_numb_output_puzzles:
+                    self._spawn_new_board()
+                    continue
+
+            # Place the next piece
+            self._place_normal_piece(next_piece)
 
         logging.info("Placement complete.\n\n")
 
-        # If no pieces left to place, clean the heap to reduce the size for pickling.
         if self._numb_unplaced_pieces == 0:
+            # Clean the heap to reduce the size for pickling.
             self._initialize_best_buddy_pool_and_heap()
+
+            # Print the best buddy result information
             self._best_buddy_accuracy.print_results()
             total_numb_bb_in_dataset = self._inter_piece_distance.get_total_best_buddy_count()
             logging.info("Total number of Best Buddies: %d" % total_numb_bb_in_dataset)
@@ -246,6 +281,26 @@ class PaikinTalSolver(object):
                 for best_buddy_acc in self._best_buddy_accuracy:
                     assert best_buddy_acc.numb_open_best_buddies == 0
                 assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset
+
+    @property
+    def _numb_placed_pieces(self):
+        """
+        Gets the number of pieces already placed by the solver.
+
+        Returns (int):
+            Number of placed already placed
+        """
+        return self._numb_pieces - self._numb_unplaced_pieces
+
+    @property
+    def _numb_pieces(self):
+        """
+        Gets the total number of pieces in the puzzle
+
+        Returns (int):
+            Number of pieces in the puzzle.
+        """
+        return len(self._pieces)
 
     def get_solved_puzzles(self):
         """
@@ -1198,7 +1253,6 @@ class PaikinTalSolver(object):
         logging.info("Segmentation completed.")
         print_elapsed_time(start_time, "segmentation")
         self._log_segment_information()
-
 
     def _finding_stitching_pieces(self):
         """
