@@ -1,0 +1,180 @@
+<!-- Instructions:
+
+     1. Search and replace Your_Name with your actual name, Title with
+the title of your project and Your_Committee with the names of your
+committee members.
+
+     2. Insert your absract at location Abstract_Here.
+     3. Replace each Result_i with results from your 297 project.
+     3. Complete the Schedule of activities for 298 by for each week:
+        (a) Replacing Calender_Week_i with the dates for that week.
+            For example, Feb.1-7.
+        (b) Replacing Read_And_Do_i with what will be accomplished
+that week.
+	(c) To save space you can group more than one week together.
+     4. Fill in descriptions for the Key Deliverable by replacing each
+Deliverable_i with the description of that deliverable.
+     5. Fill in description for each of the Innovation_and_Challenge_i's
+     6. Fill in a list of references according to the example in that
+section.
+-->
+<<!--#echo var="center" -->>
+
+<h1>CS299 Proposal</h1>
+
+<h1>An Enhanced Square-Piece, Multiple Simultaneous Jigsaw Puzzle Solver with Missing Pieces</h1>
+
+<p>Zayd Hammoudeh (zayd.hammoudeh@sjsu.edu)</p>
+<p><b>Advisor:</b> Dr. Chris Pollett</p>
+<p><b>Committee Members:</b> Dr. Thomas Austin, Dr. Teng Moh</p> 
+<<!--#echo var="centerend" -->>
+
+<h2>Abstract:</h2>
+	<p> 
+	Solving a jigsaw puzzle entails arranging a fixed set of pieces such that they reconstruct an original source image. 
+	With a traditional jigsaw puzzle, finding the solution is straightforward as interpiece mechanical
+	incongruence and knowledge of the solution image reduce the number of possible piece permutations.  
+	<br/><br/>
+	This project proposes an algorithm that can simultaneously reconstruct multiple jigsaw puzzles consisting of uniform, square pieces.
+	Unlike previous work, the algorithm takes no outside information (e.g., number of input puzzles).  In contrast, the algorithm uses
+	the image information from the bag of individual, input pieces.
+	</p>
+<h2>
+CS297 Results
+</h2>
+<ul>
+	<li>A literature review of existing techniques to solve jigsaw puzzles.</li> 
+	<li>A puzzle generator implemented using OpenCV that takes an image file as the input</li>
+	<li>An enhanced implementation of a greedy solver based off the approach proposed by Paikin & Tal (see the references for the specific
+	paper).</li> 
+	<li>Visualization tools for solutions to puzzle solver solutions as well as best buddy relationships.</li> 
+</ul>
+<h2>
+Proposed Schedule
+</h2>
+
+<table  border="1" cellpadding="4"
+summary="This table has two columns. The left column indicates each
+week on the semester in turn. The right column indicates the task
+to be completed for that week."
+>
+<tr><td> Week 1:
+	August 23-30</td><td valign="top">Complete documentation for CS299 plan for approval by the CS department.</td></tr>
+<tr><td> Week 2:
+	August 31 - September 6</td><td valign="top">Begin implementation of the segmentation algorithm used by 
+	Pomeranz <i>et. al.</i>.  Present preliminary results and provide a short description of the technique.</td></tr>
+<tr><td> Week 3:
+	September 7 - 13</td><td valign="top">Continue implementation of the segmentation algorithm used by 
+	Pomeranz <i>et. al.</i>.</td></tr>
+<tr><td> Week 4:
+	September 14 - 20</td><td valign="top">Finalize initial implementation of the segmentation algorithm used by 
+	Pomeranz <i>et. al.</i>.  Begin extension of the algorithm to support missing pieces.</td></tr>
+<tr><td> Week 5:
+	September 21 - 27</td><td valign="top"><b>Deliverable #1:</b> Complete missing piece implementation of the Pomeranz et. al. 
+	segmentation algorithm.</td></tr>
+<tr><td> Week 6:
+	September 28 - October 4</td><td valign="top">Begin development of an algorithm that predicts the number
+	of input puzzles.  Provide a preliminary strategy for review.</td></tr>
+<tr><td> Week 7:
+	October 5 - 11</td><td valign="top">Continue implementation of the input puzzle prediction algorithm.  Provide initial accuracy
+										results for review.</td></tr>
+<tr><td> Week 8:
+	October 12 - 18</td><td valign="top"><b>Deliverable #2:</b> Input puzzle algorithm completed.  Provide
+										 final results.</td></tr>
+<tr><td> Week 9:
+	October 19 - 25</td><td valign="top">Begin development of the multipass solver that utilizes both the input puzzle count analyzer
+										 and segmentation algorithm completed in previous deliverables.  Provide a basic
+										 flow chart showing the implementation plan of the algorithm.</tr>
+<tr><td> Week 10:
+	October 26 - November 1</td><td valign="top">Continue development of the implementation of the multipass algorithm and potentially
+											     provide first pass results.</td></tr>
+<tr><td> Week 11:
+	November 2 - 8</td><td valign="top">Continue development of the first pass algorithm and show a concrete flow chart of the algorithm and
+										initial results for review.</td></tr>
+<tr><td> Week 12:
+	November 9 - 15</td><td valign="top"><b>Deliverable #3:</b> Multipass solver using segmentation based error detection
+										 complete.</td></tr>
+<tr><td> Week 13:
+	November 16 - 22</td><td valign="top">Perform experiments and data collection with final algorithm for inclusion
+										  in the thesis report and presentation.</td></tr>
+<tr><td> Week 14:
+	November 23 - 29</td><td valign="top">Finalize any remaining work.  Begin writing of thesis report and creation of 
+										  the slides for the defense.</td></tr>
+<tr><td> Week 15:
+	November 30 - December 6</td><td valign="top">Continue working on thesis report and defense slides.</td></tr>
+<tr><td> Week 16:
+	December 7 - 13</td><td valign="top"><b>Deliverable #4:</b> Thesis completed.  Distribute to committee and provide
+										 to graduate studies office.</td></tr>
+<tr><td>January 31, 2017</td><td valign="top">Thesis Defense.</td></tr>
+</table>
+
+<h2>Key Deliverables:</h2>
+<ul>
+<li>Software
+	<ul>
+		<li>Implementation of a segmentation algorithm to determine with a high degree of confidence
+		portions of the solution that are assembled correctly.</li>  
+		
+		<li>Improvements to segmentation techniques to support the potential for missing pieces.</li>
+		
+		<li>An algorithm for estimating the number of input puzzles to the solver.</li>
+		
+		<li>A set of metrics used to measure the quality of solutions when solving 
+		multiple jigsaw puzzles simultaneously.</li>
+	</ul>
+	</li>
+	<li>Report
+		<ul>
+			<li>Complete a thesis write-up.</li> 
+			<li>Complete source code and thesis defense presentation.</li>
+		</ul>
+	</li>
+</ul>
+
+<h2>
+Innovations and Challenges
+</h2>
+
+<ul>
+	<li>In traditional jigsaw puzzles, pieces usually have unique or significantly different shapes.  This significantly simplifies 
+	jigsaw puzzle solving since shape alone can be used to definitively determine that some pieces are not adjacent.
+	In constrast, the puzzle pieces in this are equal sized squares which eliminates the use of shape in determining
+	piece adjacency.</li>
+	
+	<li>Most previous work on the jigsaw puzzle problem focused on solving only a single puzzle at a time.  Solving multiple (in particular)
+	large puzzles increases the number of piece permutations and introduces the complexity of dividing the input set of pieces
+	into disjoint subsets.</li>
+	
+	<li>Puzzles with missing pieces are more difficult since one cannot assume all internal pieces have a neighbor.  What is more, missing puzzle
+	pieces increase the likelihood that two puzzle pieces will have an artificially high pairwise similarity.  Both of these increase the difficulty
+	in solving a puzzle.</li>
+	
+	<li>Develop the first solver that takes no outside input other than the bag of puzzle pieces.</li>
+</ul>
+
+<h2>References:</h2>
+<ul> 
+
+	<li>A. C. Gallagher, “Jigsaw puzzles with pieces of unknown orientation,” in
+	Proceedings of the 2012 IEEE Conference on Computer Vision and Pattern
+	Recognition (CVPR), CVPR ’12, pp. 382–389, IEEE Computer Society,
+	2012.</li>
+
+	<li>D. Pomeranz, M. Shemesh, and O. Ben-Shahar, “A fully automated greedy square 
+	jigsaw puzzle solver,” in Proceedings of the 2011 IEEE Conference on Computer 
+	Vision and Pattern Recognition (CVPR), CVPR ’11, pp. 9–16, IEEE Computer Society, 2011.</li>
+	
+	<li>D. Sholomon, O. David, and N. S. Netanyahu, “A genetic algorithm-based
+	solver for very large jigsaw puzzles,” in Proceedings of the 2013 IEEE
+	Conference on Computer Vision and Pattern Recognition (CVPR), CVPR
+	’13, pp. 1767–1774, IEEE Computer Society, 2013.</li>
+	
+	<li>G. Bradski, “The OpenCV library,” Dr. Dobb’s Journal of Software Tools,
+	Nov. 2000.</li>
+	
+	<li>G. Paikin and A. Tal, “Solving multiple square jigsaw puzzles with missing
+	pieces,” in Proceedings of the 2015 IEEE Conference on Computer Vision
+	and Pattern Recognition (CVPR), CVPR ’15, IEEE Computer Society, 2015.</li>
+	
+</ul>
+</p>
