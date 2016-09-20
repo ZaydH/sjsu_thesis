@@ -25,7 +25,7 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-RECALCULATE_DISTANCES = True
+RECALCULATE_DISTANCES = False
 PERFORM_PLACEMENT = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
@@ -89,63 +89,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     paikin_tal_solver.segment(color_segments=True)
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
-    # Create a time stamp for the results
-    timestamp = time.time()
-
-    # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
-    output_puzzles = []
-    for puzzle_pieces in pieces_partitioned_by_puzzle_id:
-        # Get the first piece of the puzzle and extract information on it.
-        first_piece = puzzle_pieces[0]
-        puzzle_id = first_piece.puzzle_id
-
-        # Reconstruct the puzzle
-        new_puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
-
-        # Optionally display the images
-        if DISPLAY_IMAGES:
-            # noinspection PyProtectedMember
-            Puzzle.display_image(new_puzzle._img)
-
-        # Store the reconstructed image
-        filename_descriptor = "reconstructed"
-        if len(image_files) == 1:
-            orig_img_filename = image_files[0]
-            puzzle_id_filename = None
-        else:
-            orig_img_filename = None
-            puzzle_id_filename = puzzle_id
-        filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                              paikin_tal_solver.puzzle_type, timestamp,
-                                              orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
-        new_puzzle.save_to_file(filename)
-
-        # Save the segmented file image
-        filename_descriptor = "segmented"
-        segment_filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                                      paikin_tal_solver.puzzle_type, timestamp,
-                                                      orig_img_filename=orig_img_filename,
-                                                      puzzle_id=puzzle_id_filename)
-        new_puzzle.save_segment_color_image(segment_filename)
-
-        # Append the puzzle to the list
-        output_puzzles.append(new_puzzle)
-
-    # Determine the image filename
-    orig_img_filename = image_files[0] if len(image_files) == 1 else None
-    # Print the best buddy accuracy information
-    paikin_tal_solver.best_buddy_accuracy.print_results()
-    paikin_tal_solver.best_buddy_accuracy.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type,
-                                                                timestamp, orig_img_filename=orig_img_filename)
-
-    # Build the results information collection
-    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id, image_files)
-    # Calculate and print the accuracy results
-    results_information.calculate_accuracies(output_puzzles)
-    # Print the results to the console
-    results_information.print_results()
-    # Print the results as image files
-    results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
+    output_results_information_and_puzzles(image_files, paikin_tal_solver, pieces_partitioned_by_puzzle_id)
 
 
 def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placement_start_filename="",
@@ -215,7 +159,7 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
     # Run the Solver
     logging.info("Placer started")
     start_time = time.time()
-    paikin_tal_solver.run()
+    paikin_tal_solver.run_standard()
     print_elapsed_time(start_time, "placement")
 
     # Export the completed solver results
@@ -227,6 +171,78 @@ def run_paikin_tal_solver(image_files, puzzle_type, piece_width, pickle_placemen
 
     # Export the solved results
     return paikin_tal_solver
+
+
+def output_results_information_and_puzzles(image_files, paikin_tal_solver, pieces_partitioned_by_puzzle_id):
+    """
+    Generates the results information of the solved puzzles.
+
+    Args:
+        image_files (List[str]): List of paths to the input image files.
+
+        paikin_tal_solver (PaikinTalSolver): A completed Paikin & Tal solver object
+
+        pieces_partitioned_by_puzzle_id (List[List[PuzzlePieces]]): A list of lists of PuzzlePieces.  The pieces
+         are organized based off their output puzzle from the solver.
+    """
+
+    # Create a time stamp for the results
+    timestamp = time.time()
+
+    # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
+    output_puzzles = []
+    for puzzle_pieces in pieces_partitioned_by_puzzle_id:
+        # Get the first piece of the puzzle and extract information on it.
+        first_piece = puzzle_pieces[0]
+        puzzle_id = first_piece.puzzle_id
+
+        # Reconstruct the puzzle
+        new_puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
+
+        # Optionally display the images
+        if DISPLAY_IMAGES:
+            # noinspection PyProtectedMember
+            Puzzle.display_image(new_puzzle._img)
+
+        # Store the reconstructed image
+        filename_descriptor = "reconstructed"
+        if len(image_files) == 1:
+            orig_img_filename = image_files[0]
+            puzzle_id_filename = None
+        else:
+            orig_img_filename = None
+            puzzle_id_filename = puzzle_id
+        filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                              paikin_tal_solver.puzzle_type, timestamp,
+                                              orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
+        new_puzzle.save_to_file(filename)
+
+        # Save the segmented file image
+        filename_descriptor = "segmented"
+        segment_filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                      paikin_tal_solver.puzzle_type, timestamp,
+                                                      orig_img_filename=orig_img_filename,
+                                                      puzzle_id=puzzle_id_filename)
+        new_puzzle.save_segment_color_image(segment_filename)
+
+        # Append the puzzle to the list
+        output_puzzles.append(new_puzzle)
+
+    # Determine the image filename
+    orig_img_filename = image_files[0] if len(image_files) == 1 else None
+    # Print the best buddy accuracy information
+    paikin_tal_solver.best_buddy_accuracy.print_results()
+    paikin_tal_solver.best_buddy_accuracy.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type,
+                                                                timestamp, orig_img_filename=orig_img_filename)
+
+    # Build the results information collection
+    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id, image_files)
+    # Calculate and print the accuracy results
+    results_information.calculate_accuracies(output_puzzles)
+    # Print the results to the console
+    results_information.print_results()
+    # Print the results as image files
+    results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
 
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
@@ -323,9 +339,9 @@ if __name__ == "__main__":
     InterPieceDistance._USE_MULTIPLE_PROCESSES = False
     paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    # InterPieceDistance._USE_MULTIPLE_PROCESSES = True
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    InterPieceDistance._USE_MULTIPLE_PROCESSES = True
+    paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True

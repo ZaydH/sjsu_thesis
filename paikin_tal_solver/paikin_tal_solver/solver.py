@@ -213,7 +213,7 @@ class PaikinTalSolver(object):
                                skip_initial=skip_initial)
 
     def _run_configurable(self, max_numb_output_puzzles, max_numb_pieces_to_place, skip_initial=False,
-                          stop_solver_if_need_to_respawn=True):
+                          stop_solver_if_need_to_respawn=False):
         """
         Runs the Paikin and Tal Solver.  This function is called by other "run" functions based on the configuration
         required by the solver.
@@ -225,7 +225,7 @@ class PaikinTalSolver(object):
             max_numb_output_puzzles (int): Maximum number of possible output puzzles.  Actual number of output puzzles
                 may be less than this number.
 
-            skip_initial (Optional bool): Used with Pickling.  Skips initial setup.
+            skip_initial (bool): Used with Pickling.  Skips initial setup.
 
             stop_solver_if_need_to_respawn (bool): If True, whenever the solver would otherwise spawn a new puzzle,
                 the solver will stop.
