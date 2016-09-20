@@ -272,11 +272,16 @@ class PieceDistanceInformation(object):
     def _update_min_and_second_best_distances_and_best_buddy_candidates(self, p_i_side, p_j, p_j_side,
                                                                         update_best_buddy_candidates):
         """
+        For a given puzzle piece's side, this function will check if the other piece and its side is it
+        best or second best distance.
+
+        Optionally, this function will also store possible best buddy candidates for best buddy analysis.
 
         Args:
             p_i_side (PuzzlePieceSide): Reference side of the implicit puzzle piece
             p_j (int): Alternate piece identification number
             p_j_side (PuzzlePieceSide): Reference side of the other piece
+            update_best_buddy_candidates (bool): If True, potentially update the best buddy information.
         """
 
         # Extract the distance between p_i and p_j on their sides
@@ -297,6 +302,7 @@ class PieceDistanceInformation(object):
 
             if update_best_buddy_candidates:
                 # noinspection PyTypeChecker
+                # Append because of a tie with two pieces for best distance
                 self._best_buddy_candidates[p_i_side.value].append((p_j, p_j_side))
         # If only the second best then update the second best distance
         elif dist < self._second_best_distance[p_i_side.value]:
