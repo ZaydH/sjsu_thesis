@@ -476,7 +476,6 @@ class PuzzleSegment(object):
         """
         self._puzzle_id = puzzle_id
         self._segment_id_number = segment_id_number
-        self._numb_pieces = 0
         self._pieces = {}
         self._piece_id_list = None
         self._seed_piece = None
@@ -634,7 +633,7 @@ class PuzzleSegment(object):
         Once this distance is found for each piece, the SegmentPieceInfo of each is updated to store this distance
         for future analysis.
         """
-        self._piece_map = self._build_segment_piece_map()
+        self._piece_map = self._build_piece_map()
 
         # Build a list of unused pieces
         frontier_pieces = {}
@@ -769,7 +768,7 @@ class PuzzleSegment(object):
 
         return piece_map[row, col] == PuzzleSegment._EMPTY_PIECE_MAP_VALUE
 
-    def _build_segment_piece_map(self):
+    def _build_piece_map(self):
         """
         Creates a relative mapping of puzzle pieces in the segment to each other.  This is used for determining
         each piece's distance from an open location.

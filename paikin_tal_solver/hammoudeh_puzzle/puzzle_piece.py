@@ -1076,17 +1076,19 @@ class PuzzlePiece(object):
         else:
             color = mark_color
 
+        line_thickness = 2  # Width of the identification mark line.
+
         # Draw a vertical line
         middle_of_width = int(width / 2)
         top_middle = (0, middle_of_width)
         bottom_middle = (height - 1, middle_of_width)
-        cv2.line(image, top_middle, bottom_middle, color, thickness=1)
+        cv2.line(image, top_middle, bottom_middle, color, thickness=line_thickness)
 
         # Draw a horizontal line
         middle_of_height = int(height / 2)
         left_middle = (middle_of_height, 0)
         right_middle = (middle_of_height, width - 1)
-        cv2.line(image, left_middle, right_middle, color, thickness=1)
+        cv2.line(image, left_middle, right_middle, color, thickness=line_thickness)
 
         # Optionally add a border around the pieces before returning
         if PuzzlePiece._ADD_RESULTS_IMAGE_BORDER:
