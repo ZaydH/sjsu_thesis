@@ -312,7 +312,7 @@ class PaikinTalSolver(object):
             Multiple puzzles each of which is a set of puzzle pieces.
         """
         # A puzzle is an array of puzzle pieces that can then be reconstructed.
-        solved_puzzles = [[] for _ in range(self._actual_numb_puzzles)]
+        solved_puzzles = [[] for _ in range(self._numb_puzzles)]
         unassigned_pieces = []
 
         # Iterate through each piece and assign it to the array of pieces
