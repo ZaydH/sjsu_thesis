@@ -801,13 +801,19 @@ class PaikinTalSolver(object):
         # noinspection PyUnreachableCode
         self._place_seed_piece()
 
-    def _place_seed_piece(self):
+    def _place_seed_piece(self, seed_piece_id=None):
         """
         Seed Piece Placer
 
         Whenever a new puzzle board is started, this function should be called.  It removes the best seed piece
         from the set of possible pieces, then places it at the center of the new puzzle with no rotation (for
         simplicity as this using no rotation has no effect on the final solution).
+
+        This function allows for a specific piece to be specified externally as the seed.  If no seed piece is
+        specified, the function uses the seed piece based off the start piece candidates.
+
+        Args:
+            seed_piece_id (int): Identification number for the seed piece to be used.
 
         The function then adds the seed piece's best buddies to the pool.
         """
@@ -817,15 +823,19 @@ class PaikinTalSolver(object):
 
         logging.info("Board #" + str(self._numb_puzzles) + " was created.")
 
-        # Account for placed piece when calculating starting piece candidates.
-        if self._numb_puzzles > 1:
-            self._inter_piece_distance.find_start_piece_candidates(self._piece_placed)
-        # Get the first piece for the puzzle
-        seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
-        seed = self._pieces[seed_piece_id]
-        self._mark_piece_placed(seed_piece_id)
+        # Handle the case where no seed piece is specified
+        if seed_piece_id is not None:
+            # Account for placed piece when calculating starting piece candidates.
+            if self._numb_puzzles > 1:
+                self._inter_piece_distance.find_start_piece_candidates(self._piece_placed)
+            # Get the first piece for the puzzle
+            seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
 
-        # Set the first piece's puzzle id
+        # Extract and process seed piece
+        self._mark_piece_placed(seed_piece_id)
+        seed = self._pieces[seed_piece_id]
+
+        # Set the seed piece's puzzle id
         seed.puzzle_id = self._numb_puzzles - 1
         # Mark the last heap clear as now
         self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces

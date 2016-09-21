@@ -197,6 +197,9 @@ class PuzzlePiece(object):
         if puzzle_grid_size is not None:
             self.calculate_actual_neighbor_id_numbers(puzzle_grid_size)
 
+        # Optionally prevent the piece being placed
+        self._disallow_placement = False
+
         # Store the image data
         self._img = lab_img
         (length, width, dim) = self._img.shape
@@ -410,6 +413,9 @@ class PuzzlePiece(object):
             Board identification number
 
         """
+        if not isinstance(new_puzzle_id, int):
+            raise ValueError("Puzzle ID number must be an integer.")
+
         self._assigned_puzzle_id = new_puzzle_id
 
     @property
@@ -547,6 +553,39 @@ class PuzzlePiece(object):
         if not isinstance(value, bool):
             raise ValueError("value must be of type bool.")
         self._is_stitching_piece = value
+
+    @property
+    def disallow_placement(self):
+        """
+        Gets whether the piece is disallowed (i.e., banned) from being placed.
+
+        Returns (bool): True if this piece cannot be placed and False otherwise
+        """
+        return self._disallow_placement
+
+    @disallow_placement.setter
+    def disallow_placement(self, disallow_placement_state):
+        """
+        Sets whether the piece is disallowed (i.e., banned) from being placed.
+
+        Args:
+            disallow_placement_state (bool): True if placement for this piece will be disallowed and False otherwise.
+        """
+        if not isinstance(disallow_placement_state, bool):
+            raise ValueError("Input parameter \"disallow_placement_state\" must be a boolean value.")
+        self._disallow_placement = disallow_placement_state
+
+    def reset_placement(self):
+        """
+        Resets all attributes of the puzzle piece class related to placement in a solved puzzle including the
+        solved puzzle id, the assigned location, and all segment related information.
+        """
+        self._assigned_puzzle_id = None
+        self._assigned_loc = None
+
+        self._segment_id_numb = None
+        self._segment_color = None
+        self._is_stitching_piece = None
 
     @property
     def lab_image(self):
