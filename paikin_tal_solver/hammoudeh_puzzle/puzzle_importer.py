@@ -2021,8 +2021,11 @@ class Puzzle(object):
             Image file name constructed from the specified parameters.
         """
 
+        # Convert the timestamp to a string.
+        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
+
         # Store the reconstructed image
-        output_filename = output_directory + image_descriptor + "_type" + str(puzzle_type.value)
+        output_filename = output_directory + "/" + ts_str + "/" + image_descriptor + "_type" + str(puzzle_type.value)
 
         # If a specific filename is specified, use that.
         img_extension = None
@@ -2034,8 +2037,6 @@ class Puzzle(object):
         if puzzle_id is not None:
             output_filename += "_" + "solved_puzzle_" + ("%04d" % puzzle_id)
 
-        # Convert the timestamp to a string.
-        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
         # Add timestamp and file extension
         output_filename += "_" + ts_str
         if img_extension is not None:
