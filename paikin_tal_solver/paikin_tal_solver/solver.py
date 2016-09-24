@@ -31,6 +31,7 @@ class BestBuddyPoolInfo(object):
     @property
     def key(self):
         """
+        Gets the key associated with the best buddy pool piece.
 
         Returns (int):
             Best Buddy Pool Info Key.
@@ -131,6 +132,8 @@ class PaikinTalSolver(object):
     # Select whether to use the best_buddy_placer
     use_best_buddy_placer = False
 
+    max_numb_pieces_to_place_in_stitching_piece_solver = 100
+
     def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
         """
@@ -138,10 +141,10 @@ class PaikinTalSolver(object):
 
         Args:
             numb_puzzles (int): Number of Puzzles to be solved.
-            pieces ([PuzzlePiece])): List of puzzle pieces
+            pieces (List[PuzzlePiece])): List of puzzle pieces
             distance_function: Calculates the distance between two PuzzlePiece objects.
-            puzzle_type (Optional PuzzleType): Type of Paikin Tal Puzzle
-            puzzle_type (Optional Float): Minimum mutual compatibility when new boards are spawned
+            puzzle_type (PuzzleType): Type of Paikin Tal Puzzle
+            puzzle_type (float): Minimum mutual compatibility when new boards are spawned
             fixed_puzzle_dimensions(Optional [int]): Size of the puzzle as a Tuple (number_rows, number_columns)
         """
 
@@ -152,61 +155,128 @@ class PaikinTalSolver(object):
 
         # Store the number of pieces.  Shuffle for good measure.
         self._pieces = pieces
-        self._piece_placed = [False] * len(pieces)
-        self._numb_unplaced_pieces = len(pieces)
-
-        # Define the puzzle dimensions
-        self._initialize_open_slots()
-        self._piece_locations = []
 
         # Store the number of puzzles these collective set of pieces comprise.
         self._actual_numb_puzzles = numb_puzzles
 
-        # Store the function used to calculate piece to piece distances.
-        self._distance_function = distance_function
-
-        # Quantifies the number of best buddies that
-        self._best_buddy_accuracy = BestBuddyResultsCollection()
-
-        # Stores the best buddy placer information
-        self._best_buddy_placer = BestBuddyPlacerCollection()
-
-        # Store the puzzle dimensions if any
-        self._actual_puzzle_dimensions = fixed_puzzle_dimensions
-        self._placed_puzzle_dimensions = []  # Store the dimensions of the puzzle
+        # Standard method that re-initializes all of the placed piece information
+        self._reset_solved_puzzle_info()
 
         # Select the puzzle type.  If the user did not specify one, use the default.
         self._puzzle_type = puzzle_type if puzzle_type is not None else PaikinTalSolver.DEFAULT_PUZZLE_TYPE
+
+        # Store the puzzle dimensions if any
+        self._actual_puzzle_dimensions = fixed_puzzle_dimensions
+
+        # Calculates the asymmetric distance, asymmetric & mutual compatibility, best buddies, and starting piece
+        # information
+        self._calculate_initial_interpiece_distances(distance_function, new_board_mutual_compatibility)
+
+    def _reset_solved_puzzle_info(self):
+
+        self._numb_puzzles = 0
+
+        # No open slots since solving has not begun
+        self._initialize_open_slots()
+
+        # All pieces are unassigned
+        self._piece_locations = []
+        self._placed_puzzle_dimensions = []  # Stores the dimensions of the puzzle
+
+        # Mark all pieces as unplaced and reset placed piece count
+        self._initialize_placed_pieces()
+
+        # Reinitialize all segments
+        self._reset_segment_info()
+
+        # Quantifies the number of best buddies that are correct
+        self._best_buddy_accuracy = BestBuddyResultsCollection()
+
+        # Reset best buddy accuracy and placer information
+        self._best_buddy_accuracy = BestBuddyResultsCollection()
+        self._initialize_best_buddy_placer()
+
+        # Initialize best buddy pool and heap for the placer
+        self._initialize_best_buddy_pool_and_heap()
+
+    def _calculate_initial_interpiece_distances(self, distance_function, new_board_mutual_compatibility):
+        """
+        Initializes the data structures for interpiece distance.  If any information currently exists in these data
+        structures, they will be totally cleared and replaced by this function.
+
+        Args:
+            distance_function: Calculates the distance between two PuzzlePiece objects.
+            new_board_mutual_compatibility (float): Minimum mutual compatibility when new boards are spawned
+        """
+
+        # # Store the function used to calculate piece to piece distances.
+        # self._distance_function = distance_function
 
         if new_board_mutual_compatibility is not None:
             self._new_board_mutual_compatibility = new_board_mutual_compatibility
         else:
             self._new_board_mutual_compatibility = PaikinTalSolver.DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD
 
-        # Stores the best buddies which are prioritized for placement.
-        self._best_buddy_open_slot_heap = None  # Initialize here to prevent warnings in PyCharm
-        self._initialize_best_buddy_pool_and_heap()
-        self._numb_puzzles = 0
-        self._last_best_buddy_heap_housekeeping = None
-
         # Calculate the inter-piece distances.
-        self._inter_piece_distance = InterPieceDistance(self._pieces, self._distance_function, self._puzzle_type)
+        self._inter_piece_distance = InterPieceDistance(self._pieces, distance_function, self._puzzle_type)
 
-        # Release the Inter-piece distance function to allow pickling.
-        self._distance_function = None
+        # # Release the Inter-piece distance function to allow pickling.
+        # self._distance_function = None
 
+    def _initialize_placed_pieces(self):
+        """
+        Initializes all placed piece information.  This includes the data structures inside the Paikin and Tal solver
+        as well as those local to the individual pieces.
+        """
+        self._piece_placed = [False] * len(self._pieces)
+        self._numb_unplaced_pieces = len(self._pieces)
+
+        # Initialize all information stored with the individual piece
+        for piece in self._pieces:
+            piece.reset_placement()
+
+    def _initialize_best_buddy_placer(self):
+        """
+        If the use of the best buddy placer is selected, then this function initializes all data structures associated
+        with best buddy placing.  Otherwise, it has no effect.
+        """
+        if PaikinTalSolver.use_best_buddy_placer:
+            self._best_buddy_placer = BestBuddyPlacerCollection()
+        else:
+            self._best_buddy_placer = None
+
+    def _reset_segment_info(self):
+        """
+        Reset the segments data structure(s) so it is as if the puzzle has no segments.
+        """
         self._segments = []
 
-    # def run_stitching_piece_solver(self):
-    #
-    #     self._run_configurable(allow_new_puzzle_puzzle_spawn=False)
+    def run_stitching_piece_solver(self, seed_piece_id):
+        """
+        Specialized solver used for solving with seed pieces.
+
+        Args:
+            seed_piece_id (int): Identification number of the piece to be used as the puzzle seed.
+        """
+
+        # Initialize the data structures for a new placement
+        self._reset_solved_puzzle_info()
+
+        # Start the placement with the specified seed piece
+        self._place_seed_piece(seed_piece_id)
+
+        # Run the solver
+        self._run_configurable(max_numb_output_puzzles=1,
+                               max_numb_pieces_to_place=PaikinTalSolver.max_numb_pieces_to_place_in_stitching_piece_solver,
+                               skip_initial=True,
+                               stop_solver_if_need_to_respawn=False)
 
     def run_standard(self, skip_initial=False):
         """
         Runs the Paikin and Tal solver normally.
 
         Args:
-            skip_initial (): Used with Pickling.  Skips initial setup of running
+            skip_initial (bool): Used with Pickling.  Skips initial setup of running
         """
         self._run_configurable(max_numb_output_puzzles=self._actual_numb_puzzles,
                                max_numb_pieces_to_place=self._numb_pieces,
@@ -728,12 +798,17 @@ class PaikinTalSolver(object):
 
         Initializes a best buddy heap and pool
         """
+
+        self._best_buddy_open_slot_heap = None  # Initialize here to prevent warnings in PyCharm
+
         self._best_buddies_pool = {}
         # Clear the best buddy heap
         self._best_buddy_open_slot_heap = []
 
         # Mark the last heap clear as now
         self._last_best_buddy_heap_housekeeping = self._numb_unplaced_pieces
+
+        self._last_best_buddy_heap_housekeeping = None
 
     def _get_next_piece_from_pool(self, unplaced_pieces):
         """
@@ -824,16 +899,18 @@ class PaikinTalSolver(object):
         logging.info("Board #" + str(self._numb_puzzles) + " was created.")
 
         # Handle the case where no seed piece is specified
-        if seed_piece_id is not None:
+        if seed_piece_id is None:
             # Account for placed piece when calculating starting piece candidates.
             if self._numb_puzzles > 1:
                 self._inter_piece_distance.find_start_piece_candidates(self._piece_placed)
             # Get the first piece for the puzzle
-            seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
+            used_seed_piece_id = self._inter_piece_distance.next_starting_piece(self._piece_placed)
+        else:
+            used_seed_piece_id = seed_piece_id
 
         # Extract and process seed piece
-        self._mark_piece_placed(seed_piece_id)
-        seed = self._pieces[seed_piece_id]
+        self._mark_piece_placed(used_seed_piece_id)
+        seed = self._pieces[used_seed_piece_id]
 
         # Set the seed piece's puzzle id
         seed.puzzle_id = self._numb_puzzles - 1
@@ -903,9 +980,10 @@ class PaikinTalSolver(object):
                 # Store the neighbor side
                 neighbor_side = Puzzle.get_side_of_primary_adjacent_to_other_piece(neighbor_location,
                                                                                    placed_piece_location)
-                # Update the neighbor location information
-                placed_piece_and_side = NeighborSidePair(placed_piece_id, side)
-                self._best_buddy_placer.update_open_slot(neighbor_location, neighbor_side, placed_piece_and_side)
+                if PaikinTalSolver.use_best_buddy_placer:
+                    # Update the neighbor location information
+                    placed_piece_and_side = NeighborSidePair(placed_piece_id, side)
+                    self._best_buddy_placer.update_open_slot(neighbor_location, neighbor_side, placed_piece_and_side)
 
     @staticmethod
     def get_side_of_primary_adjacent_to_other_piece(primary_piece_location, other_piece_location):
@@ -926,10 +1004,11 @@ class PaikinTalSolver(object):
 
         # Verify the locations are actually adjacent
         # noinspection PyProtectedMember
-        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
-            assert primary_piece_location.puzzle_id == other_piece_location.puzzle_id
-            # Verify the locations are exactly one space away
-            assert abs(diff_row) + abs(diff_col) == 1
+        if abs(diff_row) + abs(diff_col) != 1:
+            raise ValueError("The two specified locations are not adjacent.")
+
+        if primary_piece_location.puzzle_id != other_piece_location.puzzle_id:
+            raise ValueError("The two specified locations come from different puzzles.")
 
         if diff_row == 1:
             return PuzzlePieceSide.left
