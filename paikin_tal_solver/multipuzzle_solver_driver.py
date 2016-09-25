@@ -1,6 +1,7 @@
 import logging
 
 from hammoudeh_puzzle import config
+from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
@@ -21,7 +22,7 @@ def run_multipuzzle_solver_driver(image_filenames, puzzle_type, piece_width):
     """
 
     logging.info("Starting Multipuzzle Solver Driver.")
-    solver_helper.log_puzzle_filenames(image_filenames)
+    puzzle_importer.log_puzzle_filenames(image_filenames)
 
     multipuzzle_solver = build_multipuzzle_solver(image_filenames, puzzle_type, piece_width)
 
@@ -47,7 +48,8 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
 
     # Initialize the distance information
     if _RECALCULATE_DISTANCES:
-        multipuzzle_solver = MultiPuzzleSolver(pieces, top_level_calculate_asymmetric_distance, piece_width)
+        multipuzzle_solver = MultiPuzzleSolver(image_filenames, pieces, top_level_calculate_asymmetric_distance,
+                                               piece_width)
         if PickleHelper.PICKLE_ENABLED:
             PickleHelper.exporter(multipuzzle_solver, pickle_filename)
         return multipuzzle_solver

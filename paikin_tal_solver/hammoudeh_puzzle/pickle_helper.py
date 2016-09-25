@@ -3,6 +3,7 @@ import os
 import logging
 import pickle
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_importer import Puzzle
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
 
@@ -73,7 +74,7 @@ class PickleHelper(object):
         file_directory = os.path.dirname(os.path.abspath(filename))
         if not os.path.isdir(file_directory):
             logging.debug("Creating pickle export directory \"%s\"." % file_directory)
-            os.mkdir(file_directory)
+            os.makedirs(file_directory)
 
         logging.info("Beginning pickle EXPORT of file: \"" + filename + "\"")
         # Dump pickle to the file.
@@ -105,5 +106,6 @@ class PickleHelper(object):
             img_root_filename = Puzzle.get_filename_without_extension(image_filenames[i])
             # Append the file name to the information
             pickle_root_filename += "_" + img_root_filename
+
         pickle_root_filename += "_type_" + str(puzzle_type) + ".pk"
-        return configs.PICKLE_DIRECTORY + pickle_descriptor + pickle_root_filename
+        return PickleHelper._PICKLE_DIRECTORY + pickle_descriptor + pickle_root_filename

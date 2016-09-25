@@ -7,7 +7,7 @@ import logging
 import time
 
 from hammoudeh_puzzle import config
-from hammoudeh_puzzle import solver_helper
+from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
@@ -20,7 +20,7 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-RECALCULATE_DISTANCES = False
+RECALCULATE_DISTANCES = True
 PERFORM_PLACEMENT = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
@@ -43,7 +43,7 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
 
     # Print the names of the images being solved:
     logging.info("Standard Paikin & Tal Driver")
-    solver_helper.log_puzzle_filenames(image_files)
+    puzzle_importer.log_puzzle_filenames(image_files)
 
     # Extract the filename of the image(s)
     pickle_placement_start_filename = ""
@@ -177,14 +177,14 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
         else:
             orig_img_filename = None
             puzzle_id_filename = puzzle_id
-        filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+        filename = Puzzle.make_image_filename(image_files, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                               paikin_tal_solver.puzzle_type, timestamp,
                                               orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
         new_puzzle.save_to_file(filename)
 
         # Save the segmented file image
         filename_descriptor = "segmented"
-        segment_filename = Puzzle.make_image_filename(filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+        segment_filename = Puzzle.make_image_filename(image_files, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                       paikin_tal_solver.puzzle_type, timestamp,
                                                       orig_img_filename=orig_img_filename,
                                                       puzzle_id=puzzle_id_filename)
@@ -197,7 +197,8 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
     orig_img_filename = image_files[0] if len(image_files) == 1 else None
     # Print the best buddy accuracy information
     paikin_tal_solver.best_buddy_accuracy.print_results()
-    paikin_tal_solver.best_buddy_accuracy.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type,
+    paikin_tal_solver.best_buddy_accuracy.output_results_images(image_files, output_puzzles,
+                                                                paikin_tal_solver.puzzle_type,
                                                                 timestamp, orig_img_filename=orig_img_filename)
 
     # Build the results information collection
@@ -207,7 +208,7 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
     # Print the results to the console
     results_information.print_results()
     # Print the results as image files
-    results_information.output_results_images(output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
+    results_information.output_results_images(image_files, output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
 
 
 if __name__ == "__main__":
@@ -218,9 +219,9 @@ if __name__ == "__main__":
     # Select the files to parse
 
     # # PaikinTalSolver.use_best_buddy_placer = False
-    # images = [".\\images\\muffins_300x200.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    images = [".\\images\\muffins_300x200.jpg"]
+    paikin_tal_driver(images, PuzzleType.type1, 25)
+    paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # PaikinTalSolver.use_best_buddy_placer = True
     # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
@@ -274,8 +275,8 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # # # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)

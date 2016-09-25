@@ -144,10 +144,11 @@ class PaikinTalSolver(object):
             fixed_puzzle_dimensions(Optional [int]): Size of the puzzle as a Tuple (number_rows, number_columns)
         """
 
-        if numb_puzzles < 0:
-            raise ValueError("At least a single puzzle is required.")
-        if numb_puzzles > 1 and fixed_puzzle_dimensions is not None:
-            raise ValueError("When specifying puzzle dimensions, only a single puzzle is allowed.")
+        if numb_puzzles is not None:
+            if numb_puzzles < 0:
+                raise ValueError("At least a single puzzle is required.")
+            if numb_puzzles > 1 and fixed_puzzle_dimensions is not None:
+                raise ValueError("When specifying puzzle dimensions, only a single puzzle is allowed.")
 
         # Store the number of pieces.  Shuffle for good measure.
         self._pieces = pieces
