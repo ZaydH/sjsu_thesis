@@ -370,7 +370,7 @@ class PieceDistanceInformation(object):
             for p_j in range(0, self._numb_pieces):
 
                 # Do not compare a piece to itself or if it is already placed
-                if self._skip_piece(piece_valid_for_placement, p_j):
+                if self._skip_piece(p_j, piece_valid_for_placement):
                     continue
 
                 # Check all valid p_j sides depending on the puzzle type.
@@ -407,7 +407,7 @@ class PieceDistanceInformation(object):
         for p_j in range(0, self._numb_pieces):
 
             # Do not compare a piece to itself or if it is already placed
-            if self._skip_piece(is_piece_valid_for_placement, p_j):
+            if self._skip_piece(p_j, is_piece_valid_for_placement):
                 continue
 
             for p_i_side in PuzzlePieceSide.get_all_sides():
@@ -434,10 +434,11 @@ class PieceDistanceInformation(object):
                     self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
 
         # Build an empty array to store the piece to piece distances
-        self._mutual_compatibilities = np.full((PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings),
-                                               fill_value=np.finfo(np.float32).max, dtype=np.float32)
+        compatibilities_matrix_dimensions = (PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings)
+        self._mutual_compatibilities = np.full(compatibilities_matrix_dimensions, fill_value=np.finfo(np.float32).max,
+                                               dtype=np.float32)
 
-    def _skip_piece(self, piece_valid_for_placement, p_j=None):
+    def _skip_piece(self, p_j, piece_valid_for_placement):
         """
         Determine if a piece should be skilled during placement.  A piece is skipped if the piece being compared
         is the same as the implicit piece or if the
@@ -719,24 +720,24 @@ class InterPieceDistance(object):
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
 
-    def calculate_mutual_compatibility(self, is_piece_valid_for_placement=None):
+    def calculate_mutual_compatibility(self, pieces_with_min_or_second_dist_changed=None):
         """
         Mutual Compatibility Calculator
 
         Calculates the mutual compatibility as defined by Paikin and Tal.
 
         Args:
-            is_piece_valid_for_placement (List[bool]): For each piece, True indicates it can be used for placement
-                and False means it is not usable for placement.
+            pieces_with_min_or_second_dist_changed (List[bool]): For each piece, True indicates that the distance will
+                be recalculated.  False entails it is left unchanged.
         """
         start_time = time.time()
         logging.info("Starting mutual compatibility calculations.")
 
         # Optionally run the single process version
-        if True and (is_piece_valid_for_placement or not InterPieceDistance._USE_MULTIPLE_PROCESSES):
-            self._calculate_mutual_compatibility_single_process(is_piece_valid_for_placement)
+        if True and (pieces_with_min_or_second_dist_changed or not InterPieceDistance._USE_MULTIPLE_PROCESSES):
+            self._calculate_mutual_compatibility_single_process(pieces_with_min_or_second_dist_changed)
         else:
-            self._calculate_mutual_compatibility_multiprocess(is_piece_valid_for_placement)
+            self._calculate_mutual_compatibility_multiprocess(pieces_with_min_or_second_dist_changed)
 
         for dist_info in self._piece_distance_info:
             dist_info.store_initial_mutual_compatibility()
@@ -835,13 +836,13 @@ class InterPieceDistance(object):
         """
 
         # Find the minimum and second best distance information for the placed pieces
-        pieces_with_changed_dist = self._update_min_and_second_best_distances(piece_valid_for_placement)
+        pieces_with_min_or_second_dist_changed = self._update_min_and_second_best_distances(piece_valid_for_placement)
 
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
-        self._recalculate_asymmetric_compatibilities(pieces_with_changed_dist, piece_valid_for_placement)
+        self._recalculate_asymmetric_compatibilities(pieces_with_min_or_second_dist_changed, piece_valid_for_placement)
 
         # Recalculate the mutual probabilities
-        self.calculate_mutual_compatibility(pieces_with_changed_dist)
+        self.calculate_mutual_compatibility(pieces_with_min_or_second_dist_changed)
 
     def _update_min_and_second_best_distances(self, piece_valid_for_placement):
         """
@@ -854,14 +855,14 @@ class InterPieceDistance(object):
         """
 
         # Determine whether anything for this piece needs to be recalculated.
-        min_or_second_best_distance_unchanged = [True] * len(piece_valid_for_placement)
+        min_or_second_best_distance_changed = [False] * len(piece_valid_for_placement)
 
         # Iterate through all of the pieces
         for p_i in range(0, self._numb_pieces):
 
-            # # Skip placed pieces
-            # if InterPieceDistance.skip_piece(p_i, is_piece_placed_with_no_open_neighbors):
-            #     continue
+            # Skip unplaced pieces
+            if InterPieceDistance.skip_piece(p_i, piece_valid_for_placement):
+                continue
 
             prev_min_dist = self._piece_distance_info[p_i].minimum_distance
             prev_second_best_dist = self._piece_distance_info[p_i].second_best_distance
@@ -873,9 +874,9 @@ class InterPieceDistance(object):
             # Check if the distances changed
             if prev_min_dist != self._piece_distance_info[p_i].minimum_distance \
                     or prev_second_best_dist != self._piece_distance_info[p_i].second_best_distance:
-                min_or_second_best_distance_unchanged[p_i] = False
+                min_or_second_best_distance_changed[p_i] = True
 
-        return min_or_second_best_distance_unchanged
+        return min_or_second_best_distance_changed
 
     def _clear_placed_piece_best_buddy_information(self):
         """
@@ -887,7 +888,7 @@ class InterPieceDistance(object):
         for p_i in range(0, self._numb_pieces):
             self._piece_distance_info[p_i].clear_best_buddy_information()
 
-    def _recalculate_asymmetric_compatibilities(self, min_or_second_best_distance_unchanged,
+    def _recalculate_asymmetric_compatibilities(self, min_or_second_best_distance_changed,
                                                 piece_valid_for_placement):
         """
         Asymmetric Compatibility Recalculator
@@ -896,14 +897,15 @@ class InterPieceDistance(object):
         found.
 
         Args:
-            min_or_second_best_distance_unchanged: (Optional [Bool]): List indicating whether each piece is placed
+            min_or_second_best_distance_changed: (Optional [Bool]): List indicating whether the minimum or second
+                best distance of the piece has changed.
             piece_valid_for_placement (List[bool]): For each piece, this marks if that piece can be used for
                 placement (and in turn compatibility calculation)
         """
         # Iterate through all pieces skipping placed ones.
         for p_i in range(0, self._numb_pieces):
             # Skip placed pieces
-            if min_or_second_best_distance_unchanged is not None and not min_or_second_best_distance_unchanged[p_i]:
+            if InterPieceDistance.skip_piece(p_i, min_or_second_best_distance_changed):
                 continue
 
             # Recalculate the
