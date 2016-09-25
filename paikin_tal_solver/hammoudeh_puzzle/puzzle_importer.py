@@ -1956,7 +1956,7 @@ class Puzzle(object):
                 filenames_combined += "."
             filenames_combined += Puzzle.get_filename_without_extension(img_file)
 
-        image_directory = output_directory + "/" + filenames_combined + "_type" + str(puzzle_type.value) + "_"
+        image_directory = output_directory + filenames_combined + "_type" + str(puzzle_type.value) + "_"
         ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
         image_directory += ts_str + "/"
 

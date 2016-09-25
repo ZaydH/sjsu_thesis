@@ -132,7 +132,7 @@ class MultiPuzzleSolver(object):
             filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor,
                                                   Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                   self._paikin_tal_solver.puzzle_type, self._start_timestamp,
-                                                  puzzle_id=str(0))
+                                                  puzzle_id=0)
             single_puzzle_id = 0
             self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, selected_segment.id_number,
                                                                filename)

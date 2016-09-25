@@ -1311,7 +1311,7 @@ class PaikinTalSolver(object):
         puzzle_pieces = [self._pieces[piece_id] for piece_id in segment_piece_ids]
 
         puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
-        puzzle.save_segment_color_image(image_filename)
+        puzzle.save_to_file(image_filename)
 
     def _perform_segmentation(self, perform_segment_cleaning):
         """
