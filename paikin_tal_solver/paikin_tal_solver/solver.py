@@ -3,13 +3,12 @@
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
 import Queue
-import copy
+import cStringIO
 import heapq
 import logging
-
-import cStringIO
-import numpy as np
 import time
+
+import numpy as np
 
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
@@ -545,13 +544,12 @@ class PaikinTalSolver(object):
         else:
             logging.debug("Need to recalculate the compatibilities.  Number of pieces left: "
                           + str(self._numb_unplaced_valid_pieces) + "\n")
-
-            piece_placed_with_open_neighbor = [False] * len(self._pieces)
-            for open_location in self._open_locations:
-                piece_placed_with_open_neighbor[open_location.piece_id] = True
+            #
+            # piece_placed_with_open_neighbor = [False] * len(self._pieces)
+            # for open_location in self._open_locations:
+            #     piece_placed_with_open_neighbor[open_location.piece_id] = True
             # Recalculate the inter-piece distances
-            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(self._piece_valid_for_placement,
-                                                                                   piece_placed_with_open_neighbor)
+            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(self._piece_valid_for_placement)
 
             # Get all unplaced pieces
             unplaced_pieces = []
