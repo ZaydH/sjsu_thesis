@@ -3,21 +3,16 @@
 .. moduleauthor:: Zayd Hammoudeh <hammoudeh@gmail.com>
 """
 # noinspection PyUnresolvedReferences
-import random
-import time
 import logging
-
-# noinspection PyUnresolvedReferences
+import random
 import sys
+import time
 
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection, \
     PickleHelper
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
-# noinspection PyUnresolvedReferences
 from hammoudeh_puzzle.solver_helper_classes import print_elapsed_time
-from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 from paikin_tal_solver.solver import PaikinTalSolver
-
 
 # Select whether to display the images after reconstruction
 DISPLAY_IMAGES = False
@@ -25,7 +20,7 @@ DEFAULT_PUZZLE_TYPE = PuzzleType.type2
 DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # When true, all asymmetric distances are recalculated.
-RECALCULATE_DISTANCES = True
+RECALCULATE_DISTANCES = False
 PERFORM_PLACEMENT = True
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
@@ -273,9 +268,9 @@ if __name__ == "__main__":
     # Select the files to parse
 
     # # PaikinTalSolver.use_best_buddy_placer = False
-    images = [".\\images\\muffins_300x200.jpg"]
-    paikin_tal_driver(images, PuzzleType.type1, 25)
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # images = [".\\images\\muffins_300x200.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type1, 25)
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # PaikinTalSolver.use_best_buddy_placer = True
     # paikin_tal_driver(images, PuzzleType.type2, 28)
@@ -328,9 +323,9 @@ if __name__ == "__main__":
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # paikin_tal_driver(images, PuzzleType.type2, 28)
 
-    # # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, 28)
+    # # # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
+    # paikin_tal_driver(images, PuzzleType.type2, 28)
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     paikin_tal_driver(images, PuzzleType.type2, 28)

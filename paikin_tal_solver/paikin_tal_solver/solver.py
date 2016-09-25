@@ -151,6 +151,7 @@ class PaikinTalSolver(object):
 
         # Store the number of pieces.  Shuffle for good measure.
         self._pieces = pieces
+        self.allow_placement_of_all_pieces()
 
         # Store the number of puzzles these collective set of pieces comprise.
         self._actual_numb_puzzles = numb_puzzles
@@ -252,6 +253,22 @@ class PaikinTalSolver(object):
         else:
             self._best_buddy_placer = None
 
+    def allow_placement_of_all_pieces(self):
+        """
+        Enables the placement of all pieces in the solver
+        """
+        for i in xrange(0, len(self._pieces)):
+            self._pieces[i].placement_disallowed = False
+
+    def disallow_piece_placement(self, piece_id):
+        """
+        Disallows the placement of a particular puzzle piece
+
+        Args:
+            piece_id (int): Puzzle piece identification number
+        """
+        self._pieces[piece_id].placement_disallowed = True
+
     def _reset_segment_info(self):
         """
         Reset the segments data structure(s) so it is as if the puzzle has no segments.
@@ -276,6 +293,17 @@ class PaikinTalSolver(object):
         self._run_configurable(max_numb_output_puzzles=1,
                                numb_pieces_to_place=PaikinTalSolver.max_numb_pieces_to_place_in_stitching_piece_solver,
                                skip_initial=True,
+                               stop_solver_if_need_to_respawn=False)
+
+    def run_single_puzzle_solver(self):
+        """
+        Performs placement while allowing only a single output puzzle.
+        """
+        self._reset_segment_info()
+
+        self._run_configurable(max_numb_output_puzzles=1,
+                               numb_pieces_to_place=self._numb_unplaced_valid_pieces,
+                               skip_initial=False,
                                stop_solver_if_need_to_respawn=False)
 
     def run_standard(self, skip_initial=False):
@@ -1259,6 +1287,8 @@ class PaikinTalSolver(object):
         # Color all segments
         if color_segments:
             self.color_segments()
+
+        return self._segments
 
     def _perform_segmentation(self, perform_segment_cleaning):
         """

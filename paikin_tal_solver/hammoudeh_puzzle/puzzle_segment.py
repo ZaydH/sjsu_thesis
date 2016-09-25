@@ -480,8 +480,8 @@ class PuzzleSegment(object):
         self._piece_id_list = None
         self._seed_piece = None
 
-        self._neighbor_segment_ids = {}
-        self._neighbor_colors = {}  # This is used for coloring the graph to quickly determine neighbor colors
+        self._reset_neighbor_info()
+        self._reset_color()
 
         # Used to determine the stitching pieces to be used
         self._piece_map = None
@@ -493,8 +493,6 @@ class PuzzleSegment(object):
         self._piece_distance_from_open_space_up_to_date = False
         self._stitching_piece_ids = []
 
-        self._color = None
-
     @property
     def puzzle_id(self):
         """
@@ -504,6 +502,8 @@ class PuzzleSegment(object):
         Returns (int): Identification number of the puzzle associated with this segment.
 
         """
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert self._puzzle_id is not None
         return self._puzzle_id
 
     @property
@@ -522,7 +522,7 @@ class PuzzleSegment(object):
 
         Returns (int): Number of pieces in the segment (minimum one)
         """
-        return self._numb_pieces
+        return len(self._pieces)
 
     def get_piece_ids(self):
         """
@@ -537,6 +537,38 @@ class PuzzleSegment(object):
                 self._piece_id_list.append(piece_info.piece_id)
 
         return self._piece_id_list
+
+    def _reset_neighbor_info(self):
+        """
+        Re-initializes all data structures associated with the neighbor segments.
+        """
+        self._neighbor_segment_ids = {}
+        self._neighbor_colors = {}  # This is used for coloring the graph to quickly determine neighbor colors
+
+    def _reset_color(self):
+        """
+        Resets the color attribute of the segment to the default fault.
+        """
+        self._color = None
+
+    def update_segment_for_multipuzzle_solver(self, new_segment_id):
+        """
+        This function is used as part of the multi-puzzle solver.
+
+        It reinitializes/resets the data structures associated with the puzzle segment when it is treated as an
+        independent unit and no longer part of a solved puzzle.
+
+        One of the primary things this entails is that the segment identification number may be changed.
+
+        Args:
+            new_segment_id (int): New identification number for the segment.
+        """
+        self._reset_neighbor_info()
+
+        self._puzzle_id = None
+        self._segment_id_number = new_segment_id
+
+        self._reset_color()
 
     def add_piece(self, piece):
         """
@@ -670,7 +702,7 @@ class PuzzleSegment(object):
 
             # Store the previous generation locations
             self._piece_groupings_by_distance_from_open.append(current_generation_locations)
-            distance_to_open += 1  # At the end of the
+            distance_to_open += 1
 
     def _update_piece_distance_to_open(self, piece_id, distance_to_open):
         """
