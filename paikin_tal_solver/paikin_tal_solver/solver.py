@@ -165,7 +165,7 @@ class PaikinTalSolver(object):
             self._puzzle_type = PaikinTalSolver.DEFAULT_PUZZLE_TYPE
         else:
             self._puzzle_type = puzzle_type
-            if self._puzzle_type != PuzzleType.type1 or self._puzzle_type != PuzzleType.type2:
+            if self._puzzle_type != PuzzleType.type1 and self._puzzle_type != PuzzleType.type2:
                 raise ValueError("Invalid puzzle type passed to Paikin Tal Solver constructor.")
 
         # Store the puzzle dimensions if any
