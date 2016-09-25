@@ -2,7 +2,6 @@ import logging
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
-from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
