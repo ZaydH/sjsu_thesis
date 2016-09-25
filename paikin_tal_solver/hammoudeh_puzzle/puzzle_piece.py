@@ -179,6 +179,7 @@ class PuzzlePiece(object):
         # Piece ID is left to the solver to set
         self._orig_piece_id = piece_id
         self._assigned_piece_id = None
+        self._key = None
 
         self._orig_puzzle_id = puzzle_id
         self._assigned_puzzle_id = None
@@ -457,6 +458,7 @@ class PuzzlePiece(object):
             new_piece_id (int): Puzzle piece identification number
         """
         self._assigned_piece_id = new_piece_id
+        self._key = PuzzlePiece.create_key(self._assigned_piece_id)
 
     @property
     def segment_number(self):
@@ -1088,7 +1090,7 @@ class PuzzlePiece(object):
 
         Returns (string): Object key to be used for dictionaries
         """
-        return PuzzlePiece.create_key(self.id_number)
+        return self._key
 
     @staticmethod
     def create_key(piece_id):
