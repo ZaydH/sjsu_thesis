@@ -496,7 +496,7 @@ class InterPieceDistance(object):
 
     # These are used for picking the starting piece.
     _USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
-    _NEIGHBOR_COMPATIBILITY_SCALAR = 4
+    _NEIGHBOR_COMPATIBILITY_SCALAR = 4  # If using only neighbors for start piece, this value does not matter if >0
 
     # Items related to multi-process computation to improve performance
     _MIN_NUMBER_PIECES_PER_THREAD = 10

@@ -13,12 +13,16 @@ class MultiPuzzleSolver(object):
             distance_function: Calculates the distance between two PuzzlePiece objects.
             puzzle_type (PuzzleType): Type of Paikin Tal Puzzle
         """
+
+        self._numb_pieces = len(pieces)
         # Build the Paikin Tal Solver
         self._paikin_tal_solver = PaikinTalSolver(numb_puzzles, pieces, distance_function, puzzle_type)
 
     def _find_initial_segments(self):
 
         while self._continue_finding_initial_segments():
+
+    def
 
 
     def _perform_placement_for_initial_segments(self):
