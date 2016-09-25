@@ -198,7 +198,7 @@ class PuzzlePiece(object):
             self.calculate_actual_neighbor_id_numbers(puzzle_grid_size)
 
         # Optionally prevent the piece being placed
-        self._disallow_placement = False
+        self.placement_disallowed = False
 
         # Store the image data
         self._img = lab_img
@@ -555,16 +555,16 @@ class PuzzlePiece(object):
         self._is_stitching_piece = value
 
     @property
-    def disallow_placement(self):
+    def placement_disallowed(self):
         """
         Gets whether the piece is disallowed (i.e., banned) from being placed.
 
         Returns (bool): True if this piece cannot be placed and False otherwise
         """
-        return self._disallow_placement
+        return self.placement_disallowed
 
-    @disallow_placement.setter
-    def disallow_placement(self, disallow_placement_state):
+    @placement_disallowed.setter
+    def placement_disallowed(self, disallow_placement_state):
         """
         Sets whether the piece is disallowed (i.e., banned) from being placed.
 
@@ -573,7 +573,7 @@ class PuzzlePiece(object):
         """
         if not isinstance(disallow_placement_state, bool):
             raise ValueError("Input parameter \"disallow_placement_state\" must be a boolean value.")
-        self._disallow_placement = disallow_placement_state
+        self.placement_disallowed = disallow_placement_state
 
     def reset_placement(self):
         """

@@ -1,0 +1,28 @@
+from paikin_tal_solver.solver import PaikinTalSolver
+
+
+class MultiPuzzleSolver(object):
+
+    def _init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None):
+        """
+        Constructor for the Multi-Puzzle Solver.
+
+        Args:
+            numb_puzzles (int): Number of Puzzles to be solved.
+            pieces (List[PuzzlePiece])): List of puzzle pieces
+            distance_function: Calculates the distance between two PuzzlePiece objects.
+            puzzle_type (PuzzleType): Type of Paikin Tal Puzzle
+        """
+        # Build the Paikin Tal Solver
+        self._paikin_tal_solver = PaikinTalSolver(numb_puzzles, pieces, distance_function, puzzle_type)
+
+    def _find_initial_segments(self):
+
+        while self._continue_finding_initial_segments():
+
+
+    def _perform_placement_for_initial_segments(self):
+
+
+
+    def _continue_finding_initial_segments(self):
