@@ -161,7 +161,12 @@ class PaikinTalSolver(object):
         self._reset_solved_puzzle_info()
 
         # Select the puzzle type.  If the user did not specify one, use the default.
-        self._puzzle_type = puzzle_type if puzzle_type is not None else PaikinTalSolver.DEFAULT_PUZZLE_TYPE
+        if puzzle_type is None:
+            self._puzzle_type = PaikinTalSolver.DEFAULT_PUZZLE_TYPE
+        else:
+            self._puzzle_type = puzzle_type
+            if self._puzzle_type != PuzzleType.type1 or self._puzzle_type != PuzzleType.type2:
+                raise ValueError("Invalid puzzle type passed to Paikin Tal Solver constructor.")
 
         # Store the puzzle dimensions if any
         self._actual_puzzle_dimensions = fixed_puzzle_dimensions
@@ -1307,7 +1312,6 @@ class PaikinTalSolver(object):
 
         puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
         puzzle.save_segment_color_image(image_filename)
-
 
     def _perform_segmentation(self, perform_segment_cleaning):
         """

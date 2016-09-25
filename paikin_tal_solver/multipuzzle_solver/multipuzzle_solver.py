@@ -13,7 +13,7 @@ class MultiPuzzleSolver(object):
 
     _SAVE_SELECTED_SEGMENTS_TO_A_FILE = True
 
-    def __init__(self, image_filenames, pieces, distance_function, puzzle_type=None):
+    def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
         Constructor for the Multi-Puzzle Solver.
 

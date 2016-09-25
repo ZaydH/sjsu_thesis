@@ -48,7 +48,7 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
     # Initialize the distance information
     if _RECALCULATE_DISTANCES:
         multipuzzle_solver = MultiPuzzleSolver(image_filenames, pieces, top_level_calculate_asymmetric_distance,
-                                               piece_width)
+                                               puzzle_type)
         if PickleHelper.PICKLE_ENABLED:
             PickleHelper.exporter(multipuzzle_solver, pickle_filename)
         return multipuzzle_solver
