@@ -1,5 +1,7 @@
+import logging
 import time
 
+from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.puzzle_importer import Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.solver import PaikinTalSolver
@@ -52,6 +54,9 @@ class MultiPuzzleSolver(object):
         while True:
             segmentation_round += 1
 
+            time_segmentation_round_began = time.time()
+            logging.info("Beginning segmentation round #%d" % segmentation_round)
+
             # Perform placement as if there is only a single puzzle
             self._paikin_tal_solver.run_single_puzzle_solver()
 
@@ -62,7 +67,13 @@ class MultiPuzzleSolver(object):
             if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE:
                 self._save_single_solved_puzzle_to_file(segmentation_round)
 
-            if max_segment_size < MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE:
+            logging.info("Beginning segmentation round #" % str(segmentation_round))
+            solver_helper.print_elapsed_time(time_segmentation_round_began,
+                                             "segmentation round #" % str(segmentation_round))
+
+            # Stop segmenting if no pieces left or maximum segment size is less than the minimum
+            if max_segment_size < MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE \
+                    or len(self._piece_id_to_segment_map) == self._numb_pieces:
                 break
 
     def _save_single_solved_puzzle_to_file(self, segmentation_round):

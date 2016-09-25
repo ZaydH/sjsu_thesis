@@ -107,5 +107,5 @@ class PickleHelper(object):
             # Append the file name to the information
             pickle_root_filename += "_" + img_root_filename
 
-        pickle_root_filename += "_type_" + str(puzzle_type) + ".pk"
+        pickle_root_filename += "_type_" + str(puzzle_type.value) + ".pk"
         return PickleHelper._PICKLE_DIRECTORY + pickle_descriptor + pickle_root_filename
