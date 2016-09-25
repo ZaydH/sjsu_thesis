@@ -329,18 +329,10 @@ if __name__ == "__main__":
     # paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-    # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
-    # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
-    # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
-    #
-    # InterPieceDistance._USE_MULTIPLE_PROCESSES = True
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
-    # InterPieceDistance._USE_MULTIPLE_PROCESSES = False
-    # paikin_tal_driver(images, PuzzleType.type2, 28)
+    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
+    paikin_tal_driver(images, PuzzleType.type2, 28)
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    InterPieceDistance._USE_MULTIPLE_PROCESSES = True
     paikin_tal_driver(images, PuzzleType.type2, 28)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
