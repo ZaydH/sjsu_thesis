@@ -2122,6 +2122,30 @@ class Puzzle(object):
         for piece in self._pieces:
             piece.id_number = piece.original_piece_id
 
+    @staticmethod
+    def get_combined_pieces_multiple_images(image_files, piece_width):
+        """
+        Builds a set of puzzle pieces from across a set of image files.
+        Args:
+            image_files (List[str]): Paths to image files
+            piece_width (int): Width of a puzzle piece in number of pixels
+
+        Returns (List[PuzzlePieces]): Pieces combined from across the images/
+        """
+        combined_pieces = []
+        puzzles = []
+        for i in range(0, len(image_files)):
+            # Define the identification number of the first piece
+            starting_piece_id = len(combined_pieces)
+
+            # Build the puzzle and add it to the list of puzzles
+            new_puzzle = Puzzle(i, image_files[i], piece_width, starting_piece_id)
+            puzzles.append(new_puzzle)
+
+            # Concatenate to the list of all pieces.
+            combined_pieces += puzzles[i].pieces
+        return combined_pieces, puzzles
+
 
 class PuzzleTester(object):
     """
