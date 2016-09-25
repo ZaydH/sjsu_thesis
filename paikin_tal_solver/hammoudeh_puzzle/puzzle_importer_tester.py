@@ -14,7 +14,7 @@ from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceSide, PuzzlePi
 
 
 # noinspection PyMethodMayBeStatic
-from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
+from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
 
 # noinspection PyMethodMayBeStatic

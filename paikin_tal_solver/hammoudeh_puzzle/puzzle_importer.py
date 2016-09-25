@@ -1,95 +1,18 @@
 """Jigsaw Puzzle Object
 """
-import copy
-import logging
-import os
-import math
-import random
-import pickle
-import time
-import datetime
-
 import cStringIO
-import numpy as np
+import copy
+import datetime
+import logging
+import math
+import os
+import random
+
 import cv2  # OpenCV
+import numpy as np
 from enum import Enum
 
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
-from hammoudeh_puzzle.solver_helper_classes import print_elapsed_time
-
-
-class PickleHelper(object):
-    """
-    The Pickle Helper class is used to simplify the importing and exporting of objects via the Python Pickle
-    Library.
-    """
-
-    _PERFORM_ASSERT_CHECKS = True
-
-    @staticmethod
-    def importer(filename):
-        """
-        Generic Pickling Importer Method
-
-        Helper method used to import any object from a Pickle file.
-
-        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
-        Pickling functions.
-
-        Args:
-            filename (str): Pickle Filename
-
-        Returns:
-            The object serialized in the specified filename.
-
-        """
-        start_time = time.time()
-
-        # Check the file directory exists
-        file_directory = os.path.dirname(os.path.abspath(filename))
-        if not os.path.isdir(file_directory):
-            raise ValueError("The file directory: \"" + file_directory + "\" does not appear to exist.")
-
-        logging.info("Beginning pickle IMPORT of file: \"" + filename + "\"")
-        # import from the pickle file.
-        f = open(filename, 'r')
-        obj = pickle.load(f)
-        f.close()
-
-        logging.info("Completed pickle IMPORT of file: \"" + filename + "\"")
-        print_elapsed_time(start_time, "pickle IMPORT of file: \"" + filename + "\"")
-        return obj
-
-    @staticmethod
-    def exporter(obj, filename):
-        """Generic Pickling Exporter Method
-
-        Helper method used to export any object to a Pickle file.
-
-        ::Note::: This function does not support objects of type "Puzzle."  They should use the class' specialized
-        Pickling functions.
-
-        Args:
-            obj:                Object to be exported to a specified Pickle file.
-            filename (str):     Name of the Pickle file.
-
-        """
-        start_time = time.time()
-
-        # If the file directory does not exist create it.
-        file_directory = os.path.dirname(os.path.abspath(filename))
-        if not os.path.isdir(file_directory):
-            logging.debug("Creating pickle export directory \"%s\"." % file_directory)
-            os.mkdir(file_directory)
-
-        logging.info("Beginning pickle EXPORT of file: \"" + filename + "\"")
-        # Dump pickle to the file.
-        f = open(filename, 'w')
-        pickle.dump(obj, f)
-        f.close()
-
-        logging.info("Completed pickle EXPORT to file: \"" + filename + "\"")
-        print_elapsed_time(start_time, "pickle EXPORT of file: \"" + filename + "\"")
 
 
 class PuzzleType(Enum):
@@ -194,11 +117,12 @@ class PuzzleResultsCollection(object):
         """
         return self._puzzle_results
 
-    def output_results_images(self, solved_puzzles, puzzle_type, timestamp):
+    def output_results_images(self, input_image_filenames, solved_puzzles, puzzle_type, timestamp):
         """
         Creates images showing the results of the image.
 
         Args:
+            input_image_filenames (List[str]): List of image files and directories.
             solved_puzzles (List[Puzzle]): A set of solved puzzles.
             puzzle_type (PuzzleType): Type of the solved image
             timestamp (float): Timestamp
@@ -237,7 +161,8 @@ class PuzzleResultsCollection(object):
 
                 # Determine whether the puzzle id should be used in the filename
                 solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
-                output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+                output_filename = Puzzle.make_image_filename(input_image_filenames, descriptor,
+                                                             Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                              timestamp, orig_img_filename=results.original_filename,
                                                              puzzle_id=solved_puzzle_id)
                 # Stores the results to a file.
@@ -264,7 +189,8 @@ class PuzzleResultsCollection(object):
             # Define the output filename
             descriptor = "neighbor_acc"
             solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
-            output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+            output_filename = Puzzle.make_image_filename(input_image_filenames, descriptor,
+                                                         Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                          timestamp, orig_img_filename=results.original_filename,
                                                          puzzle_id=solved_puzzle_id)
 
@@ -870,12 +796,14 @@ class BestBuddyResultsCollection(object):
         logging.debug(string_io.getvalue())
         string_io.close()
 
-    def output_results_images(self, solved_puzzles, puzzle_type, timestamp, orig_img_filename=None):
+    def output_results_images(self, all_input_image_filenames, solved_puzzles, puzzle_type,
+                              timestamp, orig_img_filename=None):
         """
         Converts the results information to a data visualization to see where there are right and wrong
         best buddies.
 
         Args:
+            all_input_image_filenames (List[str]): List of input image files and paths.
             solved_puzzles (List[Puzzle]): List of puzzles.
             puzzle_type (PuzzleType): Type of the solved puzzle.
             timestamp (float): Timestamp as a floating point number.  Converted to a string by this function.
@@ -904,7 +832,8 @@ class BestBuddyResultsCollection(object):
             # Determine whether the puzzle id should be used in the filename
             filename_puzzle_id = puzzle_id if orig_img_filename is None else None
             descriptor = "best_buddy_acc"
-            output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+            output_filename = Puzzle.make_image_filename(all_input_image_filenames, descriptor,
+                                                         Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                          timestamp, orig_img_filename=orig_img_filename,
                                                          puzzle_id=filename_puzzle_id)
             # Stores the results to a file.
@@ -2004,12 +1933,13 @@ class Puzzle(object):
         return os.path.splitext(os.path.basename(filename_and_path))[0]
 
     @staticmethod
-    def make_image_filename(image_descriptor, output_directory, puzzle_type, timestamp,
+    def make_image_filename(image_filenames, image_descriptor, output_directory, puzzle_type, timestamp,
                             orig_img_filename=None, puzzle_id=None):
         """
         Builds an image file name using a set of standard parameters.
 
         Args:
+            image_filenames (str): List of image files
             image_descriptor (str): Descriptor of the output puzzle.
             output_directory (str): Path where the file should be output
             puzzle_type (PuzzleType): Type of the puzzle
@@ -2020,9 +1950,18 @@ class Puzzle(object):
         Returns (str):
             Image file name constructed from the specified parameters.
         """
+        filenames_combined = ""
+        for img_file in image_filenames:
+            if filenames_combined:
+                filenames_combined += "."
+            filenames_combined += Puzzle.get_filename_without_extension(img_file)
+
+        image_directory = output_directory + "/" + filenames_combined + "_type" + str(puzzle_type.value) + "_"
+        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
+        image_directory += ts_str + "/"
 
         # Store the reconstructed image
-        output_filename = output_directory + image_descriptor + "_type" + str(puzzle_type.value)
+        output_filename = image_directory + image_descriptor + "_type" + str(puzzle_type.value)
 
         # If a specific filename is specified, use that.
         img_extension = None
@@ -2034,8 +1973,6 @@ class Puzzle(object):
         if puzzle_id is not None:
             output_filename += "_" + "solved_puzzle_" + ("%04d" % puzzle_id)
 
-        # Convert the timestamp to a string.
-        ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
         # Add timestamp and file extension
         output_filename += "_" + ts_str
         if img_extension is not None:
@@ -2103,7 +2040,7 @@ class Puzzle(object):
         file_directory = os.path.dirname(os.path.abspath(filename))
         if not os.path.isdir(file_directory):
             print "Creating solved image directory: \"%s\"." % file_directory
-            os.mkdir(file_directory)
+            os.makedirs(file_directory)
 
         # Write the image to disk.
         cv2.imwrite(filename, img)
@@ -2194,6 +2131,30 @@ class Puzzle(object):
         """
         for piece in self._pieces:
             piece.id_number = piece.original_piece_id
+
+    @staticmethod
+    def get_combined_pieces_multiple_images(image_files, piece_width):
+        """
+        Builds a set of puzzle pieces from across a set of image files.
+        Args:
+            image_files (List[str]): Paths to image files
+            piece_width (int): Width of a puzzle piece in number of pixels
+
+        Returns (List[PuzzlePieces]): Pieces combined from across the images/
+        """
+        combined_pieces = []
+        puzzles = []
+        for i in range(0, len(image_files)):
+            # Define the identification number of the first piece
+            starting_piece_id = len(combined_pieces)
+
+            # Build the puzzle and add it to the list of puzzles
+            new_puzzle = Puzzle(i, image_files[i], piece_width, starting_piece_id)
+            puzzles.append(new_puzzle)
+
+            # Concatenate to the list of all pieces.
+            combined_pieces += puzzles[i].pieces
+        return combined_pieces, puzzles
 
 
 class PuzzleTester(object):
@@ -2332,6 +2293,18 @@ class PuzzleTester(object):
         return puzzle
 
 
-if __name__ == "__main__":
-    myPuzzle = Puzzle(0, ".\images\muffins_300x200.jpg")
-    x = 1
+def log_puzzle_filenames(image_filenames):
+    """
+    Logs the name of the input image files used for the solver.
+
+    Args:
+        image_filenames (List[str]): Path to the input image files.
+    """
+    string_io = cStringIO.StringIO()
+    print >> string_io, "Names of the Image Files:"
+    for img_file in image_filenames:
+        print >> string_io, "\t%s" % Puzzle.get_filename_without_extension(img_file)
+
+    # log the result
+    logging.info(string_io.getvalue())
+    string_io.close()

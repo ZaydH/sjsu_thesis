@@ -1,2 +1,0 @@
-python solver_driver.py
-pause

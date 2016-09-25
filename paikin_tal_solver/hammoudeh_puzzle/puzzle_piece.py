@@ -7,7 +7,7 @@ from enum import Enum
 import numpy as np
 import cv2  # OpenCV
 
-from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
+from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
 
 class Location(object):
@@ -179,6 +179,7 @@ class PuzzlePiece(object):
         # Piece ID is left to the solver to set
         self._orig_piece_id = piece_id
         self._assigned_piece_id = None
+        self._key = None
 
         self._orig_puzzle_id = puzzle_id
         self._assigned_puzzle_id = None
@@ -196,6 +197,9 @@ class PuzzlePiece(object):
         self._actual_neighbor_ids = None
         if puzzle_grid_size is not None:
             self.calculate_actual_neighbor_id_numbers(puzzle_grid_size)
+
+        # Optionally prevent the piece being placed
+        self._placement_disallowed = False
 
         # Store the image data
         self._img = lab_img
@@ -410,6 +414,9 @@ class PuzzlePiece(object):
             Board identification number
 
         """
+        if not isinstance(new_puzzle_id, int):
+            raise ValueError("Puzzle ID number must be an integer.")
+
         self._assigned_puzzle_id = new_puzzle_id
 
     @property
@@ -451,6 +458,7 @@ class PuzzlePiece(object):
             new_piece_id (int): Puzzle piece identification number
         """
         self._assigned_piece_id = new_piece_id
+        self._key = PuzzlePiece.create_key(self._assigned_piece_id)
 
     @property
     def segment_number(self):
@@ -547,6 +555,39 @@ class PuzzlePiece(object):
         if not isinstance(value, bool):
             raise ValueError("value must be of type bool.")
         self._is_stitching_piece = value
+
+    @property
+    def placement_disallowed(self):
+        """
+        Gets whether the piece is disallowed (i.e., banned) from being placed.
+
+        Returns (bool): True if this piece cannot be placed and False otherwise
+        """
+        return self._placement_disallowed
+
+    @placement_disallowed.setter
+    def placement_disallowed(self, disallow_placement_state):
+        """
+        Sets whether the piece is disallowed (i.e., banned) from being placed.
+
+        Args:
+            disallow_placement_state (bool): True if placement for this piece will be disallowed and False otherwise.
+        """
+        if not isinstance(disallow_placement_state, bool):
+            raise ValueError("Input parameter \"disallow_placement_state\" must be a boolean value.")
+        self._placement_disallowed = disallow_placement_state
+
+    def reset_placement(self):
+        """
+        Resets all attributes of the puzzle piece class related to placement in a solved puzzle including the
+        solved puzzle id, the assigned location, and all segment related information.
+        """
+        self._assigned_puzzle_id = None
+        self._assigned_loc = None
+
+        self._segment_id_numb = None
+        self._segment_color = None
+        self._is_stitching_piece = None
 
     @property
     def lab_image(self):
@@ -1049,7 +1090,20 @@ class PuzzlePiece(object):
 
         Returns (string): Object key to be used for dictionaries
         """
-        return str(self.id_number)
+        return self._key
+
+    @staticmethod
+    def create_key(piece_id):
+        """
+        Key associated with a puzzle piece.
+
+        Args:
+            piece_id (int): Piece identification number.
+
+        Returns (str):
+            Key to be used for a puzzle piece.
+        """
+        return str(piece_id)
 
     @staticmethod
     def create_solid_piece_with_identification_mark(bgr_color, width, height=None, mark_color=SolidColor.white):

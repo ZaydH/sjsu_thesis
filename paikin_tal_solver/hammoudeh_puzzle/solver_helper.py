@@ -159,7 +159,7 @@ class PuzzleLocation(object):
         if self.column > 0:
             adjacent_locations.append(PuzzleLocation(self.puzzle_id, self.row, self.column - 1))
 
-        # Verify the length of the adajcents makes sense
+        # Verify the length of the adjacent locations makes sense
         if board_dim is None or (board_dim[0] > 1 and board_dim[1] > 1):
             assert len(adjacent_locations) >= 2
 
