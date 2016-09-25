@@ -1,9 +1,9 @@
-
 <h1>Zayd Hammoudeh's Thesis Blog:</h1>
 
 <ul>
+    <li><a href="#blog15">CS299 Week #15: September 20, 2016 Meeting</a></li>
     <li><a href="#blog14">CS299 Week #14: September 13, 2016 Meeting</a></li>
-    <li><a href="#blog13">CS299 Week #13: September 06, 2016 Meeting</a></li>
+    <li><a href="#blog13">CS299 Week #13: September 6, 2016 Meeting</a></li>
 </ul>
 <ul>
     <li><a href="#blog12">CS297 Week #12: April 26, 2016 Meeting</a></li>
@@ -20,11 +20,214 @@
     <li><a href="#blog01">CS297 Week #1: February 9, 2016 Meeting</a></li>
 </ul><br />
 
+<h2 id="blog15">Summary of the Meeting on September 20, 2016:</h2>
+
+The work for this week was divided among the following activities:
+<ul>
+   <li style="margin-bottom:10px;">Designing a robust algorithm for determining the distance each piece in a segment is from the nearest open space.</li>
+   
+   <li style="margin-bottom:10px;">Designing an algorithm to select the pieces to be used when stitching multiple segments together.</li>
+   
+   <li style="margin-bottom:10px;">Initial development of a modified solver that can use the segments to build </li>
+</ul>
+
+<h3>Algorithm for Determining Each Piece's Distance from an Open Space:</h3>
+
+The goal of this algorithm is to determine for each piece the nearest open space.  This can be trivially solved in <i>O(n<sup>2</sup>)</i> time (where <i>n</i> is the number of pieces in the segment).  My goals in designing the algorithm where the following:
+
+<ul>
+   <li style="margin-bottom:10px;"><i>O(n)</i> runtime (or as close to it as possible)</li>
+   
+   <li style="margin-bottom:10px;">Account for any spurs that may exist</li>
+   
+   <li style="margin-bottom:10px;">Handle any chaining because of a narrowing in the shape of the segment.</li>
+   
+   <li style="margin-bottom:10px;">Handle any voids in the middle of the segment (e.g., a donut effect)</li>
+   
+   <li style="margin-bottom:10px;">Create a visualization showing the distance of each piece from the nearest open space to check the results of the algorithm</li>
+</ul>
+
+Below is simple pseudocode showing the flow of the algorithm.  It uses a type of repetitive boundary tracing.
+
+<br /><br />
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">explored_pieces <span style="color: #333333">=</span> { }
+
+locations_at_previous_distance <span style="color: #333333">=</span> { all open spaces adjacent to piece }
+
+distance_from_open <span style="color: #333333">=</span> <span style="color: #0000DD; font-weight: bold">1</span>
+<span style="color: #008800; font-weight: bold">while</span> <span style="color: #333333">|</span>frontier_pieces<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">0</span><span style="color: #333333">:</span>
+    
+    locations_at_current_distance <span style="color: #333333">=</span> { }
+    
+    <span style="color: #888888">// Use locations at distance one less to find locations at current distance</span>
+    <span style="color: #008800; font-weight: bold">for each</span> prev_dist_location <span style="color: #008800; font-weight: bold">in</span> locations_at_previous_distance<span style="color: #333333">:</span>
+        
+        <span style="color: #008800; font-weight: bold">for each</span> adjacent_loc <span style="color: #008800; font-weight: bold">in</span> prev_dist_location.adjacent_location()<span style="color: #333333">:</span>
+        
+            <span style="color: #888888">// If piece is not yet explored, then minimum distance is the current one</span>
+            <span style="color: #008800; font-weight: bold">if</span> has_puzzle_piece_at(adjacent_loc) <span style="color: #333333">&amp;&amp;</span> piece_id(adjacent_loc) <span style="color: #008800; font-weight: bold">not in</span> explored_pieces<span style="color: #333333">:</span>
+                explored_pieces.<span style="color: #008800; font-weight: bold">delete</span>( piece_id(adjacent_loc) ) 
+                set_piece_distance(piece_id(adjacent_loc), distance_from_open)
+                locations_at_current_distance.append(adjacent_loc)
+    
+    <span style="color: #888888">// Use current generation for next generation</span>
+    locations_at_previous_distance <span style="color: #333333">=</span> locations_at_current_distance
+    
+    <span style="color: #888888">// Increment the distance from open</span>
+    distance_from_open <span style="color: #333333">=</span> distance_from_open <span style="color: #333333">+</span> <span style="color: #0000DD; font-weight: bold">1</span>
+</pre></div>
+
+
+<h3>Algorithm for Determining the Piece Locations for Stitching Multiple Segments Together:</h3>
+
+Given a set of disjoint segments, we must determine the similarity between each segment.  This can be achieved by identifying a set of pieces along the edge of each segment and see if the two segments grow into one another. The algorithm here finds the set of pieces.
+
+If a stitching piece is too close to the edge of the segment, it may form specious bounds with other segments as it is known that the most likely location to have a false best buddy is along the edge of the image.  What is more, if stitching piece is too far from an edge, it may never grow into a neighboring segment.  It is for this reason that the algorithm finds the distance between each piece and the nearest open puzzle location.
+
+The requirements for this algorithm are similar to those for the distance algorithm.  Pseudocode is below:
+
+<br /><br />
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">Divide the segment into a set of square grid of disjoint cells
+
+stitching_pieces <span style="color: #333333">=</span> {}
+
+<span style="color: #008800; font-weight: bold">for each</span> grid_cell <span style="color: #008800; font-weight: bold">in</span> { grid cells with puzzle piece adjacent to open }<span style="color: #333333">:</span>
+
+    cell_center <span style="color: #333333">=</span> center(grid_cell)
+
+    cells_at_dist <span style="color: #333333">=</span> { pieces <span style="color: #008800; font-weight: bold">in</span> grid_cell closest to ideal_distance_from_open }
+    
+    <span style="color: #008800; font-weight: bold">select</span> cell_stitching_piece <span style="color: #008800; font-weight: bold">as</span> piece <span style="color: #008800; font-weight: bold">in</span> cells_at_dist <span style="color: #008800; font-weight: bold">nearest to</span> cell_center
+    
+    stitching_pieces.append(nearest_piece_to_center)
+    
+<span style="color: #008800; font-weight: bold">return</span> stitching_pieces
+</pre></div>
+
+
+<h3>Visualizations of Piece Distance and Stitching Pieces:</h3>
+
+Continuing with the trend of previous weeks, I created visualizations showing the distance of each piece from an open.  This is represented as a lightening gradient with the further from an open the piece is the lighter the color.  Stitching pieces are indicated with a white crosshair.
+
+Below is an updated visualization from previously solved images.  
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Images&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_3300_1.jpg" alt="Two Houses Original" style="width:308px;height:233px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_bgu_805_08.jpg" alt="Lady by Water" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_mcgill_20.jpg" alt="Glass Building" style="width:151px;height:112px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Solved<br />&nbsp;&nbsp;Puzzles&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_3300_bgu08_mcgill20_0000_2016.09.13_04.04.29.jpg" alt="Solved Image #0" style="width:340px;height:204px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_3300_bgu08_mcgill20_0001_2016.09.13_04.04.29.jpg" alt="Solved Image #1" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_3300_bgu08_mcgill20_0002_2016.09.13_04.04.29.jpg" alt="Solved Image #2" style="width:264px;height:176px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Best Buddy<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_3300_bgu08_mcgill20_0000_2016.09.13_04.04.29.jpg" alt="Solved Image #0" style="width:340px;height:204px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_3300_bgu08_mcgill20_0001_2016.09.13_04.04.29.jpg" alt="Solved Image #1" style="width:196px;height:129px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_3300_bgu08_mcgill20_0002_2016.09.13_04.04.29.jpg" alt="Solved Image #2" style="width:264px;height:176px;" /></div><br /></td>
+    </tr>  
+    <tr>
+        <th><h3>Segmenter<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;<br />with Stitching Pieces</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type2_solved_puzzle_0000_2016.09.20_01.37.34.jpg"><img src="images/blog15/segmented_type2_solved_puzzle_0000_2016.09.20_01.37.34.jpg" alt="Solved Image #0" style="width:340px;height:204px;" /></a></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type2_solved_puzzle_0001_2016.09.20_01.37.34.jpg"><img src="images/blog15/segmented_type2_solved_puzzle_0001_2016.09.20_01.37.34.jpg" alt="Solved Image #1" style="width:196px;height:129px;" /></a></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type2_solved_puzzle_0002_2016.09.20_01.37.34.jpg"><img src="images/blog15/segmented_type2_solved_puzzle_0002_2016.09.20_01.37.34.jpg" alt="Solved Image #2" style="width:264px;height:176px;" /></a></div><br /></td>
+    </tr>  
+  </table>
+</div>
+<br /><br />
+
+
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Image&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/original_muffins_300x200.jpg" alt="Muffins Original"/></div><br /></td>
+    </tr>  
+  </table>
+</div>
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+     <tr>
+        <th></th>
+        <th><h3>Type 1</h3></th>
+        <th><h3>Type 2</h3></th>
+    </tr>
+    <tr>
+        <th><h3>Solved<br />&nbsp;&nbsp;Output&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/reconstructed_type1_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 1 Solved"/></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/reconstructed_type2_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 2 Solved"/></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Best Buddy<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/best_buddy_acc_type1_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 1 Best Buddies"/></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px"><img src="images/blog14/best_buddy_acc_type2_muffins_300x200_2016.09.13_03.56.33.jpg" alt="Muffins Type 2 Best Buddies"/></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Segmenter<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;<br />with Stitching Pieces</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type1_muffins_300x200_2016.09.20_01.31.40.jpg"><img src="images/blog15/segmented_type1_muffins_300x200_2016.09.20_01.31.40.jpg" alt="Segmented Solved Image #0" style="width:392px;height:202px;" /></a></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type2_muffins_300x200_2016.09.20_01.31.40.jpg"><img src="images/blog15/segmented_type2_muffins_300x200_2016.09.20_01.31.40.jpg" alt="Segmented Solved Image #1" style="width:364px;height:271px;" /></a></div><br /></td>  
+    </tr>  
+  </table>
+</div>
+<br /><br />
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Images&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_bgu_805_08.jpg" alt="Lady by Water" style="width:392;height:258px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/original_mcgill_20.jpg" alt="Glass Building" style="width:302px;height:224px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Solved<br />&nbsp;&nbsp;Puzzles&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_bgu08_mcgill20_0000_2016.09.13_05.28.26.jpg" alt="Solved Image #0" style="width:392px;height:202px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/reconstructed_type2_bgu08_mcgill20_0001_2016.09.13_05.28.26.jpg" alt="Solved Image #1" style="width:364px;height:271px;" /></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>Best Buddy<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_bgu08_mcgill20_0000_2016.09.13_05.28.26.jpg" alt="Best Buddies Solved Image #0" style="width:392px;height:202px;" /></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><img src="images/blog14/best_buddy_acc_type2_bgu08_mcgill20_0001_2016.09.13_05.28.26.jpg" alt="Best Buddies Solved Image #1" style="width:364px;height:271px;" /></div><br /></td>
+    </tr> 
+    <tr>
+        <th><h3>Segmenter<br />&nbsp;&nbsp;Visualization&nbsp;&nbsp;<br />with Stitching Pieces</h3></th> 
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type2_solved_puzzle_0000_2016.09.20_01.32.07.jpg"><img src="images/blog15/segmented_type2_solved_puzzle_0000_2016.09.20_01.32.07.jpg" alt="Segmented Solved Image #0" style="width:392px;height:202px;" /></a></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog15/segmented_type2_solved_puzzle_0001_2016.09.20_01.32.35.jpg"><img src="images/blog15/segmented_type2_solved_puzzle_0001_2016.09.20_01.32.35.jpg" alt="Segmented Solved Image #1" style="width:364px;height:271px;" /></a></div><br /></td>  
+    </tr>   
+    <tr>
+
+    </tr>  
+  </table>
+</div>
+<br /><br />
+
+Possible improvements to the algorithm:
+<ul>
+   <li style="margin-bottom:10px;">Specify a minimum segment size for stitching pieces</li>
+   
+   <li style="margin-bottom:10px;">Specify minimum grid cell sizes</li>
+</ul>
+
+<h3>Modified Solver:</h3>
+
+The original implementation of the solver followed the implementation of Paikin & Tal rather closely.  As such, it was not implemented with multiple passes in mind.  What is more, it was not written to support only partially solving a puzzle, which would be used when trying to find similarity between two neighboring segments.  Work has begun on implementing this. 
+<br /><br />
+One item that is clear is that the algorithm will need to have a better approach for spawning a new segment/board.  Right now, the algorithm will spawn if the mutual compatibility drops below an arbitrarily set, predefined threshold.  This can lead to huge board bloat as with the previous three puzzle problem spawning several hundred puzzles.
+<br /><br />
+One problem the algorithm appears to have is that when there are a large number of pieces in a puzzle that shows relatively high uniformity, the mutual compatibility is artificially reduced meaning that boards spawn prematurely.
+
+<br /><br /><br />
 <h2 id="blog14">Summary of the Meeting on September 13, 2016:</h2>
 
-The work for these week was divided into five primary areas, name:
+The work for these week was divided into five primary areas, namely:
 <ul>
-   <li style="margin-bottom:10px;">Speed-up of the mutual compatibility.</li>
+   <li style="margin-bottom:10px;">Speed-up of the mutual compatibility</li>
    <li style="margin-bottom:10px;">Implementation of the segmenter</li>
    <li style="margin-bottom:10px;">Implementation of the visualization functionality of using five colors</li>
    <li style="margin-bottom:10px;">Fixed bugs in the calculation of the solver accuracy</li>
@@ -37,8 +240,9 @@ The implementation of the segmenter for this week matches the description of the
 
 <h3>Five Coloring Algorithm:</h3>
 
-The Five Color Theorem states that on a planar graph, the vertices can be colored with five colors such that no two vertices have the same color.  This week, I implemented the <a href="http://graphstream-project.org/doc/Algorithms/Welsh-Powell/">Welsh-Powell Algorithm</a> to assign colors to different segments in the solved image.  Below is a summarized version of the algorithm:<br /><br />
+The Five Color Theorem states that on a planar graph, the vertices can be colored with five colors such that no two vertices have the same color.  This week, I implemented the <a href="http://graphstream-project.org/doc/Algorithms/Welsh-Powell/">Welsh-Powell Algorithm</a> to assign colors to different segments in the solved image.  Below is a summarized version of the algorithm:
 
+<br /><br />
 <div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">unassigned_segments <span style="color: #333333">=</span> { all_segments }
 <span style="color: #888888">// Prioritize segments with most neighbors </span>
 sort unassigned_segments by degree 
