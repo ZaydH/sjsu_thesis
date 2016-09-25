@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4dfada96-1563-4bd9-ba15-692e3a39ebe7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/config.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" afterPath="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multipuzzle_solver_driver.py" afterPath="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikan_tal_solver_driver.py" afterPath="$PROJECT_DIR$/paikan_tal_solver_driver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/solver.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -33,11 +35,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="puzzle_piece.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="470">
+              <caret line="1093" column="29" selection-start-line="1093" selection-start-column="29" selection-end-line="1093" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="paikan_tal_solver_driver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/paikan_tal_solver_driver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="855">
-              <caret line="212" column="0" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+            <state relative-caret-position="420">
+              <caret line="167" column="26" selection-start-line="167" selection-start-column="26" selection-end-line="167" selection-end-column="26" />
               <folding>
                 <element signature="e#127#141#0" expanded="true" />
               </folding>
@@ -45,13 +57,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="multipuzzle_solver_driver.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="multipuzzle_solver_driver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/multipuzzle_solver_driver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+            <state relative-caret-position="476">
+              <caret line="28" column="25" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="25" />
               <folding>
-                <element signature="e#0#35#0" expanded="true" />
+                <element signature="e#0#14#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -67,12 +79,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="multipuzzle_solver.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="multipuzzle_solver.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="12" column="8" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
-              <folding />
+            <state relative-caret-position="453">
+              <caret line="124" column="52" selection-start-line="124" selection-start-column="52" selection-end-line="124" selection-end-column="52" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,11 +94,21 @@
       <file leaf-file-name="solver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="137" column="13" selection-start-line="137" selection-start-column="13" selection-end-line="137" selection-end-column="13" />
+            <state relative-caret-position="521">
+              <caret line="1294" column="68" selection-start-line="1294" selection-start-column="68" selection-end-line="1294" selection-end-column="68" />
               <folding>
                 <element signature="e#95#107#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="puzzle_segment.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="861">
+              <caret line="526" column="21" selection-start-line="526" selection-start-column="8" selection-end-line="526" selection-end-column="21" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -94,48 +118,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="657">
               <caret line="2136" column="44" selection-start-line="2136" selection-start-column="44" selection-end-line="2136" selection-end-column="44" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pickle_helper.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/pickle_helper.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1853">
-              <caret line="109" column="0" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="best_buddy_image_analyzer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="708">
-              <caret line="190" column="30" selection-start-line="190" selection-start-column="30" selection-end-line="190" selection-end-column="30" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="solver_helper.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3355">
-              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -160,20 +142,21 @@
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
         <option value="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/globals.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/configs.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/pickle_helper.py" />
-        <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
         <option value="$PROJECT_DIR$/solver_driver.py" />
-        <option value="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/multipuzzle_solver_driver.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/config.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py" />
         <option value="$PROJECT_DIR$/paikan_tal_solver_driver.py" />
         <option value="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
+        <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py" />
+        <option value="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" />
       </list>
     </option>
   </component>
@@ -312,9 +295,9 @@
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
     <property name="settings.editor.selected.configurable" value="Errors" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/solver_driver.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
   </component>
-  <component name="RunManager" selected="Python.Paikin_Tal_Driver">
+  <component name="RunManager" selected="Python.Multipuzzle_Solver">
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -536,13 +519,32 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\Zayd\Desktop\Courses\Thesis\paikin_tal_solver\paikan_tal_solver_driver.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/paikan_tal_solver_driver.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <list size="1">
+    <configuration default="false" name="Multipuzzle_Solver" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Zayd\Miniconda2\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="paikin_tal_solver" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <list size="2">
       <item index="0" class="java.lang.String" itemvalue="Python.Paikin_Tal_Driver" />
+      <item index="1" class="java.lang.String" itemvalue="Python.Multipuzzle_Solver" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
@@ -640,7 +642,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/paikan_tal_solver_driver.py</url>
-          <line>128</line>
+          <line>126</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -653,6 +655,11 @@
           <line>572</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/multipuzzle_solver_driver.py</url>
+          <line>28</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -661,7 +668,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="19" />
+      <option name="time" value="20" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -874,22 +881,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6">
-          <caret line="532" column="0" selection-start-line="532" selection-start-column="0" selection-end-line="532" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="522" column="68" selection-start-line="522" selection-start-column="68" selection-end-line="522" selection-end-column="68" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer_tester.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5372">
@@ -922,14 +913,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3355">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/configs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -944,16 +927,6 @@
           <caret line="109" column="0" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="137" column="13" selection-start-line="137" selection-start-column="13" selection-end-line="137" selection-end-column="13" />
-          <folding>
-            <element signature="e#95#107#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -982,30 +955,68 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py">
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="12" column="8" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="8" />
-          <folding />
+        <state relative-caret-position="703">
+          <caret line="165" column="53" selection-start-line="165" selection-start-column="53" selection-end-line="165" selection-end-column="53" />
+          <folding>
+            <element signature="e#131#145#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/paikan_tal_solver_driver.py">
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="855">
-          <caret line="212" column="0" selection-start-line="212" selection-start-column="0" selection-end-line="212" selection-end-column="0" />
+        <state relative-caret-position="521">
+          <caret line="1294" column="68" selection-start-line="1294" selection-start-column="68" selection-end-line="1294" selection-end-column="68" />
           <folding>
-            <element signature="e#127#141#0" expanded="true" />
+            <element signature="e#95#107#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/multipuzzle_solver_driver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        <state relative-caret-position="476">
+          <caret line="28" column="25" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="25" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="861">
+          <caret line="526" column="21" selection-start-line="526" selection-start-column="8" selection-end-line="526" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/paikan_tal_solver_driver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="167" column="26" selection-start-line="167" selection-start-column="26" selection-end-line="167" selection-end-column="26" />
+          <folding>
+            <element signature="e#127#141#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_piece.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="470">
+          <caret line="1093" column="29" selection-start-line="1093" selection-start-column="29" selection-end-line="1093" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="124" column="52" selection-start-line="124" selection-start-column="52" selection-end-line="124" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>

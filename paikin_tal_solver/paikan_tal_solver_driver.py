@@ -7,6 +7,7 @@ import logging
 import time
 
 from hammoudeh_puzzle import config
+from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
@@ -41,11 +42,8 @@ def paikin_tal_driver(image_files, puzzle_type=None, piece_width=None):
     local_piece_width = piece_width if piece_width is not None else DEFAULT_PUZZLE_PIECE_WIDTH
 
     # Print the names of the images being solved:
-    log_string = "Standard Paikin & Tal Driver\n"
-    log_string += "Names of the Image Files:\n"
-    for img_file in image_files:
-        log_string += "\t%s\n" % Puzzle.get_filename_without_extension(img_file)
-    logging.info(log_string)
+    logging.info("Standard Paikin & Tal Driver")
+    solver_helper.log_puzzle_filenames(image_files)
 
     # Extract the filename of the image(s)
     pickle_placement_start_filename = ""

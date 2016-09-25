@@ -1088,7 +1088,20 @@ class PuzzlePiece(object):
 
         Returns (string): Object key to be used for dictionaries
         """
-        return str(self.id_number)
+        return PuzzlePiece.create_key(self.id_number)
+
+    @staticmethod
+    def create_key(piece_id):
+        """
+        Key associated with a puzzle piece.
+
+        Args:
+            piece_id (int): Piece identification number.
+
+        Returns (str):
+            Key to be used for a puzzle piece.
+        """
+        return str(piece_id)
 
     @staticmethod
     def create_solid_piece_with_identification_mark(bgr_color, width, height=None, mark_color=SolidColor.white):

@@ -1,10 +1,14 @@
+import logging
+
 from hammoudeh_puzzle import config
+from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 from multipuzzle_solver.multipuzzle_solver import MultiPuzzleSolver
 
 _RECALCULATE_DISTANCES = True
+
 
 def run_multipuzzle_solver_driver(image_filenames, puzzle_type, piece_width):
     """
@@ -16,8 +20,13 @@ def run_multipuzzle_solver_driver(image_filenames, puzzle_type, piece_width):
         piece_width (int): Puzzle piece width in number of pixels
     """
 
+    logging.info("Starting Multipuzzle Solver Driver.")
+    solver_helper.log_puzzle_filenames(image_filenames)
+
     multipuzzle_solver = build_multipuzzle_solver(image_filenames, puzzle_type, piece_width)
 
+    # Run the solver
+    multipuzzle_solver.run()
 
 
 def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):

@@ -1290,6 +1290,24 @@ class PaikinTalSolver(object):
 
         return self._segments
 
+    def save_segment_to_image_file(self, puzzle_id, segment_id, image_filename):
+        """
+        Creates an image with just the contents of the solved image.
+
+        Args:
+            puzzle_id (int): Identification number of the solved puzzle
+            segment_id (int): Identification number of the segment
+            image_filename (str): Name the file the segment image will be saved to.
+        """
+        segment_piece_ids = self._segments[puzzle_id][segment_id].get_piece_ids()
+
+        # Get the pieces with the identification numbers in the segment
+        puzzle_pieces = [self._pieces[piece_id] for piece_id in segment_piece_ids]
+
+        puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
+        puzzle.save_segment_color_image(image_filename)
+
+
     def _perform_segmentation(self, perform_segment_cleaning):
         """
         Performs the actual segmentation of the solved images.  Each segment is disjoint.

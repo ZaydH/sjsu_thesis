@@ -6,6 +6,10 @@ import logging
 
 import time
 
+import cStringIO
+
+from hammoudeh_puzzle.puzzle_importer import Puzzle
+
 
 class NextPieceToPlace(object):
     """
@@ -159,7 +163,7 @@ class PuzzleLocation(object):
         if self.column > 0:
             adjacent_locations.append(PuzzleLocation(self.puzzle_id, self.row, self.column - 1))
 
-        # Verify the length of the adajcents makes sense
+        # Verify the length of the adjacent locations makes sense
         if board_dim is None or (board_dim[0] > 1 and board_dim[1] > 1):
             assert len(adjacent_locations) >= 2
 
@@ -230,6 +234,23 @@ class NeighborSidePair(object):
 
         """
         return self._neighbor_side
+
+
+def log_puzzle_filenames(image_filenames):
+    """
+    Logs the name of the input image files used for the solver.
+
+    Args:
+        image_filenames (List[str]): Path to the input image files.
+    """
+    string_io = cStringIO.StringIO()
+    print >> string_io, "Names of the Image Files:\n"
+    for img_file in image_filenames:
+        print >> string_io, "\t%s\n" % Puzzle.get_filename_without_extension(img_file)
+
+    # log the result
+    logging.info(string_io.getvalue())
+    string_io.close()
 
 
 def print_elapsed_time(start_time, task_name):
