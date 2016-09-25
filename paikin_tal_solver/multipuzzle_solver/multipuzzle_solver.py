@@ -10,12 +10,11 @@ class MultiPuzzleSolver(object):
 
     _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE = False
 
-    def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None):
+    def __init__(self, pieces, distance_function, puzzle_type=None):
         """
         Constructor for the Multi-Puzzle Solver.
 
         Args:
-            numb_puzzles (int): Number of Puzzles to be solved.
             pieces (List[PuzzlePiece])): List of puzzle pieces
             distance_function: Calculates the distance between two PuzzlePiece objects.
             puzzle_type (PuzzleType): Type of Paikin Tal Puzzle
@@ -30,7 +29,7 @@ class MultiPuzzleSolver(object):
         self._piece_id_to_segment_map = {}
 
         # Build the Paikin Tal Solver
-        self._paikin_tal_solver = PaikinTalSolver(numb_puzzles, pieces, distance_function, puzzle_type)
+        self._paikin_tal_solver = PaikinTalSolver(pieces, distance_function, puzzle_type=puzzle_type)
 
     def run(self):
 

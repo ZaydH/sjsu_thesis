@@ -7,7 +7,7 @@ from enum import Enum
 import math
 
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
-from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
+from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
 
 class SegmentColor(Enum):

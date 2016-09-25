@@ -7,7 +7,7 @@ from enum import Enum
 import numpy as np
 import cv2  # OpenCV
 
-from hammoudeh_puzzle.solver_helper_classes import PuzzleLocation
+from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
 
 class Location(object):

@@ -15,7 +15,7 @@ import time
 
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
-from hammoudeh_puzzle.solver_helper_classes import print_elapsed_time
+from hammoudeh_puzzle.solver_helper import print_elapsed_time
 
 
 class PieceDistanceInformation(object):

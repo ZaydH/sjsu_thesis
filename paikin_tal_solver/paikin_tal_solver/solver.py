@@ -14,7 +14,7 @@ from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
 from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, SegmentColor
-from hammoudeh_puzzle.solver_helper_classes import NextPieceToPlace, PuzzleLocation, NeighborSidePair, \
+from hammoudeh_puzzle.solver_helper import NextPieceToPlace, PuzzleLocation, NeighborSidePair, \
     print_elapsed_time
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -130,15 +130,15 @@ class PaikinTalSolver(object):
 
     max_numb_pieces_to_place_in_stitching_piece_solver = 100
 
-    def __init__(self, numb_puzzles, pieces, distance_function, puzzle_type=None,
+    def __init__(self, pieces, distance_function, numb_puzzles=None, puzzle_type=None,
                  new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
         """
         Constructor for the Paikin and Tal solver.
 
         Args:
-            numb_puzzles (int): Number of Puzzles to be solved.
             pieces (List[PuzzlePiece])): List of puzzle pieces
             distance_function: Calculates the distance between two PuzzlePiece objects.
+            numb_puzzles (int): Number of Puzzles to be solved.
             puzzle_type (PuzzleType): Type of Paikin Tal Puzzle
             puzzle_type (float): Minimum mutual compatibility when new boards are spawned
             fixed_puzzle_dimensions(Optional [int]): Size of the puzzle as a Tuple (number_rows, number_columns)
