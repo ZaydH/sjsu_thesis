@@ -11,7 +11,7 @@ class MultiPuzzleSolver(object):
 
     _MINIMUM_SEGMENT_SIZE = 10
 
-    _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE = False
+    _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE = True
 
     _SAVE_SELECTED_SEGMENTS_TO_A_FILE = True
 
@@ -67,9 +67,9 @@ class MultiPuzzleSolver(object):
             if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE:
                 self._save_single_solved_puzzle_to_file(segmentation_round)
 
-            logging.info("Beginning segmentation round #" % str(segmentation_round))
+            logging.info("Beginning segmentation round #%d" % segmentation_round)
             solver_helper.print_elapsed_time(time_segmentation_round_began,
-                                             "segmentation round #" % str(segmentation_round))
+                                             "segmentation round #%d" % segmentation_round)
 
             # Stop segmenting if no pieces left or maximum segment size is less than the minimum
             if max_segment_size < MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE \
