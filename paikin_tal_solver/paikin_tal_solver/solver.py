@@ -319,6 +319,26 @@ class PaikinTalSolver(object):
                                skip_initial=True,
                                stop_solver_if_need_to_respawn=False)
 
+    def run_solver_with_specified_seeds(self, seed_piece_ids):
+        """
+        Runs the solver with the specified piece IDs as seeds.
+
+        When this solver runs, the maximum number of boards is fixed based off of the number of seed pieces.
+
+        Args:
+            seed_piece_ids (List[int]): Identification number of all the seed pieces.
+        """
+
+        # Build all the boards
+        for seed_id in seed_piece_ids:
+            self._place_seed_piece(seed_id)
+
+        # Run the solver
+        self._run_configurable(max_numb_output_puzzles=len(seed_piece_ids),
+                               numb_pieces_to_place=len(self._pieces),
+                               skip_initial=True,
+                               stop_solver_if_need_to_respawn=False)
+
     def run_single_puzzle_solver(self):
         """
         Performs placement while allowing only a single output puzzle.
@@ -398,7 +418,7 @@ class PaikinTalSolver(object):
             # Place the next piece
             self._place_normal_piece(next_piece)
 
-        logging.info("Placement complete.\n\n")
+        logging.info("Placement complete.\n")
 
         if self._numb_unplaced_valid_pieces == 0:
             # Clean the heap to reduce the size for pickling.

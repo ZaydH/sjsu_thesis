@@ -1,5 +1,8 @@
+import copy
 import logging
 import time
+
+import cStringIO
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import solver_helper
@@ -13,6 +16,18 @@ class StitchingPieceInfo(object):
     def __init__(self, piece_id, segment_numb):
         self._piece_id = piece_id
         self._segment_numb = segment_numb
+
+        self._total_numb_segments = None
+
+        self._total_numb_solved_pieces = 0
+        self._solver_piece_segments = []
+        self._solver_piece_without_segment = []
+
+        self._segment_overlap_coefficient = []
+
+        # Ensure no duplicate pieces
+        if config.PERFORM_ASSERT_CHECKS:
+            self._all_solver_pieces = {}
 
     @property
     def piece_id(self):
@@ -34,19 +49,144 @@ class StitchingPieceInfo(object):
         """
         return self._segment_numb
 
+    def add_solver_piece(self, solved_piece_id, piece_segment_id):
+        """
+        After the solver is run using the stitching piece as the seed, pieces from the solved puzzle are added to the
+        stitching piece information object.
+
+        Args:
+            solved_piece_id (int): Identification number of piece in stitching piece solver
+
+            piece_segment_id (int): Identification number of the segment where the piece with identification
+                number of "solved_piece_id" was assigned in initial segmentation.  This value is "None" if the piece
+                has no associated segment.
+        """
+        self._total_numb_solved_pieces += 1
+
+        # Ensure no duplicate pieces.
+        if config.PERFORM_ASSERT_CHECKS:
+            key = PuzzlePiece.create_key(solved_piece_id)
+            assert key not in self._all_solver_pieces
+            self._all_solver_pieces[key] = solved_piece_id
+
+        # Handle the case where the piece was not assigned to any segment initially
+        if piece_segment_id is None:
+            self._solver_piece_without_segment.append(solved_piece_id)
+            return
+
+        while len(self._solver_piece_segments) < piece_segment_id + 1:
+            self._solver_piece_segments.append([])
+        self._solver_piece_segments[piece_segment_id].append(solved_piece_id)
+
+    @property
+    def total_numb_pieces_in_solved_result(self):
+        """
+        Gets the total number of pieces in the solved result of this stitching piece.
+
+        Returns (int):
+            Number of pieces that were in the solved result of this stitching piece
+        """
+        return self._total_numb_solved_pieces
+
+    def log_piece_to_segment_mapping(self, total_numb_segments=None):
+        """
+        This logs the breakdown of pieces by mapping them to segments.
+
+        The user can optionally specify the total number of segments in the puzzle and all will be logged.  If this is
+        not specified, then only the maximum segment number this stitching piece has a piece from is logged.
+
+        Args:
+            total_numb_segments (int):  Total number of segments found
+        """
+
+        string_io = cStringIO.StringIO()
+        print >> string_io, "Stitching Piece Solver Result Breakdown by Segment"
+        print >> string_io, "Segment ID #%d" % self._segment_numb
+        print >> string_io, "Stitching Piece ID #%d\n" % self._piece_id
+
+        # Handle the case of no segment
+        pieces_no_segment = len(self._solver_piece_without_segment)
+        print >> string_io, "%d pieces (%d%%) have no associated segment." % (pieces_no_segment,
+                                                                              self._get_percent_in_segment(pieces_no_segment))
+
+        # Determine number of segments to log with option to log more than in the list
+        numb_segments_in_info = len(self._solver_piece_segments)
+        numb_segments = max(numb_segments_in_info, total_numb_segments) if total_numb_segments is not None else numb_segments_in_info
+        for segment_cnt in xrange(0, numb_segments):
+            if segment_cnt >= numb_segments_in_info:
+                pieces_in_segment = 0
+            else:
+                pieces_in_segment = len(self._solver_piece_segments[segment_cnt])
+
+            print >> string_io, "%d pieces (%d%%) are from segment #%d" % (pieces_in_segment,
+                                                                           self._get_percent_in_segment(pieces_in_segment),
+                                                                           segment_cnt)
+
+        logging.info(string_io.getvalue())
+        string_io.close()
+
+    def _get_percent_in_segment(self, piece_count_in_segment):
+        """
+        Converts piece count to the number of pieces in the segment.
+
+        Args:
+            piece_count_in_segment (int): Number of pieces in the segment
+
+        Returns (float):
+            Percent representation with decimal on the number of pieces in the segment.
+        """
+        return round(100.0 * piece_count_in_segment / self._total_numb_solved_pieces, 1)
+
+    def calculate_overlap_coefficient(self, size_of_each_segments):
+        """
+        For solved puzzle of this stitching piece, this function calculates and returns the overlap coefficient.
+
+        Args:
+            size_of_each_segments (List[int]): Number of pieces in each segment
+
+        Returns (List[float]):
+            Overlap coefficient for this stitching piece to all other segments
+        """
+
+        if len(self._solver_piece_segments) > len(size_of_each_segments):
+            raise ValueError("List containing each segment's size has too few elements for number of segments")
+
+        # Iterate through each segment and calculate the overlap coefficient.
+        self._segment_overlap_coefficient = []
+        for segment_cnt in xrange(0, len(size_of_each_segments)):
+            other_segment_size = size_of_each_segments[segment_cnt]
+
+            # Handle case where segment number is greater than the maximum segment number for any piece in solved
+            # puzzle for this stitching piece
+            if segment_cnt >= len(self._solver_piece_segments):
+                pieces_from_other_segment = 0
+            else:
+                pieces_from_other_segment = self._solver_piece_segments
+
+            overlap = 1.0 * pieces_from_other_segment / min(self._total_numb_solved_pieces, other_segment_size)
+            self._segment_overlap_coefficient.append(overlap)
+
+        return copy.copy(self._segment_overlap_coefficient)
+
 
 class MultiPuzzleSolver(object):
 
     _MINIMUM_SEGMENT_SIZE = 10
 
+    # Variables related to the saving of puzzle images.
     _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE = True
     _SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE = True
     _SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE = True
+    _SAVE_FINAL_PUZZLE_IMAGES = True
 
+    # File descriptors for pickle export
+    _POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR = "post_initial_segmentation"
+    _POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR = "post_stitching_piece_solving"
+
+    # Pickle Related variables
     _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
     _ALLOW_POST_SEGMENTATION_PICKLE_EXPORT = True
-
-    _POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR = "post_initial_segmentation"
+    _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = True
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -64,6 +204,8 @@ class MultiPuzzleSolver(object):
         # This maps piece identification numbers to segments.
         self._piece_id_to_segment_map = {}
 
+        self._stitching_pieces = None
+
         # Variables used for creating the output image files
         self._start_timestamp = time.time()
         self._image_filenames = image_filenames
@@ -73,11 +215,23 @@ class MultiPuzzleSolver(object):
         # Build the Paikin Tal Solver
         self._paikin_tal_solver = PaikinTalSolver(pieces, distance_function, puzzle_type=puzzle_type)
 
+        self._set_of_final_seed_pieces = None
+
     def run(self):
+        """
+        Executes all steps involved in the multipuzzle solver.
+
+        Returns (List[Puzzle]):
+            Puzzle solutions from the solver.
+        """
 
         self._find_initial_segments()
 
         self._perform_stitching_piece_solving()
+
+        # self._perform_placement_with_final_seed_pieces()
+        #
+        # return self._build_output_puzzles()
 
     def _find_initial_segments(self, skip_initial=False):
         """
@@ -118,7 +272,7 @@ class MultiPuzzleSolver(object):
                                              "segmentation round #%d" % self._numb_segmentation_rounds)
 
             if MultiPuzzleSolver._ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT:
-                self._export_segmentation_round_with_pickle()
+                self._pickle_export_after_segmentation_round()
 
             # Stop segmenting if no pieces left or maximum segment size is less than the minimum
             if max_segment_size < MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE \
@@ -130,19 +284,23 @@ class MultiPuzzleSolver(object):
         self._paikin_tal_solver.reset_all_pieces_placement()
 
         if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PICKLE_EXPORT:
-            self._export_after_segmentation()
+            self._pickle_export_after_segmentation()
 
     def _perform_stitching_piece_solving(self):
         """
         Runs a single puzzle, reduced size solver for each of the stitching pieces.
         """
 
-        all_stitching_pieces = self._get_stitching_pieces()
+        self._stitching_pieces = self._get_stitching_pieces()
+        if config.PERFORM_ASSERT_CHECKS:
+            assert len(self._stitching_pieces) == len(self._segments)
 
-        self._paikin_tal_solver.allow_placement_of_all_pieces()
+        # Iterate through all the stitching pieces in all segments and run the solver on them to determine
+        # affinity between segments.
+        for segment_cnt in xrange(0, len(self._stitching_pieces)):
+            for stitching_piece_cnt in xrange(0, len(self._stitching_pieces[segment_cnt])):
+                stitching_piece = self._stitching_pieces[segment_cnt][stitching_piece_cnt]
 
-        for segment_cnt in xrange(0, len(self._segments)):
-            for stitching_piece in all_stitching_pieces[segment_cnt]:
                 logging.info("Beginning placement of stitching piece #%d for segment #%d" % (stitching_piece.piece_id,
                                                                                              segment_cnt))
 
@@ -151,12 +309,91 @@ class MultiPuzzleSolver(object):
                 self._paikin_tal_solver.run_stitching_piece_solver(stitching_piece.piece_id)
 
                 numb_pieces_placed = self._numb_pieces - self._paikin_tal_solver.numb_unplaced_valid_pieces
-                logging.info("Number of Pieces Placed: %d\n\n" % numb_pieces_placed)
+                logging.info("Number of Pieces Placed: %d\n" % numb_pieces_placed)
+
+                # Determine the segment each stitching piece belongs to.
+                self._process_stitching_piece_solver_result(segment_cnt, stitching_piece_cnt)
 
                 if MultiPuzzleSolver._SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE:
                     self._save_stitching_piece_solved_puzzle_to_file(stitching_piece)
 
-    def _export_segmentation_round_with_pickle(self):
+        if MultiPuzzleSolver._ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT:
+            self._pickle_export_after_stitching_piece_solving()
+
+
+    def _process_stitching_piece_solver_result(self, segment_numb, stitching_piece_numb):
+        """
+        After the solver is run for a stitching piece, this function process those results including adding the
+        pieces in the solved result to the StitchingPieceInfo object.  This includes tracking the segment to which
+        each piece in the solved output belows (if any).
+
+        Args:
+            segment_numb (int): Identification number of the segment whose stitching piece is being processed
+
+            stitching_piece_numb (int): Index of the stitching piece in the associated segment list
+        """
+        solved_puzzle, _ = self._paikin_tal_solver.get_solved_puzzles()
+
+        single_puzzle_id_number = 0
+        for piece in solved_puzzle[single_puzzle_id_number]:
+            piece_id = piece.id_number
+            # Get segment associated with the piece if any
+            try:
+                piece_segment_numb = self._piece_id_to_segment_map[PuzzlePiece.create_key(piece_id)]
+            except KeyError:
+                piece_segment_numb = None
+            # Add the piece to the stitching piece information
+            self._stitching_pieces[segment_numb][stitching_piece_numb].add_solver_piece(piece_id,
+                                                                                        piece_segment_numb)
+
+        self._stitching_pieces[segment_numb][stitching_piece_numb].log_piece_to_segment_mapping(len(self._segments))
+
+    def _perform_placement_with_final_seed_pieces(self):
+        """
+        This is run after the final set of seed pieces have been found.  It runs the final solver segments the piece
+        into disjoint sets.  The number of disjoint sets is based off the number of seed pieces selected.
+        """
+        self._paikin_tal_solver.restore_initial_placer_settings_and_distances()
+        self._paikin_tal_solver.allow_placement_of_all_pieces()
+
+        self._paikin_tal_solver.run_solver_with_specified_seeds(self._set_of_final_seed_pieces)
+
+    def _build_output_puzzles(self):
+        """
+        Constructs the final output puzzles that are to be returned by the multiple puzzle solver.
+
+        Returns (List[Puzzle]):
+            List of the final solved puzzles.
+        """
+        solved_puzzles, _ = self._paikin_tal_solver.get_solved_puzzles()
+
+        # Merge the pieces into a set of solved puzzles
+        output_puzzles = [Puzzle.reconstruct_from_pieces(solved_puzzles[i], i) for i in xrange(0, len(solved_puzzles))]
+
+        # Optionally export the solved image files.
+        if MultiPuzzleSolver._SAVE_FINAL_PUZZLE_IMAGES:
+            self._output_reconstructed_puzzle_image_files(output_puzzles)
+
+        return output_puzzles
+
+    def _output_reconstructed_puzzle_image_files(self, output_puzzles):
+        """
+        Saves images files for each of the final reconstructed output puzzles.
+
+        Args:
+            output_puzzles (List[Puzzle]): Set of final solved puzzles
+        """
+        for puzzle in output_puzzles:
+            filename = Puzzle.make_image_filename(self._image_filenames,
+                                                  "multipuzzle_reconstructed",
+                                                  Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                  self._paikin_tal_solver.puzzle_type,
+                                                  self._start_timestamp,
+                                                  puzzle_id=puzzle.id_number)
+            Puzzle.save_to_file(puzzle, filename)
+
+
+    def _pickle_export_after_segmentation_round(self):
         """
         Export the entire multipuzzle solver via pickle.
         """
@@ -166,11 +403,21 @@ class MultiPuzzleSolver(object):
                                                                                       puzzle_type)
         PickleHelper.exporter(self, pickle_filename)
 
-    def _export_after_segmentation(self):
+    def _pickle_export_after_segmentation(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
         pickle_filename = PickleHelper.build_filename(MultiPuzzleSolver._POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR,
+                                                      self._image_filenames,
+                                                      self._paikin_tal_solver.puzzle_type)
+        PickleHelper.exporter(self, pickle_filename)
+
+    def _pickle_export_after_stitching_piece_solving(self):
+        """
+        Exports the multipuzzle solver after segmentation is completed.
+        """
+        file_descriptor = MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR
+        pickle_filename = PickleHelper.build_filename(file_descriptor,
                                                       self._image_filenames,
                                                       self._paikin_tal_solver.puzzle_type)
         PickleHelper.exporter(self, pickle_filename)
