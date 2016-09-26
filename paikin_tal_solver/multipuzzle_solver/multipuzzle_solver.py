@@ -234,7 +234,7 @@ class MultiPuzzleSolver(object):
 
         self._perform_stitching_piece_solving()
 
-        self._perform_placement_with_final_seed_pieces()
+        # self._perform_placement_with_final_seed_pieces()
 
         # self._final_puzzles = self._build_output_puzzles()
 
