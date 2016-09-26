@@ -1,11 +1,38 @@
 import logging
 import time
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.solver import PaikinTalSolver
+
+
+class StitchingPiecePuzzle(object):
+    def __init__(self, piece_id, segment_numb):
+        self._piece_id = piece_id
+        self._segment_numb = segment_numb
+
+    @property
+    def piece_id(self):
+        """
+        Gets the piece identification number of the stitching piece
+
+        Returns (int):
+            Piece identification number
+        """
+        return self._piece_id
+
+    @property
+    def segment_numb(self):
+        """
+        Gets the identification number of the segment where the specified piece is location.
+
+        Returns (int):
+            Piece identification number
+        """
+        return self._segment_numb
 
 
 class MultiPuzzleSolver(object):
@@ -210,6 +237,17 @@ class MultiPuzzleSolver(object):
                                                   puzzle_id=0)
             single_puzzle_id = 0
             self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, initial_segment_id, filename)
+
+    def _get_segmentation_pieces(self):
+
+        all_stitching_pieces = []
+        for segment in self._segments:
+            segment_stitching_pieces = segment.select_pieces_for_segment_stitching():
+            for single_segmenation_piece in segment_stitching_pieces:
+
+        if config.PERFORM_ASSERT_CHECKS:
+            just_piece_ids = []
+            assert([item for item, count in collections.Counter(a).items() if count > 1]
 
     def _place_identification_pieces(self):
         pass

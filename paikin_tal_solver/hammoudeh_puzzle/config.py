@@ -2,6 +2,8 @@ import logging
 
 DEFAULT_PIECE_WIDTH = 28
 
+PERFORM_ASSERT_CHECKS = True
+
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
     """
