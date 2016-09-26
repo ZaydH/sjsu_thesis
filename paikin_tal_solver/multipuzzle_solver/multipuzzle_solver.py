@@ -133,13 +133,25 @@ class MultiPuzzleSolver(object):
             self._export_after_segmentation()
 
     def _perform_stitching_piece_solving(self):
+        """
+        Runs a single puzzle, reduced size solver for each of the stitching pieces.
+        """
 
         all_stitching_pieces = self._get_stitching_pieces()
 
+        self._paikin_tal_solver.allow_placement_of_all_pieces()
+
         for segment_cnt in xrange(0, len(self._segments)):
             for stitching_piece in all_stitching_pieces[segment_cnt]:
+                logging.info("Beginning placement of stitching piece #%d for segment #%d" % (stitching_piece.piece_id,
+                                                                                             segment_cnt))
+
                 # For each stitching piece in each segment run the solver and see the results.
+                self._paikin_tal_solver.restore_initial_placer_settings_and_distances()
                 self._paikin_tal_solver.run_stitching_piece_solver(stitching_piece.piece_id)
+
+                numb_pieces_placed = self._numb_pieces - self._paikin_tal_solver.numb_unplaced_valid_pieces
+                logging.info("Number of Pieces Placed: %d\n\n" % numb_pieces_placed)
 
                 if MultiPuzzleSolver._SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE:
                     self._save_stitching_piece_solved_puzzle_to_file(stitching_piece)
@@ -285,6 +297,7 @@ class MultiPuzzleSolver(object):
         Returns (List[List[StitchingPieceSegment]]): List of stitching pieces for each segment.
         """
         all_stitching_pieces = []
+        existing_piece_ids = {}
         for segment_id_numb in xrange(0, len(self._segments)):
 
             # Verify the identification number matches what is stored in the array
@@ -297,10 +310,11 @@ class MultiPuzzleSolver(object):
             for segmentation_piece_id in segment_stitching_pieces:
                 all_stitching_pieces[segment_id_numb].append(StitchingPieceInfo(segmentation_piece_id, segment_id_numb))
 
-        if config.PERFORM_ASSERT_CHECKS:
-            just_piece_ids = [stitching_piece.piece_id for stitching_piece in all_stitching_pieces]
-            # Verify no duplicate stitching pieces
-            assert len(just_piece_ids) == len(set(just_piece_ids))
+                # Verify no duplicate stitching pieces
+                if config.PERFORM_ASSERT_CHECKS:
+                    key = PuzzlePiece.create_key(segmentation_piece_id)
+                    assert key not in existing_piece_ids
+                    existing_piece_ids[key] = segmentation_piece_id
 
         return all_stitching_pieces
 

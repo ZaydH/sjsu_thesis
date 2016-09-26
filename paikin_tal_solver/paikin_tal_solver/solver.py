@@ -310,9 +310,6 @@ class PaikinTalSolver(object):
             seed_piece_id (int): Identification number of the piece to be used as the puzzle seed.
         """
 
-        # Initialize the data structures for a new placement
-        self._reset_solved_puzzle_info()
-
         # Start the placement with the specified seed piece
         self._place_seed_piece(seed_piece_id)
 
@@ -361,7 +358,7 @@ class PaikinTalSolver(object):
             stop_solver_if_need_to_respawn (bool): If True, whenever the solver would otherwise spawn a new puzzle,
                 the solver will stop.
         """
-        if numb_pieces_to_place < self._numb_unplaced_valid_pieces:
+        if numb_pieces_to_place > self._numb_unplaced_valid_pieces:
             raise ValueError("Number of pieces to place must equal or exceed the number of initial unplaced pieces.")
 
         if not skip_initial:
@@ -796,6 +793,17 @@ class PaikinTalSolver(object):
             return True
         else:
             return False
+
+    @property
+    def numb_unplaced_valid_pieces(self):
+        """
+        Gets the number of pieces that are valid for placement (i.e., their placement has not been selectively
+        disallowed), but that have not yet been placed.
+
+        Returns (int):
+            Number of pieces that were allowed to be placed but that have not been.
+        """
+        return self._numb_unplaced_valid_pieces
 
     def _clean_best_buddy_heap(self):
         """
