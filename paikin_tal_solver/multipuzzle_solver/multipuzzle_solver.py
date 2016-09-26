@@ -320,7 +320,6 @@ class MultiPuzzleSolver(object):
         if MultiPuzzleSolver._ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT:
             self._pickle_export_after_stitching_piece_solving()
 
-
     def _process_stitching_piece_solver_result(self, segment_numb, stitching_piece_numb):
         """
         After the solver is run for a stitching piece, this function process those results including adding the
@@ -391,7 +390,6 @@ class MultiPuzzleSolver(object):
                                                   self._start_timestamp,
                                                   puzzle_id=puzzle.id_number)
             Puzzle.save_to_file(puzzle, filename)
-
 
     def _pickle_export_after_segmentation_round(self):
         """
