@@ -16,7 +16,7 @@ class MultiPuzzleSolver(object):
 
     _SAVE_SELECTED_SEGMENTS_TO_A_FILE = True
 
-    _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = True
+    _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -97,7 +97,7 @@ class MultiPuzzleSolver(object):
         self._paikin_tal_solver.allow_placement_of_all_pieces()
 
     @staticmethod
-    def _run_imported_segmentation_round(image_filenames, puzzle_type, segmentation_round_numb):
+    def run_imported_segmentation_round(image_filenames, puzzle_type, segmentation_round_numb):
         """
         Debug method that imports a pickle file for the specified image files, puzzle type, and segmentation round
         and then runs the initial segmentation starting after the specified round.
@@ -106,9 +106,6 @@ class MultiPuzzleSolver(object):
             image_filenames (List[str]): List of paths to image file names
             puzzle_type (PuzzleType): Solver puzzle type
             segmentation_round_numb (int): Segmentation round number
-
-        Returns:
-
         """
         pickle_filename = MultiPuzzleSolver._build_segmentation_round_pickle_filename(segmentation_round_numb,
                                                                                       image_filenames,
