@@ -289,6 +289,14 @@ class SegmentPieceInfo(object):
         """
         return self._location
 
+    def reset_puzzle_id(self):
+        """
+        Accesses the puzzle piece information's location
+
+        Returns (PuzzleLocation): Puzzle piece's location
+        """
+        self._location.puzzle_id = None
+
     @property
     def is_stitching_piece(self):
         """
@@ -481,13 +489,15 @@ class PuzzleSegment(object):
         self._seed_piece = None
 
         self._reset_neighbor_info()
+
+        self._color = None  # Needed to prevent PyCharm __init__ error.  Not actually needed.
         self._reset_color()
 
         # Used to determine the stitching pieces to be used
         self._piece_map = None
         self._top_left = None
         self._piece_map_border_width = PuzzleSegment.PIECE_MAP_BORDER_WIDTH
-        self._piece_groupings_by_distance_from_open = []
+        self._piece_groupings_by_distance_from_open = None
         self._neighbor_grid_cell_info = None
 
         self._piece_distance_from_open_space_up_to_date = False
@@ -569,6 +579,12 @@ class PuzzleSegment(object):
         self._segment_id_number = new_segment_id
 
         self._reset_color()
+
+        # Iterate through all the pieces and reset the puzzle location to None
+        for key in self._pieces.keys():
+            piece = self._pieces[key]
+            piece.reset_puzzle_id()
+            self._pieces[key] = piece
 
     def add_piece(self, piece):
         """
@@ -669,7 +685,7 @@ class PuzzleSegment(object):
 
         explored_pieces = {}  # As pieces' minimum distance is found, mark as explored
         open_locations_next_to_piece = self._find_open_spaces_adjacent_to_piece(self._piece_map)
-        self._piece_groupings_by_distance_from_open.append(open_locations_next_to_piece)
+        self._piece_groupings_by_distance_from_open = [open_locations_next_to_piece]
 
         distance_to_open = 1  # If not a blank space, minimum of distance 1 away
         # Continue looping until all pieces have a distance found
@@ -706,6 +722,7 @@ class PuzzleSegment(object):
 
         # Distance to open up to date
         self._piece_distance_from_open_space_up_to_date = True
+        self._stitching_piece_ids = None  # Reset the stitching piece info
 
     def _update_piece_distance_to_open(self, piece_id, distance_to_open):
         """
@@ -1000,6 +1017,9 @@ class PuzzleSegment(object):
         """
 
         # If piece distance to open data is not valid, then calculate it.
+        if self._piece_distance_from_open_space_up_to_date and self._stitching_piece_ids:
+            return self._stitching_piece_ids
+
         if not self._piece_distance_from_open_space_up_to_date:
             self._determine_piece_distances_to_open_location()
 

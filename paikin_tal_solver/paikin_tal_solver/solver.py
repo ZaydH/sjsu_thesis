@@ -245,6 +245,12 @@ class PaikinTalSolver(object):
 
         self._numb_unplaced_valid_pieces = self._numb_initial_placeable_pieces
 
+        self.reset_all_pieces_placement()
+
+    def reset_all_pieces_placement(self):
+        """
+        Reinitializes the placement information of all pieces.
+        """
         # Initialize all information stored with the individual piece
         for piece in self._pieces:
             piece.reset_placement()

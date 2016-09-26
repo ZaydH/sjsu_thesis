@@ -127,6 +127,7 @@ class MultiPuzzleSolver(object):
 
         # Re-allow all pieces to be placed.
         self._paikin_tal_solver.allow_placement_of_all_pieces()
+        self._paikin_tal_solver.reset_all_pieces_placement()
 
         if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PICKLE_EXPORT:
             self._export_after_segmentation()
@@ -286,14 +287,13 @@ class MultiPuzzleSolver(object):
         all_stitching_pieces = []
         for segment_id_numb in xrange(0, len(self._segments)):
 
-            # Separate the stitching pieces by segments
-            all_stitching_pieces.append([])
-            segment_stitching_pieces = self._segments[segment_id_numb].select_pieces_for_segment_stitching()
-
             # Verify the identification number matches what is stored in the array
             if config.PERFORM_ASSERT_CHECKS:
                 assert segment_id_numb == self._segments[segment_id_numb].id_number
 
+            # Separate the stitching pieces by segments
+            all_stitching_pieces.append([])
+            segment_stitching_pieces = self._segments[segment_id_numb].select_pieces_for_segment_stitching()
             for segmentation_piece_id in segment_stitching_pieces:
                 all_stitching_pieces[segment_id_numb].append(StitchingPieceInfo(segmentation_piece_id, segment_id_numb))
 
@@ -326,7 +326,7 @@ class MultiPuzzleSolver(object):
                                                                                       puzzle_type)
         solver = PickleHelper.importer(pickle_filename)
         # noinspection PyProtectedMember
-        solver._reset_timestamp()
+        solver.reset_timestamp()
 
         # noinspection PyProtectedMember
         solver._find_initial_segments(skip_initial=True)
@@ -344,7 +344,7 @@ class MultiPuzzleSolver(object):
                                                       image_filenames, puzzle_type)
         solver = PickleHelper.importer(pickle_filename)
         # noinspection PyProtectedMember
-        solver._reset_timestamp()
+        solver.reset_timestamp()
 
         # noinspection PyProtectedMember
         solver._perform_stitching_piece_solving()
