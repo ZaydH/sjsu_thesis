@@ -9,6 +9,7 @@ from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
+from hammoudeh_puzzle.solver_helper import print_elapsed_time
 from paikin_tal_solver.solver import PaikinTalSolver
 
 
@@ -217,6 +218,8 @@ class MultiPuzzleSolver(object):
 
         self._set_of_final_seed_pieces = None
 
+        self._final_puzzles = None
+
     def run(self):
         """
         Executes all steps involved in the multipuzzle solver.
@@ -225,13 +228,19 @@ class MultiPuzzleSolver(object):
             Puzzle solutions from the solver.
         """
 
+        logging.info("Multipuzzle Solver Started")
+
         self._find_initial_segments()
 
         self._perform_stitching_piece_solving()
 
-        # self._perform_placement_with_final_seed_pieces()
-        #
-        # return self._build_output_puzzles()
+        self._perform_placement_with_final_seed_pieces()
+
+        # self._final_puzzles = self._build_output_puzzles()
+
+        logging.info("Multipuzzle Solver Complete")
+        print_elapsed_time(self._start_timestamp, "entire multipuzzle solver.")
+        return self._final_puzzles
 
     def _find_initial_segments(self, skip_initial=False):
         """
