@@ -9,7 +9,7 @@ from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from paikin_tal_solver.solver import PaikinTalSolver
 
 
-class StitchingPiecePuzzle(object):
+class StitchingPieceInfo(object):
     def __init__(self, piece_id, segment_numb):
         self._piece_id = piece_id
         self._segment_numb = segment_numb
@@ -39,11 +39,14 @@ class MultiPuzzleSolver(object):
 
     _MINIMUM_SEGMENT_SIZE = 10
 
-    _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE = True
-
-    _SAVE_SELECTED_SEGMENTS_TO_A_FILE = True
+    _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE = True
+    _SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE = True
+    _SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE = True
 
     _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
+    _ALLOW_POST_SEGMENTATION_PICKLE_EXPORT = True
+
+    _POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR = "post_initial_segmentation"
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -73,6 +76,8 @@ class MultiPuzzleSolver(object):
     def run(self):
 
         self._find_initial_segments()
+
+        self._perform_stitching_piece_solving()
 
     def _find_initial_segments(self, skip_initial=False):
         """
@@ -105,7 +110,7 @@ class MultiPuzzleSolver(object):
             solved_segments = self._paikin_tal_solver.segment()
             max_segment_size = self._process_solved_segments(solved_segments[0])
 
-            if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_A_FILE:
+            if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE:
                 self._save_single_solved_puzzle_to_file(self._numb_segmentation_rounds)
 
             logging.info("Beginning segmentation round #%d" % self._numb_segmentation_rounds)
@@ -123,24 +128,20 @@ class MultiPuzzleSolver(object):
         # Re-allow all pieces to be placed.
         self._paikin_tal_solver.allow_placement_of_all_pieces()
 
-    @staticmethod
-    def run_imported_segmentation_round(image_filenames, puzzle_type, segmentation_round_numb):
-        """
-        Debug method that imports a pickle file for the specified image files, puzzle type, and segmentation round
-        and then runs the initial segmentation starting after the specified round.
+        if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PICKLE_EXPORT:
+            self._export_after_segmentation()
 
-        Args:
-            image_filenames (List[str]): List of paths to image file names
-            puzzle_type (PuzzleType): Solver puzzle type
-            segmentation_round_numb (int): Segmentation round number
-        """
-        pickle_filename = MultiPuzzleSolver._build_segmentation_round_pickle_filename(segmentation_round_numb,
-                                                                                      image_filenames,
-                                                                                      puzzle_type)
-        solver = PickleHelper.importer(pickle_filename)
+    def _perform_stitching_piece_solving(self):
 
-        # noinspection PyProtectedMember
-        solver._find_initial_segments(skip_initial=True)
+        all_stitching_pieces = self._get_stitching_pieces()
+
+        for segment_cnt in xrange(0, len(self._segments)):
+            for stitching_piece in all_stitching_pieces[segment_cnt]:
+                # For each stitching piece in each segment run the solver and see the results.
+                self._paikin_tal_solver.run_stitching_piece_solver(stitching_piece.piece_id)
+
+                if MultiPuzzleSolver._SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE:
+                    self._save_stitching_piece_solved_puzzle_to_file(stitching_piece)
 
     def _export_segmentation_round_with_pickle(self):
         """
@@ -150,6 +151,15 @@ class MultiPuzzleSolver(object):
         pickle_filename = MultiPuzzleSolver._build_segmentation_round_pickle_filename(self._numb_segmentation_rounds,
                                                                                       self._image_filenames,
                                                                                       puzzle_type)
+        PickleHelper.exporter(self, pickle_filename)
+
+    def _export_after_segmentation(self):
+        """
+        Exports the multipuzzle solver after segmentation is completed.
+        """
+        pickle_filename = PickleHelper.build_filename(MultiPuzzleSolver._POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR,
+                                                      self._image_filenames,
+                                                      self._paikin_tal_solver.puzzle_type)
         PickleHelper.exporter(self, pickle_filename)
 
     @staticmethod
@@ -169,7 +179,7 @@ class MultiPuzzleSolver(object):
 
     def _save_single_solved_puzzle_to_file(self, segmentation_round):
         """
-        Saves the solved image to a file.
+        Saves the solved image when perform single puzzle solving to a file.
 
         Args:
             segmentation_round (int): iteration count for the segmentation
@@ -180,7 +190,33 @@ class MultiPuzzleSolver(object):
 
         # Store the reconstructed image
         max_numb_zero_padding = 4
-        filename_descriptor = "single_puzzle_round" + str(segmentation_round).zfill(max_numb_zero_padding)
+        filename_descriptor = "single_puzzle_round_" + str(segmentation_round).zfill(max_numb_zero_padding)
+        filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp,
+                                              puzzle_id=0)
+        new_puzzle.save_to_file(filename)
+
+    def _save_stitching_piece_solved_puzzle_to_file(self, stitching_piece_segment_info):
+        """
+        Saves the solved image when perform single puzzle solving to a file.
+
+        Args:
+            stitching_piece_segment_info (StitchingPieceInfo): Information on the stitching piece information.
+        """
+        solved_puzzle, _ = self._paikin_tal_solver.get_solved_puzzles()
+        # Reconstruct the puzzle
+        new_puzzle = Puzzle.reconstruct_from_pieces(solved_puzzle[0], 0)
+
+        max_numb_zero_padding = 4
+
+        # Store the reconstructed image
+        segment_id = stitching_piece_segment_info.segment_numb
+        filename_descriptor = "segment_" + str(segment_id).zfill(max_numb_zero_padding)
+
+        stitching_piece_id = stitching_piece_segment_info.piece_id
+        filename_descriptor += "_stitching_piece_id_" + str(stitching_piece_id).zfill(max_numb_zero_padding)
+
+        # Build the filename and output to a file
         filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                               self._paikin_tal_solver.puzzle_type, self._start_timestamp,
                                               puzzle_id=0)
@@ -203,7 +239,8 @@ class MultiPuzzleSolver(object):
         max_segment_size = max([segment.numb_pieces for segment in solved_segments])
 
         for segment in solved_segments:
-            if segment.numb_pieces >= max_segment_size / 2:
+            if segment.numb_pieces >= max_segment_size / 2 \
+                    and segment.numb_pieces >= MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE:
                 self._select_segment_for_solver(segment)
 
         return max_segment_size
@@ -229,8 +266,9 @@ class MultiPuzzleSolver(object):
             self._piece_id_to_segment_map[key] = selected_segment.id_number
 
         # Optionally output the segment image to a file.
-        if MultiPuzzleSolver._SAVE_SELECTED_SEGMENTS_TO_A_FILE:
-            filename_descriptor = "segment_number" + str(initial_segment_id)
+        if MultiPuzzleSolver._SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE:
+            zfill_width = 4
+            filename_descriptor = "segment_number_" + str(selected_segment.id_number).zfill(zfill_width)
             filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor,
                                                   Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                   self._paikin_tal_solver.puzzle_type, self._start_timestamp,
@@ -238,19 +276,75 @@ class MultiPuzzleSolver(object):
             single_puzzle_id = 0
             self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, initial_segment_id, filename)
 
-    def _get_segmentation_pieces(self):
+    def _get_stitching_pieces(self):
+        """
+        Iterates through all of the segments found by the initial solver, and builds a list of the piece identification
+        numbers for all of the stitching pieces.
 
+        Returns (List[List[StitchingPieceSegment]]): List of stitching pieces for each segment.
+        """
         all_stitching_pieces = []
-        for segment in self._segments:
-            segment_stitching_pieces = segment.select_pieces_for_segment_stitching():
-            for single_segmenation_piece in segment_stitching_pieces:
+        for segment_id_numb in xrange(0, len(self._segments)):
+
+            # Separate the stitching pieces by segments
+            all_stitching_pieces.append([])
+            segment_stitching_pieces = self._segments[segment_id_numb].select_pieces_for_segment_stitching()
+
+            # Verify the identification number matches what is stored in the array
+            if config.PERFORM_ASSERT_CHECKS:
+                assert segment_id_numb == self._segments[segment_id_numb].id_number
+
+            for segmentation_piece_id in segment_stitching_pieces:
+                all_stitching_pieces[segment_id_numb].append(StitchingPieceInfo(segmentation_piece_id, segment_id_numb))
 
         if config.PERFORM_ASSERT_CHECKS:
-            just_piece_ids = []
-            assert([item for item, count in collections.Counter(a).items() if count > 1]
+            just_piece_ids = [stitching_piece.piece_id for stitching_piece in all_stitching_pieces]
+            # Verify no duplicate stitching pieces
+            assert len(just_piece_ids) == len(set(just_piece_ids))
 
-    def _place_identification_pieces(self):
-        pass
+        return all_stitching_pieces
 
-    def _continue_finding_initial_segments(self):
-        pass
+    def reset_timestamp(self):
+        """
+        Resets the time stamp for the puzzle solver for debug functions.
+        """
+        self._start_timestamp = time.time()
+
+    @staticmethod
+    def run_imported_segmentation_round(image_filenames, puzzle_type, segmentation_round_numb):
+        """
+        Debug method that imports a pickle file for the specified image files, puzzle type, and segmentation round
+        and then runs the initial segmentation starting after the specified round.
+
+        Args:
+            image_filenames (List[str]): List of paths to image file names
+            puzzle_type (PuzzleType): Solver puzzle type
+            segmentation_round_numb (int): Segmentation round number
+        """
+        pickle_filename = MultiPuzzleSolver._build_segmentation_round_pickle_filename(segmentation_round_numb,
+                                                                                      image_filenames,
+                                                                                      puzzle_type)
+        solver = PickleHelper.importer(pickle_filename)
+        # noinspection PyProtectedMember
+        solver._reset_timestamp()
+
+        # noinspection PyProtectedMember
+        solver._find_initial_segments(skip_initial=True)
+
+    @staticmethod
+    def run_imported_stitching_piece_solving(image_filenames, puzzle_type):
+        """
+        Debug method that is used to test the stitching piece solving.
+
+        Args:
+            image_filenames (List[str]): List of paths to image file names
+            puzzle_type (PuzzleType): Solver puzzle type
+        """
+        pickle_filename = PickleHelper.build_filename(MultiPuzzleSolver._POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR,
+                                                      image_filenames, puzzle_type)
+        solver = PickleHelper.importer(pickle_filename)
+        # noinspection PyProtectedMember
+        solver._reset_timestamp()
+
+        # noinspection PyProtectedMember
+        solver._perform_stitching_piece_solving()

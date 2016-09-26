@@ -55,7 +55,9 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
 
     # Read the pickle information from the
     else:
-        return PickleHelper.importer(pickle_filename)
+        multipuzzle_solver = PickleHelper.importer(pickle_filename)
+        multipuzzle_solver.reset_timestamp()
+        return multipuzzle_solver
 
 
 if __name__ == "__main__":
@@ -64,9 +66,10 @@ if __name__ == "__main__":
     config.setup_logging()
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-
-    # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, PuzzleType.type2)
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
+    # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
 
     # images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)

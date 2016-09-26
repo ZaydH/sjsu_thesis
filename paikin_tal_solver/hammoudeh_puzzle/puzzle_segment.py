@@ -704,6 +704,9 @@ class PuzzleSegment(object):
             self._piece_groupings_by_distance_from_open.append(current_generation_locations)
             distance_to_open += 1
 
+        # Distance to open up to date
+        self._piece_distance_from_open_space_up_to_date = True
+
     def _update_piece_distance_to_open(self, piece_id, distance_to_open):
         """
         Updates the distance to open value for a piece
