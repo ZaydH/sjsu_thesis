@@ -281,6 +281,21 @@ class PaikinTalSolver(object):
         """
         self._segments = []
 
+    def restore_initial_placer_settings_and_distances(self):
+        """
+        Restores all of the initial solver settings that were present when the solver is first created.
+
+        It also resets all of the InterPieceDistance data structures so all of the interpiece distance information
+        also matches the original settings.
+        """
+
+        self._reset_solved_puzzle_info()
+
+        self._inter_piece_distance.restore_initial_distance_values()
+
+        # The starting piece candidates are reset based off the pieces valid for placement only
+        self._inter_piece_distance.find_start_piece_candidates(self._piece_valid_for_placement)
+
     def run_stitching_piece_solver(self, seed_piece_id):
         """
         Specialized solver used for solving with seed pieces.
@@ -305,7 +320,6 @@ class PaikinTalSolver(object):
         """
         Performs placement while allowing only a single output puzzle.
         """
-        self._reset_segment_info()
 
         self._run_configurable(max_numb_output_puzzles=1,
                                numb_pieces_to_place=self._numb_unplaced_valid_pieces,
@@ -347,6 +361,9 @@ class PaikinTalSolver(object):
         if not skip_initial:
             # Place the initial seed piece
             self._place_seed_piece()
+
+        # Store the initial seed piece ordering in case it is needed for segmentation
+        self._inter_piece_distance.store_placement_initial_starting_piece_order()
 
         # Continue placing pieces until the maximum number has been placed
         while self._numb_placed_pieces < numb_pieces_to_place:
@@ -392,7 +409,8 @@ class PaikinTalSolver(object):
             if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
                 for best_buddy_acc in self._best_buddy_accuracy:
                     assert best_buddy_acc.numb_open_best_buddies == 0
-                assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset
+                # Removed because when pieces excluded, this will not always be equal.
+                # assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset
 
     @property
     def _numb_placed_pieces(self):
@@ -1151,9 +1169,14 @@ class PaikinTalSolver(object):
             # If so, it (and potentially its BB) must be processed
             if placed_piece_bb_info:
 
+                # Ignore best buddy info for disallowed placement.
+                if self._pieces[placed_piece_bb_id].placement_disallowed:
+                    self._best_buddy_accuracy[puzzle_id].add_excluded_best_buddy(placed_piece_bb_id,
+                                                                                 placed_piece_bb_side)
+
                 # If the BB is already placed, delete from open list if applicable and add to wrong list
                 # if applicable
-                if not self._piece_valid_for_placement[placed_piece_bb_id]:
+                elif not self._piece_valid_for_placement[placed_piece_bb_id]:
                     # Get the placed piece's puzzle id number
                     bb_puzzle_id = self._pieces[placed_piece_bb_id].puzzle_id
                     # If it is open, delete it from the open list
@@ -1327,10 +1350,11 @@ class PaikinTalSolver(object):
         # Create a dictionary containing all of the unsegmented pieces
         unassigned_pieces = {}
         for piece in self._pieces:
-            unassigned_pieces[piece.key()] = piece.id_number
+            if not piece.placement_disallowed:
+                unassigned_pieces[piece.key()] = piece.id_number
 
         # Use the seed priority to determine the order pieces are added to segments.
-        piece_segment_priority = self._inter_piece_distance.get_initial_starting_piece_order()
+        piece_segment_priority = self._inter_piece_distance.get_placement_initial_starting_piece_order()
 
         # Initialize the segment placeholder
         self._segments = []
@@ -1340,6 +1364,7 @@ class PaikinTalSolver(object):
         # Initialize the seed and segment building information
         priority_cnt = 0
         segment_piece_queue = Queue.Queue()
+
         # Continue segmenting
         while unassigned_pieces:
 
@@ -1349,6 +1374,9 @@ class PaikinTalSolver(object):
                 seed_piece = self._pieces[seed_piece_id_number]
                 if seed_piece.key() not in unassigned_pieces:
                     priority_cnt += 1
+                    # # If end of the list reached then break.
+                    # if priority_cnt == len(self._pieces[seed_piece_id_number]):
+                    #     break
                 else:
                     break
 
@@ -1438,6 +1466,11 @@ class PaikinTalSolver(object):
         """
         # Iterate through all pieces
         for piece in self._pieces:
+
+            # Ignore if placement is disallowed
+            if piece.placement_disallowed:
+                continue
+
             piece_puzzle_id = piece.puzzle_id
             piece_segment_id = piece.segment_number
 

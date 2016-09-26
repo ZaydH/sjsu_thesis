@@ -781,6 +781,7 @@ class BestBuddyResultsCollection(object):
             bb_count += best_buddy_acc.numb_open_best_buddies
             bb_count += best_buddy_acc.numb_wrong_best_buddies
             bb_count += best_buddy_acc.numb_correct_best_buddies
+            bb_count += best_buddy_acc.numb_excluded_best_buddies
         return bb_count
 
     def print_results(self):
@@ -864,6 +865,17 @@ class BestBuddyAccuracy(object):
         self._open_best_buddies = {}
         self._wrong_best_buddies = {}
         self._correct_best_buddies = {}
+        self._excluded_best_buddies = {}
+
+    def add_excluded_best_buddy(self, piece_id, side):
+        """
+        Adds an excluded best buddies pairing.
+
+        Args:
+            piece_id (int): Piece identification number of the as of yet unpaired best buddy
+            side (PuzzlePieceSide): Side of the unpaired best buddy
+        """
+        BestBuddyAccuracy.add_piece_side_tuple_to_dict(self._excluded_best_buddies, piece_id, side)
 
     def add_open_best_buddy(self, piece_id, side):
         """
@@ -1014,6 +1026,17 @@ class BestBuddyAccuracy(object):
             Dictionary key in the form "<piece_id>_<side_int_value>"
         """
         return str(piece_id) + "_" + str(side.value)
+
+    @property
+    def numb_excluded_best_buddies(self):
+        """
+        Property to get the total number of best buddies where one of the pieces has been excluded.
+
+        Returns (int):
+            Total number of best buddies whose best buddies have not yet been placed.
+
+        """
+        return len(self._excluded_best_buddies)
 
     @property
     def numb_open_best_buddies(self):

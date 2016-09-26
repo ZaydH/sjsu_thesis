@@ -49,7 +49,10 @@ class PieceDistanceInformation(object):
         self._second_best_distance = None
 
         self._asymmetric_distances = None
+
         self._asymmetric_compatibilities = None
+        self._initial_asymmetric_compatibilities = None
+        self._asymmetric_compatibility_has_changed = False
 
         self._mutual_compatibilities = None
         self._initial_mutual_compatibilities = None
@@ -141,6 +144,23 @@ class PieceDistanceInformation(object):
         p_j_side_val = InterPieceDistance.get_p_j_side_index(self._puzzle_type, p_j_side)
         # Return the mutual compatibility
         return self._mutual_compatibilities[p_i_side.value, p_j, p_j_side_val]
+
+    def store_initial_asymmetric_compatibility(self):
+        """
+        Store the initial asymmetric compatibilities for reuse later if needed.
+        """
+        self._initial_asymmetric_compatibilities = copy.deepcopy(self._asymmetric_compatibilities)
+
+        # Stored so no need to reset.
+        self._asymmetric_compatibility_has_changed = False
+
+    def restore_initial_asymmetric_compatibility(self):
+        """
+        In cases where asymmetric compatibility may have changed, this function restores the initial asymmetric compatibilities.
+        """
+        if self._asymmetric_compatibility_has_changed:
+            self._asymmetric_compatibilities = copy.deepcopy(self._initial_asymmetric_compatibilities)
+            self._asymmetric_compatibility_has_changed = False
 
     def store_initial_mutual_compatibility(self):
         """
@@ -431,7 +451,9 @@ class PieceDistanceInformation(object):
                     else:
                         # Calculate the asymmetric compatibility
                         asym_compatibility = (1 - 1.0 * piece_to_piece_distance / second_best_distance)
+
                     self._asymmetric_compatibilities[p_i_side.value, p_j, p_j_side_index] = asym_compatibility
+                    self._asymmetric_compatibility_has_changed = True
 
         # Build an empty array to store the piece to piece distances
         compatibilities_matrix_dimensions = (PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings)
@@ -545,12 +567,16 @@ class InterPieceDistance(object):
         # Calculate the piece to piece mutual compatibility
         self.calculate_mutual_compatibility()
 
+        # Backup the compatibility information
+        self.store_all_compatibility_info()
+
         # Calculate the best buddies using the inter-distance information.
         self.find_best_buddies()
 
         # Find the set of valid starter pieces.
         self.find_start_piece_candidates()
         self._initial_start_piece_ordering = copy.deepcopy(self._start_piece_ordering)
+        self._placement_initial_seed_piece_ordering = None
         self._reinitialize_start_piece_order = False
 
         # Clear the distance function for pickling purposes
@@ -562,6 +588,7 @@ class InterPieceDistance(object):
         made during the placement process.
         """
         for dist_info in self._piece_distance_info:
+            dist_info.restore_initial_asymmetric_compatibility()
             dist_info.restore_initial_mutual_compatibility()
 
         # Optionally reinitialize start piece ordering.
@@ -720,6 +747,20 @@ class InterPieceDistance(object):
                         self._piece_distance_info[p_i].set_mutual_compatibility(p_i_side, p_j, p_j_side, mutual_compat)
                         self._piece_distance_info[p_j].set_mutual_compatibility(p_j_side, p_i, p_i_side, mutual_compat)
 
+    def store_all_compatibility_info(self):
+        """
+        Stores all compatibility information for all interpiece distance.
+        """
+        start_time = time.time()
+        logging.info("Starting mutual compatibility calculations.")
+
+        for dist_info in self._piece_distance_info:
+            dist_info.store_initial_asymmetric_compatibility()
+            dist_info.store_initial_mutual_compatibility()
+
+        logging.info("Storing backup of all compatibility completed.")
+        print_elapsed_time(start_time, "storing compatibility")
+
     def calculate_mutual_compatibility(self, pieces_with_min_or_second_dist_changed=None):
         """
         Mutual Compatibility Calculator
@@ -738,9 +779,6 @@ class InterPieceDistance(object):
             self._calculate_mutual_compatibility_single_process(pieces_with_min_or_second_dist_changed)
         else:
             self._calculate_mutual_compatibility_multiprocess(pieces_with_min_or_second_dist_changed)
-
-        for dist_info in self._piece_distance_info:
-            dist_info.store_initial_mutual_compatibility()
 
         logging.info("Mutual compatibility calculations completed.")
         print_elapsed_time(start_time, "mutual compatibility calculation")
@@ -943,7 +981,7 @@ class InterPieceDistance(object):
     def find_start_piece_candidates(self, piece_valid_for_placement=None):
         """
         Creates a list of starter puzzle pieces.  This is based off the criteria defined by Paikin and Tal
-        where a piece must have 4 best buddies and its best buddies must have 4 best buddies.
+        where a piece must have 4 best buddies and those best buddies must also have 4 best buddies.
 
         This list is sorted from best starter piece to worst.
 
@@ -1064,17 +1102,38 @@ class InterPieceDistance(object):
                 i += 1
             return self._start_piece_ordering[i][0]
 
-    def get_initial_starting_piece_order(self):
-        """
-        Access the initial starting piece ordering for pieces.
+    # def get_initial_starting_piece_order(self):
+    #     """
+    #     Access the initial starting piece ordering for pieces.
+    #
+    #     Returns (List[int]): Descending order of the pieces from best to worst to seed piece candidate
+    #     """
+    #     # return copy.deepcopy(self._initial_start_piece_ordering)  # Seems to take a long time
+    #     piece_ordering = []
+    #     # Remove everything but the piece ID number
+    #     for piece_info in self._initial_start_piece_ordering:
+    #         piece_ordering.append(piece_info[0])
+    #     return piece_ordering
 
-        Returns (List[int]): Descending order of the pieces from best candidate to be a seed piece
-          to worst candidate to be a seed piece.
+    def store_placement_initial_starting_piece_order(self):
         """
-        # return copy.deepcopy(self._initial_start_piece_ordering)  # Seems to take a long time
+        Stores the seed piece ordering when placement begins.  It is separate from when
+        """
+        self._placement_initial_seed_piece_ordering = copy.deepcopy(self._start_piece_ordering)
+
+    def get_placement_initial_starting_piece_order(self):
+        """
+        Accesses the seed piece ordering at the start of placement.  It is not necessary the same as the initial
+        seed piece placement.
+
+        Returns (List[int]): Descending order of the pieces from best to worst to seed piece candidate
+        """
+        if InterPieceDistance._PERFORM_ASSERT_CHECKS:
+            assert self._placement_initial_seed_piece_ordering is not None
+
         piece_ordering = []
         # Remove everything but the piece ID number
-        for piece_info in self._initial_start_piece_ordering:
+        for piece_info in self._placement_initial_seed_piece_ordering:
             piece_ordering.append(piece_info[0])
         return piece_ordering
 

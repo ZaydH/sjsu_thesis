@@ -58,13 +58,20 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
         return PickleHelper.importer(pickle_filename)
 
 
+def _segmentation_debug(image_filenames, puzzle_type, segmentation_round):
+
+    # noinspection PyProtectedMember
+    MultiPuzzleSolver._run_imported_segmentation_round(image_filenames, puzzle_type, segmentation_round)
+
+
 if __name__ == "__main__":
 
     # Setup the logger
     config.setup_logging()
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    _segmentation_debug(images, PuzzleType.type2, 1)
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
