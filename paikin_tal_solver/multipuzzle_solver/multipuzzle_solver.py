@@ -459,8 +459,7 @@ class MultiPuzzleSolver(object):
         max_numb_zero_padding = 4
         filename_descriptor = "single_puzzle_round_" + str(segmentation_round).zfill(max_numb_zero_padding)
         filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp,
-                                              puzzle_id=0)
+                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp)
         new_puzzle.save_to_file(filename)
 
     def _save_stitching_piece_solved_puzzle_to_file(self, stitching_piece_segment_info):
@@ -485,8 +484,7 @@ class MultiPuzzleSolver(object):
 
         # Build the filename and output to a file
         filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp,
-                                              puzzle_id=0)
+                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp)
         new_puzzle.save_to_file(filename)
 
     def _process_solved_segments(self, solved_segments):
@@ -536,10 +534,10 @@ class MultiPuzzleSolver(object):
         if MultiPuzzleSolver._SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE:
             zfill_width = 4
             filename_descriptor = "segment_number_" + str(selected_segment.id_number).zfill(zfill_width)
+            filename_descriptor += "_puzzle_round_" + str(self._numb_segmentation_rounds).zfill(zfill_width)
             filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor,
                                                   Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                                  self._paikin_tal_solver.puzzle_type, self._start_timestamp,
-                                                  puzzle_id=0)
+                                                  self._paikin_tal_solver.puzzle_type, self._start_timestamp)
             single_puzzle_id = 0
             self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, initial_segment_id, filename)
 
