@@ -1,6 +1,7 @@
 <h1>Zayd Hammoudeh's Thesis Blog:</h1>
 
 <ul>
+    <li><a href="#blog16">CS299 Week #16: September 27, 2016 Meeting</a></li>
     <li><a href="#blog15">CS299 Week #15: September 20, 2016 Meeting</a></li>
     <li><a href="#blog14">CS299 Week #14: September 13, 2016 Meeting</a></li>
     <li><a href="#blog13">CS299 Week #13: September 6, 2016 Meeting</a></li>
@@ -20,6 +21,159 @@
     <li><a href="#blog01">CS297 Week #1: February 9, 2016 Meeting</a></li>
 </ul><br />
 
+<h2 id="blog16">Summary of the Meeting on September 27, 2016:</h2>
+
+The work for this week was divided among the following activities:
+<ul>
+    <li style="margin-bottom:10px;">Modifying the base Paikin and Tal solver to support the following:
+        <ul>
+            <li style="margin-bottom:10px;">Solving only a subset of the pieces</li>
+            <li style="margin-bottom:10px;">Running the solver multiple times</li>
+            <li style="margin-bottom:10px;">Stopping the placer from running after a certain number of pieces have been placed</li>
+        </ul>
+    </li>
+    <li style="margin-bottom:10px;">Finding key segments in the original puzzle(s)</li>
+    <li style="margin-bottom:10px;">Building a solver for the stitching pieces of each segment</li>
+    <li style="margin-bottom:10px;">Develop a technique for determining the similarity between solved segments.</li>
+</ul>
+
+<h3>Initial Segmenter</h3>
+
+Below is pseudocode for the implementation of the initial segmenter.
+
+<br /><br />
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">saved_segments <span style="color: #333333">=</span> {}
+
+unplaced_pieces <span style="color: #333333">=</span> {all_pieces}
+
+<span style="color: #997700; font-weight: bold">do:</span>
+
+    <span style="color: #888888">// Run the solver and generate a single output puzzle</span>
+    solved_puzzle <span style="color: #333333">=</span> run_single_puzzle_paikin_tal_solver(unplaced_pieces)
+
+    <span style="color: #888888">// Segment the puzzle</span>
+    solved_segments <span style="color: #333333">=</span> solved_puzzle.segment()
+    
+    max_segment_size <span style="color: #333333">=</span> solved_segments.get_max_segment_size()
+    
+    <span style="color: #888888">// Save all segments at least half as large as the largest segment</span>
+    <span style="color: #008800; font-weight: bold">for each</span> segment <span style="color: #008800; font-weight: bold">in</span> solved_segments<span style="color: #333333">:</span>
+        <span style="color: #008800; font-weight: bold">if</span> <span style="color: #333333">|</span>segment<span style="color: #333333">|</span> <span style="color: #333333">&gt;</span> max_segment_size <span style="color: #333333">/</span> <span style="color: #0000DD; font-weight: bold">2</span><span style="color: #333333">:</span>
+            saved_segments.append(segment)
+            unplaced_pieces.remove_placed_pieces(segment)
+
+<span style="color: #008800; font-weight: bold">while</span> max_segment_size <span style="color: #333333">&lt;</span> minimum_segment_size <span style="color: #008800; font-weight: bold">and</span> <span style="color: #333333">|</span>unplaced_pieces<span style="color: #333333">|</span> <span style="color: #333333">></span> <span style="color: #0000DD; font-weight: bold">0</span>
+
+<span style="color: #008800; font-weight: bold">return</span> saved_segments
+</pre></div>
+
+<h3>Example Solver Results</h3>
+
+Below are three input puzzles passed to the solver.
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>Input<br />&nbsp;&nbsp;Images&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog14/original_3300_1.jpg"><img src="images/blog14/original_3300_1.jpg" alt="Two Jungle Houses" style="width:308px;height:233px;" /></a></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog14/original_bgu_805_08.jpg"><img src="images/blog14/original_bgu_805_08.jpg" alt="Lady by Water" style="width:196px;height:129px;" /></a></div><br /></td>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog14/original_mcgill_20.jpg"><img src="images/blog14/original_mcgill_20.jpg" alt="Glass Building" style="width:151px;height:112px;" /></a></div><br /></td>
+    </tr>
+  </table>
+</div>
+<br /><br />
+
+The initial segmentation solver ran four rounds.  Below are the output image from each of the rounds.  Note that between each round, the image is segmented and the largest segments removed.  The pieces in those segments are then excluded from future placement.
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>&nbsp;&nbsp;Round #1&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/single_puzzle_round_0001_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/single_puzzle_round_0001_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Round #1" style="width:400px;height:396px;" /></a></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>&nbsp;&nbsp;Round #2&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/single_puzzle_round_0002_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/single_puzzle_round_0002_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Round #2" style="width:288px;height:315px;" /></a></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>&nbsp;&nbsp;Round #3&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/single_puzzle_round_0003_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/single_puzzle_round_0003_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Round #3" style="width:200px;height:35px;" /></a></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>&nbsp;&nbsp;Round #4&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/single_puzzle_round_0004_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/single_puzzle_round_0004_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Round #4" style="width:100px;height:55px;" /></a></div><br /></td>
+    </tr>
+  </table>
+</div>
+<br /><br />
+
+These puzzles were then segmented into four segments with each placement round yielding a single segment.  Note that while in this case each round yielded a single segment, that will not always be the case.
+
+<br /><br />
+<div>
+ <table style="margin: 0 auto;" border="2">
+    <tr>
+        <th><h3>&nbsp;&nbsp;Segment #0&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/segment_number_0000_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/segment_number_0000_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Segment #0" style="width:308px;height:233px;" /></a></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>&nbsp;&nbsp;Segment #1&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/segment_number_0001_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/segment_number_0001_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Segment #1" style="width:196px;height:129px;" /></a></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>&nbsp;&nbsp;Segment #2&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/segment_number_0002_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/segment_number_0002_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Segment #2" style="width:151px;height:112px;" /></a></div><br /></td>
+    </tr>
+    <tr>
+        <th><h3>&nbsp;&nbsp;Segment #3&nbsp;&nbsp;</h3></th>
+        <td><br /><div style="margin-left:10px;margin-right:10px;text-align:center"><a href="images/blog16/segment_number_0003_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg"><img src="images/blog16/segment_number_0003_type2_solved_puzzle_0000_2016.09.26_12.59.00.jpg" alt="Segment #3" style="width:250px;height:30px;" /></a></div><br /></td>
+    </tr>
+  </table>
+</div>
+<br /><br />
+
+After the segments have been found, stitching pieces near the edge of each segment are indentified.  This is done using the stitching piece identification algorithm described in last week's blog.
+
+<h3>Stitching Piece Solvers</h3>
+
+After the initial segmenter has completed, individual segments are run on each of the stitching pieces.  
+
+<br /><br />
+<div style="background: #ffffff; overflow:auto;width:fit-content;margin-right:auto;margin-left:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">for each</span> segment <span style="color: #008800; font-weight: bold">in</span> solved_segments<span style="color: #333333">:</span>
+    
+    <span style="color: #008800; font-weight: bold">for each</span> stitching_piece <span style="color: #008800; font-weight: bold">in</span> segment.find_stitching_pieces()<span style="color: #333333">:</span>
+        output_puzzle <span style="color: #333333">=</span> run_fixed_size_paikin_tal_solver(seed_piece <span style="color: #333333">=</span> stitching_piece)
+        
+        overlap_coefficient <span style="color: #333333">=</span> output_puzzle.calculate_segment_over(solved_segments)
+        
+        save_best_segment_scores(segment, overlap_coefficient)
+        
+<span style="color: #008800; font-weight: bold">return</span> best_segment_scores
+</pre></div>
+
+<h3>Asymmetric Segment Overlap Metric</h3>
+
+As mentioned above, a single puzzle solver of fixed size is run for each of the stitching pieces.  Below is a proposed metric for quantitifying the similarity between two segments.<br/><br/>
+
+<div style="text-align:center">`Overlap(\Phi_i,\Phi_j)=argmax_{\zeta_k in \Phi_i}{|P_{\zeta_k}\cap\Phi_j|}/{min(|P_{\zeta_k}|, |\Phi_j|)}`</div>
+
+<ul>
+    <li style="margin-bottom:10px;">`\Phi_i` - `i`<sup>th</sup> segment from the initial segmentation</li>
+    <li style="margin-bottom:10px;">`\zeta_k` - `k`<sup>th</sup> stitching piece in segment `\Phi_i`</li>
+    <li style="margin-bottom:10px;">`P_{\zeta_k}` - Fixed size solved puzzle with stitching piece as `\zeta_k` seed.</li>
+</ul>
+
+In most cases, Segment similarity will not be symmetric.
+
+<h3>Segment Similarity</h3>
+
+The similarity between two segments is proposed to be:
+
+<div style="text-align:center">`Similarity(\Phi_i,\Phi_j)={Overlap(\Phi_i,\Phi_j)+Overlap(\Phi_j,\Phi_i)}/{2}`</div>
+
+<br /><br />
 <h2 id="blog15">Summary of the Meeting on September 20, 2016:</h2>
 
 The work for this week was divided among the following activities:
@@ -939,7 +1093,7 @@ To address these limitations when solving multiple puzzles with non-fixed puzzle
 
 <br /><br /> 
 
-<div style="auto;width:fit-content;margin-right:auto;margin-left:auto;">`EDAS_i = \max_{s_j \in S}((c_(ij))/(n_i + \sum_{k \ne i}(m_(kj))))`</div>
+<div style="auto;width:fit-content;margin-right:auto;margin-left:auto;">`EDAS_i = \max_{s_j  \in  S}((c_(ij))/(n_i + \sum_{k \ne i}(m_(kj))))`</div>
 <br />
 given:
 <ul>

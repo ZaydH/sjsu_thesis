@@ -1,0 +1,10 @@
+for each segment in solved_segments:
+    
+    for each stitching_piece in segment.find_stitching_pieces():
+        output_puzzle = run_fixed_size_paikin_tal_solver(seed_piece = stitching_piece)
+        
+        overlap_coefficient = output_puzzle.calculate_segment_over(solved_segments)
+        
+        save_best_segment_scores(segment, overlap_coefficient)
+        
+return best_segment_scores

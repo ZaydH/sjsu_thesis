@@ -1,0 +1,23 @@
+saved_segments = {}
+
+unplaced_pieces = {all_pieces}
+
+do:
+
+    // Run the solver and generate a single output puzzle
+    solved_puzzle = run_single_puzzle_paikin_tal_solver(unplaced_pieces)
+
+    // Segment the puzzle
+    solved_segments = solved_puzzle.segment()
+    
+    max_segment_size = solved_segments.get_max_segment_size()
+    
+    // Save all segments at least half as large as the largest segment
+    for each segment in solved_segments:
+        if |segment| > max_segment_size / 2:
+            saved_segments.append(segment)
+            unplaced_pieces.remove_placed_pieces(segment)
+
+while max_segment_size < minimum_segment_size and |unplaced_pieces| > 0
+
+return saved_segments
