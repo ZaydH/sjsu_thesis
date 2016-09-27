@@ -530,6 +530,8 @@ class MultiPuzzleSolver(object):
             key = PuzzlePiece.create_key(piece_id)
             self._piece_id_to_segment_map[key] = selected_segment.id_number
 
+        logging.log("Saved segment #%d has %d pieces." % (selected_segment.id_number, selected_segment.numb_pieces))
+
         # Optionally output the segment image to a file.
         if MultiPuzzleSolver._SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE:
             zfill_width = 4
