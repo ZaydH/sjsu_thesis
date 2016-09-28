@@ -84,15 +84,15 @@ def test_random_mcgill():
         # Build the puzzle list
         DIRECTORY_805_PIECE_IMAGES = "805_pieces//"
         IMAGE_FILE_EXTENSION = ".jpg"
-        images = []
-        while len(images) < numb_puzzles:
+        images_file_list = []
+        while len(images_file_list) < numb_puzzles:
             filename = DIRECTORY_805_PIECE_IMAGES + str(random.randint(1, 20)) + IMAGE_FILE_EXTENSION
             # Ensure no duplicate puzzles
-            if filename not in images:
-                images.append(filename)
+            if filename not in images_file_list:
+                images_file_list.append(filename)
 
         # Run the solver
-        run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+        run_multipuzzle_solver_driver(images_file_list, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
 
 if __name__ == "__main__":
@@ -122,5 +122,3 @@ if __name__ == "__main__":
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
-
-    test_random_mcgill()
