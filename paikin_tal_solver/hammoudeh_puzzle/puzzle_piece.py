@@ -46,8 +46,7 @@ class PuzzlePieceRotation(Enum):
         Gets a list of all supported rotations for a puzzle piece.  The list is ascending from 0 degrees to 270
         degrees increasing.
 
-        Returns ([PuzzlePieceRotation]):
-        List of all puzzle rotations.
+        Returns ([PuzzlePieceRotation]): List of all puzzle rotations.
         """
         return [PuzzlePieceRotation.degree_0, PuzzlePieceRotation.degree_90,
                 PuzzlePieceRotation.degree_180, PuzzlePieceRotation.degree_270]
@@ -59,8 +58,7 @@ class PuzzlePieceRotation(Enum):
 
         Generates and returns a random rotation.
 
-        Returns (PuzzlePieceRotation):
-        A random puzzle piece rotation
+        Returns (PuzzlePieceRotation): A random puzzle piece rotation
         """
         return random.choice(PuzzlePieceRotation.all_rotations())
 
@@ -166,10 +164,10 @@ class PuzzlePiece(object):
 
         Args:
             puzzle_id (int): Puzzle identification number
-            location ([int]): (row, column) location of this piece.
+            location (List[int]): (row, column) location of this piece.
             lab_img: Image data in the form of a NumPy array.
             piece_id (int): Piece identification number.
-            puzzle_grid_size ([int]): Grid size of the puzzle
+            puzzle_grid_size (List[int]): Grid size of the puzzle
         """
 
         # Verify the piece id information
@@ -229,7 +227,7 @@ class PuzzlePiece(object):
         has no neighbor, then location associated with that puzzle piece is filled with "None".
 
         Args:
-            puzzle_grid_size ([int]): Grid size (number of rows, number of columns) for this piece's puzzle.
+            puzzle_grid_size (List[int]): Grid size (number of rows, number of columns) for this piece's puzzle.
         """
 
         # Only need to calculate the actual neighbor id information once
@@ -364,7 +362,7 @@ class PuzzlePiece(object):
         """
         Gets the location of the puzzle piece on the board.
 
-        Returns ([int]):
+        Returns (List[int]):
             Tuple of the (row, column)
 
         """
@@ -657,7 +655,7 @@ class PuzzlePiece(object):
         """
         Gets the results color image for the piece.
 
-        Returns(List):
+        Returns(List[Tuple[int, PuzzlePieceSide]]):
             Either a single BGR integer list when a solid color is used.  If it is using polygon print, then the
             return is a List[(List[int], PuzzlePieceSide)].
 
@@ -701,7 +699,7 @@ class PuzzlePiece(object):
         Given a puzzle piece, this function returns the four surrounding coordinates/location and the sides of THIS
         puzzle piece that corresponds to those locations so that it can be added to the open slot list.
 
-        Returns (List[Tuple(PuzzleLocation, PuzzlePieceSide)]: A list of puzzle piece locations and their
+        Returns (List[Tuple(PuzzleLocation, PuzzlePieceSide)]): A list of puzzle piece locations and their
            accompanying side.
         """
 
@@ -722,7 +720,7 @@ class PuzzlePiece(object):
 
         DEPRECATED.
 
-        Returns ([([int], PuzzlePieceSide)]):
+        Returns (List[Tuple[List[int], PuzzlePieceSide]]):
             Valid puzzle piece locations and the respective puzzle piece side.
         """
 
@@ -742,10 +740,10 @@ class PuzzlePiece(object):
         and the puzzle piece side that aligns with it so that it can be added to the open slot list.
 
         Args:
-            piece_loc ([int]):
-            piece_rotation (PuzzlePieceRotation):
+            piece_loc (List[int]): Location of the piece in format [row, column]
+            piece_rotation (PuzzlePieceRotation): Piece's rotation
 
-        Returns ([([int], PuzzlePieceSide)]):
+        Returns (List[Tuple[List[int], PuzzlePieceSide]]):
             Valid puzzle piece locations and the respective puzzle piece side.
         """
         # Get the top location and respective side
@@ -1206,7 +1204,7 @@ class PuzzlePiece(object):
             if PuzzlePiece._PERFORM_ASSERT_CHECKS:
                 # Ensure no side is drawn twice
                 assert side not in sides_drawn
-                # Add the side tot he list.
+                # Add the side to the list.
                 sides_drawn.append(side)
 
             # Represent the polygon vertex points as a NumPy matrix

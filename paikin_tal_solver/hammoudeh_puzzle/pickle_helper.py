@@ -1,9 +1,8 @@
-import time
-import os
 import logging
+import os
 import pickle
+import time
 
-from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_importer import Puzzle
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
 

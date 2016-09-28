@@ -1962,7 +1962,7 @@ class Puzzle(object):
         Builds an image file name using a set of standard parameters.
 
         Args:
-            image_filenames (str): List of image files
+            image_filenames (list[str]): List of image files
             image_descriptor (str): Descriptor of the output puzzle.
             output_directory (str): Path where the file should be output
             puzzle_type (PuzzleType): Type of the puzzle
@@ -2087,12 +2087,12 @@ class Puzzle(object):
 
 
         1. Piece Locations - A Numpy 2D matrix showing the PUZZLE PIECE ID NUMBER in each puzzle location.  If a puzzle
-         piece location has no assigned piece, then the cell is filled with the Puzzle class's static property
-         "MISSING_PIECE_PUZZLE_INFO_VALUE"
+        piece location has no assigned piece, then the cell is filled with the Puzzle class's static property
+        "MISSING_PIECE_PUZZLE_INFO_VALUE"
 
         2. Piece Rotations - A Numpy 2D matrix showing the ROTATION VALUE NUMBER the puzzle piece in each puzzle
-         location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the
-         Puzzle class's static property "MISSING_PIECE_PUZZLE_INFO_VALUE"
+        location.  If no puzzle piece is assigned to a specific location, then the cell is filled in with the
+        Puzzle class's static property "MISSING_PIECE_PUZZLE_INFO_VALUE"
 
         Returns (Tuple[Numpy[int]]):
             Location of each puzzle piece in the grid

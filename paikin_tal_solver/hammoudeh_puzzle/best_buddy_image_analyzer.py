@@ -9,7 +9,8 @@ import logging
 # noinspection PyUnresolvedReferences
 import time
 
-from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PickleHelper, PieceSideBestBuddyAccuracyResult
+from hammoudeh_puzzle.pickle_helper import PickleHelper
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PieceSideBestBuddyAccuracyResult
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
@@ -263,7 +264,8 @@ class ImageBestBuddyStatistics(object):
         orig_img_filename = self._filename_root + "." + self._file_extension
 
         descriptor = "image_best_buddies"
-        output_filename = Puzzle.make_image_filename(descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY, self.puzzle_type,
+        output_filename = Puzzle.make_image_filename([orig_img_filename], descriptor,
+                                                     Puzzle.OUTPUT_IMAGE_DIRECTORY, self.puzzle_type,
                                                      timestamp, orig_img_filename=orig_img_filename)
         # Stores the results to a file.
         self._puzzle.build_puzzle_image(use_results_coloring=True)
