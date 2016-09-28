@@ -1,4 +1,7 @@
 import logging
+import random
+
+import time
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
@@ -62,6 +65,36 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
         return multipuzzle_solver
 
 
+def test_random_mcgill():
+    """
+    Randomly selects a set of 805 piece puzzles and runs the multipuzzle solver on them.
+    """
+
+    # Improve the seed quality
+    random.seed(time.time())
+
+    while True:
+        # Get a number of puzzles
+        minimum_numb_puzzles = 2
+        maximum_numb_puzzles = 5
+        numb_puzzles = random.randint(minimum_numb_puzzles, maximum_numb_puzzles)
+
+        logging.info("Number of 805 Piece Input Puzzles: %d" % numb_puzzles)
+
+        # Build the puzzle list
+        DIRECTORY_805_PIECE_IMAGES = "805_pieces//"
+        IMAGE_FILE_EXTENSION = ".jpg"
+        images = []
+        while len(images) < numb_puzzles:
+            filename = DIRECTORY_805_PIECE_IMAGES + str(random.randint(1, 20)) + IMAGE_FILE_EXTENSION
+            # Ensure no duplicate puzzles
+            if filename not in images:
+                images.append(filename)
+
+        # Run the solver
+        run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+
 if __name__ == "__main__":
 
     # Setup the logger
@@ -72,17 +105,22 @@ if __name__ == "__main__":
 
     images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
 
-    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    test_random_mcgill()
 
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
     # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
-    MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
+    # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
 
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
+    # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
+
+    test_random_mcgill()

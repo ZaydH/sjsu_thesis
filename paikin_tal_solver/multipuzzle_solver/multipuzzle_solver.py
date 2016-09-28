@@ -417,7 +417,7 @@ class MultiPuzzleSolver(object):
         string_io = cStringIO.StringIO()
         print >> string_io, matrix_description_message
         print >> string_io, numpy_matrix
-        logging.info(string_io.getvalue())
+        logging.critical(string_io.getvalue())
         string_io.close()
 
     def _perform_placement_with_final_seed_pieces(self):
