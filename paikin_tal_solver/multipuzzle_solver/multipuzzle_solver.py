@@ -1,8 +1,9 @@
+import cStringIO
 import copy
 import logging
 import time
 
-import cStringIO
+import numpy as np
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import solver_helper
@@ -138,31 +139,31 @@ class StitchingPieceInfo(object):
         """
         return round(100.0 * piece_count_in_segment / self._total_numb_solved_pieces, 1)
 
-    def calculate_overlap_coefficient(self, size_of_each_segments):
+    def calculate_overlap_coefficient(self, size_of_each_segment):
         """
         For solved puzzle of this stitching piece, this function calculates and returns the overlap coefficient.
 
         Args:
-            size_of_each_segments (List[int]): Number of pieces in each segment
+            size_of_each_segment (List[int]): Number of pieces in each segment
 
         Returns (List[float]):
             Overlap coefficient for this stitching piece to all other segments
         """
 
-        if len(self._solver_piece_segments) > len(size_of_each_segments):
+        if len(self._solver_piece_segments) > len(size_of_each_segment):
             raise ValueError("List containing each segment's size has too few elements for number of segments")
 
         # Iterate through each segment and calculate the overlap coefficient.
         self._segment_overlap_coefficient = []
-        for segment_cnt in xrange(0, len(size_of_each_segments)):
-            other_segment_size = size_of_each_segments[segment_cnt]
+        for segment_cnt in xrange(0, len(size_of_each_segment)):
+            other_segment_size = size_of_each_segment[segment_cnt]
 
             # Handle case where segment number is greater than the maximum segment number for any piece in solved
             # puzzle for this stitching piece
             if segment_cnt >= len(self._solver_piece_segments):
                 pieces_from_other_segment = 0
             else:
-                pieces_from_other_segment = self._solver_piece_segments
+                pieces_from_other_segment = len(self._solver_piece_segments[segment_cnt])
 
             overlap = 1.0 * pieces_from_other_segment / min(self._total_numb_solved_pieces, other_segment_size)
             self._segment_overlap_coefficient.append(overlap)
@@ -183,11 +184,13 @@ class MultiPuzzleSolver(object):
     # File descriptors for pickle export
     _POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR = "post_initial_segmentation"
     _POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR = "post_stitching_piece_solving"
+    _POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR = "post_similarity_matrix"
 
     # Pickle Related variables
     _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
     _ALLOW_POST_SEGMENTATION_PICKLE_EXPORT = True
     _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = True
+    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = False
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -216,6 +219,10 @@ class MultiPuzzleSolver(object):
         # Build the Paikin Tal Solver
         self._paikin_tal_solver = PaikinTalSolver(pieces, distance_function, puzzle_type=puzzle_type)
 
+        # These are used in building the hierarchical clustering algorithm.
+        self._asymmetric_overlap_matrix = None
+        self._segment_similarity_matrix = None
+
         self._set_of_final_seed_pieces = None
 
         self._final_puzzles = None
@@ -233,6 +240,8 @@ class MultiPuzzleSolver(object):
         self._find_initial_segments()
 
         self._perform_stitching_piece_solving()
+
+        self._build_similarity_matrix()
 
         # self._perform_placement_with_final_seed_pieces()
 
@@ -356,6 +365,61 @@ class MultiPuzzleSolver(object):
 
         self._stitching_pieces[segment_numb][stitching_piece_numb].log_piece_to_segment_mapping(len(self._segments))
 
+    def _build_similarity_matrix(self):
+        """
+        Creates the asymmetric overlap and segment similarity matrices for use in the hierarchical clustering.
+        """
+
+        # Build the similarity matrix.  Worst similarity is 0
+        numb_segments = len(self._segments)
+        self._asymmetric_overlap_matrix = np.full((numb_segments, numb_segments), fill_value=-1, dtype=np.float)
+
+        # Calculate asymmetric overlap for each segment
+        numb_pieces_in_each_segment = [segment.numb_pieces for segment in self._segments]
+        for segment_i in xrange(0, numb_segments):
+
+            # Iterate through all the stitching pieces in this segment and calculate the asymmetric overlap
+            for stitching_piece_info in self._stitching_pieces[segment_i]:
+                overlap = stitching_piece_info.calculate_overlap_coefficient(numb_pieces_in_each_segment)
+
+                # Get the max overlap between pairs of segments
+                for segment_j in xrange(0, numb_segments):
+
+                    if segment_i == segment_j:
+                        continue
+                    # Update if the new value is greater
+                    if self._asymmetric_overlap_matrix[segment_i, segment_j] < overlap[segment_j]:
+                        self._asymmetric_overlap_matrix[segment_i, segment_j] = overlap[segment_j]
+        MultiPuzzleSolver._log_numpy_matrix("Asymmetric Segment Overlap Matrix:", self._asymmetric_overlap_matrix)
+
+        # Calculate the similarity matrix
+        self._segment_similarity_matrix = np.full((numb_segments, numb_segments), fill_value=-1, dtype=np.float)
+        for segment_i in xrange(0, numb_segments):
+            for segment_j in xrange(segment_i + 1, numb_segments):
+                similarity = self._asymmetric_overlap_matrix[segment_i, segment_j] \
+                             + self._asymmetric_overlap_matrix[segment_j, segment_i]
+                similarity /= 2
+                self._segment_similarity_matrix[segment_i, segment_j] = similarity
+        MultiPuzzleSolver._log_numpy_matrix("Segment Similarity Matrix", self._segment_similarity_matrix)
+
+        if MultiPuzzleSolver._ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT:
+            self._pickle_export_after_similarity_matrix_calculation()
+
+    @staticmethod
+    def _log_numpy_matrix(matrix_description_message, numpy_matrix):
+        """
+        Helper function for logging Numpy matrix values.
+
+        Args:
+            matrix_description_message (str): Description message to go with the matrix printing
+            numpy_matrix (np[float]): Numpy array to be logged
+        """
+        string_io = cStringIO.StringIO()
+        print >> string_io, matrix_description_message
+        print >> string_io, numpy_matrix
+        logging.info(string_io.getvalue())
+        string_io.close()
+
     def _perform_placement_with_final_seed_pieces(self):
         """
         This is run after the final set of seed pieces have been found.  It runs the final solver segments the piece
@@ -404,45 +468,37 @@ class MultiPuzzleSolver(object):
         """
         Export the entire multipuzzle solver via pickle.
         """
-        puzzle_type = self._paikin_tal_solver.puzzle_type
-        pickle_filename = MultiPuzzleSolver._build_segmentation_round_pickle_filename(self._numb_segmentation_rounds,
-                                                                                      self._image_filenames,
-                                                                                      puzzle_type)
-        PickleHelper.exporter(self, pickle_filename)
+        self._local_pickle_expert_helper("segment_round_%d" % self._numb_segmentation_rounds)
 
     def _pickle_export_after_segmentation(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
-        pickle_filename = PickleHelper.build_filename(MultiPuzzleSolver._POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR,
-                                                      self._image_filenames,
-                                                      self._paikin_tal_solver.puzzle_type)
-        PickleHelper.exporter(self, pickle_filename)
+        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_stitching_piece_solving(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
-        file_descriptor = MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR
-        pickle_filename = PickleHelper.build_filename(file_descriptor,
+        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR)
+
+    def _pickle_export_after_similarity_matrix_calculation(self):
+        """
+        Exports the multipuzzle solver after the similarity matrix is calculated.
+        """
+        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR)
+
+    def _local_pickle_expert_helper(self, pickle_file_descriptor):
+        """
+        Helper function that handles the pickle export for a specific file description.
+
+        Args:
+            pickle_file_descriptor (str): File descriptor for the pickle file
+        """
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor,
                                                       self._image_filenames,
                                                       self._paikin_tal_solver.puzzle_type)
         PickleHelper.exporter(self, pickle_filename)
-
-    @staticmethod
-    def _build_segmentation_round_pickle_filename(segmentation_round_numb, image_filenames, puzzle_type):
-        """
-        Builds a pickle filename for segmentation.
-
-        Args:
-            segmentation_round_numb (int): Segmentation round number
-            image_filenames (List[str]): List of paths to image file names
-            puzzle_type (PuzzleType): Solver puzzle type
-
-        Returns (str):
-            Name and path for the segmentation round pickle file.
-        """
-        return PickleHelper.build_filename("segment_round_%d" % segmentation_round_numb, image_filenames, puzzle_type)
 
     def _save_single_solved_puzzle_to_file(self, segmentation_round):
         """
@@ -587,9 +643,9 @@ class MultiPuzzleSolver(object):
             puzzle_type (PuzzleType): Solver puzzle type
             segmentation_round_numb (int): Segmentation round number
         """
-        pickle_filename = MultiPuzzleSolver._build_segmentation_round_pickle_filename(segmentation_round_numb,
-                                                                                      image_filenames,
-                                                                                      puzzle_type)
+        pickle_file_descriptor = "segment_round_%d" % segmentation_round_numb
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
+
         solver = PickleHelper.importer(pickle_filename)
         # noinspection PyProtectedMember
         solver.reset_timestamp()
@@ -614,3 +670,23 @@ class MultiPuzzleSolver(object):
 
         # noinspection PyProtectedMember
         solver._perform_stitching_piece_solving()
+
+    @staticmethod
+    def run_imported_similarity_matrix_calculation(image_filenames, puzzle_type):
+        """
+        Debug method that imports a pickle file for the specified image files, puzzle type, and segmentation round
+        and then runs the initial segmentation starting after the specified round.
+
+        Args:
+            image_filenames (List[str]): List of paths to image file names
+            puzzle_type (PuzzleType): Solver puzzle type
+        """
+        pickle_file_descriptor = MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
+
+        solver = PickleHelper.importer(pickle_filename)
+        # noinspection PyProtectedMember
+        solver.reset_timestamp()
+
+        # noinspection PyProtectedMember
+        solver._build_similarity_matrix()

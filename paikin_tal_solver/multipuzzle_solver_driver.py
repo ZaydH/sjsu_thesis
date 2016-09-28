@@ -66,10 +66,12 @@ if __name__ == "__main__":
     config.setup_logging()
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
     # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
+    MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
 
     images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
