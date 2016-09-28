@@ -87,12 +87,13 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">paikin_tal_solver package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-paikin_tal_solver.inter_piece_distance">paikin_tal_solver.inter_piece_distance module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-paikin_tal_solver.paikin_tal_tester">paikin_tal_solver.paikin_tal_tester module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#paikin-tal-solver-paikin-tal-tester-module">paikin_tal_solver.paikin_tal_tester module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-paikin_tal_solver.solver">paikin_tal_solver.solver module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-paikin_tal_solver">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="hammoudeh_puzzle.html">hammoudeh_puzzle package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multipuzzle_solver.html">multipuzzle_solver package</a></li>
 </ul>
 </li>
 </ul>
@@ -252,7 +253,7 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>p_i</strong> (<em>int</em>) &#8211; Identification number of the piece who best buddy information is to be retrieved</li>
-<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of piece whose best buddy is being retriefed</li>
+<li><strong>p_i_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; Side of piece whose best buddy is being retrieved</li>
 </ul>
 </td>
 </tr>
@@ -261,6 +262,32 @@ and the starter puzzle pieces as defined by the Paikin and Tal paper.</p>
 <dl class="docutils">
 <dt>Returns (List[int]):</dt>
 <dd>List of best buddy piece id numbers</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix">
+<em class="property">static </em><code class="descname">calculate_elements_per_process_for_diagonal_matrix</code><span class="sig-paren">(</span><em>numb_pieces</em>, <em>numb_processes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The calculation of the data for the inter-piece distance diagonal matrix can be spread across multiple
+processes.  This function enumerates how many elements to assign to the different processes to ensure each
+process is assigned a comparable amount of work to reduce the overall execution time.</p>
+<p>The design of this function uses the concept that the number of elements in a diagonal matrix is essentially
+the same as calculating the area of a triangle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>numb_pieces</strong> (<em>int</em>) &#8211; Number of pieces in the puzzle</li>
+<li><strong>numb_processes</strong> (<em>int</em>) &#8211; Number of processes to be spawned.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns (List(int)):</dt>
+<dd>Number of the first element that will be calculated for each of the processes.</dd>
 </dl>
 </dd></dl>
 
@@ -282,14 +309,15 @@ two parts.</p>
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_mutual_compatibility">
-<code class="descname">calculate_mutual_compatibility</code><span class="sig-paren">(</span><em>is_piece_placed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.calculate_mutual_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_mutual_compatibility" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calculate_mutual_compatibility</code><span class="sig-paren">(</span><em>pieces_with_min_or_second_dist_changed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.calculate_mutual_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_mutual_compatibility" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mutual Compatibility Calculator</p>
 <p>Calculates the mutual compatibility as defined by Paikin and Tal.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>is_piece_placed</strong> (<em>Optional [Bool]</em>) &#8211; List indicating whether each piece is placed</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pieces_with_min_or_second_dist_changed</strong> (<em>List[bool]</em>) &#8211; For each piece, True indicates that the distance will
+be recalculated.  False entails it is left unchanged.</td>
 </tr>
 </tbody>
 </table>
@@ -297,30 +325,23 @@ two parts.</p>
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_best_buddies">
-<code class="descname">find_best_buddies</code><span class="sig-paren">(</span><em>is_piece_placed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.find_best_buddies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_best_buddies" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find_best_buddies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.find_best_buddies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_best_buddies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the best buddies for this set of distance calculations.</p>
 <p>The best buddies information is stored with the inter-piece distances.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>is_piece_placed</strong> (<em>Optional [Bool]</em>) &#8211; List indicating whether each piece is placed</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_start_piece_candidates">
-<code class="descname">find_start_piece_candidates</code><span class="sig-paren">(</span><em>is_piece_placed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.find_start_piece_candidates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_start_piece_candidates" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find_start_piece_candidates</code><span class="sig-paren">(</span><em>piece_valid_for_placement=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.find_start_piece_candidates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_start_piece_candidates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a list of starter puzzle pieces.  This is based off the criteria defined by Paikin and Tal
-where a piece must have 4 best buddies and its best buddies must have 4 best buddies.</p>
+where a piece must have 4 best buddies and those best buddies must also have 4 best buddies.</p>
 <p>This list is sorted from best starter piece to worst.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>is_piece_placed</strong> (<em>Optional [Bool]</em>) &#8211; List indicating whether each piece is placed</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>piece_valid_for_placement</strong> (<em>List[bool]</em>) &#8211; List indicating whether the selected piece should be considered
+for placement.</td>
 </tr>
 </tbody>
 </table>
@@ -348,6 +369,14 @@ where a piece must have 4 best buddies and its best buddies must have 4 best bud
 on a given side of the primary piece.  For type 2 puzzles, the index is set to the p_j_side value defined
 in the PuzzlePieceSide enumerated type.</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.get_placement_initial_starting_piece_order">
+<code class="descname">get_placement_initial_starting_piece_order</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.get_placement_initial_starting_piece_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.get_placement_initial_starting_piece_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accesses the seed piece ordering at the start of placement.  It is not necessary the same as the initial
+seed piece placement.</p>
+<p>Returns (List[int]): Descending order of the pieces from best to worst to seed piece candidate</p>
 </dd></dl>
 
 <dl class="method">
@@ -385,6 +414,33 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 </dd></dl>
 
 <dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.invalidate_start_piece_ordering">
+<code class="descname">invalidate_start_piece_ordering</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.invalidate_start_piece_ordering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.invalidate_start_piece_ordering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks that the start pieces need to be recalculated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.is_pieces_best_buddies">
+<code class="descname">is_pieces_best_buddies</code><span class="sig-paren">(</span><em>first_piece</em>, <em>first_piece_side</em>, <em>second_piece</em>, <em>second_piece_side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.is_pieces_best_buddies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.is_pieces_best_buddies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether two pieces pieces are best buddies on the specified sides.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>first_piece</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePiece" title="hammoudeh_puzzle.puzzle_piece.PuzzlePiece"><em>PuzzlePiece</em></a>) &#8211; A puzzle piece</li>
+<li><strong>first_piece_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; The side of the first puzzle piece</li>
+<li><strong>second_piece</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePiece" title="hammoudeh_puzzle.puzzle_piece.PuzzlePiece"><em>PuzzlePiece</em></a>) &#8211; A second puzzle piece</li>
+<li><strong>second_piece_side</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide" title="hammoudeh_puzzle.puzzle_piece.PuzzlePieceSide"><em>PuzzlePieceSide</em></a>) &#8211; The side of the second piece being compared</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns (Bool): True if the two pieces are best buddies on their respective sides and False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.mutual_compatibility">
 <code class="descname">mutual_compatibility</code><span class="sig-paren">(</span><em>p_i</em>, <em>p_i_side</em>, <em>p_j</em>, <em>p_j_side</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.mutual_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.mutual_compatibility" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mutual Compatibility Accessor</p>
@@ -411,14 +467,14 @@ contrast, if the puzzle is type 2, then any puzzle piece side can be placed adja
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.next_starting_piece">
-<code class="descname">next_starting_piece</code><span class="sig-paren">(</span><em>placed_pieces=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.next_starting_piece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.next_starting_piece" title="Permalink to this definition">¶</a></dt>
+<code class="descname">next_starting_piece</code><span class="sig-paren">(</span><em>piece_valid_for_placement=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.next_starting_piece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.next_starting_piece" title="Permalink to this definition">¶</a></dt>
 <dd><p>Next Starting Piece Accessor</p>
 <p>Gets the puzzle piece that is the best candidate to use as the seed of a puzzle.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>placed_pieces</strong> (<em>Optional [bool]</em>) &#8211; An array indicating whether each puzzle piece (by index) has been
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>piece_valid_for_placement</strong> (<em>Optional [bool]</em>) &#8211; An array indicating whether each puzzle piece (by index) has been
 placed.</td>
 </tr>
 </tbody>
@@ -431,22 +487,60 @@ placed.</td>
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.recalculate_remaining_piece_compatibilities">
-<code class="descname">recalculate_remaining_piece_compatibilities</code><span class="sig-paren">(</span><em>is_piece_placed</em>, <em>is_piece_placed_with_no_open_neighbors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.recalculate_remaining_piece_compatibilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.recalculate_remaining_piece_compatibilities" title="Permalink to this definition">¶</a></dt>
+<code class="descname">recalculate_remaining_piece_compatibilities</code><span class="sig-paren">(</span><em>piece_valid_for_placement</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.recalculate_remaining_piece_compatibilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.recalculate_remaining_piece_compatibilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compatibility Recalculator</p>
 <p>When no best buddy is in the pool, this function is called to recalculate the best buddies and compatibilities.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>piece_valid_for_placement</strong> (<em>List[bool]</em>) &#8211; List indicating whether the piece&#8217;s distance should be
+recalculated.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.restore_initial_distance_values">
+<code class="descname">restore_initial_distance_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.restore_initial_distance_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.restore_initial_distance_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the piece distance data structure as it was when it was first built.  Hence, it overwrites any changes
+made during the placement process.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.skip_piece">
+<em class="property">static </em><code class="descname">skip_piece</code><span class="sig-paren">(</span><em>p_i</em>, <em>exclude_piece_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.skip_piece"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.skip_piece" title="Permalink to this definition">¶</a></dt>
+<dd><p>Piece Skip Checker</p>
+<p>Checks whether a puzzle piece should be skipped based off whether it is placed or is disallowed in placement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>is_piece_placed</strong> (<em>[Bool]</em>) &#8211; List indicating whether each piece is placed</li>
-<li><strong>is_piece_placed_with_no_open_neighbors</strong> (<em>[Bool]</em>) &#8211; Subset of the elements in the array &#8220;is_piece_placed.&#8221;  It
-is only those pieces that are placed AND have no open locations amongst their direct neighbors.</li>
+<li><strong>p_i</strong> (<em>int</em>) &#8211; Identification number of the puzzle piece</li>
+<li><strong>exclude_piece_list</strong> (<em>Optional [Bool]</em>) &#8211; List indicating the piece should be used</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>Returns (bool):</dt>
+<dd>True if piece p_i should be skipped and False otherwise</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.store_all_compatibility_info">
+<code class="descname">store_all_compatibility_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.store_all_compatibility_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.store_all_compatibility_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores all compatibility information for all interpiece distance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.InterPieceDistance.store_placement_initial_starting_piece_order">
+<code class="descname">store_placement_initial_starting_piece_order</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#InterPieceDistance.store_placement_initial_starting_piece_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.InterPieceDistance.store_placement_initial_starting_piece_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the seed piece ordering when placement begins.  It is separate from when</p>
 </dd></dl>
 
 </dd></dl>
@@ -574,14 +668,14 @@ buddy, this function returns an empty list.</p>
 
 <dl class="method">
 <dt id="paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.calculate_asymmetric_compatibility">
-<code class="descname">calculate_asymmetric_compatibility</code><span class="sig-paren">(</span><em>is_piece_placed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#PieceDistanceInformation.calculate_asymmetric_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.calculate_asymmetric_compatibility" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calculate_asymmetric_compatibility</code><span class="sig-paren">(</span><em>is_piece_valid_for_placement=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#PieceDistanceInformation.calculate_asymmetric_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.calculate_asymmetric_compatibility" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asymmetric Compatibility Calculator</p>
 <p>Calculates the asymmetric compatibility for this piece with respect to all other pieces.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>is_piece_placed</strong> (<em>Optional [Bool]</em>) &#8211; For each puzzle piece, True if the piece is placed and false otherwise.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>is_piece_valid_for_placement</strong> (<em>List[Bool]</em>) &#8211; For each puzzle piece, indicate whether it is valid for placement.</td>
 </tr>
 </tbody>
 </table>
@@ -659,6 +753,18 @@ distance between it and any other piece.</p>
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.restore_initial_asymmetric_compatibility">
+<code class="descname">restore_initial_asymmetric_compatibility</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#PieceDistanceInformation.restore_initial_asymmetric_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.restore_initial_asymmetric_compatibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>In cases where asymmetric compatibility may have changed, this function restores the initial asymmetric compatibilities.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.restore_initial_mutual_compatibility">
+<code class="descname">restore_initial_mutual_compatibility</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#PieceDistanceInformation.restore_initial_mutual_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.restore_initial_mutual_compatibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>In cases where mutual compatibility may have changed, this function restores the initial mutual compatibilities.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.second_best_distance">
 <code class="descname">second_best_distance</code><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.second_best_distance" title="Permalink to this definition">¶</a></dt>
@@ -691,23 +797,23 @@ distance between it and any other piece.</p>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.store_initial_asymmetric_compatibility">
+<code class="descname">store_initial_asymmetric_compatibility</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#PieceDistanceInformation.store_initial_asymmetric_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.store_initial_asymmetric_compatibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store the initial asymmetric compatibilities for reuse later if needed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.store_initial_mutual_compatibility">
+<code class="descname">store_initial_mutual_compatibility</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/inter_piece_distance.html#PieceDistanceInformation.store_initial_mutual_compatibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.store_initial_mutual_compatibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store the initial mutual compatibilities for reuse later if needed.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
-<div class="section" id="module-paikin_tal_solver.paikin_tal_tester">
-<span id="paikin-tal-solver-paikin-tal-tester-module"></span><h2>paikin_tal_solver.paikin_tal_tester module<a class="headerlink" href="#module-paikin_tal_solver.paikin_tal_tester" title="Permalink to this headline">¶</a></h2>
-<p>Unittest Module for the Paikin Tal Solver</p>
-<dl class="class">
-<dt id="paikin_tal_solver.paikin_tal_tester.PaikinTalTester">
-<em class="property">class </em><code class="descclassname">paikin_tal_solver.paikin_tal_tester.</code><code class="descname">PaikinTalTester</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/paikin_tal_tester.html#PaikinTalTester"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.paikin_tal_tester.PaikinTalTester" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
-<dl class="method">
-<dt id="paikin_tal_solver.paikin_tal_tester.PaikinTalTester.test1">
-<code class="descname">test1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/paikin_tal_tester.html#PaikinTalTester.test1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.paikin_tal_tester.PaikinTalTester.test1" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="paikin-tal-solver-paikin-tal-tester-module">
+<h2>paikin_tal_solver.paikin_tal_tester module<a class="headerlink" href="#paikin-tal-solver-paikin-tal-tester-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-paikin_tal_solver.solver">
 <span id="paikin-tal-solver-solver-module"></span><h2>paikin_tal_solver.solver module<a class="headerlink" href="#module-paikin_tal_solver.solver" title="Permalink to this headline">¶</a></h2>
@@ -729,14 +835,18 @@ maximum heap.</p>
 <dl class="attribute">
 <dt id="paikin_tal_solver.solver.BestBuddyPoolInfo.key">
 <code class="descname">key</code><a class="headerlink" href="#paikin_tal_solver.solver.BestBuddyPoolInfo.key" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>Returns (int)</em> &#8211; Best Buddy Pool Info Key.</p>
+<dd><p>Gets the key associated with the best buddy pool piece.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Best Buddy Pool Info Key.</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="paikin_tal_solver.solver.PaikinTalSolver">
-<em class="property">class </em><code class="descclassname">paikin_tal_solver.solver.</code><code class="descname">PaikinTalSolver</code><span class="sig-paren">(</span><em>numb_puzzles</em>, <em>pieces</em>, <em>distance_function</em>, <em>puzzle_type=None</em>, <em>new_board_mutual_compatibility=None</em>, <em>fixed_puzzle_dimensions=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">paikin_tal_solver.solver.</code><code class="descname">PaikinTalSolver</code><span class="sig-paren">(</span><em>pieces</em>, <em>distance_function</em>, <em>numb_puzzles=None</em>, <em>puzzle_type=None</em>, <em>new_board_mutual_compatibility=None</em>, <em>fixed_puzzle_dimensions=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Paikin &amp; Tal Solver</p>
 <dl class="attribute">
@@ -749,6 +859,12 @@ maximum heap.</p>
 <code class="descname">DEFAULT_PUZZLE_TYPE</code><em class="property"> = &lt;PuzzleType.type1: 1&gt;</em><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.DEFAULT_PUZZLE_TYPE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.allow_placement_of_all_pieces">
+<code class="descname">allow_placement_of_all_pieces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.allow_placement_of_all_pieces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.allow_placement_of_all_pieces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enables the placement of all pieces in the solver</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="paikin_tal_solver.solver.PaikinTalSolver.best_buddy_accuracy">
 <code class="descname">best_buddy_accuracy</code><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.best_buddy_accuracy" title="Permalink to this definition">¶</a></dt>
@@ -757,6 +873,30 @@ maximum heap.</p>
 <dt>Returns (List[BestBuddyAccuracy]):</dt>
 <dd>All the best buddy accuracy results in the puzzle.</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.color_segments">
+<code class="descname">color_segments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.color_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.color_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function colors each of the segments.  This allows for the generation of a visualization where
+no two adjacent segments have the same color.</p>
+<p>This function uses the Welsh-Powell Algorithm to color the graph.  For more information, see:</p>
+<blockquote>
+<div><a class="reference external" href="http://graphstream-project.org/doc/Algorithms/Welsh-Powell/">http://graphstream-project.org/doc/Algorithms/Welsh-Powell/</a></div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.disallow_piece_placement">
+<code class="descname">disallow_piece_placement</code><span class="sig-paren">(</span><em>piece_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.disallow_piece_placement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.disallow_piece_placement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disallows the placement of a particular puzzle piece</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>piece_id</strong> (<em>int</em>) &#8211; Puzzle piece identification number</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -769,8 +909,8 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>primary_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.solver_helper_classes.PuzzleLocation" title="hammoudeh_puzzle.solver_helper_classes.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the primary piece</li>
-<li><strong>other_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.solver_helper_classes.PuzzleLocation" title="hammoudeh_puzzle.solver_helper_classes.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the other piece</li>
+<li><strong>primary_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.solver_helper.PuzzleLocation" title="hammoudeh_puzzle.solver_helper.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the primary piece</li>
+<li><strong>other_piece_location</strong> (<a class="reference internal" href="hammoudeh_puzzle.html#hammoudeh_puzzle.solver_helper.PuzzleLocation" title="hammoudeh_puzzle.solver_helper.PuzzleLocation"><em>PuzzleLocation</em></a>) &#8211; Location of the other piece</li>
 </ul>
 </td>
 </tr>
@@ -794,6 +934,22 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.max_numb_pieces_to_place_in_stitching_piece_solver">
+<code class="descname">max_numb_pieces_to_place_in_stitching_piece_solver</code><em class="property"> = 100</em><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.max_numb_pieces_to_place_in_stitching_piece_solver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.numb_unplaced_valid_pieces">
+<code class="descname">numb_unplaced_valid_pieces</code><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.numb_unplaced_valid_pieces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of pieces that are valid for placement (i.e., their placement has not been selectively
+disallowed), but that have not yet been placed.</p>
+<dl class="docutils">
+<dt>Returns (int):</dt>
+<dd>Number of pieces that were allowed to be placed but that have not been.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="paikin_tal_solver.solver.PaikinTalSolver.puzzle_type">
 <code class="descname">puzzle_type</code><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.puzzle_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Puzzle Type Accessor</p>
@@ -805,14 +961,101 @@ piece that is adjacent (i.e. touching) the other piece.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="paikin_tal_solver.solver.PaikinTalSolver.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>skip_initial=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the Paikin and Tal Solver.</p>
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.reset_all_pieces_placement">
+<code class="descname">reset_all_pieces_placement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.reset_all_pieces_placement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.reset_all_pieces_placement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinitializes the placement information of all pieces.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.restore_initial_placer_settings_and_distances">
+<code class="descname">restore_initial_placer_settings_and_distances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.restore_initial_placer_settings_and_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.restore_initial_placer_settings_and_distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restores all of the initial solver settings that were present when the solver is first created.</p>
+<p>It also resets all of the InterPieceDistance data structures so all of the interpiece distance information
+also matches the original settings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.run_single_puzzle_solver">
+<code class="descname">run_single_puzzle_solver</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.run_single_puzzle_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.run_single_puzzle_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs placement while allowing only a single output puzzle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.run_solver_with_specified_seeds">
+<code class="descname">run_solver_with_specified_seeds</code><span class="sig-paren">(</span><em>seed_piece_ids</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.run_solver_with_specified_seeds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.run_solver_with_specified_seeds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the solver with the specified piece IDs as seeds.</p>
+<p>When this solver runs, the maximum number of boards is fixed based off of the number of seed pieces.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>skip_initial</strong> (<em>Optional bool</em>) &#8211; Used with Pickling.  Skips initial setup.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed_piece_ids</strong> (<em>List[int]</em>) &#8211; Identification number of all the seed pieces.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.run_standard">
+<code class="descname">run_standard</code><span class="sig-paren">(</span><em>skip_initial=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.run_standard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.run_standard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the Paikin and Tal solver normally.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>skip_initial</strong> (<em>bool</em>) &#8211; Used with Pickling.  Skips initial setup of running</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.run_stitching_piece_solver">
+<code class="descname">run_stitching_piece_solver</code><span class="sig-paren">(</span><em>seed_piece_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.run_stitching_piece_solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.run_stitching_piece_solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specialized solver used for solving with seed pieces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed_piece_id</strong> (<em>int</em>) &#8211; Identification number of the piece to be used as the puzzle seed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.save_segment_to_image_file">
+<code class="descname">save_segment_to_image_file</code><span class="sig-paren">(</span><em>puzzle_id</em>, <em>segment_id</em>, <em>image_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.save_segment_to_image_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.save_segment_to_image_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an image with just the contents of the solved image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>puzzle_id</strong> (<em>int</em>) &#8211; Identification number of the solved puzzle</li>
+<li><strong>segment_id</strong> (<em>int</em>) &#8211; Identification number of the segment</li>
+<li><strong>image_filename</strong> (<em>str</em>) &#8211; Name the file the segment image will be saved to.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="paikin_tal_solver.solver.PaikinTalSolver.segment">
+<code class="descname">segment</code><span class="sig-paren">(</span><em>perform_segment_cleaning=False</em>, <em>color_segments=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paikin_tal_solver/solver.html#PaikinTalSolver.segment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paikin_tal_solver.solver.PaikinTalSolver.segment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function divides the set of solved puzzles into a set of disjoint segments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>perform_segment_cleaning</strong> (<em>Optional bool</em>) &#8211; If True, perform additional steps to improve the accuracy
+of the segments.  This will result in smaller segments overall.</li>
+<li><strong>color_segments</strong> (<em>Optional bool</em>) &#8211; Optionally color the individual segments.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>

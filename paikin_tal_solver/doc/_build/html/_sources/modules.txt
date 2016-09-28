@@ -6,3 +6,4 @@ Project Packages
 
    paikin_tal_solver
    hammoudeh_puzzle
+   multipuzzle_solver

@@ -131,15 +131,20 @@
 
 <span class="sd">.. moduleauthor:: Zayd Hammoudeh &lt;hammoudeh@gmail.com&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">Queue</span>
+<span class="kn">import</span> <span class="nn">cStringIO</span>
 <span class="kn">import</span> <span class="nn">heapq</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle.best_buddy_placer</span> <span class="kn">import</span> <span class="n">BestBuddyPlacerCollection</span>
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_importer</span> <span class="kn">import</span> <span class="n">PuzzleType</span><span class="p">,</span> <span class="n">PuzzleDimensions</span><span class="p">,</span> <span class="n">BestBuddyResultsCollection</span><span class="p">,</span> <span class="n">Puzzle</span>
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePieceRotation</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span>
-<span class="kn">from</span> <span class="nn">hammoudeh_puzzle.solver_helper_classes</span> <span class="kn">import</span> <span class="n">NextPieceToPlace</span><span class="p">,</span> <span class="n">PuzzleLocation</span><span class="p">,</span> <span class="n">NeighborSidePair</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_segment</span> <span class="kn">import</span> <span class="n">PuzzleSegment</span><span class="p">,</span> <span class="n">SegmentColor</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle.solver_helper</span> <span class="kn">import</span> <span class="n">NextPieceToPlace</span><span class="p">,</span> <span class="n">PuzzleLocation</span><span class="p">,</span> <span class="n">NeighborSidePair</span><span class="p">,</span> \
+    <span class="n">print_elapsed_time</span>
 <span class="kn">from</span> <span class="nn">paikin_tal_solver.inter_piece_distance</span> <span class="kn">import</span> <span class="n">InterPieceDistance</span>
 
 
@@ -154,6 +159,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the key associated with the best buddy pool piece.</span>
 
 <span class="sd">        Returns (int):</span>
 <span class="sd">            Best Buddy Pool Info Key.</span>
@@ -234,9 +240,6 @@
     <span class="c1"># Used to simplify debugging without affecting test time by enabling assertion checks</span>
     <span class="n">_PERFORM_ASSERTION_CHECK</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="c1"># Prints progress messages while the puzzle is running</span>
-    <span class="n">_PRINT_PROGRESS_MESSAGES</span> <span class="o">=</span> <span class="bp">True</span>
-
     <span class="c1"># Select whether to clear the BB heap on completion</span>
     <span class="n">_CLEAR_BEST_BUDDY_HEAP_ON_SPAWN</span> <span class="o">=</span> <span class="bp">True</span>
 
@@ -248,97 +251,278 @@
     <span class="n">_MINIMUM_CLEAN_HEAP_SIZE</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span>
     <span class="n">_MINIMUM_CLEAN_HEAP_FREQUENCY</span> <span class="o">=</span> <span class="mi">100</span>
 
+    <span class="c1"># Defines how many often the number of remaining pieces to be placed is logged</span>
+    <span class="n">_PIECE_COUNT_LOGGING_FREQUENCY</span> <span class="o">=</span> <span class="mi">50</span>
+
     <span class="c1"># Select whether to use the best_buddy_placer</span>
     <span class="n">use_best_buddy_placer</span> <span class="o">=</span> <span class="bp">False</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numb_puzzles</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">max_numb_pieces_to_place_in_stitching_piece_solver</span> <span class="o">=</span> <span class="mi">100</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">numb_puzzles</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">new_board_mutual_compatibility</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fixed_puzzle_dimensions</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor for the Paikin and Tal solver.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            numb_puzzles (int): Number of Puzzles to be solved.</span>
-<span class="sd">            pieces ([PuzzlePiece])): List of puzzle pieces</span>
+<span class="sd">            pieces (List[PuzzlePiece])): List of puzzle pieces</span>
 <span class="sd">            distance_function: Calculates the distance between two PuzzlePiece objects.</span>
-<span class="sd">            puzzle_type (Optional PuzzleType): Type of Paikin Tal Puzzle</span>
-<span class="sd">            puzzle_type (Optional Float): Minimum mutual compatibility when new boards are spawned</span>
+<span class="sd">            numb_puzzles (int): Number of Puzzles to be solved.</span>
+<span class="sd">            puzzle_type (PuzzleType): Type of Paikin Tal Puzzle</span>
+<span class="sd">            puzzle_type (float): Minimum mutual compatibility when new boards are spawned</span>
 <span class="sd">            fixed_puzzle_dimensions(Optional [int]): Size of the puzzle as a Tuple (number_rows, number_columns)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">numb_puzzles</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least a single puzzle is required.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">numb_puzzles</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">fixed_puzzle_dimensions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;When specifying puzzle dimensions, only a single puzzle is allowed.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numb_puzzles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">numb_puzzles</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least a single puzzle is required.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">numb_puzzles</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">fixed_puzzle_dimensions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;When specifying puzzle dimensions, only a single puzzle is allowed.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Store the number of pieces.  Shuffle for good measure.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span> <span class="o">=</span> <span class="n">pieces</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span> <span class="o">=</span> <span class="p">[</span><span class="bp">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
-
-        <span class="c1"># Define the puzzle dimensions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_open_slots</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_placement_of_all_pieces</span><span class="p">()</span>
 
         <span class="c1"># Store the number of puzzles these collective set of pieces comprise.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_actual_numb_puzzles</span> <span class="o">=</span> <span class="n">numb_puzzles</span>
 
-        <span class="c1"># Store the function used to calculate piece to piece distances.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span> <span class="o">=</span> <span class="n">distance_function</span>
+        <span class="c1"># Standard method that re-initializes all of the placed piece information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_solved_puzzle_info</span><span class="p">()</span>
 
-        <span class="c1"># Quantifies the number of best buddies that</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span> <span class="o">=</span> <span class="n">BestBuddyResultsCollection</span><span class="p">()</span>
-
-        <span class="c1"># Stores the best buddy placer information</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_placer</span> <span class="o">=</span> <span class="n">BestBuddyPlacerCollection</span><span class="p">()</span>
+        <span class="c1"># Select the puzzle type.  If the user did not specify one, use the default.</span>
+        <span class="k">if</span> <span class="n">puzzle_type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span> <span class="o">=</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">DEFAULT_PUZZLE_TYPE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span> <span class="o">=</span> <span class="n">puzzle_type</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span> <span class="o">!=</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span> <span class="o">!=</span> <span class="n">PuzzleType</span><span class="o">.</span><span class="n">type2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid puzzle type passed to Paikin Tal Solver constructor.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Store the puzzle dimensions if any</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_actual_puzzle_dimensions</span> <span class="o">=</span> <span class="n">fixed_puzzle_dimensions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_placed_puzzle_dimensions</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store the dimensions of the puzzle</span>
 
-        <span class="c1"># Select the puzzle type.  If the user did not specify one, use the default.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span> <span class="o">=</span> <span class="n">puzzle_type</span> <span class="k">if</span> <span class="n">puzzle_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">DEFAULT_PUZZLE_TYPE</span>
+        <span class="c1"># Calculates the asymmetric distance, asymmetric &amp; mutual compatibility, best buddies, and starting piece</span>
+        <span class="c1"># information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_initial_interpiece_distances</span><span class="p">(</span><span class="n">distance_function</span><span class="p">,</span> <span class="n">new_board_mutual_compatibility</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reset_solved_puzzle_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets all data structures required to begin resolving a puzzle of any type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># No open slots since solving has not begun</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_open_slots</span><span class="p">()</span>
+
+        <span class="c1"># All pieces are unassigned</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_placed_puzzle_dimensions</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Stores the dimensions of the puzzle</span>
+
+        <span class="c1"># Mark all pieces as unplaced and reset placed piece count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_placed_pieces</span><span class="p">()</span>
+
+        <span class="c1"># Reinitialize all segments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_segment_info</span><span class="p">()</span>
+
+        <span class="c1"># Quantifies the number of best buddies that are correct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span> <span class="o">=</span> <span class="n">BestBuddyResultsCollection</span><span class="p">()</span>
+
+        <span class="c1"># Reset best buddy accuracy and placer information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span> <span class="o">=</span> <span class="n">BestBuddyResultsCollection</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_best_buddy_placer</span><span class="p">()</span>
+
+        <span class="c1"># Initialize best buddy pool and heap for the placer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_best_buddy_pool_and_heap</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_initial_interpiece_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">new_board_mutual_compatibility</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the data structures for interpiece distance.  If any information currently exists in these data</span>
+<span class="sd">        structures, they will be totally cleared and replaced by this function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            distance_function: Calculates the distance between two PuzzlePiece objects.</span>
+<span class="sd">            new_board_mutual_compatibility (float): Minimum mutual compatibility when new boards are spawned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># # Store the function used to calculate piece to piece distances.</span>
+        <span class="c1"># self._distance_function = distance_function</span>
 
         <span class="k">if</span> <span class="n">new_board_mutual_compatibility</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_new_board_mutual_compatibility</span> <span class="o">=</span> <span class="n">new_board_mutual_compatibility</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_new_board_mutual_compatibility</span> <span class="o">=</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD</span>
 
-        <span class="c1"># Stores the best buddies which are prioritized for placement.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># Initialize here to prevent warnings in PyCharm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_best_buddy_pool_and_heap</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">None</span>
-
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Starting to calculate inter-piece distances&quot;</span>
-
         <span class="c1"># Calculate the inter-piece distances.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Finished calculating inter-piece distances&quot;</span>
+        <span class="c1"># # Release the Inter-piece distance function to allow pickling.</span>
+        <span class="c1"># self._distance_function = None</span>
 
-        <span class="c1"># Release the Inter-piece distance function to allow pickling.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span> <span class="o">=</span> <span class="bp">None</span>
-
-<div class="viewcode-block" id="PaikinTalSolver.run"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_initial</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_initialize_placed_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runs the Paikin and Tal Solver.</span>
+<span class="sd">        Initializes all placed piece information.  This includes the data structures inside the Paikin and Tal solver</span>
+<span class="sd">        as well as those local to the individual pieces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_initial_placeable_pieces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)</span>
+
+        <span class="c1"># Use the pieces not allowed for placement based off placement being disallowed</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">placement_disallowed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_numb_initial_placeable_pieces</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_initial_placeable_pieces</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_all_pieces_placement</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PaikinTalSolver.reset_all_pieces_placement"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.reset_all_pieces_placement">[docs]</a>    <span class="k">def</span> <span class="nf">reset_all_pieces_placement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reinitializes the placement information of all pieces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize all information stored with the individual piece</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">:</span>
+            <span class="n">piece</span><span class="o">.</span><span class="n">reset_placement</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_initialize_best_buddy_placer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If the use of the best buddy placer is selected, then this function initializes all data structures associated</span>
+<span class="sd">        with best buddy placing.  Otherwise, it has no effect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">use_best_buddy_placer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_placer</span> <span class="o">=</span> <span class="n">BestBuddyPlacerCollection</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_placer</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="PaikinTalSolver.allow_placement_of_all_pieces"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.allow_placement_of_all_pieces">[docs]</a>    <span class="k">def</span> <span class="nf">allow_placement_of_all_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enables the placement of all pieces in the solver</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">placement_disallowed</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="PaikinTalSolver.disallow_piece_placement"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.disallow_piece_placement">[docs]</a>    <span class="k">def</span> <span class="nf">disallow_piece_placement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disallows the placement of a particular puzzle piece</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            skip_initial (Optional bool): Used with Pickling.  Skips initial setup.</span>
+<span class="sd">            piece_id (int): Puzzle piece identification number</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span><span class="o">.</span><span class="n">placement_disallowed</span> <span class="o">=</span> <span class="bp">True</span></div>
+
+    <span class="k">def</span> <span class="nf">_reset_segment_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the segments data structure(s) so it is as if the puzzle has no segments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="PaikinTalSolver.restore_initial_placer_settings_and_distances"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.restore_initial_placer_settings_and_distances">[docs]</a>    <span class="k">def</span> <span class="nf">restore_initial_placer_settings_and_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restores all of the initial solver settings that were present when the solver is first created.</span>
+
+<span class="sd">        It also resets all of the InterPieceDistance data structures so all of the interpiece distance information</span>
+<span class="sd">        also matches the original settings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_solved_puzzle_info</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">restore_initial_distance_values</span><span class="p">()</span>
+
+        <span class="c1"># The starting piece candidates are reset based off the pieces valid for placement only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">find_start_piece_candidates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PaikinTalSolver.run_stitching_piece_solver"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.run_stitching_piece_solver">[docs]</a>    <span class="k">def</span> <span class="nf">run_stitching_piece_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_piece_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specialized solver used for solving with seed pieces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed_piece_id (int): Identification number of the piece to be used as the puzzle seed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Start the placement with the specified seed piece</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_place_seed_piece</span><span class="p">(</span><span class="n">seed_piece_id</span><span class="p">)</span>
+
+        <span class="c1"># Run the solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_configurable</span><span class="p">(</span><span class="n">max_numb_output_puzzles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="n">numb_pieces_to_place</span><span class="o">=</span><span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">max_numb_pieces_to_place_in_stitching_piece_solver</span><span class="p">,</span>
+                               <span class="n">skip_initial</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                               <span class="n">stop_solver_if_need_to_respawn</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PaikinTalSolver.run_solver_with_specified_seeds"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.run_solver_with_specified_seeds">[docs]</a>    <span class="k">def</span> <span class="nf">run_solver_with_specified_seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_piece_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the solver with the specified piece IDs as seeds.</span>
+
+<span class="sd">        When this solver runs, the maximum number of boards is fixed based off of the number of seed pieces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed_piece_ids (List[int]): Identification number of all the seed pieces.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Build all the boards</span>
+        <span class="k">for</span> <span class="n">seed_id</span> <span class="ow">in</span> <span class="n">seed_piece_ids</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_place_seed_piece</span><span class="p">(</span><span class="n">seed_id</span><span class="p">)</span>
+
+        <span class="c1"># Run the solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_configurable</span><span class="p">(</span><span class="n">max_numb_output_puzzles</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">seed_piece_ids</span><span class="p">),</span>
+                               <span class="n">numb_pieces_to_place</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">),</span>
+                               <span class="n">skip_initial</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                               <span class="n">stop_solver_if_need_to_respawn</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PaikinTalSolver.run_single_puzzle_solver"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.run_single_puzzle_solver">[docs]</a>    <span class="k">def</span> <span class="nf">run_single_puzzle_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs placement while allowing only a single output puzzle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_configurable</span><span class="p">(</span><span class="n">max_numb_output_puzzles</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="n">numb_pieces_to_place</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span><span class="p">,</span>
+                               <span class="n">skip_initial</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                               <span class="n">stop_solver_if_need_to_respawn</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PaikinTalSolver.run_standard"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.run_standard">[docs]</a>    <span class="k">def</span> <span class="nf">run_standard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_initial</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the Paikin and Tal solver normally.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            skip_initial (bool): Used with Pickling.  Skips initial setup of running</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_configurable</span><span class="p">(</span><span class="n">max_numb_output_puzzles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actual_numb_puzzles</span><span class="p">,</span>
+                               <span class="n">numb_pieces_to_place</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span>
+                               <span class="n">skip_initial</span><span class="o">=</span><span class="n">skip_initial</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_run_configurable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_numb_output_puzzles</span><span class="p">,</span> <span class="n">numb_pieces_to_place</span><span class="p">,</span> <span class="n">skip_initial</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                          <span class="n">stop_solver_if_need_to_respawn</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the Paikin and Tal Solver.  This function is called by other &quot;run&quot; functions based on the configuration</span>
+<span class="sd">        required by the solver.</span>
+
+<span class="sd">        If the maximum number of output puzzles is ever reached, the solver runs normally and continues placing pieces.</span>
+<span class="sd">        The only change in the execution is that no new puzzles can be spawned.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            max_numb_output_puzzles (int): Maximum number of possible output puzzles.  Actual number of output puzzles</span>
+<span class="sd">                may be less than this number.</span>
+
+<span class="sd">            skip_initial (bool): Used with Pickling.  Skips initial setup.</span>
+
+<span class="sd">            stop_solver_if_need_to_respawn (bool): If True, whenever the solver would otherwise spawn a new puzzle,</span>
+<span class="sd">                the solver will stop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">numb_pieces_to_place</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of pieces to place must equal or exceed the number of initial unplaced pieces.&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_initial</span><span class="p">:</span>
             <span class="c1"># Place the initial seed piece</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_place_seed_piece</span><span class="p">()</span>
-            <span class="c1"># Mark the last heap clear as now</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span>
 
-        <span class="c1"># Place pieces until no pieces left to be placed.</span>
-        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Store the initial seed piece ordering in case it is needed for segmentation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">store_placement_initial_starting_piece_order</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; remain to be placed.&quot;</span>
+        <span class="c1"># Continue placing pieces until the maximum number has been placed</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_placed_pieces</span> <span class="o">&lt;</span> <span class="n">numb_pieces_to_place</span><span class="p">:</span>
+
+            <span class="c1"># Log the remaining piece count at some frequency</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span> <span class="o">%</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PIECE_COUNT_LOGGING_FREQUENCY</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; remain to be placed.&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
 
             <span class="c1"># if len(self._best_buddies_pool) == 0:</span>
@@ -347,29 +531,58 @@
             <span class="c1"># Get the next piece to place</span>
             <span class="n">next_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_next_piece</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_numb_puzzles</span> \
-                    <span class="ow">and</span> <span class="n">next_piece</span><span class="o">.</span><span class="n">mutual_compatibility</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_board_mutual_compatibility</span><span class="p">:</span>
+            <span class="c1"># Handle the case when ordinarily would spawn a new board.</span>
+            <span class="k">if</span> <span class="n">next_piece</span><span class="o">.</span><span class="n">mutual_compatibility</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_board_mutual_compatibility</span><span class="p">:</span>
                 <span class="c1"># PickleHelper.exporter(self, &quot;paikin_tal_board_spawn.pk&quot;)</span>
                 <span class="c1"># return</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_new_board</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Place the next piece</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_place_normal_piece</span><span class="p">(</span><span class="n">next_piece</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s2">&quot;Placement complete.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="c1"># Spawning new boards is prevent so break and do not place more pieces</span>
+                <span class="k">if</span> <span class="n">stop_solver_if_need_to_respawn</span><span class="p">:</span>
+                    <span class="k">break</span>
 
-            <span class="c1"># If no pieces left to place, clean the heap to reduce the size for pickling.</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_best_buddy_pool_and_heap</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
-                <span class="n">total_numb_bb_in_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">get_total_best_buddy_count</span><span class="p">()</span>
-                <span class="k">print</span> <span class="s2">&quot;Total number of Best Buddies: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">total_numb_bb_in_dataset</span>
-                <span class="c1"># Once all pieces have been placed verify that no best buddies remain unaccounted for.</span>
-                <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECK</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">best_buddy_acc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="p">:</span>
-                        <span class="k">assert</span> <span class="n">best_buddy_acc</span><span class="o">.</span><span class="n">numb_open_best_buddies</span> <span class="o">==</span> <span class="mi">0</span>
-                    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="o">.</span><span class="n">total_best_buddy_count</span><span class="p">()</span> <span class="o">==</span> <span class="n">total_numb_bb_in_dataset</span></div>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">&lt;</span> <span class="n">max_numb_output_puzzles</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_new_board</span><span class="p">()</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Place the next piece</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_place_normal_piece</span><span class="p">(</span><span class="n">next_piece</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Placement complete.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Clean the heap to reduce the size for pickling.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_best_buddy_pool_and_heap</span><span class="p">()</span>
+
+            <span class="c1"># Print the best buddy result information</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="o">.</span><span class="n">print_results</span><span class="p">()</span>
+            <span class="n">total_numb_bb_in_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">get_total_best_buddy_count</span><span class="p">()</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Total number of Best Buddies: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">total_numb_bb_in_dataset</span><span class="p">)</span>
+            <span class="c1"># Once all pieces have been placed verify that no best buddies remain unaccounted for.</span>
+            <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECK</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">best_buddy_acc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">best_buddy_acc</span><span class="o">.</span><span class="n">numb_open_best_buddies</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="c1"># Removed because when pieces excluded, this will not always be equal.</span>
+                <span class="c1"># assert self._best_buddy_accuracy.total_best_buddy_count() == total_numb_bb_in_dataset</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_numb_placed_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of pieces already placed by the solver.</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of placed already placed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_initial_placeable_pieces</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_numb_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the total number of pieces in the puzzle</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces in the puzzle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PaikinTalSolver.get_solved_puzzles"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.get_solved_puzzles">[docs]</a>    <span class="k">def</span> <span class="nf">get_solved_puzzles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -381,7 +594,7 @@
 <span class="sd">            Multiple puzzles each of which is a set of puzzle pieces.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># A puzzle is an array of puzzle pieces that can then be reconstructed.</span>
-        <span class="n">solved_puzzles</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_actual_numb_puzzles</span><span class="p">)]</span>
+        <span class="n">solved_puzzles</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">)]</span>
         <span class="n">unassigned_pieces</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Iterate through each piece and assign it to the array of pieces</span>
@@ -524,7 +737,7 @@
                     <span class="c1"># Get the best next piece from the heap.</span>
                     <span class="n">heap_info</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span><span class="p">)</span>
                     <span class="c1"># Make sure the piece is not already placed and/or the slot not already filled.</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">[</span><span class="n">heap_info</span><span class="o">.</span><span class="n">bb_id</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">heap_info</span><span class="o">.</span><span class="n">location</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">heap_info</span><span class="o">.</span><span class="n">bb_id</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">heap_info</span><span class="o">.</span><span class="n">location</span><span class="p">):</span>
                         <span class="n">next_piece</span> <span class="o">=</span> <span class="n">NextPieceToPlace</span><span class="p">(</span><span class="n">heap_info</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
                                                       <span class="n">heap_info</span><span class="o">.</span><span class="n">bb_id</span><span class="p">,</span> <span class="n">heap_info</span><span class="o">.</span><span class="n">bb_side</span><span class="p">,</span>
                                                       <span class="n">heap_info</span><span class="o">.</span><span class="n">neighbor_id</span><span class="p">,</span> <span class="n">heap_info</span><span class="o">.</span><span class="n">neighbor_side</span><span class="p">,</span>
@@ -533,21 +746,20 @@
             <span class="k">return</span> <span class="n">next_piece</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s2">&quot;Need to recalculate the compatibilities.  Number of pieces left: &quot;</span> \
-                  <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-
-            <span class="n">placed_and_open_pieces</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">open_location</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_locations</span><span class="p">:</span>
-                <span class="n">placed_and_open_pieces</span><span class="p">[</span><span class="n">open_location</span><span class="o">.</span><span class="n">piece_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Need to recalculate the compatibilities.  Number of pieces left: &quot;</span>
+                          <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1">#</span>
+            <span class="c1"># piece_placed_with_open_neighbor = [False] * len(self._pieces)</span>
+            <span class="c1"># for open_location in self._open_locations:</span>
+            <span class="c1">#     piece_placed_with_open_neighbor[open_location.piece_id] = True</span>
             <span class="c1"># Recalculate the inter-piece distances</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">recalculate_remaining_piece_compatibilities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">,</span>
-                                                                                   <span class="n">placed_and_open_pieces</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">recalculate_remaining_piece_compatibilities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">)</span>
 
             <span class="c1"># Get all unplaced pieces</span>
             <span class="n">unplaced_pieces</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">)):</span>
                 <span class="c1"># If the piece is not placed, then append to the list</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">[</span><span class="n">p_i</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">p_i</span><span class="p">]:</span>
                     <span class="n">unplaced_pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_i</span><span class="p">)</span>
             <span class="c1"># Use the unplaced pieces to determine the best location.</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_next_piece_from_pool</span><span class="p">(</span><span class="n">unplaced_pieces</span><span class="p">)</span>
@@ -690,8 +902,28 @@
 <span class="sd">        Returns (bool):</span>
 <span class="sd">            True of the location in the specified puzzle is open and false otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">slot_location</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">slot_location</span><span class="o">.</span><span class="n">location</span><span class="p">]</span> <span class="o">==</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_UNPLACED_PIECE_ID</span> \
-               <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_board_dimensions</span><span class="p">(</span><span class="n">slot_location</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">slot_location</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">slot_location</span><span class="o">.</span><span class="n">location</span><span class="p">]</span> <span class="o">==</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_UNPLACED_PIECE_ID</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_board_dimensions</span><span class="p">(</span><span class="n">slot_location</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_get_piece_in_puzzle_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_location</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Puzzle Piece Accessor via a Location</span>
+
+<span class="sd">        Returns the puzzle piece at the specified location.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            puzzle_location (PuzzleLocation): Location in the puzzle from which to get a piece</span>
+
+<span class="sd">        Returns (PuzzlePiece): Puzzle piece at the specified location</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Optionally verify the piece exists in the specified location</span>
+        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECK</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">puzzle_location</span><span class="p">)</span>
+
+        <span class="n">piece_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">puzzle_location</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">puzzle_location</span><span class="o">.</span><span class="n">location</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_check_if_perform_best_buddy_heap_housecleaning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -701,13 +933,26 @@
 <span class="sd">            True if BB heap house cleaning should not be performed and False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">numb_pieces_placed_since_last_housekeeping</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span>
+                                                      <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_ENABLE_BEST_BUDDY_HEAP_HOUSEKEEPING</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_MINIMUM_CLEAN_HEAP_SIZE</span>
-                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span> <span class="o">&gt;=</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_MINIMUM_CLEAN_HEAP_FREQUENCY</span><span class="p">):</span>
+                <span class="ow">and</span> <span class="n">numb_pieces_placed_since_last_housekeeping</span> <span class="o">&gt;=</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_MINIMUM_CLEAN_HEAP_FREQUENCY</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">numb_unplaced_valid_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of pieces that are valid for placement (i.e., their placement has not been selectively</span>
+<span class="sd">        disallowed), but that have not yet been placed.</span>
+
+<span class="sd">        Returns (int):</span>
+<span class="sd">            Number of pieces that were allowed to be placed but that have not been.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span>
 
     <span class="k">def</span> <span class="nf">_clean_best_buddy_heap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -715,31 +960,28 @@
 <span class="sd">        in particular when there are a lot of pieces.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s2">&quot;Cleaning best buddy heap...&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cleaning best buddy heap...&quot;</span><span class="p">)</span>
 
         <span class="n">elements_deleted</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Stores the number of elements in the heap removed</span>
         <span class="n">new_bb_heap</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Go through all the heap elements and if a slot is full or a best buddy was placed, remove</span>
         <span class="c1"># Do not add it to the new heap</span>
         <span class="k">for</span> <span class="n">bb_heap_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">bb_heap_info</span><span class="o">.</span><span class="n">location</span><span class="p">)</span>
-                    <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">[</span><span class="n">bb_heap_info</span><span class="o">.</span><span class="n">bb_id</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">bb_heap_info</span><span class="o">.</span><span class="n">location</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">bb_heap_info</span><span class="o">.</span><span class="n">bb_id</span><span class="p">]:</span>
                 <span class="n">elements_deleted</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">new_bb_heap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bb_heap_info</span><span class="p">)</span>
         <span class="c1"># Mark when BB heap was last cleaned.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span>
 
         <span class="c1"># Turn the cleaned list into a heap and replace the existing heap</span>
         <span class="n">heapq</span><span class="o">.</span><span class="n">heapify</span><span class="p">(</span><span class="n">new_bb_heap</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span> <span class="o">=</span> <span class="n">new_bb_heap</span>
 
         <span class="c1"># Print the number of elements deleted</span>
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span><span class="p">:</span>
-            <span class="n">total_numb_elements</span> <span class="o">=</span> <span class="n">elements_deleted</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_bb_heap</span><span class="p">)</span>
-            <span class="k">print</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> out of </span><span class="si">%d</span><span class="s2"> elements removed in the heap cleanup.</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">elements_deleted</span><span class="p">,</span> <span class="n">total_numb_elements</span><span class="p">)</span>
+        <span class="n">total_numb_elements</span> <span class="o">=</span> <span class="n">elements_deleted</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_bb_heap</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> out of </span><span class="si">%d</span><span class="s2"> elements removed in the heap cleanup.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">elements_deleted</span><span class="p">,</span> <span class="n">total_numb_elements</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_check_board_dimensions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_location</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -779,12 +1021,17 @@
 
 <span class="sd">        Initializes a best buddy heap and pool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># Initialize here to prevent warnings in PyCharm</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddies_pool</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># Clear the best buddy heap</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Mark the last heap clear as now</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">_get_next_piece_from_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unplaced_pieces</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -852,7 +1099,7 @@
         <span class="c1"># noinspection PyUnreachableCode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_place_seed_piece</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_place_seed_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_place_seed_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed_piece_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Seed Piece Placer</span>
 
@@ -860,33 +1107,55 @@
 <span class="sd">        from the set of possible pieces, then places it at the center of the new puzzle with no rotation (for</span>
 <span class="sd">        simplicity as this using no rotation has no effect on the final solution).</span>
 
+<span class="sd">        This function allows for a specific piece to be specified externally as the seed.  If no seed piece is</span>
+<span class="sd">        specified, the function uses the seed piece based off the start piece candidates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed_piece_id (int): Identification number for the seed piece to be used.</span>
+
 <span class="sd">        The function then adds the seed piece&#39;s best buddies to the pool.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Increment the number of puzzles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PRINT_PROGRESS_MESSAGES</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Board #&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; was created.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Board #&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; was created.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Account for placed piece when calculating starting piece candidates.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">find_start_piece_candidates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">)</span>
-        <span class="c1"># Get the first piece for the puzzle</span>
-        <span class="n">seed_piece_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">next_starting_piece</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">)</span>
-        <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">seed_piece_id</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mark_piece_placed</span><span class="p">(</span><span class="n">seed_piece_id</span><span class="p">)</span>
+        <span class="c1"># Handle the case where no seed piece is specified</span>
+        <span class="k">if</span> <span class="n">seed_piece_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># Account for placed piece when calculating starting piece candidates.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">find_start_piece_candidates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">)</span>
+            <span class="c1"># Get the first piece for the puzzle</span>
+            <span class="n">used_seed_piece_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">next_starting_piece</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">used_seed_piece_id</span> <span class="o">=</span> <span class="n">seed_piece_id</span>
 
-        <span class="c1"># Set the first piece&#39;s puzzle id</span>
+        <span class="c1"># Extract and process seed piece</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mark_piece_placed</span><span class="p">(</span><span class="n">used_seed_piece_id</span><span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">used_seed_piece_id</span><span class="p">]</span>
+
+        <span class="c1"># Set the seed piece&#39;s puzzle id</span>
         <span class="n">seed</span><span class="o">.</span><span class="n">puzzle_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span> <span class="o">-</span> <span class="mi">1</span>
-
         <span class="c1"># Mark the last heap clear as now</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_best_buddy_heap_housekeeping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span>
+
+        <span class="c1"># Print information about the seed</span>
+        <span class="n">string_io</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;Seed Piece Information for new Board #</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">seed</span><span class="o">.</span><span class="n">puzzle_id</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Original Puzzle ID:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">seed</span><span class="o">.</span><span class="n">original_puzzle_id</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Original Piece ID:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">seed</span><span class="o">.</span><span class="n">original_piece_id</span>
+        <span class="c1"># Print the original location information</span>
+        <span class="n">original_location</span> <span class="o">=</span> <span class="n">seed</span><span class="o">.</span><span class="n">original_puzzle_location</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Original Location:</span><span class="se">\t</span><span class="s2">(</span><span class="si">%d</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">original_location</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="n">original_location</span><span class="o">.</span><span class="n">column</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">Solver Piece ID:</span><span class="se">\t</span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">seed</span><span class="o">.</span><span class="n">id_number</span>
+        <span class="c1"># log the result</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">string_io</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+        <span class="n">string_io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1"># Initialize the piece locations list</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="p">[</span><span class="n">seed</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">]</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_UNPLACED_PIECE_ID</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_locations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_UNPLACED_PIECE_ID</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
 
         <span class="c1"># Place the piece unrotated in the center of the board.</span>
         <span class="n">board_center</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
@@ -934,9 +1203,10 @@
                 <span class="c1"># Store the neighbor side</span>
                 <span class="n">neighbor_side</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">get_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="n">neighbor_location</span><span class="p">,</span>
                                                                                    <span class="n">placed_piece_location</span><span class="p">)</span>
-                <span class="c1"># Update the neighbor location information</span>
-                <span class="n">placed_piece_and_side</span> <span class="o">=</span> <span class="n">NeighborSidePair</span><span class="p">(</span><span class="n">placed_piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_placer</span><span class="o">.</span><span class="n">update_open_slot</span><span class="p">(</span><span class="n">neighbor_location</span><span class="p">,</span> <span class="n">neighbor_side</span><span class="p">,</span> <span class="n">placed_piece_and_side</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">use_best_buddy_placer</span><span class="p">:</span>
+                    <span class="c1"># Update the neighbor location information</span>
+                    <span class="n">placed_piece_and_side</span> <span class="o">=</span> <span class="n">NeighborSidePair</span><span class="p">(</span><span class="n">placed_piece_id</span><span class="p">,</span> <span class="n">side</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_placer</span><span class="o">.</span><span class="n">update_open_slot</span><span class="p">(</span><span class="n">neighbor_location</span><span class="p">,</span> <span class="n">neighbor_side</span><span class="p">,</span> <span class="n">placed_piece_and_side</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="PaikinTalSolver.get_side_of_primary_adjacent_to_other_piece"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.get_side_of_primary_adjacent_to_other_piece">[docs]</a>    <span class="k">def</span> <span class="nf">get_side_of_primary_adjacent_to_other_piece</span><span class="p">(</span><span class="n">primary_piece_location</span><span class="p">,</span> <span class="n">other_piece_location</span><span class="p">):</span>
@@ -957,10 +1227,11 @@
 
         <span class="c1"># Verify the locations are actually adjacent</span>
         <span class="c1"># noinspection PyProtectedMember</span>
-        <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECK</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">primary_piece_location</span><span class="o">.</span><span class="n">puzzle_id</span> <span class="o">==</span> <span class="n">other_piece_location</span><span class="o">.</span><span class="n">puzzle_id</span>
-            <span class="c1"># Verify the locations are exactly one space away</span>
-            <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">diff_row</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">diff_col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">diff_row</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">diff_col</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The two specified locations are not adjacent.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">primary_piece_location</span><span class="o">.</span><span class="n">puzzle_id</span> <span class="o">!=</span> <span class="n">other_piece_location</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The two specified locations come from different puzzles.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">diff_row</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">left</span>
@@ -1061,9 +1332,14 @@
             <span class="c1"># If so, it (and potentially its BB) must be processed</span>
             <span class="k">if</span> <span class="n">placed_piece_bb_info</span><span class="p">:</span>
 
+                <span class="c1"># Ignore best buddy info for disallowed placement.</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">placed_piece_bb_id</span><span class="p">]</span><span class="o">.</span><span class="n">placement_disallowed</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_accuracy</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">]</span><span class="o">.</span><span class="n">add_excluded_best_buddy</span><span class="p">(</span><span class="n">placed_piece_bb_id</span><span class="p">,</span>
+                                                                                 <span class="n">placed_piece_bb_side</span><span class="p">)</span>
+
                 <span class="c1"># If the BB is already placed, delete from open list if applicable and add to wrong list</span>
                 <span class="c1"># if applicable</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">[</span><span class="n">placed_piece_bb_id</span><span class="p">]:</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">placed_piece_bb_id</span><span class="p">]:</span>
                     <span class="c1"># Get the placed piece&#39;s puzzle id number</span>
                     <span class="n">bb_puzzle_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">placed_piece_bb_id</span><span class="p">]</span><span class="o">.</span><span class="n">puzzle_id</span>
                     <span class="c1"># If it is open, delete it from the open list</span>
@@ -1135,8 +1411,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            piece_id (int): Identification number for the puzzle piece</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_pieces</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_numb_unplaced_valid_pieces</span> <span class="o">-=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">_add_best_buddies_to_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1163,7 +1439,7 @@
                 <span class="n">bb_pool_info</span> <span class="o">=</span> <span class="n">BestBuddyPoolInfo</span><span class="p">(</span><span class="n">bb_id</span><span class="p">)</span>
 
                 <span class="c1"># If the best buddy is already placed or in the pool, skip it.</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_placed</span><span class="p">[</span><span class="n">bb_id</span><span class="p">]</span> <span class="ow">or</span> <span class="n">bb_pool_info</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddies_pool</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_valid_for_placement</span><span class="p">[</span><span class="n">bb_id</span><span class="p">]</span> <span class="ow">or</span> <span class="n">bb_pool_info</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddies_pool</span><span class="p">:</span>
                     <span class="k">continue</span>
 
                 <span class="c1"># Add the best buddy to the pool</span>
@@ -1186,6 +1462,290 @@
                                                          <span class="n">open_slot_info</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">mutual_compat</span><span class="p">)</span>
                         <span class="c1"># Push the best buddy onto the heap</span>
                         <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_open_slot_heap</span><span class="p">,</span> <span class="n">bb_heap_info</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PaikinTalSolver.segment"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.segment">[docs]</a>    <span class="k">def</span> <span class="nf">segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perform_segment_cleaning</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">color_segments</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function divides the set of solved puzzles into a set of disjoint segments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            perform_segment_cleaning (Optional bool): If True, perform additional steps to improve the accuracy</span>
+<span class="sd">             of the segments.  This will result in smaller segments overall.</span>
+<span class="sd">            color_segments (Optional bool): Optionally color the individual segments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perform_segmentation</span><span class="p">(</span><span class="n">perform_segment_cleaning</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_finding_stitching_pieces</span><span class="p">()</span>
+
+        <span class="c1"># Color all segments</span>
+        <span class="k">if</span> <span class="n">color_segments</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color_segments</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span></div>
+
+<div class="viewcode-block" id="PaikinTalSolver.save_segment_to_image_file"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.save_segment_to_image_file">[docs]</a>    <span class="k">def</span> <span class="nf">save_segment_to_image_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_id</span><span class="p">,</span> <span class="n">segment_id</span><span class="p">,</span> <span class="n">image_filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an image with just the contents of the solved image.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            puzzle_id (int): Identification number of the solved puzzle</span>
+<span class="sd">            segment_id (int): Identification number of the segment</span>
+<span class="sd">            image_filename (str): Name the file the segment image will be saved to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">segment_piece_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_piece_ids</span><span class="p">()</span>
+
+        <span class="c1"># Get the pieces with the identification numbers in the segment</span>
+        <span class="n">puzzle_pieces</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">piece_id</span> <span class="ow">in</span> <span class="n">segment_piece_ids</span><span class="p">]</span>
+
+        <span class="n">puzzle</span> <span class="o">=</span> <span class="n">Puzzle</span><span class="o">.</span><span class="n">reconstruct_from_pieces</span><span class="p">(</span><span class="n">puzzle_pieces</span><span class="p">,</span> <span class="n">puzzle_id</span><span class="p">)</span>
+        <span class="n">puzzle</span><span class="o">.</span><span class="n">save_to_file</span><span class="p">(</span><span class="n">image_filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_perform_segmentation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">perform_segment_cleaning</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs the actual segmentation of the solved images.  Each segment is disjoint.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            perform_segment_cleaning (Optional bool): If True, perform additional steps to improve the accuracy</span>
+<span class="sd">             of the segments.  This will result in smaller segments overall.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Beginning segmentation.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create a dictionary containing all of the unsegmented pieces</span>
+        <span class="n">unassigned_pieces</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">piece</span><span class="o">.</span><span class="n">placement_disallowed</span><span class="p">:</span>
+                <span class="n">unassigned_pieces</span><span class="p">[</span><span class="n">piece</span><span class="o">.</span><span class="n">key</span><span class="p">()]</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">id_number</span>
+
+        <span class="c1"># Use the seed priority to determine the order pieces are added to segments.</span>
+        <span class="n">piece_segment_priority</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">get_placement_initial_starting_piece_order</span><span class="p">()</span>
+
+        <span class="c1"># Initialize the segment placeholder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+
+        <span class="c1"># Initialize the seed and segment building information</span>
+        <span class="n">priority_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">segment_piece_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+
+        <span class="c1"># Continue segmenting</span>
+        <span class="k">while</span> <span class="n">unassigned_pieces</span><span class="p">:</span>
+
+            <span class="c1"># Find the next seed piece - Essentially a do while loop</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">seed_piece_id_number</span> <span class="o">=</span> <span class="n">piece_segment_priority</span><span class="p">[</span><span class="n">priority_cnt</span><span class="p">]</span>
+                <span class="n">seed_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">seed_piece_id_number</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">seed_piece</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unassigned_pieces</span><span class="p">:</span>
+                    <span class="n">priority_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="c1"># # If end of the list reached then break.</span>
+                    <span class="c1"># if priority_cnt == len(self._pieces[seed_piece_id_number]):</span>
+                    <span class="c1">#     break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+            <span class="c1"># Create a new segment</span>
+            <span class="n">new_segment</span> <span class="o">=</span> <span class="n">PuzzleSegment</span><span class="p">(</span><span class="n">seed_piece</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">seed_piece</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">]))</span>
+            <span class="n">segment_piece_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">seed_piece</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">unassigned_pieces</span><span class="p">[</span><span class="n">seed_piece</span><span class="o">.</span><span class="n">key</span><span class="p">()]</span>  <span class="c1"># Piece now in the queue to be assigned</span>
+
+            <span class="c1"># Add pieces to the segment</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">segment_piece_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+
+                <span class="c1"># Add the next piece in the queue and keep looping</span>
+                <span class="n">queue_piece</span> <span class="o">=</span> <span class="n">segment_piece_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+                <span class="c1"># Add the piece to the segment</span>
+                <span class="n">queue_piece</span><span class="o">.</span><span class="n">segment_number</span> <span class="o">=</span> <span class="n">new_segment</span><span class="o">.</span><span class="n">id_number</span>
+                <span class="n">new_segment</span><span class="o">.</span><span class="n">add_piece</span><span class="p">(</span><span class="n">queue_piece</span><span class="p">)</span>
+
+                <span class="c1"># Iterate through all the sides and determine if should be added</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">neighbor_loc</span><span class="p">,</span> <span class="n">queue_piece_side</span><span class="p">)</span> <span class="ow">in</span> <span class="n">queue_piece</span><span class="o">.</span><span class="n">get_neighbor_puzzle_location_and_sides</span><span class="p">():</span>
+                    <span class="c1"># If no neighbor is present, go to next side</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">neighbor_loc</span><span class="p">):</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Get the neighbor piece</span>
+                    <span class="n">neighbor_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_piece_in_puzzle_location</span><span class="p">(</span><span class="n">neighbor_loc</span><span class="p">)</span>
+
+                    <span class="c1"># Verify the puzzle identification numbers match</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECK</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="n">neighbor_piece</span><span class="o">.</span><span class="n">puzzle_id</span> <span class="o">==</span> <span class="n">new_segment</span><span class="o">.</span><span class="n">puzzle_id</span>
+
+                    <span class="c1"># If piece already assigned a segment go to next piece</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">neighbor_piece</span><span class="o">.</span><span class="n">id_number</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unassigned_pieces</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">neighbor_piece_side</span> <span class="o">=</span> <span class="n">neighbor_piece</span><span class="o">.</span><span class="n">side_adjacent_to_location</span><span class="p">(</span><span class="n">queue_piece</span><span class="o">.</span><span class="n">puzzle_location</span><span class="p">)</span>
+
+                    <span class="c1"># Add the piece to the queue if they are best buddies</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pieces_best_buddies</span><span class="p">(</span><span class="n">queue_piece</span><span class="p">,</span> <span class="n">queue_piece_side</span><span class="p">,</span> <span class="n">neighbor_piece</span><span class="p">,</span> <span class="n">neighbor_piece_side</span><span class="p">):</span>
+                        <span class="n">segment_piece_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">neighbor_piece</span><span class="p">)</span>
+                        <span class="k">del</span> <span class="n">unassigned_pieces</span><span class="p">[</span><span class="n">neighbor_piece</span><span class="o">.</span><span class="n">key</span><span class="p">()]</span>  <span class="c1"># Piece now in the queue to be assigned</span>
+
+            <span class="k">if</span> <span class="n">perform_segment_cleaning</span><span class="p">:</span>  <span class="c1"># Not yet supported.</span>
+                <span class="c1"># TODO Implement the code to clean segments.</span>
+                <span class="k">assert</span> <span class="bp">False</span>
+
+            <span class="c1"># Add the segment to the list of segments</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">new_segment</span><span class="o">.</span><span class="n">puzzle_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_segment</span><span class="p">)</span>
+
+        <span class="c1"># Mark which segments are physically adjacent to each other</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_segment_neighbors</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Segmentation completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;segmentation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_segment_information</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_finding_stitching_pieces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function finds the stitching pieces in each of the solved segments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting to find stitching pieces.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">puzzle_id</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">segment_id</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">])):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">select_pieces_for_segment_stitching</span><span class="p">()</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Completed finding stitching pieces.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;finding stitching pieces&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_log_segment_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper function to log information regarding the segment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Print the number of segments per puzzle</span>
+        <span class="n">string_io</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;Segments Per Output Puzzle&quot;</span>
+        <span class="k">for</span> <span class="n">puzzle_id</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">):</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Solved Puzzle #</span><span class="si">%d</span><span class="s2">:</span><span class="se">\t</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">puzzle_id</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">]))</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">string_io</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">string_io</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+        <span class="n">string_io</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_segment_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A segment will have one or more neighbors.  This function updates the segments to reflect their neighboring</span>
+<span class="sd">        segments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Iterate through all pieces</span>
+        <span class="k">for</span> <span class="n">piece</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">:</span>
+
+            <span class="c1"># Ignore if placement is disallowed</span>
+            <span class="k">if</span> <span class="n">piece</span><span class="o">.</span><span class="n">placement_disallowed</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">piece_puzzle_id</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">puzzle_id</span>
+            <span class="n">piece_segment_id</span> <span class="o">=</span> <span class="n">piece</span><span class="o">.</span><span class="n">segment_number</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="n">neighbor_loc</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">piece</span><span class="o">.</span><span class="n">get_neighbor_puzzle_location_and_sides</span><span class="p">():</span>
+                <span class="c1"># Verify the</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_slot_open</span><span class="p">(</span><span class="n">neighbor_loc</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="c1"># Get the neighbor piece</span>
+                <span class="n">neighbor_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_piece_in_puzzle_location</span><span class="p">(</span><span class="n">neighbor_loc</span><span class="p">)</span>
+
+                <span class="c1"># Verify the pieces are from the same puzzle</span>
+                <span class="k">if</span> <span class="n">PaikinTalSolver</span><span class="o">.</span><span class="n">_PERFORM_ASSERTION_CHECK</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">piece_puzzle_id</span> <span class="o">==</span> <span class="n">neighbor_piece</span><span class="o">.</span><span class="n">puzzle_id</span>
+                    <span class="k">assert</span> <span class="n">PuzzleLocation</span><span class="o">.</span><span class="n">are_adjacent</span><span class="p">(</span><span class="n">piece</span><span class="o">.</span><span class="n">puzzle_location</span><span class="p">,</span> <span class="n">neighbor_loc</span><span class="p">)</span>
+
+                <span class="c1"># If the pieces are from different segments, then mark them as adjacent</span>
+                <span class="n">neighbor_segment_id</span> <span class="o">=</span> <span class="n">neighbor_piece</span><span class="o">.</span><span class="n">segment_number</span>
+                <span class="k">if</span> <span class="n">piece_segment_id</span> <span class="o">!=</span> <span class="n">neighbor_segment_id</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">piece_puzzle_id</span><span class="p">][</span><span class="n">piece_segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">add_neighboring_segment</span><span class="p">(</span><span class="n">neighbor_segment_id</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">piece_puzzle_id</span><span class="p">][</span><span class="n">neighbor_segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">add_neighboring_segment</span><span class="p">(</span><span class="n">piece_segment_id</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PaikinTalSolver.color_segments"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.solver.PaikinTalSolver.color_segments">[docs]</a>    <span class="k">def</span> <span class="nf">color_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function colors each of the segments.  This allows for the generation of a visualization where</span>
+<span class="sd">        no two adjacent segments have the same color.</span>
+
+<span class="sd">        This function uses the Welsh-Powell Algorithm to color the graph.  For more information, see:</span>
+
+<span class="sd">                 http://graphstream-project.org/doc/Algorithms/Welsh-Powell/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Beginning coloring of segments.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">puzzle_id</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_puzzles</span><span class="p">):</span>
+            <span class="c1"># build a list that allows for sorting the segments by degree (i.e., number of neighbors)</span>
+            <span class="n">segment_degree_priority</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">])):</span>
+                <span class="n">segment_degree_priority</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">neighbor_degree</span><span class="p">))</span>
+            <span class="c1"># Perform an inplace sort using the degree of each segment.</span>
+            <span class="n">segment_degree_priority</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  <span class="c1"># Use reverse so descending</span>
+
+            <span class="c1"># Get all the colors</span>
+            <span class="n">segment_colors</span> <span class="o">=</span> <span class="n">SegmentColor</span><span class="o">.</span><span class="n">get_all_colors</span><span class="p">()</span>
+            <span class="n">color_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># Go through all the segment</span>
+            <span class="n">segment_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">segment_cnt</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">segment_degree_priority</span><span class="p">):</span>
+
+                <span class="c1"># Determine if next segment is colored.  If so, increment and retry</span>
+                <span class="n">next_segment_id</span> <span class="o">=</span> <span class="n">segment_degree_priority</span><span class="p">[</span><span class="n">segment_cnt</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># if the segment is already colored, go to the next segment</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">next_segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_colored</span><span class="p">():</span>
+                    <span class="n">segment_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">continue</span>  <span class="c1"># Use continue to prevent overflowing the list</span>
+
+                <span class="c1"># Get the next color and then increment the color counter</span>
+                <span class="n">next_color</span> <span class="o">=</span> <span class="n">segment_colors</span><span class="p">[</span><span class="n">color_cnt</span><span class="p">]</span>
+                <span class="n">color_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Color the highest priority segment</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_assign_color_to_segment</span><span class="p">(</span><span class="n">puzzle_id</span><span class="p">,</span> <span class="n">next_segment_id</span><span class="p">,</span> <span class="n">next_color</span><span class="p">)</span>
+                <span class="c1"># Color any other segments that have no neighbor with the same color</span>
+                <span class="k">for</span> <span class="n">other_segment_cnt</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">segment_cnt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">segment_degree_priority</span><span class="p">)):</span>
+                    <span class="n">other_segment_id</span> <span class="o">=</span> <span class="n">segment_degree_priority</span><span class="p">[</span><span class="n">other_segment_cnt</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="c1"># Check if not colored and does not have a neighbor with the specified color</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">other_segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_colored</span><span class="p">()</span> \
+                            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">other_segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">has_neighbor_color</span><span class="p">(</span><span class="n">next_color</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_assign_color_to_segment</span><span class="p">(</span><span class="n">puzzle_id</span><span class="p">,</span> <span class="n">other_segment_id</span><span class="p">,</span> <span class="n">next_color</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Coloring of segments completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;segment coloring&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_assign_color_to_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">puzzle_id</span><span class="p">,</span> <span class="n">segment_id</span><span class="p">,</span> <span class="n">new_segment_color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Colors a segment in the puzzle.  It also marks all neighbors of this segment that they have a neighbor</span>
+<span class="sd">        with the specified color.</span>
+
+<span class="sd">        The last stage in this function is to color the pieces that are part of the segment to be colored.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            puzzle_id (int): Puzzle identification where the segment is located.</span>
+<span class="sd">            segment_id (int): Number for the segment to be colored</span>
+<span class="sd">            new_segment_color (SegmentColor): Color to set the segment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Color the segment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">new_segment_color</span>
+
+        <span class="c1"># For all parts adjacent to this segment, add this as a neighbor color</span>
+        <span class="n">neighbor_segment_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_neighbor_segment_ids</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">neighbor_id</span> <span class="ow">in</span> <span class="n">neighbor_segment_ids</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">neighbor_id</span><span class="p">]</span><span class="o">.</span><span class="n">add_neighbor_color</span><span class="p">(</span><span class="n">new_segment_color</span><span class="p">)</span>
+
+        <span class="c1"># Color the pieces that belong to this segment.</span>
+        <span class="k">for</span> <span class="n">piece_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_piece_ids</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span><span class="o">.</span><span class="n">segment_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">get_piece_color</span><span class="p">(</span><span class="n">piece_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pieces</span><span class="p">[</span><span class="n">piece_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_stitching_piece</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_segments</span><span class="p">[</span><span class="n">puzzle_id</span><span class="p">][</span><span class="n">segment_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_piece_used_for_stitching</span><span class="p">(</span><span class="n">piece_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_is_pieces_best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_piece</span><span class="p">,</span> <span class="n">first_piece_side</span><span class="p">,</span> <span class="n">second_piece</span><span class="p">,</span> <span class="n">second_piece_side</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether two pieces pieces are best buddies on the specified sides.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first_piece (PuzzlePiece): A puzzle piece</span>
+<span class="sd">            first_piece_side (PuzzlePieceSide):  The side of the first puzzle piece</span>
+<span class="sd">            second_piece (PuzzlePiece): A second puzzle piece</span>
+<span class="sd">            second_piece_side (PuzzlePieceSide): The side of the second piece being compared</span>
+
+<span class="sd">        Returns (Bool): True if the two pieces are best buddies on their respective sides and False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inter_piece_distance</span><span class="o">.</span><span class="n">is_pieces_best_buddies</span><span class="p">(</span><span class="n">first_piece</span><span class="p">,</span> <span class="n">first_piece_side</span><span class="p">,</span>
+                                                                 <span class="n">second_piece</span><span class="p">,</span> <span class="n">second_piece_side</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">puzzle_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

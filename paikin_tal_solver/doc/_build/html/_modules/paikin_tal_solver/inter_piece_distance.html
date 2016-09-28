@@ -131,13 +131,20 @@
 
 <span class="sd">.. moduleauthor:: Zayd Hammoudeh &lt;hammoudeh@gmail.com&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">math</span>  <span class="c1"># Used for ceiling function</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="kn">as</span> <span class="nn">mp</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_importer</span> <span class="kn">import</span> <span class="n">PuzzleType</span>
 <span class="kn">from</span> <span class="nn">hammoudeh_puzzle.puzzle_piece</span> <span class="kn">import</span> <span class="n">PuzzlePieceSide</span>
+<span class="kn">from</span> <span class="nn">hammoudeh_puzzle.solver_helper</span> <span class="kn">import</span> <span class="n">print_elapsed_time</span>
 
 
 <div class="viewcode-block" id="PieceDistanceInformation"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation">[docs]</a><span class="k">class</span> <span class="nc">PieceDistanceInformation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -171,8 +178,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_second_best_distance</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_distances</span> <span class="o">=</span> <span class="bp">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_asymmetric_compatibilities</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_mutual_compatibilities</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="c1"># Define the best buddies information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_candidates</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">()]</span>
@@ -237,7 +250,11 @@
 <span class="sd">            compatibility (float): Mutual compatibility between p_i and p_j on their respective sides.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span> <span class="o">=</span> <span class="n">compatibility</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span> <span class="o">=</span> <span class="n">compatibility</span>
+
+        <span class="c1"># This indicates whether mutual compatibilities need to be replaced on a restore or the original</span>
+        <span class="c1"># values can be used.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">True</span></div>
 
 <div class="viewcode-block" id="PieceDistanceInformation.get_mutual_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.get_mutual_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">get_mutual_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -256,6 +273,40 @@
         <span class="n">p_j_side_val</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_p_j_side_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
         <span class="c1"># Return the mutual compatibility</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_val</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="PieceDistanceInformation.store_initial_asymmetric_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.store_initial_asymmetric_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">store_initial_asymmetric_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the initial asymmetric compatibilities for reuse later if needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_asymmetric_compatibilities</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span><span class="p">)</span>
+
+        <span class="c1"># Stored so no need to reset.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="PieceDistanceInformation.restore_initial_asymmetric_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.restore_initial_asymmetric_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">restore_initial_asymmetric_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In cases where asymmetric compatibility may have changed, this function restores the initial asymmetric compatibilities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibility_has_changed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_asymmetric_compatibilities</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="PieceDistanceInformation.store_initial_mutual_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.store_initial_mutual_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">store_initial_mutual_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store the initial mutual compatibilities for reuse later if needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_mutual_compatibilities</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="p">)</span>
+
+        <span class="c1"># Stored so no need to reset.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="PieceDistanceInformation.restore_initial_mutual_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.restore_initial_mutual_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">restore_initial_mutual_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In cases where mutual compatibility may have changed, this function restores the initial mutual compatibilities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibility_has_changed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_mutual_compatibilities</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">False</span></div>
 
 <div class="viewcode-block" id="PieceDistanceInformation.best_buddy_candidates"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.best_buddy_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">best_buddy_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -347,11 +398,8 @@
                                                                                  <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
 
         <span class="c1"># Build an empty array to store the piece to piece distances</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_distances</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span>
-                                                 <span class="n">numb_possible_pairings</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
-        <span class="n">fill_value</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_distances</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">fill_value</span><span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span> <span class="n">numb_possible_pairings</span><span class="p">),</span>
+                                             <span class="n">fill_value</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
         <span class="c1"># Reset the piece&#39;s important distance values.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_min_and_second_best_distances</span><span class="p">()</span>
 
@@ -397,11 +445,16 @@
     <span class="k">def</span> <span class="nf">_update_min_and_second_best_distances_and_best_buddy_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">,</span>
                                                                         <span class="n">update_best_buddy_candidates</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a given puzzle piece&#39;s side, this function will check if the other piece and its side is it</span>
+<span class="sd">        best or second best distance.</span>
+
+<span class="sd">        Optionally, this function will also store possible best buddy candidates for best buddy analysis.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            p_i_side (PuzzlePieceSide): Reference side of the implicit puzzle piece</span>
 <span class="sd">            p_j (int): Alternate piece identification number</span>
 <span class="sd">            p_j_side (PuzzlePieceSide): Reference side of the other piece</span>
+<span class="sd">            update_best_buddy_candidates (bool): If True, potentially update the best buddy information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Extract the distance between p_i and p_j on their sides</span>
@@ -422,6 +475,7 @@
 
             <span class="k">if</span> <span class="n">update_best_buddy_candidates</span><span class="p">:</span>
                 <span class="c1"># noinspection PyTypeChecker</span>
+                <span class="c1"># Append because of a tie with two pieces for best distance</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_best_buddy_candidates</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">))</span>
         <span class="c1"># If only the second best then update the second best distance</span>
         <span class="k">elif</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_second_best_distance</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">]:</span>
@@ -441,22 +495,22 @@
         <span class="c1"># distance is supposed to be the minimum.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_min_distance</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">())]</span>
 
-    <span class="k">def</span> <span class="nf">_find_min_and_second_best_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_piece</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_find_min_and_second_best_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Minimum and Second Best Distance Finder</span>
 
 <span class="sd">        Finds the minimum and second best distance for a piece with respect to already calculated distances.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            skip_piece ([Bool]): A list indicating whether each piece should be skipped.  If True, the piece should</span>
-<span class="sd">            be skipped.  If the piece should be checked, then the array should be false.</span>
+<span class="sd">            piece_valid_for_placement ([Bool]): A list indicating whether each piece can be used for placement.</span>
+<span class="sd">                If True for any piece, then the piece is used.  If False, the piece is skipped.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Reset the piece&#39;s distance information.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_min_and_second_best_distances</span><span class="p">()</span>
 
-        <span class="c1"># Select whether to update the best buddy candidates</span>
-        <span class="n">update_best_buddy_candidates</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">skip_piece</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">False</span>
+        <span class="c1"># # Select whether to update the best buddy candidates</span>
+        <span class="c1"># update_best_buddy_candidates = True if piece_valid_for_placement is None else False</span>
 
         <span class="c1"># Go through all the valid sides</span>
         <span class="k">for</span> <span class="n">p_i_side</span> <span class="ow">in</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">():</span>
@@ -465,7 +519,7 @@
             <span class="k">for</span> <span class="n">p_j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
                 <span class="c1"># Do not compare a piece to itself or if it is already placed</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">skip_piece</span><span class="p">,</span> <span class="n">p_j</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
                     <span class="k">continue</span>
 
                 <span class="c1"># Check all valid p_j sides depending on the puzzle type.</span>
@@ -475,34 +529,34 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_update_min_and_second_best_distances_and_best_buddy_candidates</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span>
                                                                                          <span class="n">p_j</span><span class="p">,</span>
                                                                                          <span class="n">p_j_side</span><span class="p">,</span>
-                                                                                         <span class="n">update_best_buddy_candidates</span><span class="p">)</span>
+                                                                                         <span class="n">update_best_buddy_candidates</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PieceDistanceInformation.calculate_asymmetric_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.calculate_asymmetric_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_asymmetric_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PieceDistanceInformation.calculate_asymmetric_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.PieceDistanceInformation.calculate_asymmetric_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_asymmetric_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Asymmetric Compatibility Calculator</span>
 
 <span class="sd">        Calculates the asymmetric compatibility for this piece with respect to all other pieces.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            is_piece_placed (Optional [Bool]): For each puzzle piece, True if the piece is placed and false otherwise.</span>
+<span class="sd">            is_piece_valid_for_placement (List[Bool]): For each puzzle piece, indicate whether it is valid for placement.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Based on the puzzle type, determine the number of possible piece to piece pairings.</span>
         <span class="n">numb_possible_pairings</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_valid_neighbor_sides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span>
                                                                                  <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span>
 
-        <span class="c1"># Regenerate the numpy array only if it has not already been generated</span>
+        <span class="c1"># Regenerate the np array only if it has not already been generated</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c1"># Build an empty array to store the piece to piece distances</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span>
-                                                           <span class="n">numb_possible_pairings</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span> <span class="n">numb_possible_pairings</span><span class="p">),</span>
+                                                       <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+                                                       <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
         <span class="c1"># Calculate the asymmetric compatibility</span>
         <span class="k">for</span> <span class="n">p_j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
             <span class="c1"># Do not compare a piece to itself or if it is already placed</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">is_piece_placed</span><span class="p">,</span> <span class="n">p_j</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="k">for</span> <span class="n">p_i_side</span> <span class="ow">in</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">():</span>
@@ -526,27 +580,34 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># Calculate the asymmetric compatibility</span>
                         <span class="n">asym_compatibility</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">piece_to_piece_distance</span> <span class="o">/</span> <span class="n">second_best_distance</span><span class="p">)</span>
+
                     <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibilities</span><span class="p">[</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">asym_compatibility</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_asymmetric_compatibility_has_changed</span> <span class="o">=</span> <span class="bp">True</span>
 
         <span class="c1"># Build an empty array to store the piece to piece distances</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span>
-                                                    <span class="n">numb_possible_pairings</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span></div>
+        <span class="n">compatibilities_matrix_dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span> <span class="n">numb_possible_pairings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mutual_compatibilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">compatibilities_matrix_dimensions</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+                                               <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_skip_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_piece</span><span class="p">,</span> <span class="n">p_j</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_skip_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deetermine if a piece should be skilled during placement</span>
+<span class="sd">        Determine if a piece should be skilled during placement.  A piece is skipped if the piece being compared</span>
+<span class="sd">        is the same as the implicit piece or if the</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            skip_piece (Optional [Bool]):</span>
-<span class="sd">            p_j (Optional int):</span>
+<span class="sd">            piece_valid_for_placement (List[bool]): For each piece in the puzzle, True represents the piece</span>
+<span class="sd">                is valid to be placed and False means the piece&#39;s placement is disallowed or the piece is already</span>
+<span class="sd">                placed.</span>
+
+<span class="sd">            p_j (int): Identification number of the piece being compared to the implicit piece</span>
 
 <span class="sd">        Returns (bool):</span>
 <span class="sd">            True if this piece should be skipped and False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">p_j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">==</span> <span class="n">p_j</span><span class="p">)</span> <span class="ow">or</span> \
-                <span class="p">(</span><span class="n">skip_piece</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">skip_piece</span><span class="p">[</span><span class="n">p_j</span><span class="p">]):</span>  <span class="c1"># Do not compare a piece to itself.</span>
-                <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">p_j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">==</span> <span class="n">p_j</span><span class="p">)</span> \
+                <span class="ow">or</span> <span class="p">(</span><span class="n">piece_valid_for_placement</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">piece_valid_for_placement</span><span class="p">[</span><span class="n">p_j</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
 
@@ -587,7 +648,12 @@
 
     <span class="c1"># These are used for picking the starting piece.</span>
     <span class="n">_USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">_NEIGHBOR_COMPATIBILITY_SCALAR</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">_NEIGHBOR_COMPATIBILITY_SCALAR</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># If using only neighbors for start piece, this value does not matter if &gt;0</span>
+
+    <span class="c1"># Items related to multi-process computation to improve performance</span>
+    <span class="n">_MIN_NUMBER_PIECES_PER_THREAD</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">_MAX_NUMBER_OF_PARALLEL_PROCESSES</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">_USE_MULTIPLE_PROCESSES</span> <span class="o">=</span> <span class="bp">True</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -630,14 +696,40 @@
         <span class="c1"># Calculate the piece to piece mutual compatibility</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mutual_compatibility</span><span class="p">()</span>
 
+        <span class="c1"># Backup the compatibility information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store_all_compatibility_info</span><span class="p">()</span>
+
         <span class="c1"># Calculate the best buddies using the inter-distance information.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find_best_buddies</span><span class="p">()</span>
 
         <span class="c1"># Find the set of valid starter pieces.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find_start_piece_candidates</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_start_piece_ordering</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_placement_initial_seed_piece_ordering</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reinitialize_start_piece_order</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="c1"># Clear the distance function for pickling purposes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="InterPieceDistance.restore_initial_distance_values"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.restore_initial_distance_values">[docs]</a>    <span class="k">def</span> <span class="nf">restore_initial_distance_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the piece distance data structure as it was when it was first built.  Hence, it overwrites any changes</span>
+<span class="sd">        made during the placement process.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">dist_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">:</span>
+            <span class="n">dist_info</span><span class="o">.</span><span class="n">restore_initial_asymmetric_compatibility</span><span class="p">()</span>
+            <span class="n">dist_info</span><span class="o">.</span><span class="n">restore_initial_mutual_compatibility</span><span class="p">()</span>
+
+        <span class="c1"># Optionally reinitialize start piece ordering.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reinitialize_start_piece_order</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_start_piece_ordering</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reinitialize_start_piece_order</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="InterPieceDistance.invalidate_start_piece_ordering"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.invalidate_start_piece_ordering">[docs]</a>    <span class="k">def</span> <span class="nf">invalidate_start_piece_ordering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Marks that the start pieces need to be recalculated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reinitialize_start_piece_order</span> <span class="o">=</span> <span class="bp">True</span></div>
 
 <div class="viewcode-block" id="InterPieceDistance.calculate_inter_piece_distances"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_inter_piece_distances">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_inter_piece_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pieces</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -651,9 +743,79 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Calculates the piece to piece distances so we only need to do it once.</span>
-        <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_inter_piece_distances</span><span class="p">(</span><span class="n">pieces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span><span class="p">)</span></div>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting inter-piece distance calculations.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If no speed up benefit then do the operations serially</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span> <span class="o">&lt;</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_MIN_NUMBER_PIECES_PER_THREAD</span> \
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_USE_MULTIPLE_PROCESSES</span><span class="p">:</span>
+
+            <span class="c1"># Calculates the piece to piece distances so we only need to do it once.</span>
+            <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_inter_piece_distances</span><span class="p">(</span><span class="n">pieces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span><span class="p">)</span>
+
+        <span class="c1"># Calculate distance in a multi-process environment for improved throughput</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="c1"># Do not always use maximum number of threads.  Base on the workload.</span>
+            <span class="n">numb_processes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_numb_parallel_calculation_processes</span><span class="p">()</span>
+            <span class="n">max_elements_per_thread</span> <span class="o">=</span> <span class="nb">long</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span> <span class="o">/</span> <span class="n">numb_processes</span><span class="p">))</span>
+
+            <span class="c1"># Populate the data for the thread pool</span>
+            <span class="n">thread_elements</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numb_processes</span><span class="p">):</span>
+                <span class="n">distance_calc_element</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">max_elements_per_thread</span><span class="p">,</span>
+                                         <span class="s2">&quot;last&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_elements_per_thread</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">),</span>  <span class="c1"># Exclusive</span>
+                                         <span class="s2">&quot;all_pieces&quot;</span><span class="p">:</span> <span class="n">pieces</span><span class="p">,</span>  <span class="c1"># Piece distance information</span>
+                                         <span class="s2">&quot;puzzle_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span>
+                                         <span class="s2">&quot;distance_function&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_function</span><span class="p">}</span>
+                <span class="n">thread_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance_calc_element</span><span class="p">)</span>
+
+            <span class="c1"># Build the thread pool</span>
+            <span class="n">process_pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">numb_processes</span><span class="p">)</span>
+            <span class="n">calculated_distances</span> <span class="o">=</span> <span class="n">process_pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_multiprocess_interpiece_distances_calc</span><span class="p">,</span>
+                                                    <span class="n">thread_elements</span><span class="p">)</span>
+            <span class="n">process_pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">process_pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+            <span class="c1"># Merge the data back into the main structure</span>
+            <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
+                <span class="n">piece_dist</span> <span class="o">=</span> <span class="n">calculated_distances</span><span class="p">[</span><span class="n">p_i</span> <span class="o">//</span> <span class="n">max_elements_per_thread</span><span class="p">][</span><span class="n">p_i</span> <span class="o">%</span> <span class="n">max_elements_per_thread</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">piece_dist</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Inter-distance calculation completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;inter-piece distance calculation&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_elements_per_process_for_diagonal_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_elements_per_process_for_diagonal_matrix</span><span class="p">(</span><span class="n">numb_pieces</span><span class="p">,</span> <span class="n">numb_processes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The calculation of the data for the inter-piece distance diagonal matrix can be spread across multiple</span>
+<span class="sd">        processes.  This function enumerates how many elements to assign to the different processes to ensure each</span>
+<span class="sd">        process is assigned a comparable amount of work to reduce the overall execution time.</span>
+
+<span class="sd">        The design of this function uses the concept that the number of elements in a diagonal matrix is essentially</span>
+<span class="sd">        the same as calculating the area of a triangle.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            numb_pieces (int): Number of pieces in the puzzle</span>
+<span class="sd">            numb_processes (int): Number of processes to be spawned.</span>
+
+<span class="sd">        Returns (List(int)):</span>
+<span class="sd">            Number of the first element that will be calculated for each of the processes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">numb_pieces</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">numb_processes</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+
+        <span class="c1"># Stores the first element to be processed for each process</span>
+        <span class="n">first_element_for_each_process</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">numb_processes</span><span class="p">):</span>
+            <span class="n">percentage_of_area</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">i</span> <span class="o">/</span> <span class="n">numb_processes</span>
+            <span class="n">first_element</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">numb_pieces</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">percentage_of_area</span><span class="p">))</span>
+            <span class="n">first_element_for_each_process</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">first_element</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">first_element_for_each_process</span></div>
 
 <div class="viewcode-block" id="InterPieceDistance.get_total_best_buddy_count"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.get_total_best_buddy_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_best_buddy_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -671,14 +833,17 @@
                 <span class="n">bb_total_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">piece_dist_info</span><span class="o">.</span><span class="n">best_buddies</span><span class="p">(</span><span class="n">side</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">bb_total_count</span></div>
 
-<div class="viewcode-block" id="InterPieceDistance.calculate_mutual_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_mutual_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_mutual_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_calculate_mutual_compatibility_single_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Mutual Compatibility Calculator</span>
+<span class="sd">        Single Process Mutual Compatibility Calculator</span>
 
 <span class="sd">        Calculates the mutual compatibility as defined by Paikin and Tal.</span>
 
+<span class="sd">        &lt;b&gt;Note:&lt;/b&gt; This is done in a single process only.  Hence, it operates on the results data structures directly.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed</span>
+<span class="sd">            is_piece_valid_for_placement (List[bool]): List indicating whether each piece is valid for placement</span>
+<span class="sd">                or should be ignored.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
@@ -688,8 +853,9 @@
 
                     <span class="c1"># Skip placed pieces</span>
                     <span class="c1"># No Need to check p_i == p_j since doing a diagonal calculation</span>
-                    <span class="k">if</span> <span class="n">p_i</span> <span class="o">==</span> <span class="n">p_j</span> <span class="ow">or</span> <span class="p">(</span><span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">)</span>
-                                      <span class="ow">and</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">)):</span>
+                    <span class="n">skip_piece</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">)</span> \
+                                 <span class="ow">and</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">p_i</span> <span class="o">==</span> <span class="n">p_j</span> <span class="ow">or</span> <span class="n">skip_piece</span><span class="p">:</span>
                         <span class="k">continue</span>
 
                     <span class="c1"># Check all valid p_j sides depending on the puzzle type.</span>
@@ -708,73 +874,176 @@
 
                         <span class="c1"># Store the mutual compatibility for BOTH p_i and p_j</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">set_mutual_compatibility</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">,</span> <span class="n">mutual_compat</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_j</span><span class="p">]</span><span class="o">.</span><span class="n">set_mutual_compatibility</span><span class="p">(</span><span class="n">p_j_side</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">,</span> <span class="n">mutual_compat</span><span class="p">)</span></div>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_j</span><span class="p">]</span><span class="o">.</span><span class="n">set_mutual_compatibility</span><span class="p">(</span><span class="n">p_j_side</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">,</span> <span class="n">mutual_compat</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InterPieceDistance.recalculate_remaining_piece_compatibilities"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.recalculate_remaining_piece_compatibilities">[docs]</a>    <span class="k">def</span> <span class="nf">recalculate_remaining_piece_compatibilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">,</span>
-                                                    <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">):</span>
+<div class="viewcode-block" id="InterPieceDistance.store_all_compatibility_info"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.store_all_compatibility_info">[docs]</a>    <span class="k">def</span> <span class="nf">store_all_compatibility_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores all compatibility information for all interpiece distance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting mutual compatibility calculations.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dist_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">:</span>
+            <span class="n">dist_info</span><span class="o">.</span><span class="n">store_initial_asymmetric_compatibility</span><span class="p">()</span>
+            <span class="n">dist_info</span><span class="o">.</span><span class="n">store_initial_mutual_compatibility</span><span class="p">()</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Storing backup of all compatibility completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;storing compatibility&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InterPieceDistance.calculate_mutual_compatibility"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.calculate_mutual_compatibility">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_mutual_compatibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pieces_with_min_or_second_dist_changed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mutual Compatibility Calculator</span>
+
+<span class="sd">        Calculates the mutual compatibility as defined by Paikin and Tal.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pieces_with_min_or_second_dist_changed (List[bool]): For each piece, True indicates that the distance will</span>
+<span class="sd">                be recalculated.  False entails it is left unchanged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting mutual compatibility calculations.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Optionally run the single process version</span>
+        <span class="k">if</span> <span class="bp">True</span> <span class="ow">and</span> <span class="p">(</span><span class="n">pieces_with_min_or_second_dist_changed</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_USE_MULTIPLE_PROCESSES</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_mutual_compatibility_single_process</span><span class="p">(</span><span class="n">pieces_with_min_or_second_dist_changed</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_mutual_compatibility_multiprocess</span><span class="p">(</span><span class="n">pieces_with_min_or_second_dist_changed</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Mutual compatibility calculations completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;mutual compatibility calculation&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_calculate_mutual_compatibility_multiprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multiprocess version of the mutual compatibility calculator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            is_piece_valid_for_placement (Optional List[Bool]): List indicating whether each puzzle piece can be used</span>
+<span class="sd">                for placement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Calculate the information passed to</span>
+        <span class="n">numb_processes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_numb_parallel_calculation_processes</span><span class="p">()</span>
+        <span class="n">first_elem_per_process</span> <span class="o">=</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">calculate_elements_per_process_for_diagonal_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">,</span>
+                                                                                                       <span class="n">numb_processes</span><span class="p">)</span>
+        <span class="c1"># For simplified calculation append number of pieces</span>
+        <span class="n">first_elem_per_process</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">)</span>
+
+        <span class="c1"># Build the data structure to be pickled and shared with each process</span>
+        <span class="n">calc_process_input_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">numb_processes</span><span class="p">):</span>
+            <span class="n">mutual_compat_process_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;first_piece&quot;</span><span class="p">:</span> <span class="n">first_elem_per_process</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                          <span class="s2">&quot;last_piece&quot;</span><span class="p">:</span> <span class="n">first_elem_per_process</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>  <span class="c1"># Exclusive</span>
+                                          <span class="s2">&quot;puzzle_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span>
+                                          <span class="s2">&quot;is_piece_valid_for_placement&quot;</span><span class="p">:</span> <span class="n">is_piece_valid_for_placement</span><span class="p">,</span>
+                                          <span class="s2">&quot;piece_distance_info&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">}</span>
+            <span class="n">calc_process_input_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutual_compat_process_data</span><span class="p">)</span>
+
+        <span class="c1"># Build the thread pool</span>
+        <span class="n">process_pool</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">numb_processes</span><span class="p">)</span>
+        <span class="n">new_piece_distance</span> <span class="o">=</span> <span class="n">process_pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_multiprocess_mutual_compatibility_calc</span><span class="p">,</span>
+                                              <span class="n">calc_process_input_elements</span><span class="p">)</span>
+        <span class="n">process_pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">process_pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="c1"># Transfer the data from the data structures calculated by each process to the master data structure.</span>
+        <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Go through all the valid sides</span>
+            <span class="k">for</span> <span class="n">p_i_side</span> <span class="ow">in</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">():</span>
+
+                    <span class="n">process_id</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Used to select from which process to read the calculated results</span>
+                    <span class="c1"># Iterate through all p_j calculated in this segment</span>
+                    <span class="k">for</span> <span class="n">p_j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">p_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
+
+                        <span class="c1"># Go to the process that contains the results for this pairing of p_i and p_j</span>
+                        <span class="k">while</span> <span class="n">first_elem_per_process</span><span class="p">[</span><span class="n">process_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">p_j</span><span class="p">:</span>
+                            <span class="n">process_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                        <span class="c1"># Skip placed pieces</span>
+                        <span class="c1"># No Need to check p_i == p_j since doing a diagonal calculation</span>
+                        <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># Check all valid p_j sides depending on the puzzle type.</span>
+                        <span class="k">for</span> <span class="n">p_j_side</span> <span class="ow">in</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_valid_neighbor_sides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_puzzle_type</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">):</span>
+                            <span class="c1"># Extract the mutual compatibility from the results</span>
+                            <span class="n">mutual_compat</span> <span class="o">=</span> <span class="n">new_piece_distance</span><span class="p">[</span><span class="n">process_id</span><span class="p">][</span><span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+                            <span class="c1"># Make sure a value is present</span>
+                            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
+                                <span class="k">assert</span> <span class="n">mutual_compat</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">NAN</span>
+
+                            <span class="c1"># Store the mutual compatibility for BOTH p_i and p_j</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">set_mutual_compatibility</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span>
+                                                                                    <span class="n">p_j_side</span><span class="p">,</span> <span class="n">mutual_compat</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_j</span><span class="p">]</span><span class="o">.</span><span class="n">set_mutual_compatibility</span><span class="p">(</span><span class="n">p_j_side</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span>
+                                                                                    <span class="n">p_i_side</span><span class="p">,</span> <span class="n">mutual_compat</span><span class="p">)</span>
+
+    <span class="c1"># Do not always use maximum number of threads.  Base on the workload.</span>
+    <span class="k">def</span> <span class="nf">_calculate_numb_parallel_calculation_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to calculate based on the number of pieces in the puzzle the ideal number of parallel processes</span>
+<span class="sd">        that will be used.</span>
+
+<span class="sd">        Returns (int): Number of processes to be used to perform parallel calculations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_MAX_NUMBER_OF_PARALLEL_PROCESSES</span><span class="p">,</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span> <span class="o">/</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_MIN_NUMBER_PIECES_PER_THREAD</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InterPieceDistance.recalculate_remaining_piece_compatibilities"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.recalculate_remaining_piece_compatibilities">[docs]</a>    <span class="k">def</span> <span class="nf">recalculate_remaining_piece_compatibilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compatibility Recalculator</span>
 
 <span class="sd">        When no best buddy is in the pool, this function is called to recalculate the best buddies and compatibilities.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            is_piece_placed ([Bool]): List indicating whether each piece is placed</span>
-
-<span class="sd">            is_piece_placed_with_no_open_neighbors ([Bool]): Subset of the elements in the array &quot;is_piece_placed.&quot;  It</span>
-<span class="sd">                is only those pieces that are placed AND have no open locations amongst their direct neighbors.</span>
+<span class="sd">            piece_valid_for_placement (List[bool]): List indicating whether the piece&#39;s distance should be</span>
+<span class="sd">                recalculated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_piece_placed</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">)</span>
-
         <span class="c1"># Find the minimum and second best distance information for the placed pieces</span>
-        <span class="n">pieces_with_changed_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_min_and_second_best_distances</span><span class="p">(</span><span class="n">is_piece_placed</span><span class="p">,</span>
-                                                                            <span class="n">is_piece_placed</span><span class="p">)</span>
+        <span class="n">pieces_with_min_or_second_dist_changed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_min_and_second_best_distances</span><span class="p">(</span><span class="n">piece_valid_for_placement</span><span class="p">)</span>
 
         <span class="c1"># Calculate the asymmetric compatibilities using the updated min and second best distances.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_recalculate_asymmetric_compatibilities</span><span class="p">(</span><span class="n">pieces_with_changed_dist</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_recalculate_asymmetric_compatibilities</span><span class="p">(</span><span class="n">pieces_with_min_or_second_dist_changed</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">)</span>
 
         <span class="c1"># Recalculate the mutual probabilities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mutual_compatibility</span><span class="p">(</span><span class="n">pieces_with_changed_dist</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_mutual_compatibility</span><span class="p">(</span><span class="n">pieces_with_min_or_second_dist_changed</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_find_min_and_second_best_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_update_min_and_second_best_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        During placement, this function will update the minimum and second best distance for those pieces which remain</span>
+<span class="sd">        valid for placement.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed</span>
+<span class="sd">            piece_valid_for_placement (List[bool]): List indicating whether each puzzle piece is valid for placement</span>
+<span class="sd">                If a piece is valid, the associated index is &quot;True.&quot;  Otherwise, it is &quot;False.&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Determine whether anything for this piece needs to be recalculated.</span>
-        <span class="n">min_or_second_best_distance_unchanged</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">)</span>
-
-        <span class="c1"># Initialize the minimum distance to prevent warnings in PyCharm</span>
-        <span class="n">prev_min_dist</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">prev_second_best_dist</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">min_or_second_best_distance_changed</span> <span class="o">=</span> <span class="p">[</span><span class="bp">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">piece_valid_for_placement</span><span class="p">)</span>
 
         <span class="c1"># Iterate through all of the pieces</span>
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
-            <span class="c1"># Skip placed pieces</span>
-            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">):</span>
+            <span class="c1"># Skip unplaced pieces</span>
+            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="c1"># If these change, it means asymmetric distance or mutual compatibility need to be recalculated</span>
-            <span class="k">if</span> <span class="n">is_piece_placed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">prev_min_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">minimum_distance</span>
-                <span class="n">prev_second_best_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">second_best_distance</span>
+            <span class="n">prev_min_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">minimum_distance</span>
+            <span class="n">prev_second_best_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">second_best_distance</span>
 
             <span class="c1"># Find the minimum and second best distance for each piece and side</span>
             <span class="c1"># noinspection PyProtectedMember</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">_find_min_and_second_best_distances</span><span class="p">(</span><span class="n">is_piece_placed</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">_find_min_and_second_best_distances</span><span class="p">(</span><span class="n">piece_valid_for_placement</span><span class="p">)</span>
 
             <span class="c1"># Check if the distances changed</span>
-            <span class="k">if</span> <span class="n">is_piece_placed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">prev_min_dist</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">minimum_distance</span>
-                                                <span class="ow">or</span> <span class="n">prev_second_best_dist</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">second_best_distance</span><span class="p">):</span>
-                <span class="n">min_or_second_best_distance_unchanged</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">if</span> <span class="n">prev_min_dist</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">minimum_distance</span> \
+                    <span class="ow">or</span> <span class="n">prev_second_best_dist</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">second_best_distance</span><span class="p">:</span>
+                <span class="n">min_or_second_best_distance_changed</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
 
-        <span class="c1"># Return those parts whose distance actually changed to speed up calculations.</span>
-        <span class="k">if</span> <span class="n">is_piece_placed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">min_or_second_best_distance_unchanged</span>
+        <span class="k">return</span> <span class="n">min_or_second_best_distance_changed</span>
 
     <span class="k">def</span> <span class="nf">_clear_placed_piece_best_buddy_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -786,8 +1055,8 @@
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">clear_best_buddy_information</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_recalculate_asymmetric_compatibilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_or_second_best_distance_unchanged</span><span class="p">,</span>
-                                                <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_recalculate_asymmetric_compatibilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_or_second_best_distance_changed</span><span class="p">,</span>
+                                                <span class="n">piece_valid_for_placement</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Asymmetric Compatibility Recalculator</span>
 
@@ -795,33 +1064,35 @@
 <span class="sd">        found.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            min_or_second_best_distance_unchanged: (Optional [Bool]): List indicating whether each piece is placed</span>
+<span class="sd">            min_or_second_best_distance_changed: (Optional [Bool]): List indicating whether the minimum or second</span>
+<span class="sd">                best distance of the piece has changed.</span>
+<span class="sd">            piece_valid_for_placement (List[bool]): For each piece, this marks if that piece can be used for</span>
+<span class="sd">                placement (and in turn compatibility calculation)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Iterate through all pieces skipping placed ones.</span>
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
             <span class="c1"># Skip placed pieces</span>
-            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">min_or_second_best_distance_unchanged</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">min_or_second_best_distance_changed</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="c1"># Recalculate the</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_asymmetric_compatibility</span><span class="p">(</span><span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_asymmetric_compatibility</span><span class="p">(</span><span class="n">piece_valid_for_placement</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InterPieceDistance.find_best_buddies"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_best_buddies">[docs]</a>    <span class="k">def</span> <span class="nf">find_best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="InterPieceDistance.find_best_buddies"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_best_buddies">[docs]</a>    <span class="k">def</span> <span class="nf">find_best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># , is_piece_valid_for_placement=None):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds the best buddies for this set of distance calculations.</span>
 
 <span class="sd">        The best buddies information is stored with the inter-piece distances.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting finding of best buddies.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Go through each piece to find its best buddies.</span>
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
-            <span class="c1"># Skip placed pieces</span>
-            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">):</span>
-                <span class="k">continue</span>
+            <span class="c1"># # Skip placed pieces</span>
+            <span class="c1"># if InterPieceDistance.skip_piece(p_i, is_piece_valid_for_placement):</span>
+            <span class="c1">#     continue</span>
 
             <span class="c1"># Find the best buddies of all sides.</span>
             <span class="k">for</span> <span class="n">p_i_side</span> <span class="ow">in</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">():</span>  <span class="c1"># Iterate through all the sides.</span>
@@ -831,25 +1102,31 @@
                 <span class="k">for</span> <span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span> <span class="ow">in</span> <span class="n">best_buddy_candidates</span><span class="p">:</span>
                     <span class="n">piece_dist_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_j</span><span class="p">]</span>
                     <span class="k">if</span> <span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">)</span> <span class="ow">in</span> <span class="n">piece_dist_info</span><span class="o">.</span><span class="n">best_buddy_candidates</span><span class="p">(</span><span class="n">p_j_side</span><span class="p">):</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">add_best_buddy</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span></div>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">add_best_buddy</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InterPieceDistance.find_start_piece_candidates"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_start_piece_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">find_start_piece_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding best buddies completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;finding best buddies&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InterPieceDistance.find_start_piece_candidates"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.find_start_piece_candidates">[docs]</a>    <span class="k">def</span> <span class="nf">find_start_piece_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a list of starter puzzle pieces.  This is based off the criteria defined by Paikin and Tal</span>
-<span class="sd">        where a piece must have 4 best buddies and its best buddies must have 4 best buddies.</span>
+<span class="sd">        where a piece must have 4 best buddies and those best buddies must also have 4 best buddies.</span>
 
 <span class="sd">        This list is sorted from best starter piece to worst.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            is_piece_placed (Optional [Bool]): List indicating whether each piece is placed</span>
+<span class="sd">            piece_valid_for_placement (List[bool]): List indicating whether the selected piece should be considered</span>
+<span class="sd">                for placement.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding start piece candidates&quot;</span><span class="p">)</span>
 
         <span class="c1"># Calculate each pieces best buddy count for each piece</span>
         <span class="n">all_best_buddy_info</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
             <span class="c1"># Skip placed pieces</span>
-            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
                 <span class="n">all_best_buddy_info</span><span class="o">.</span><span class="n">append</span><span class="p">(([],</span> <span class="mi">0</span><span class="p">))</span>
                 <span class="k">continue</span>
 
@@ -864,7 +1141,7 @@
                 <span class="c1"># Iterate through best buddies to pick the best one</span>
                 <span class="k">for</span> <span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">best_buddies</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">):</span>
 
-                    <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
                         <span class="k">continue</span>
 
                     <span class="n">compatibility</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">get_mutual_compatibility</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
@@ -901,7 +1178,7 @@
         <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_numb_pieces</span><span class="p">):</span>
 
             <span class="c1"># Skip placed pieces</span>
-            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="p">):</span>
                 <span class="k">continue</span>
 
             <span class="n">this_piece_bb_info</span> <span class="o">=</span> <span class="n">all_best_buddy_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span>
@@ -923,32 +1200,71 @@
 
         <span class="c1"># Sort by number of best buddy neighbors (1) then by total compatibility if there is a tie (2)</span>
         <span class="c1"># See here for more information: http://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InterPieceDistance.next_starting_piece"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.next_starting_piece">[docs]</a>    <span class="k">def</span> <span class="nf">next_starting_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placed_pieces</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reinitialize_start_piece_order</span> <span class="o">=</span> <span class="bp">True</span>  <span class="c1"># In case need to restore initial values later</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the start pieces completed.&quot;</span><span class="p">)</span>
+        <span class="n">print_elapsed_time</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">&quot;finding start pieces&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InterPieceDistance.next_starting_piece"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.next_starting_piece">[docs]</a>    <span class="k">def</span> <span class="nf">next_starting_piece</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">piece_valid_for_placement</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Next Starting Piece Accessor</span>
 
 <span class="sd">        Gets the puzzle piece that is the best candidate to use as the seed of a puzzle.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            placed_pieces (Optional [bool]): An array indicating whether each puzzle piece (by index) has been</span>
+<span class="sd">            piece_valid_for_placement (Optional [bool]): An array indicating whether each puzzle piece (by index) has been</span>
 <span class="sd">                placed.</span>
 
 <span class="sd">        Returns (int):</span>
 <span class="sd">            Index of the next piece to use for starting a board.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># If no pieces are placed, then use the first piece</span>
-        <span class="k">if</span> <span class="n">placed_pieces</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">piece_valid_for_placement</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># If some pieces are already placed, ensure that you do not use a placed piece as the</span>
         <span class="c1"># next seed.</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">while</span> <span class="n">placed_pieces</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]:</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">piece_valid_for_placement</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]:</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="c1"># def get_initial_starting_piece_order(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Access the initial starting piece ordering for pieces.</span>
+    <span class="c1">#</span>
+    <span class="c1">#     Returns (List[int]): Descending order of the pieces from best to worst to seed piece candidate</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     # return copy.deepcopy(self._initial_start_piece_ordering)  # Seems to take a long time</span>
+    <span class="c1">#     piece_ordering = []</span>
+    <span class="c1">#     # Remove everything but the piece ID number</span>
+    <span class="c1">#     for piece_info in self._initial_start_piece_ordering:</span>
+    <span class="c1">#         piece_ordering.append(piece_info[0])</span>
+    <span class="c1">#     return piece_ordering</span>
+
+<div class="viewcode-block" id="InterPieceDistance.store_placement_initial_starting_piece_order"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.store_placement_initial_starting_piece_order">[docs]</a>    <span class="k">def</span> <span class="nf">store_placement_initial_starting_piece_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the seed piece ordering when placement begins.  It is separate from when</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_placement_initial_seed_piece_ordering</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_piece_ordering</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="InterPieceDistance.get_placement_initial_starting_piece_order"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.get_placement_initial_starting_piece_order">[docs]</a>    <span class="k">def</span> <span class="nf">get_placement_initial_starting_piece_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accesses the seed piece ordering at the start of placement.  It is not necessary the same as the initial</span>
+<span class="sd">        seed piece placement.</span>
+
+<span class="sd">        Returns (List[int]): Descending order of the pieces from best to worst to seed piece candidate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">_PERFORM_ASSERT_CHECKS</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_placement_initial_seed_piece_ordering</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+
+        <span class="n">piece_ordering</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Remove everything but the piece ID number</span>
+        <span class="k">for</span> <span class="n">piece_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_placement_initial_seed_piece_ordering</span><span class="p">:</span>
+            <span class="n">piece_ordering</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">piece_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">piece_ordering</span></div>
 
 <div class="viewcode-block" id="InterPieceDistance.best_buddies"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.best_buddies">[docs]</a>    <span class="k">def</span> <span class="nf">best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -956,7 +1272,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            p_i (int): Identification number of the piece who best buddy information is to be retrieved</span>
-<span class="sd">            p_i_side  (PuzzlePieceSide): Side of piece whose best buddy is being retriefed</span>
+<span class="sd">            p_i_side  (PuzzlePieceSide): Side of piece whose best buddy is being retrieved</span>
 
 <span class="sd">        Returns (List[int]):</span>
 <span class="sd">            List of best buddy piece id numbers</span>
@@ -1100,22 +1416,151 @@
             <span class="k">assert</span><span class="p">(</span><span class="n">p_i_side</span><span class="o">.</span><span class="n">complementary_side</span> <span class="o">==</span> <span class="n">p_j_side</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">):</span>
+<div class="viewcode-block" id="InterPieceDistance.skip_piece"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.skip_piece">[docs]</a>    <span class="k">def</span> <span class="nf">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">exclude_piece_list</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Piece Skip Checker</span>
 
-<span class="sd">        Checks whether a puzzle piece should be skipped based off whether it is placed.</span>
+<span class="sd">        Checks whether a puzzle piece should be skipped based off whether it is placed or is disallowed in placement.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            p_i (int): Identification number of the puzzle piece</span>
-<span class="sd">            is_piece_placed_with_no_open_neighbors ([Bool]):  List indicating whether each piece is placed</span>
+<span class="sd">            exclude_piece_list (Optional [Bool]):  List indicating the piece should be used</span>
 
 <span class="sd">        Returns (bool):</span>
 <span class="sd">            True if piece p_i should be skipped and False otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">is_piece_placed_with_no_open_neighbors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">is_piece_placed_with_no_open_neighbors</span><span class="p">[</span><span class="n">p_i</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">exclude_piece_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exclude_piece_list</span><span class="p">[</span><span class="n">p_i</span><span class="p">]:</span>
             <span class="k">return</span> <span class="bp">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="InterPieceDistance.is_pieces_best_buddies"><a class="viewcode-back" href="../../paikin_tal_solver.html#paikin_tal_solver.inter_piece_distance.InterPieceDistance.is_pieces_best_buddies">[docs]</a>    <span class="k">def</span> <span class="nf">is_pieces_best_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_piece</span><span class="p">,</span> <span class="n">first_piece_side</span><span class="p">,</span> <span class="n">second_piece</span><span class="p">,</span> <span class="n">second_piece_side</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether two pieces pieces are best buddies on the specified sides.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first_piece (PuzzlePiece): A puzzle piece</span>
+<span class="sd">            first_piece_side (PuzzlePieceSide):  The side of the first puzzle piece</span>
+<span class="sd">            second_piece (PuzzlePiece): A second puzzle piece</span>
+<span class="sd">            second_piece_side (PuzzlePieceSide): The side of the second piece being compared</span>
+
+<span class="sd">        Returns (Bool): True if the two pieces are best buddies on their respective sides and False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distance_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_piece_distance_info</span><span class="p">[</span><span class="n">first_piece</span><span class="o">.</span><span class="n">id_number</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">second_piece</span><span class="o">.</span><span class="n">id_number</span><span class="p">,</span> <span class="n">second_piece_side</span><span class="p">)</span> <span class="ow">in</span> <span class="n">distance_info</span><span class="o">.</span><span class="n">best_buddies</span><span class="p">(</span><span class="n">first_piece_side</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># Functions are only pickle-able if defined at the top level of a module.</span>
+<span class="c1"># Pickle-ability is needed to make the function passable to a multiprocess pool.</span>
+<span class="k">def</span> <span class="nf">_multiprocess_interpiece_distances_calc</span><span class="p">(</span><span class="n">interpiece_distance_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allows for multi-process calculation of inter-piece distance.  Needs to be declared at top level</span>
+<span class="sd">    otherwise the</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        interpiece_distance_data (dict): Dictionary containing the distance calculation information</span>
+<span class="sd">         for interpiece distance.</span>
+
+<span class="sd">    Returns (List[PieceDistanceInformation]): Inter-piece distance between the specified indices and</span>
+<span class="sd">     all other pieces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># extract the data from the dictionary containing the input data</span>
+    <span class="n">first_element_numb</span> <span class="o">=</span> <span class="n">interpiece_distance_data</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">]</span>
+    <span class="n">last_element_numb</span> <span class="o">=</span> <span class="n">interpiece_distance_data</span><span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">]</span>  <span class="c1"># Exclusive</span>
+    <span class="n">all_pieces</span> <span class="o">=</span> <span class="n">interpiece_distance_data</span><span class="p">[</span><span class="s2">&quot;all_pieces&quot;</span><span class="p">]</span>
+    <span class="n">distance_function</span> <span class="o">=</span> <span class="n">interpiece_distance_data</span><span class="p">[</span><span class="s2">&quot;distance_function&quot;</span><span class="p">]</span>
+    <span class="n">puzzle_type</span> <span class="o">=</span> <span class="n">interpiece_distance_data</span><span class="p">[</span><span class="s2">&quot;puzzle_type&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Calculate the number of pieces</span>
+    <span class="n">numb_pieces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_pieces</span><span class="p">)</span>
+
+    <span class="c1"># Calculate each puzzle piece&#39;s distance</span>
+    <span class="n">calculated_distance_info</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">first_element_numb</span><span class="p">,</span> <span class="n">last_element_numb</span><span class="p">):</span>
+        <span class="n">piece_dist_info</span> <span class="o">=</span> <span class="n">PieceDistanceInformation</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">numb_pieces</span><span class="p">,</span> <span class="n">puzzle_type</span><span class="p">)</span>
+        <span class="c1"># Calculate the distance information for this piece and append to the list</span>
+        <span class="n">piece_dist_info</span><span class="o">.</span><span class="n">calculate_inter_piece_distances</span><span class="p">(</span><span class="n">all_pieces</span><span class="p">,</span> <span class="n">distance_function</span><span class="p">)</span>
+        <span class="n">calculated_distance_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">piece_dist_info</span><span class="p">)</span>
+
+    <span class="c1"># Return all of the calculated distances</span>
+    <span class="k">return</span> <span class="n">calculated_distance_info</span>
+
+
+<span class="k">def</span> <span class="nf">_multiprocess_mutual_compatibility_calc</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiprocess Mutual Compatibility Calculator</span>
+
+<span class="sd">    Calculates the mutual compatibility as defined by Paikin and Tal.  This supports the use of multiprocessing so</span>
+<span class="sd">    additional analysis of the data is required.</span>
+
+<span class="sd">    A basic diagram of how this function iterates over the diagonal matrix is shown below.  Note that along the</span>
+<span class="sd">    rows of the matrix, all elements from the first row to the &quot;last_piece&quot; row (exclusive) are traversed.  In</span>
+<span class="sd">    contrast, only the columns between &quot;first_piece&quot; (inclusive) and &quot;last_piece&quot; (exclusive&quot; are traversed.</span>
+<span class="sd">    </span>
+<span class="sd">    -----------</span>
+<span class="sd">    \   ***   |</span>
+<span class="sd">     \  ***   |</span>
+<span class="sd">      \ ***   |</span>
+<span class="sd">       \ **   |</span>
+<span class="sd">        \ *   |</span>
+<span class="sd">         \    |</span>
+<span class="sd">          \   |</span>
+<span class="sd">           \  |</span>
+<span class="sd">            \ |</span>
+<span class="sd">             \|</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        params (Dict): Dictionary containing the input parameters to the function.  This must be pickle-able</span>
+<span class="sd">        to work with the multiprocessing Python class.</span>
+
+<span class="sd">    Returns (Numpy[float]): This contains the mutual compatibility data calculated by this process.  The size of the</span>
+<span class="sd">        NumPy array return is [total_numb_pieces x total_numb_pieces].  However, only the values actually calculated by</span>
+<span class="sd">        this process are populated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">first_piece</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;first_piece&quot;</span><span class="p">]</span>
+    <span class="n">last_piece</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;last_piece&quot;</span><span class="p">]</span>
+    <span class="n">puzzle_type</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;puzzle_type&quot;</span><span class="p">]</span>
+    <span class="n">piece_distance_info</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;piece_distance_info&quot;</span><span class="p">]</span>
+    <span class="n">is_piece_valid_for_placement</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;is_piece_valid_for_placement&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Build an array to store the results.  Initialize to NaN</span>
+    <span class="n">mutual_compat_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="n">last_piece</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">(),</span>
+                                   <span class="n">last_piece</span><span class="p">,</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_numb_sides</span><span class="p">()],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">mutual_compat_data</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NAN</span>
+
+    <span class="c1"># For the given section, calculate all pieces that fall in that sliver of a region.</span>
+    <span class="c1"># Hence, must start from 0 as shown in the figure below:</span>
+    <span class="k">for</span> <span class="n">p_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">last_piece</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_i</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Go through all the valid sides</span>
+        <span class="k">for</span> <span class="n">p_i_side</span> <span class="ow">in</span> <span class="n">PuzzlePieceSide</span><span class="o">.</span><span class="n">get_all_sides</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">p_j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">first_piece</span><span class="p">,</span> <span class="n">last_piece</span><span class="p">):</span>
+
+                <span class="c1"># Skip placed pieces</span>
+                <span class="c1"># No Need to check p_i == p_j since doing a diagonal calculation</span>
+                <span class="k">if</span> <span class="n">p_i</span> <span class="o">==</span> <span class="n">p_j</span> <span class="ow">or</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">skip_piece</span><span class="p">(</span><span class="n">p_j</span><span class="p">,</span> <span class="n">is_piece_valid_for_placement</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Check all valid p_j sides depending on the puzzle type.</span>
+                <span class="k">for</span> <span class="n">p_j_side</span> <span class="ow">in</span> <span class="n">InterPieceDistance</span><span class="o">.</span><span class="n">get_valid_neighbor_sides</span><span class="p">(</span><span class="n">puzzle_type</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">):</span>
+
+                    <span class="n">p_i_to_p_j</span> <span class="o">=</span> <span class="n">piece_distance_info</span><span class="p">[</span><span class="n">p_i</span><span class="p">]</span><span class="o">.</span><span class="n">asymmetric_compatibility</span><span class="p">(</span><span class="n">p_i_side</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="p">)</span>
+                    <span class="n">p_j_to_p_i</span> <span class="o">=</span> <span class="n">piece_distance_info</span><span class="p">[</span><span class="n">p_j</span><span class="p">]</span><span class="o">.</span><span class="n">asymmetric_compatibility</span><span class="p">(</span><span class="n">p_j_side</span><span class="p">,</span> <span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="p">)</span>
+                    <span class="c1"># Check if the calculation can be skipped for speed-up</span>
+                    <span class="k">if</span> <span class="n">p_i_to_p_j</span> <span class="o">==</span> <span class="o">-</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span> <span class="ow">or</span> <span class="n">p_j_to_p_i</span> <span class="o">==</span> <span class="o">-</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span><span class="p">:</span>
+                        <span class="n">mutual_compat</span> <span class="o">=</span> <span class="o">-</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Get the compatibility from p_i to p_j</span>
+                        <span class="n">mutual_compat</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_i_to_p_j</span> <span class="o">+</span> <span class="n">p_j_to_p_i</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+                    <span class="c1"># Store the mutual compatibility for BOTH p_i and p_j</span>
+                    <span class="n">mutual_compat_data</span><span class="p">[</span><span class="n">p_i</span><span class="p">,</span> <span class="n">p_i_side</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">p_j</span><span class="p">,</span> <span class="n">p_j_side</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutual_compat</span>
+    <span class="k">return</span> <span class="n">mutual_compat_data</span>
 </pre></div>
 
            </div>
