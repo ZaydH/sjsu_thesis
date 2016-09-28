@@ -798,7 +798,7 @@ class BestBuddyResultsCollection(object):
         string_io.close()
 
     def output_results_images(self, all_input_image_filenames, solved_puzzles, puzzle_type,
-                              timestamp, orig_img_filename=None):
+                              timestamp, orig_img_filename=None, output_filenames=None):
         """
         Converts the results information to a data visualization to see where there are right and wrong
         best buddies.
@@ -809,7 +809,7 @@ class BestBuddyResultsCollection(object):
             puzzle_type (PuzzleType): Type of the solved puzzle.
             timestamp (float): Timestamp as a floating point number.  Converted to a string by this function.
             orig_img_filename (Optional str): Filename of the original image
-
+            output_filenames (List[str]): Name of the output image files
         """
 
         # Iterate through each possible and print its BB accuracy information.
@@ -833,10 +833,13 @@ class BestBuddyResultsCollection(object):
             # Determine whether the puzzle id should be used in the filename
             filename_puzzle_id = puzzle_id if orig_img_filename is None else None
             descriptor = "best_buddy_acc"
-            output_filename = Puzzle.make_image_filename(all_input_image_filenames, descriptor,
-                                                         Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
-                                                         timestamp, orig_img_filename=orig_img_filename,
-                                                         puzzle_id=filename_puzzle_id)
+            if output_filenames is None:
+                output_filename = Puzzle.make_image_filename(all_input_image_filenames, descriptor,
+                                                             Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
+                                                             timestamp, orig_img_filename=orig_img_filename,
+                                                             puzzle_id=filename_puzzle_id)
+            else:
+                output_filename = output_filenames[puzzle_id]
             # Stores the results to a file.
             puzzle.build_puzzle_image(use_results_coloring=True)
             puzzle.save_to_file(output_filename)

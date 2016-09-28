@@ -500,6 +500,19 @@ class MultiPuzzleSolver(object):
                                                       self._paikin_tal_solver.puzzle_type)
         PickleHelper.exporter(self, pickle_filename)
 
+    def _make_image_filename(self, filename_descriptor):
+        """
+        Creates an image file name with the specified descriptor included.
+
+        Args:
+            filename_descriptor (str): Filename descriptor for the output file
+
+        Returns (str):
+            Standardized filename with directory
+        """
+        return Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                          self._paikin_tal_solver.puzzle_type, self._start_timestamp)
+
     def _save_single_solved_puzzle_to_file(self, segmentation_round):
         """
         Saves the solved image when perform single puzzle solving to a file.
@@ -511,12 +524,18 @@ class MultiPuzzleSolver(object):
         # Reconstruct the puzzle
         new_puzzle = Puzzle.reconstruct_from_pieces(solved_puzzle[0], 0)
 
-        # Store the reconstructed image
+        # Store the reconstructed segmented image
         max_numb_zero_padding = 4
         filename_descriptor = "single_puzzle_round_" + str(segmentation_round).zfill(max_numb_zero_padding)
-        filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp)
-        new_puzzle.save_to_file(filename)
+        new_puzzle.save_to_file(self._make_image_filename(filename_descriptor))
+
+        # Store the best buddy image.
+        filename_descriptor += "_best_buddy_acc"
+        output_filename = self._make_image_filename(filename_descriptor)
+        self._paikin_tal_solver.best_buddy_accuracy.output_results_images(self._image_filenames, [new_puzzle],
+                                                                          self._paikin_tal_solver.puzzle_type,
+                                                                          self._start_timestamp,
+                                                                          output_filenames=[output_filename])
 
     def _save_stitching_piece_solved_puzzle_to_file(self, stitching_piece_segment_info):
         """
@@ -539,9 +558,7 @@ class MultiPuzzleSolver(object):
         filename_descriptor += "_stitching_piece_id_" + str(stitching_piece_id).zfill(max_numb_zero_padding)
 
         # Build the filename and output to a file
-        filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                              self._paikin_tal_solver.puzzle_type, self._start_timestamp)
-        new_puzzle.save_to_file(filename)
+        new_puzzle.save_to_file(self._make_image_filename(filename_descriptor))
 
     def _process_solved_segments(self, solved_segments):
         """
@@ -593,11 +610,11 @@ class MultiPuzzleSolver(object):
             zfill_width = 4
             filename_descriptor = "segment_number_" + str(selected_segment.id_number).zfill(zfill_width)
             filename_descriptor += "_puzzle_round_" + str(self._numb_segmentation_rounds).zfill(zfill_width)
-            filename = Puzzle.make_image_filename(self._image_filenames, filename_descriptor,
-                                                  Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                                  self._paikin_tal_solver.puzzle_type, self._start_timestamp)
+
             single_puzzle_id = 0
-            self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, initial_segment_id, filename)
+            self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, initial_segment_id,
+                                                               filename_descriptor, self._image_filenames,
+                                                               self._start_timestamp)
 
     def _get_stitching_pieces(self):
         """
@@ -645,6 +662,7 @@ class MultiPuzzleSolver(object):
             puzzle_type (PuzzleType): Solver puzzle type
             segmentation_round_numb (int): Segmentation round number
         """
+
         pickle_file_descriptor = "segment_round_%d" % segmentation_round_numb
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 

@@ -1353,22 +1353,38 @@ class PaikinTalSolver(object):
 
         return self._segments
 
-    def save_segment_to_image_file(self, puzzle_id, segment_id, image_filename):
+    def save_segment_to_image_file(self, puzzle_id, segment_id, filename_descriptor, image_filenames, start_timestamp):
         """
         Creates an image with just the contents of the solved image.
+
+        Also creates the best buddy image.
 
         Args:
             puzzle_id (int): Identification number of the solved puzzle
             segment_id (int): Identification number of the segment
-            image_filename (str): Name the file the segment image will be saved to.
+            filename_descriptor (str): File descriptor for the image file.
+            image_filenames (List(str)): File names of the image
+            start_timestamp (int): Timestamp the solver was started.
         """
         segment_piece_ids = self._segments[puzzle_id][segment_id].get_piece_ids()
 
         # Get the pieces with the identification numbers in the segment
         puzzle_pieces = [self._pieces[piece_id] for piece_id in segment_piece_ids]
 
+        # Build the reconstructed image
         puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
+        image_filename = Puzzle.make_image_filename(image_filenames, filename_descriptor,
+                                                    Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                    self._puzzle_type, start_timestamp)
         puzzle.save_to_file(image_filename)
+
+        # Build the best buddy image
+        filename_descriptor += "_best_buddy_acc"
+        image_filename = Puzzle.make_image_filename(image_filenames, filename_descriptor,
+                                                    Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                    self._puzzle_type, start_timestamp)
+        self.best_buddy_accuracy.output_results_images(image_filenames, [puzzle], self.puzzle_type, start_timestamp,
+                                                       output_filenames=[image_filename])
 
     def _perform_segmentation(self, perform_segment_cleaning):
         """
