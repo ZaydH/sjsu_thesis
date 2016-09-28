@@ -10,15 +10,17 @@ from multipuzzle_solver.multipuzzle_solver import MultiPuzzleSolver
 _RECALCULATE_DISTANCES = True
 
 
-def run_multipuzzle_solver_driver(image_filenames, puzzle_type, piece_width):
+def run_multipuzzle_solver_driver(image_files, puzzle_type, piece_width):
     """
     Runs the multipuzzle solver on a set of images.
 
     Args:
-        image_filenames (List[str]): List of puzzle file paths.
+        image_files (List[str]): List of puzzle file paths.
         puzzle_type (PuzzleType): Type of the puzzle to solve.
         piece_width (int): Puzzle piece width in number of pixels
     """
+
+    image_filenames = config.add_image_folder_path(image_files)
 
     logging.info("Starting Multipuzzle Solver Driver.")
     puzzle_importer.log_puzzle_filenames(image_filenames)
@@ -65,13 +67,22 @@ if __name__ == "__main__":
     # Setup the logger
     config.setup_logging()
 
-    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
     # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
     MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
 
-    images = [".\\images\\bgu_805_08.jpg", ".\\images\\mcgill_20.jpg", ".\\images\\3300_1.jpg"]
+    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
