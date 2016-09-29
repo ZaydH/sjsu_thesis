@@ -697,9 +697,14 @@ class MultiPuzzleSolver(object):
         """
         From the segment clusters, this function builds the starting pieces for each of the output puzzles.
         """
-        # Build a map from piece ID number to cluster
+
         piece_to_cluster_map = {}
+        cluster_has_seed = {}
         for cluster in self._segment_clusters:
+            # Used to determine if each cluster has a starting piece
+            cluster_has_seed[MultiPuzzleSolver.create_cluster_key(cluster.key)] = False
+
+            # Build a map from piece ID number to cluster
             for piece_id in cluster.get_pieces():
                 key = PuzzlePiece.create_key(piece_id)
 
@@ -714,19 +719,19 @@ class MultiPuzzleSolver(object):
         # Build the
         self._final_starting_pieces = []
         starting_piece_cnt = 0
-        cluster_has_seed = [False] * len(self._segment_clusters)
+
         while len(self._final_starting_pieces) != len(self._segment_clusters):
 
             # Get the cluster number (if any) for the starting piece candidate
             starting_piece_candidate = starting_piece_ordering[starting_piece_cnt]
-            key = PuzzlePiece.create_key(starting_piece_candidate)
+            piece_key = PuzzlePiece.create_key(starting_piece_candidate)
             try:
-                cluster_number = piece_to_cluster_map[key]
+                cluster_key = MultiPuzzleSolver.create_cluster_key(piece_to_cluster_map[piece_key])
 
                 # If the cluster has no seed, use this seed piece
-                if not cluster_has_seed[cluster_number]:
+                if not cluster_has_seed[cluster_key]:
                     self._final_starting_pieces.append(starting_piece_candidate)
-                    cluster_has_seed[cluster_number] = True
+                    cluster_has_seed[cluster_key] = True
 
                     # Log the clustering information
                     piece_initial_puzzle = self._paikin_tal_solver.get_piece_original_puzzle_id(starting_piece_candidate)
@@ -739,6 +744,17 @@ class MultiPuzzleSolver(object):
 
         if MultiPuzzleSolver._ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT:
             self._pickle_export_after_select_starting_pieces()
+
+    @staticmethod
+    def create_cluster_key(cluster_id):
+        """
+        Creates and returns a key for a cluster for use in a dictionary.
+        Args:
+            cluster_id (int): Cluster identification number
+
+        Returns (str): Key for the cluster
+        """
+        return str(cluster_id)
 
     def _log_clustering_result(self):
         """
