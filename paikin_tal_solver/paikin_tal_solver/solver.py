@@ -814,6 +814,15 @@ class PaikinTalSolver(object):
         else:
             return False
 
+    def get_initial_starting_piece_ordering(self):
+        """
+        Gets a copy of the initial starting piece ordering (i.e., based off the input puzzles unaltered).
+
+        Returns (List(int)):
+            Piece identification numbers for the starting pieces order from best to worst
+        """
+        return self._inter_piece_distance.get_placement_initial_starting_piece_order()
+
     @property
     def numb_unplaced_valid_pieces(self):
         """
@@ -1633,6 +1642,17 @@ class PaikinTalSolver(object):
         """
         return self._inter_piece_distance.is_pieces_best_buddies(first_piece, first_piece_side,
                                                                  second_piece, second_piece_side)
+
+    def get_piece_original_puzzle_id(self, piece_id):
+        """
+        Gets the puzzle number associated with the original puzzle associated with this piece.
+
+        Args:
+            piece_id (int): Puzzle identification number
+
+        Returns (int): The associated piece's original (i.e. input) puzzle identification number
+        """
+        return self._pieces[piece_id].original_puzzle_id
 
     @property
     def puzzle_type(self):

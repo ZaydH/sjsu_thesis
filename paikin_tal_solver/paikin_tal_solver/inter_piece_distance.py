@@ -1131,11 +1131,8 @@ class InterPieceDistance(object):
         if InterPieceDistance._PERFORM_ASSERT_CHECKS:
             assert self._placement_initial_seed_piece_ordering is not None
 
-        piece_ordering = []
         # Remove everything but the piece ID number
-        for piece_info in self._placement_initial_seed_piece_ordering:
-            piece_ordering.append(piece_info[0])
-        return piece_ordering
+        return [piece_info[0] for piece_info in self._placement_initial_seed_piece_ordering]
 
     def best_buddies(self, p_i, p_i_side):
         """

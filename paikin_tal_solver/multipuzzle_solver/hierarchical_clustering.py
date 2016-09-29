@@ -32,8 +32,7 @@ class SegmentCluster(object):
         """
         return self._cluster_id
 
-    @property
-    def pieces(self):
+    def get_pieces(self):
         """
         Gets the pieces in the segment cluster.
 
@@ -79,8 +78,8 @@ class SegmentCluster(object):
         """
 
         # Build the merged cluster
-        new_cluster_id = min(first_cluster.cluster_id, second_cluster.cluster_id)
-        merged_piece_list = first_cluster.pieces + second_cluster.pieces
+        new_cluster_id = min(first_cluster.id_number, second_cluster.id_number)
+        merged_piece_list = first_cluster._pieces + second_cluster._pieces
         merged_cluster = SegmentCluster(new_cluster_id, merged_piece_list)
 
         # Define the segments in this cluster.

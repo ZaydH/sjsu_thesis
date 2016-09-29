@@ -187,6 +187,7 @@ class MultiPuzzleSolver(object):
     _POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR = "post_stitching_piece_solving"
     _POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR = "post_similarity_matrix"
     _POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR = "post_hierarchical_clustering"
+    _POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR = "post_select_starting_pieces"
 
     # Pickle Related variables
     _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
@@ -194,6 +195,7 @@ class MultiPuzzleSolver(object):
     _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = False
     _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = True
     _ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT = True
+    _ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT = True
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -232,7 +234,7 @@ class MultiPuzzleSolver(object):
 
         # Built from the hierarchical clustering output
         # Input to the final solver.
-        self._set_of_final_seed_pieces = None
+        self._final_starting_pieces = None
 
         self._final_puzzles = None
 
@@ -253,6 +255,8 @@ class MultiPuzzleSolver(object):
         self._build_similarity_matrix()
 
         self._perform_hierarchical_clustering()
+
+        self._select_starting_pieces_from_clusters()
 
         self._perform_placement_with_final_seed_pieces()
 
@@ -439,7 +443,7 @@ class MultiPuzzleSolver(object):
         self._paikin_tal_solver.restore_initial_placer_settings_and_distances()
         self._paikin_tal_solver.allow_placement_of_all_pieces()
 
-        self._paikin_tal_solver.run_solver_with_specified_seeds(self._set_of_final_seed_pieces)
+        self._paikin_tal_solver.run_solver_with_specified_seeds(self._final_starting_pieces)
 
     def _build_output_puzzles(self):
         """
@@ -504,6 +508,12 @@ class MultiPuzzleSolver(object):
         Exports the multipuzzle solver after hierarchical clustering is completed.
         """
         self._local_pickle_expert_helper(MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR)
+
+    def _pickle_export_after_select_starting_pieces(self):
+        """
+        Exports the multipuzzle solver after hierarchical clustering is completed.
+        """
+        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR)
 
     def _local_pickle_expert_helper(self, pickle_file_descriptor):
         """
@@ -667,7 +677,8 @@ class MultiPuzzleSolver(object):
         Performs hierarchical clustering to merge the puzzle segments.
         """
         # Perform the hierarchical clustering output.
-        hierarchical_results = HierarchicalClustering.run(self._segments, self._segment_similarity_matrix)
+        temp_similarity_matrix = copy.copy(self._segment_similarity_matrix)
+        hierarchical_results = HierarchicalClustering.run(self._segments, temp_similarity_matrix)
         self._segment_clusters = hierarchical_results[0]
         self._final_cluster_similarity_matrix = hierarchical_results[1]
 
@@ -675,6 +686,53 @@ class MultiPuzzleSolver(object):
 
         if MultiPuzzleSolver._ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT:
             self._pickle_export_after_hierarchical_clustering()
+
+    def _select_starting_pieces_from_clusters(self):
+        """
+        From the segment clusters, this function builds the starting pieces for each of the output puzzles.
+        """
+        # Build a map from piece ID number to cluster
+        piece_to_cluster_map = {}
+        for cluster in self._segment_clusters:
+            for piece_id in cluster.get_pieces():
+                key = PuzzlePiece.create_key(piece_id)
+
+                # Verify no duplicates
+                if config.PERFORM_ASSERT_CHECKS:
+                    assert key not in piece_to_cluster_map
+                piece_to_cluster_map[key] = cluster.id_number
+
+        # Get the starting piece ordering
+        starting_piece_ordering = self._paikin_tal_solver.get_initial_starting_piece_ordering()
+
+        # Build the
+        self._final_starting_pieces = []
+        starting_piece_cnt = 0
+        cluster_has_seed = [False] * len(self._segment_clusters)
+        while len(self._final_starting_pieces) != len(self._segment_clusters):
+
+            # Get the cluster number (if any) for the starting piece candidate
+            starting_piece_candidate = starting_piece_ordering[starting_piece_cnt]
+            key = PuzzlePiece.create_key(starting_piece_candidate)
+            try:
+                cluster_number = piece_to_cluster_map[key]
+
+                # If the cluster has no seed, use this seed piece
+                if not cluster_has_seed[cluster_number]:
+                    self._final_starting_pieces.append(starting_piece_candidate)
+                    cluster_has_seed[cluster_number] = True
+
+                    # Log the clustering information
+                    piece_initial_puzzle = self._paikin_tal_solver.get_piece_original_puzzle_id(starting_piece_candidate)
+                    logging.info("Seed piece for cluster %d is piece id %d from initial puzzle %d" % (cluster_number,
+                                                                                                      starting_piece_candidate,
+                                                                                                      piece_initial_puzzle))
+            except KeyError:
+                pass
+            starting_piece_cnt += 1
+
+        if MultiPuzzleSolver._ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT:
+            self._pickle_export_after_select_starting_pieces()
 
     def _log_clustering_result(self):
         """
@@ -781,3 +839,23 @@ class MultiPuzzleSolver(object):
 
         # noinspection PyProtectedMember
         solver._perform_hierarchical_clustering()
+
+    @staticmethod
+    def run_imported_select_starting_pieces(image_filenames, puzzle_type):
+        """
+        Debug method that imports a pickle file after hierarchical clustering was completed.  It then selects the
+        seed pieces as inputs to the solver..
+
+        Note: The pickle file name is built from the image file names and the puzzle type.
+
+        Args:
+            image_filenames (List[str]): List of paths to image file names
+            puzzle_type (PuzzleType): Solver puzzle type
+        """
+        pickle_file_descriptor = MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
+
+        solver = PickleHelper.importer(pickle_filename)
+
+        # noinspection PyProtectedMember
+        solver._select_starting_pieces_from_clusters()
