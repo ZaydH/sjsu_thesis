@@ -194,9 +194,9 @@ class MultiPuzzleSolver(object):
     _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
     _ALLOW_POST_SEGMENTATION_PICKLE_EXPORT = False
     _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = False
-    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = True
-    _ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT = True
-    _ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT = True
+    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = False
+    _ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT = False
+    _ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT = False
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -769,7 +769,7 @@ class MultiPuzzleSolver(object):
                 print >> string_io, "\t\tPuzzle #%d Piece Count: %d" % (puzzle_id, pieces_per_input_puzzle[puzzle_id])
             print >> string_io, ""
 
-        logging.info(string_io.getvalue())
+        logging.critical(string_io.getvalue())
         string_io.close()
 
     def _log_segmentation_results(self):
@@ -792,7 +792,7 @@ class MultiPuzzleSolver(object):
                 print >> string_io, "\t\tPuzzle #%d Piece Count: %d" % (puzzle_id, pieces_per_input_puzzle[puzzle_id])
             print >> string_io, ""
 
-        logging.info(string_io.getvalue())
+        logging.critical(string_io.getvalue())
         string_io.close()
 
     def reset_timestamp(self):
