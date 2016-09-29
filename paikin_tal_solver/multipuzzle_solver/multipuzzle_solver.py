@@ -702,7 +702,7 @@ class MultiPuzzleSolver(object):
         cluster_has_seed = {}
         for cluster in self._segment_clusters:
             # Used to determine if each cluster has a starting piece
-            cluster_has_seed[MultiPuzzleSolver.create_cluster_key(cluster.key)] = False
+            cluster_has_seed[MultiPuzzleSolver.create_cluster_key(cluster.id_number)] = False
 
             # Build a map from piece ID number to cluster
             for piece_id in cluster.get_pieces():
@@ -716,17 +716,17 @@ class MultiPuzzleSolver(object):
         # Get the starting piece ordering
         starting_piece_ordering = self._paikin_tal_solver.get_initial_starting_piece_ordering()
 
-        # Build the
+        # Find the start pieces.
         self._final_starting_pieces = []
         starting_piece_cnt = 0
-
         while len(self._final_starting_pieces) != len(self._segment_clusters):
 
             # Get the cluster number (if any) for the starting piece candidate
             starting_piece_candidate = starting_piece_ordering[starting_piece_cnt]
             piece_key = PuzzlePiece.create_key(starting_piece_candidate)
             try:
-                cluster_key = MultiPuzzleSolver.create_cluster_key(piece_to_cluster_map[piece_key])
+                cluster_number = piece_to_cluster_map[piece_key]
+                cluster_key = MultiPuzzleSolver.create_cluster_key(cluster_number)
 
                 # If the cluster has no seed, use this seed piece
                 if not cluster_has_seed[cluster_key]:
