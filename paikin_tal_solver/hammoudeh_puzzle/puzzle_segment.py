@@ -241,6 +241,7 @@ class SegmentPieceInfo(object):
 
     def __init__(self, piece_id, location):
         """
+        Constructor for SegmentPieceInfo Objects
 
         Args:
             piece_id (int): Identification number of the piece
