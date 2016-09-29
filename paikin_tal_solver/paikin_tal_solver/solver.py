@@ -335,7 +335,7 @@ class PaikinTalSolver(object):
 
         # Run the solver
         self._run_configurable(max_numb_output_puzzles=len(seed_piece_ids),
-                               numb_pieces_to_place=len(self._pieces),
+                               numb_pieces_to_place=len(self._pieces) - len(seed_piece_ids),
                                skip_initial=True,
                                stop_solver_if_need_to_respawn=False)
 

@@ -920,3 +920,5 @@ class MultiPuzzleSolver(object):
 
         # noinspection PyProtectedMember
         solver._perform_placement_with_final_seed_pieces()
+        # noinspection PyProtectedMember
+        solver._final_puzzles = solver._build_output_puzzles()
