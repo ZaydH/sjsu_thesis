@@ -748,7 +748,7 @@ class MultiPuzzleSolver(object):
             for segment_id in cluster.get_segments():
                 if segment_list:
                     segment_list += ", "
-                segment_list += segment_id
+                segment_list += str(segment_id)
             print >> string_io, ("\tCluster #%d contains segments: " + segment_list) % cluster.id_number
 
         logging.info(string_io.getvalue())
