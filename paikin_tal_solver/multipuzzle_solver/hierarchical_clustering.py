@@ -24,7 +24,7 @@ class SegmentCluster(object):
         self._merging_history = []
 
     @property
-    def cluster_id(self):
+    def id_number(self):
         """
         Identification number of the cluster.
 
@@ -49,6 +49,14 @@ class SegmentCluster(object):
         Returns (bool): True if this cluster can be merged with others and False otherwise.
         """
         return self._merge_allowed
+
+    def get_segments(self):
+        """
+        Gets a list of the one or more segments that comprise the cluster.
+
+        Returns (List[int]): Solver segment(s) in the cluster.
+        """
+        return copy.copy(self._segment_ids)
 
     def disallow_merging(self):
         """
@@ -78,14 +86,17 @@ class SegmentCluster(object):
         # Define the segments in this cluster.
         merged_cluster._segment_ids = sorted(first_cluster._segment_ids + second_cluster._segment_ids)
 
+        # Make the history object for this merged.
+        merging_history = [(merged_cluster._segment_ids, intercluster_similarity)]
+
         # Combine the merging history
-        merging_history = [(merged_cluster._segment_ids, intercluster_similarity)] \
-                          + first_cluster._merging_history + second_cluster._merging_history
-        merged_cluster._merging_history = sorted(merging_history, key=lambda history[1])
+        merging_history += first_cluster._merging_history + second_cluster._merging_history
+        merged_cluster._merging_history = sorted(merging_history, key=lambda history: history[1])
 
         return merged_cluster
 
-class HierarchicalCluster(object):
+
+class HierarchicalClustering(object):
 
     MINIMUM_CLUSTER_SIMILARITY = 0.1
 
@@ -127,7 +138,7 @@ class HierarchicalCluster(object):
 
                     # Determine if the two clusters should be merged.
                     if similarity_matrix[row, col] > max_dist \
-                            and HierarchicalCluster._allow_cluster_merging(clusters, row, col, similarity_matrix):
+                            and HierarchicalClustering._allow_cluster_merging(clusters, row, col, similarity_matrix):
                         max_dist = similarity_matrix[row, col]
                         clusters_to_merge = (row, col)
 
@@ -136,10 +147,10 @@ class HierarchicalCluster(object):
                 return clusters, similarity_matrix
 
             # Update clusters and similarity matrix
-            clusters, similarity_matrix = HierarchicalCluster.merge_clusters(clusters,
-                                                                             clusters_to_merge[0],
-                                                                             clusters_to_merge[1],
-                                                                             similarity_matrix)
+            clusters, similarity_matrix = HierarchicalClustering.merge_clusters(clusters,
+                                                                                clusters_to_merge[0],
+                                                                                clusters_to_merge[1],
+                                                                                similarity_matrix)
 
     @staticmethod
     def merge_clusters(clusters, first_cluster_id, second_cluster_id, similarity_matrix):
@@ -172,26 +183,26 @@ class HierarchicalCluster(object):
             if other_cluster_id == min_index or other_cluster_id == second_index:
                 continue
             # Get the maximum similarity
-            first_cluster_similarity = HierarchicalCluster._get_intercluster_similarity(similarity_matrix,
-                                                                                        min_index, other_cluster_id)
-            second_cluster_similarity = HierarchicalCluster._get_intercluster_similarity(similarity_matrix,
-                                                                                         second_index, other_cluster_id)
+            first_cluster_similarity = HierarchicalClustering._get_intercluster_similarity(similarity_matrix,
+                                                                                           min_index, other_cluster_id)
+            second_cluster_similarity = HierarchicalClustering._get_intercluster_similarity(similarity_matrix,
+                                                                                            second_index, other_cluster_id)
             intercluster_similarity = max(first_cluster_similarity, second_cluster_similarity)
 
             # Update the similarity
-            HierarchicalCluster._update_intercluster_similarity(similarity_matrix, first_cluster_id,
-                                                                other_cluster_id, intercluster_similarity)
+            HierarchicalClustering._update_intercluster_similarity(similarity_matrix, first_cluster_id,
+                                                                   other_cluster_id, intercluster_similarity)
 
         # Merge in the last cluster
         for other_cluster_id in xrange(0, last_cluster_id):
             # Skip the cluster being merged into
-            if other_cluster_id ==second_index:
+            if other_cluster_id == second_index:
                 continue
             # Get and update the similarity for the last cluster.
-            intercluster_similarity = HierarchicalCluster._get_intercluster_similarity(similarity_matrix,
-                                                                                       last_cluster_id, other_cluster_id)
-            HierarchicalCluster._update_intercluster_similarity(similarity_matrix, first_cluster_id,
-                                                                other_cluster_id, intercluster_similarity)
+            intercluster_similarity = HierarchicalClustering._get_intercluster_similarity(similarity_matrix,
+                                                                                          last_cluster_id, other_cluster_id)
+            HierarchicalClustering._update_intercluster_similarity(similarity_matrix, first_cluster_id,
+                                                                   other_cluster_id, intercluster_similarity)
 
         # Remove the last cluster
         return clusters[:last_cluster_id], similarity_matrix[:last_cluster_id, :last_cluster_id]
@@ -247,6 +258,6 @@ class HierarchicalCluster(object):
         [row, col] = sorted([first_cluster_id, second_cluster_id])
 
         # Cluster must exceed some minimum similarity.
-        if similarity_matrix[row, col] < HierarchicalCluster.MINIMUM_CLUSTER_SIMILARITY:
+        if similarity_matrix[row, col] < HierarchicalClustering.MINIMUM_CLUSTER_SIMILARITY:
             return False
         return True

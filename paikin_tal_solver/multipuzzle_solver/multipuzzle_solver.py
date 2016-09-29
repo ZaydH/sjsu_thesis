@@ -11,6 +11,7 @@ from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
+from hierarchical_clustering import HierarchicalClustering
 from paikin_tal_solver.solver import PaikinTalSolver
 
 
@@ -185,12 +186,14 @@ class MultiPuzzleSolver(object):
     _POST_SEGMENTATION_PICKLE_FILE_DESCRIPTOR = "post_initial_segmentation"
     _POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR = "post_stitching_piece_solving"
     _POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR = "post_similarity_matrix"
+    _POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR = "post_hierarchical_clustering"
 
     # Pickle Related variables
     _ALLOW_SEGMENTATION_ROUND_PICKLE_EXPORT = False
     _ALLOW_POST_SEGMENTATION_PICKLE_EXPORT = False
     _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = False
-    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = False
+    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = True
+    _ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT = True
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
         """
@@ -219,10 +222,16 @@ class MultiPuzzleSolver(object):
         # Build the Paikin Tal Solver
         self._paikin_tal_solver = PaikinTalSolver(pieces, distance_function, puzzle_type=puzzle_type)
 
-        # These are used in building the hierarchical clustering algorithm.
+        # Input to the hierarchical clustering algorithm.
         self._asymmetric_overlap_matrix = None
         self._segment_similarity_matrix = None
 
+        # Output from the hierarchical clustering algorithm
+        self._segment_clusters = None
+        self._final_cluster_similarity_matrix = None
+
+        # Built from the hierarchical clustering output
+        # Input to the final solver.
         self._set_of_final_seed_pieces = None
 
         self._final_puzzles = None
@@ -243,9 +252,11 @@ class MultiPuzzleSolver(object):
 
         self._build_similarity_matrix()
 
-        # self._perform_placement_with_final_seed_pieces()
+        self._perform_hierarchical_clustering()
 
-        # self._final_puzzles = self._build_output_puzzles()
+        self._perform_placement_with_final_seed_pieces()
+
+        self._final_puzzles = self._build_output_puzzles()
 
         logging.info("Multipuzzle Solver Complete")
         print_elapsed_time(self._start_timestamp, "entire multipuzzle solver.")
@@ -488,6 +499,12 @@ class MultiPuzzleSolver(object):
         """
         self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR)
 
+    def _pickle_export_after_hierarchical_clustering(self):
+        """
+        Exports the multipuzzle solver after hierarchical clustering is completed.
+        """
+        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR)
+
     def _local_pickle_expert_helper(self, pickle_file_descriptor):
         """
         Helper function that handles the pickle export for a specific file description.
@@ -645,6 +662,40 @@ class MultiPuzzleSolver(object):
 
         return all_stitching_pieces
 
+    def _perform_hierarchical_clustering(self):
+        """
+        Performs hierarchical clustering to merge the puzzle segments.
+        """
+        # Perform the hierarchical clustering output.
+        hierarchical_results = HierarchicalClustering.run(self._segments, self._segment_similarity_matrix)
+        self._segment_clusters = hierarchical_results[0]
+        self._final_cluster_similarity_matrix = hierarchical_results[1]
+
+        self._log_clustering_result()
+
+        if MultiPuzzleSolver._ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT:
+            self._pickle_export_after_hierarchical_clustering()
+
+    def _log_clustering_result(self):
+        """
+        Logs the hierarchical clustering result.
+        """
+        string_io = cStringIO.StringIO()
+
+        print >>string_io, "Number of Clusters: %d" % len(self._segment_clusters)
+        # Log the segments in cluster
+        for cluster in self._segment_clusters:
+            # Build a list of segments in the cluster.
+            segment_list = ""
+            for segment_id in cluster.get_segments():
+                if segment_list:
+                    segment_list += ", "
+                segment_list += segment_id
+            print >> string_io, ("\tCluster #%d contains segments: " + segment_list) % cluster.id_number
+
+        logging.info(string_io.getvalue())
+        string_io.close()
+
     def reset_timestamp(self):
         """
         Resets the time stamp for the puzzle solver for debug functions.
@@ -710,3 +761,23 @@ class MultiPuzzleSolver(object):
 
         # noinspection PyProtectedMember
         solver._build_similarity_matrix()
+
+    @staticmethod
+    def run_imported_hierarchical_clustering(image_filenames, puzzle_type):
+        """
+        Debug method that imports a pickle file after the similarity matrix was built.  It then runs hierarchical
+        clustering on that imported pickle file.
+
+        Note: The pickle file name is built from the image file names and the puzzle type.
+
+        Args:
+            image_filenames (List[str]): List of paths to image file names
+            puzzle_type (PuzzleType): Solver puzzle type
+        """
+        pickle_file_descriptor = MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
+
+        solver = PickleHelper.importer(pickle_filename)
+
+        # noinspection PyProtectedMember
+        solver._perform_hierarchical_clustering()
