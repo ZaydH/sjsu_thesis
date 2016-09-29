@@ -335,7 +335,7 @@ class PaikinTalSolver(object):
 
         # Run the solver
         self._run_configurable(max_numb_output_puzzles=len(seed_piece_ids),
-                               numb_pieces_to_place=len(self._pieces) - len(seed_piece_ids),
+                               numb_pieces_to_place=len(self._pieces),
                                skip_initial=True,
                                stop_solver_if_need_to_respawn=False)
 
@@ -378,7 +378,7 @@ class PaikinTalSolver(object):
             stop_solver_if_need_to_respawn (bool): If True, whenever the solver would otherwise spawn a new puzzle,
                 the solver will stop.
         """
-        if numb_pieces_to_place > self._numb_unplaced_valid_pieces:
+        if numb_pieces_to_place > self._numb_unplaced_valid_pieces + self._numb_placed_pieces:
             raise ValueError("Number of pieces to place must equal or exceed the number of initial unplaced pieces.")
 
         if not skip_initial:
