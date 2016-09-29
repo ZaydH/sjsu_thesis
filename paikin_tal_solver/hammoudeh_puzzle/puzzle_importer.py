@@ -2332,5 +2332,5 @@ def log_puzzle_filenames(image_filenames):
         print >> string_io, "\t%s" % Puzzle.get_filename_without_extension(img_file)
 
     # log the result
-    logging.info(string_io.getvalue())
+    logging.critical(string_io.getvalue())
     string_io.close()
