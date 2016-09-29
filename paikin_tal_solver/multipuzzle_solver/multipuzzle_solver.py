@@ -6,6 +6,7 @@ import time
 import numpy as np
 
 from hammoudeh_puzzle import config
+from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle
@@ -385,6 +386,9 @@ class MultiPuzzleSolver(object):
         Creates the asymmetric overlap and segment similarity matrices for use in the hierarchical clustering.
         """
 
+        logging.info("Reminder on the image files:")
+        puzzle_importer.log_puzzle_filenames(self._image_filenames)
+
         # Build the similarity matrix.  Worst similarity is 0
         numb_segments = len(self._segments)
         self._asymmetric_overlap_matrix = np.full((numb_segments, numb_segments), fill_value=-1, dtype=np.float)
@@ -744,12 +748,22 @@ class MultiPuzzleSolver(object):
         # Log the segments in cluster
         for cluster in self._segment_clusters:
             # Build a list of segments in the cluster.
+            pieces_per_input_puzzle = [0] * len(self._image_filenames)
             segment_list = ""
             for segment_id in cluster.get_segments():
                 if segment_list:
                     segment_list += ", "
+                # Get the pieces in the cluster from the original puzzle
                 segment_list += str(segment_id)
+                for piece_id in self._segments[segment_id].get_piece_ids():
+                    original_puzzle_id = self._paikin_tal_solver.get_piece_original_puzzle_id(piece_id)
+                    pieces_per_input_puzzle[original_puzzle_id] += 1
+
+            # Print the number of pieces from each puzzle.
             print >> string_io, ("\tCluster #%d contains segments: " + segment_list) % cluster.id_number
+            for puzzle_id in xrange(0, len(self._image_filenames)):
+                print >> string_io, "\t\tPuzzle #%d Piece Count: %d" % (puzzle_id, pieces_per_input_puzzle[puzzle_id])
+            print >> string_io, ""
 
         logging.info(string_io.getvalue())
         string_io.close()
