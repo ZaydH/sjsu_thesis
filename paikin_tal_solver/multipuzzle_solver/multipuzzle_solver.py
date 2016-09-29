@@ -317,6 +317,8 @@ class MultiPuzzleSolver(object):
         self._paikin_tal_solver.allow_placement_of_all_pieces()
         self._paikin_tal_solver.reset_all_pieces_placement()
 
+        self._log_segmentation_results()
+
         if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PICKLE_EXPORT:
             self._pickle_export_after_segmentation()
 
@@ -740,10 +742,12 @@ class MultiPuzzleSolver(object):
 
     def _log_clustering_result(self):
         """
-        Logs the hierarchical clustering result.
+        Logs information on the hierarchical clusters found during the hierarchical clustering.
         """
-        string_io = cStringIO.StringIO()
+        logging.info("Re-logging segment details for reference.")
+        self._log_segmentation_results()
 
+        string_io = cStringIO.StringIO()
         print >>string_io, "Number of Clusters: %d" % len(self._segment_clusters)
         # Log the segments in cluster
         for cluster in self._segment_clusters:
@@ -761,6 +765,29 @@ class MultiPuzzleSolver(object):
 
             # Print the number of pieces from each puzzle.
             print >> string_io, ("\tCluster #%d contains segments: " + segment_list) % cluster.id_number
+            for puzzle_id in xrange(0, len(self._image_filenames)):
+                print >> string_io, "\t\tPuzzle #%d Piece Count: %d" % (puzzle_id, pieces_per_input_puzzle[puzzle_id])
+            print >> string_io, ""
+
+        logging.info(string_io.getvalue())
+        string_io.close()
+
+    def _log_segmentation_results(self):
+        """
+        Logs information on the hierarchical clusters found during the hierarchical clustering.
+        """
+        string_io = cStringIO.StringIO()
+
+        print >>string_io, "Number of Segments: %d" % len(self._segments)
+        for segment in self._segments:
+            print >> string_io, "\tSegment #%d contains %d pieces." % (segment.id_number, len(segment.get_piece_ids()))
+            # Get the pieces in the cluster from the original puzzle
+            pieces_per_input_puzzle = [0] * len(self._image_filenames)
+            for piece_id in segment.get_piece_ids():
+                original_puzzle_id = self._paikin_tal_solver.get_piece_original_puzzle_id(piece_id)
+                pieces_per_input_puzzle[original_puzzle_id] += 1
+
+            # Print the number of pieces from each puzzle.
             for puzzle_id in xrange(0, len(self._image_filenames)):
                 print >> string_io, "\t\tPuzzle #%d Piece Count: %d" % (puzzle_id, pieces_per_input_puzzle[puzzle_id])
             print >> string_io, ""
@@ -873,3 +900,23 @@ class MultiPuzzleSolver(object):
 
         # noinspection PyProtectedMember
         solver._select_starting_pieces_from_clusters()
+
+    @staticmethod
+    def run_imported_final_puzzle_solving(image_filenames, puzzle_type):
+        """
+        Debug method that imports a pickle file after hierarchical clustering was completed.  It then selects the
+        seed pieces as inputs to the solver..
+
+        Note: The pickle file name is built from the image file names and the puzzle type.
+
+        Args:
+            image_filenames (List[str]): List of paths to image file names
+            puzzle_type (PuzzleType): Solver puzzle type
+        """
+        pickle_file_descriptor = MultiPuzzleSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
+
+        solver = PickleHelper.importer(pickle_filename)
+
+        # noinspection PyProtectedMember
+        solver._perform_placement_with_final_seed_pieces()
