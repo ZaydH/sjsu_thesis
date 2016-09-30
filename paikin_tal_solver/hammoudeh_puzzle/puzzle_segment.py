@@ -1,3 +1,4 @@
+import Queue
 import sys
 import functools
 
@@ -5,7 +6,9 @@ import cv2
 import numpy as np
 from enum import Enum
 import math
+import copy
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
@@ -47,6 +50,112 @@ class SegmentColor(Enum):
 
         """
         return str(self.value)
+
+
+class DepthFirstSearchNode(object):
+
+    def __init__(self, piece_id, puzzle_location, parent_id, depth):
+        """
+        Creates a Node for the Depth First Search of the Segment
+
+        Args:
+            piece_id (int): Identification number of the piece associated with the node
+            puzzle_location (PuzzleLocation): Location of the piece.
+            parent_id (int): Identification number of this node's parent.
+            depth (int): Depth of the node in the tree.
+        """
+        self.piece_id = piece_id
+        self.key = str(self.piece_id)
+
+        self.location = puzzle_location
+
+        self.is_articulation_point = False
+
+        self._child_count = 0
+        self._parent_id = parent_id
+
+        self.depth = depth
+        self._lowpoint = depth
+
+    def create_child(self, piece):
+        """
+        Creates a child node from a parent node.
+
+        Args:
+            piece (PuzzlePiece): Puzzle piece associated with the child node
+
+        Returns (DepthFirstSearchNode): Child node
+        """
+        self._add_child()
+        return DepthFirstSearchNode(piece.id_number, piece.puzzle_location,
+                                    parent_id=self.piece_id, depth=self.depth+1)
+
+    @staticmethod
+    def define_root(piece):
+        """
+        Creates the root of the DFS tree.
+
+        Args:
+            piece (PuzzlePiece): Puzzle piece associated with the root node
+
+        Returns (DepthFirstSearchNode):
+            Root node using the specified piece as the seed.
+        """
+        # noinspection PyTypeChecker
+        return DepthFirstSearchNode(piece.id_number, piece.location, parent_id=None, depth=0)
+
+    def update_lowpoint(self, adjacent_node, check_is_articulation):
+        """
+        Updates the low point of the node.
+
+        If appropriate, this function will also update if the point is an articulation point.
+
+        Args:
+            adjacent_node (DepthFirstSearchNode): Node adjacent to the implicit node
+            check_is_articulation (bool): If True, then the function checks (and if necessary updates) whether the
+               implicit piece is an articulation piece.
+        """
+        if check_is_articulation:
+            self.is_articulation_point = self.is_articulation_point or self._lowpoint >= adjacent_node._lowpoint
+
+        self._lowpoint = min(self._lowpoint, adjacent_node._lowpoint)
+
+    def _add_child(self):
+        """
+        Increments the child count for node.
+
+        Also, will set the root as articulation if appropriate.
+        """
+        self._child_count += 1
+        if self._parent_id is None and self._child_count > 1:
+            self.is_articulation_point = True
+
+    def has_parent(self, piece_id):
+        """
+        Checks whether the specified piece is this node's parent.
+
+        Args:
+            piece_id (int): Identification number of a piece to check if it is a parent.
+
+        Returns (bool): True if the specified piece identification number corresponds to the parent and False
+        otherwise.
+        """
+        if self._parent_id is None:
+            return False
+
+        return self._parent_id == piece_id
+
+    @staticmethod
+    def create_key(piece_id):
+        """
+        Creates a key object for Depth First Search node.
+
+        Args:
+            piece_id (int): Puzzle piece identification for the node.
+
+        Returns (str): Key for a node.
+        """
+        return str(piece_id)
 
 
 class SegmentGridLocation(object):
@@ -463,7 +572,7 @@ class PuzzleSegment(object):
     This class is used to store a puzzle the information associated with a puzzle segment.
     """
 
-    _PERFORM_ASSERT_CHECKS = True
+    _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
 
     _EMPTY_PIECE_MAP_VALUE = -1
 
@@ -486,6 +595,7 @@ class PuzzleSegment(object):
         self._puzzle_id = puzzle_id
         self._segment_id_number = segment_id_number
         self._pieces = {}
+        self._removed_pieces = {}
         self._piece_id_list = None
         self._seed_piece = None
 
@@ -619,13 +729,241 @@ class PuzzleSegment(object):
         # Optionally ensure the key exists before trying to remove it
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert key in self._pieces  # verify the piece to be deleted actually exists
-            assert key != self._seed_piece.key  # Cannot delete the seed piece
+            assert piece_id != self._seed_piece.id_number   # Cannot delete the seed piece
+
+        piece_location = self._pieces[key].puzzle_location
 
         # Since a piece was removed, piece distance information no longer up to date
         self._piece_distance_from_open_space_up_to_date = False
         self._piece_id_list = None
-
         del self._pieces[key]
+
+        # Update the list of removed pieces.
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert key not in self._removed_pieces
+        self._removed_pieces[key] = piece_id
+
+        self._mark_piece_map_location_open(piece_location)
+
+    def remove_articulation_points_and_disconnected_pieces(self):
+        """
+        Removes from the segment any articulation points as well as those pieces that become disconnected from the seed
+        upon removal of the articulation points.
+
+        Note that if the seed is an articulation point, all other pieces except the seed are removed from the
+        segment.
+
+        Returns (List[int]): List of all pieces removed from the segment.
+        """
+
+        articulation_points = self._find_articulation_points()
+
+        # If no articulation pieces, this can be removed.
+        if not articulation_points:
+            return self._build_removed_pieces_list()
+
+        # Remove the articulation pieces
+        for node in articulation_points:
+            # Cannot remove the seed piece so it becomes its own segment.
+            if node.piece_id == self._seed_piece.id_number:
+                return self._remove_all_pieces_except_seed()
+            self.remove_piece(node.piece_id)
+
+        self._remove_disconnected_pieces()
+
+        return self._build_removed_pieces_list()
+
+    def _remove_disconnected_pieces(self):
+        """
+        Removes from the segment any pieces that are not reachable from the seed.
+        """
+
+        # Anything in the unexplored set at the end is disconnected
+        unexplored_set = {}
+        for piece in self._pieces:
+            if piece.id_number != self._seed_piece.id_number:
+                unexplored_set[piece.key] = piece.id_number
+
+        # Run until no connected pool is empty
+        connected_pool = Queue.Queue()
+        connected_pool.put(self._seed_piece.puzzle_location)
+        while not connected_pool.empty():
+            piece_location = connected_pool.get()
+            # If the piece is adjacent and unexplored, remove from unexplored list
+            for adjacent_id in self._get_location_adjacency_list(piece_location):
+                adjacent_key = PuzzlePiece.create_key(adjacent_id)
+                if adjacent_key in unexplored_set:
+                    del unexplored_set[adjacent_key]
+                    connected_pool.put(self._pieces[adjacent_key].puzzle_location)
+
+        # Remove the unexplored pieces
+        for unexplored_piece_id in unexplored_set.values():
+            self.remove_piece(unexplored_piece_id)
+
+    def _find_articulation_points(self):
+        """
+        Gets the list of articulation points for a segment.
+
+        Returns (DepthFirstSearchNode): List of the nodes that are articulation points.
+        """
+
+        # Build the root of the tree
+        tree_root = DepthFirstSearchNode.define_root(self._seed_piece)
+        dfs_tree = {tree_root.key: tree_root}
+
+        # Perform depth first search to find the articulation points.
+        self._depth_first_search_for_articulation_points(dfs_tree, tree_root)
+
+        # Build and return the list of articulation points.
+        return [node for node in dfs_tree.values if node.is_articulation_point]
+
+    def _depth_first_search_for_articulation_points(self, dfs_tree, current_node):
+        """
+        Performs depth first search to find the articulation points (if any).
+
+        Based off the code here: https://en.wikipedia.org/wiki/Biconnected_component
+
+        Args:
+            self (PuzzleSegment): Puzzle segment being analyzed
+            dfs_tree (dict): Representation of DFS tree as a dictionary
+            current_node (DepthFirstSearchNode): Current node in the DFS tree
+        """
+
+        for adjacent_id in self._get_location_adjacency_list(current_node.location):
+            # Always skip the parent.
+            if current_node.has_parent(adjacent_id):
+                continue
+
+            adjacent_piece_key = DepthFirstSearchNode.create_key(adjacent_id)
+            # Check if the piece is visited
+            try:
+                adjacent_node = dfs_tree[adjacent_piece_key]
+                current_node.update_lowpoint(adjacent_node, check_is_articulation=False)
+
+            # Piece not visited
+            except KeyError:
+                child_node = current_node.create_child(self._pieces[adjacent_piece_key])
+                dfs_tree[child_node.key] = child_node
+                self._depth_first_search_for_articulation_points(dfs_tree, child_node)
+                current_node.update_lowpoint(child_node, check_is_articulation=True)
+
+    def _remove_all_pieces_except_seed(self):
+        """
+        Updates the segment and removes all non-seed pieces from the segment.
+
+        Returns (List[str]): List of the identification numbers of the pieces removed from the segment.
+        """
+        # Use a copy of the piece list since it is going to be updated as the list runs
+        all_piece_ids = copy.copy(self.get_piece_ids())
+
+        # Delete everything but the seed piece
+        for piece_id in all_piece_ids:
+            if self._seed_piece.id_numb == piece_id:
+                continue
+            self.remove_piece(piece_id)
+        return self._build_removed_pieces_list()
+
+    def _build_removed_pieces_list(self):
+        """
+        Builds a list of the pieces removed from the list.
+
+        Returns (List[int]): List of the identification numbers of the pieces removed from the segment.
+        """
+        return [piece_id for piece_id in self._removed_pieces.values()]
+
+    def _get_location_adjacency_list(self, puzzle_location):
+        """
+        Gets all of the puzzle pieces at locations adjacent to the specified location.
+
+        Args:
+            puzzle_location (PuzzleLocation): Location in the segment
+
+        Returns (List[int]): Identification number (if any) of the adjacent puzzle pieces.
+        """
+        adjacency_list = []
+        for adjacent_location in puzzle_location.get_adjacent_locations():
+            if self._does_location_have_piece(adjacent_location):
+                adjacency_list.append(self._get_piece_at_segment_location(adjacent_location))
+
+        return adjacency_list
+
+    def _get_piece_at_segment_location(self, puzzle_location):
+        """
+        Gets the puzzle piece at the specified location
+
+        Args:
+            puzzle_location (PuzzleLocation): Location inside the puzzle segment
+
+        Returns (int): Identification number of the piece at the specified location.
+        """
+        row, col = self._get_location_piece_map_row_and_column(puzzle_location)
+
+        piece_id = self._piece_map[row, col]
+        if config.PERFORM_ASSERT_CHECKS:
+            assert piece_id != PuzzleSegment._EMPTY_PIECE_MAP_VALUE
+        return piece_id
+
+    def _get_location_piece_map_row_and_column(self, puzzle_location):
+        """
+        Normalizes the specified puzzle location based off the top left row and column
+
+        Args:
+            puzzle_location ():
+
+        Returns (Tuple[int]): Two element Tuple in the form (row, column)
+        """
+        # Get the adjusted row and column
+        row = puzzle_location.row - self._top_left.row
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert row >= 0
+
+        col = puzzle_location.column - self._top_left.column
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert col >= 0
+
+        return row, col
+
+    def _update_piece_map_location(self, puzzle_location, piece_id):
+        """
+        Updates the segment's piece map by updating the piece identification number at the specified puzzle location.
+
+        Args:
+            puzzle_location (PuzzleLocation): Location in the segment
+            piece_id (int): Identification number of the piece in the specified segment location
+        """
+        # Get the adjust row and column
+        row, col = self._get_location_piece_map_row_and_column(puzzle_location)
+        self._piece_map[row, col] = piece_id
+
+    def _mark_piece_map_location_open(self, puzzle_location):
+        """
+        Updates the piece map for the implicit segment at the specified location to be open.
+
+        Args:
+            puzzle_location (PuzzleLocation): Segment location to be marked as open.
+        """
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert self._does_location_have_piece(puzzle_location)
+
+        self._update_piece_map_location(puzzle_location, PuzzleSegment._EMPTY_PIECE_MAP_VALUE)
+
+    def _does_location_have_piece(self, puzzle_location):
+        """
+        Checks whether the specified location has a puzzle piece.
+
+        Args:
+            puzzle_location (PuzzleLocation): Location in the puzzle.
+
+        Returns (bool):
+            True if the location has a piece and False otherwise.
+        """
+        # Calculate the offset row and column
+        row = puzzle_location.row - self._top_left.row
+        col = puzzle_location.column - self._top_left.column
+        if not PuzzleSegment._is_piece_map_location_valid(self._piece_map, row, col) \
+                or PuzzleSegment._is_piece_map_location_empty(self._piece_map, row, col):
+            return False
+        return True
 
     def add_neighboring_segment(self, neighbor_segment_id):
         """

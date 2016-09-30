@@ -103,17 +103,18 @@ if __name__ == "__main__":
     # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
-    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
+    MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
+    # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, segmentation_round_numb=1)
     #
     # test_random_mcgill()
 
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # MultiPuzzleSolver.run_imported_hierarchical_clustering(images, PuzzleType.type2)
     # MultiPuzzleSolver.run_imported_select_starting_pieces(images, PuzzleType.type2)
     # MultiPuzzleSolver.run_imported_final_puzzle_solving(images, PuzzleType.type2)
@@ -122,14 +123,14 @@ if __name__ == "__main__":
     # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
     # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
 
-    images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)

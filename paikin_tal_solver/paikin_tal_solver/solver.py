@@ -12,7 +12,7 @@ import numpy as np
 
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
-from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide
+from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide, PuzzlePiece
 from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, SegmentColor
 from hammoudeh_puzzle.solver_helper import NextPieceToPlace, PuzzleLocation, NeighborSidePair, \
     print_elapsed_time
@@ -1479,8 +1479,11 @@ class PaikinTalSolver(object):
                         del unassigned_pieces[neighbor_piece.key()]  # Piece now in the queue to be assigned
 
             if perform_segment_cleaning:  # Not yet supported.
-                # TODO Implement the code to clean segments.
-                assert False
+                removed_pieces = new_segment.remove_articulation_points_and_disconnected_pieces()
+                # Add back the deleted pieces tp the unassigned set
+                for piece_id_to_add_back in removed_pieces:
+                    key = PuzzlePiece.create_key(piece_id_to_add_back)
+                    unassigned_pieces[key] = piece_id_to_add_back
 
             # Add the segment to the list of segments
             self._segments[new_segment.puzzle_id].append(new_segment)
