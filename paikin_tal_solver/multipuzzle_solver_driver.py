@@ -1,4 +1,5 @@
 import logging
+import os
 import random
 
 import time
@@ -10,7 +11,7 @@ from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 from multipuzzle_solver.multipuzzle_solver import MultiPuzzleSolver
 
-_RECALCULATE_DISTANCES = True
+_FORCE_RECALCULATE_DISTANCES = True
 
 
 def run_multipuzzle_solver_driver(image_files, puzzle_type, piece_width):
@@ -51,7 +52,7 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
     pickle_filename = PickleHelper.build_filename("multipuzzle_distances", image_filenames, puzzle_type)
 
     # Initialize the distance information
-    if _RECALCULATE_DISTANCES:
+    if _FORCE_RECALCULATE_DISTANCES or not os.path.exists(pickle_filename):
         multipuzzle_solver = MultiPuzzleSolver(image_filenames, pieces, top_level_calculate_asymmetric_distance,
                                                puzzle_type)
         if PickleHelper.PICKLE_ENABLED:
@@ -99,9 +100,9 @@ if __name__ == "__main__":
 
     # Setup the logger
     config.setup_logging()
-
-    images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
@@ -129,8 +130,14 @@ if __name__ == "__main__":
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
