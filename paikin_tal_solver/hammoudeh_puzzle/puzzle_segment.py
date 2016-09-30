@@ -74,7 +74,7 @@ class DepthFirstSearchNode(object):
         self._child_count = 0
         self._parent_id = parent_id
 
-        self.depth = depth
+        self._depth = depth
         self._lowpoint = depth
 
     def create_child(self, piece):
@@ -82,13 +82,13 @@ class DepthFirstSearchNode(object):
         Creates a child node from a parent node.
 
         Args:
-            piece (PuzzlePiece): Puzzle piece associated with the child node
+            piece (SegmentPieceInfo): Puzzle piece associated with the child node
 
         Returns (DepthFirstSearchNode): Child node
         """
-        self._add_child()
-        return DepthFirstSearchNode(piece.id_number, piece.puzzle_location,
-                                    parent_id=self.piece_id, depth=self.depth+1)
+        self._increment_child_count()
+        return DepthFirstSearchNode(piece.piece_id, piece.location,
+                                    parent_id=self.piece_id, depth=self._depth + 1)
 
     @staticmethod
     def define_root(piece):
@@ -96,13 +96,13 @@ class DepthFirstSearchNode(object):
         Creates the root of the DFS tree.
 
         Args:
-            piece (PuzzlePiece): Puzzle piece associated with the root node
+            piece (SegmentPieceInfo): Puzzle piece associated with the root node
 
         Returns (DepthFirstSearchNode):
             Root node using the specified piece as the seed.
         """
         # noinspection PyTypeChecker
-        return DepthFirstSearchNode(piece.id_number, piece.location, parent_id=None, depth=0)
+        return DepthFirstSearchNode(piece.piece_id, piece.location, parent_id=None, depth=0)
 
     def update_lowpoint(self, adjacent_node, check_is_articulation):
         """
@@ -116,11 +116,13 @@ class DepthFirstSearchNode(object):
                implicit piece is an articulation piece.
         """
         if check_is_articulation:
-            self.is_articulation_point = self.is_articulation_point or self._lowpoint >= adjacent_node._lowpoint
+            if not self.is_root():  # Root's condition for articulation is more than one child node.
+                self.is_articulation_point = self.is_articulation_point or adjacent_node._lowpoint >= self._depth
+            self._lowpoint = min(self._lowpoint, adjacent_node._lowpoint)
+        else:
+            self._lowpoint = min(self._lowpoint, adjacent_node._depth)
 
-        self._lowpoint = min(self._lowpoint, adjacent_node._lowpoint)
-
-    def _add_child(self):
+    def _increment_child_count(self):
         """
         Increments the child count for node.
 
@@ -129,6 +131,14 @@ class DepthFirstSearchNode(object):
         self._child_count += 1
         if self._parent_id is None and self._child_count > 1:
             self.is_articulation_point = True
+
+    def is_root(self):
+        """
+        Checks if the implicit node is the root of the DFS tree.
+
+        Returns (bool): True if the piece is the root of the tree and False otherwise.
+        """
+        return self._parent_id is None
 
     def has_parent(self, piece_id):
         """
@@ -756,6 +766,8 @@ class PuzzleSegment(object):
         Returns (List[int]): List of all pieces removed from the segment.
         """
 
+        self._build_piece_map()
+
         articulation_points = self._find_articulation_points()
 
         # If no articulation pieces, this can be removed.
@@ -815,7 +827,7 @@ class PuzzleSegment(object):
         self._depth_first_search_for_articulation_points(dfs_tree, tree_root)
 
         # Build and return the list of articulation points.
-        return [node for node in dfs_tree.values if node.is_articulation_point]
+        return [node for node in dfs_tree.values() if node.is_articulation_point]
 
     def _depth_first_search_for_articulation_points(self, dfs_tree, current_node):
         """
@@ -828,11 +840,13 @@ class PuzzleSegment(object):
             dfs_tree (dict): Representation of DFS tree as a dictionary
             current_node (DepthFirstSearchNode): Current node in the DFS tree
         """
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert current_node.piece_id == self._get_piece_at_segment_location(current_node.location)
 
         for adjacent_id in self._get_location_adjacency_list(current_node.location):
-            # Always skip the parent.
-            if current_node.has_parent(adjacent_id):
-                continue
+            # # Always skip the parent.
+            # if current_node.has_parent(adjacent_id):
+            #     continue
 
             adjacent_piece_key = DepthFirstSearchNode.create_key(adjacent_id)
             # Check if the piece is visited
@@ -958,8 +972,7 @@ class PuzzleSegment(object):
             True if the location has a piece and False otherwise.
         """
         # Calculate the offset row and column
-        row = puzzle_location.row - self._top_left.row
-        col = puzzle_location.column - self._top_left.column
+        row, col = self._get_location_piece_map_row_and_column(puzzle_location)
         if not PuzzleSegment._is_piece_map_location_valid(self._piece_map, row, col) \
                 or PuzzleSegment._is_piece_map_location_empty(self._piece_map, row, col):
             return False
@@ -1020,7 +1033,7 @@ class PuzzleSegment(object):
         Once this distance is found for each piece, the SegmentPieceInfo of each is updated to store this distance
         for future analysis.
         """
-        self._piece_map = self._build_piece_map()
+        self._build_piece_map()
 
         explored_pieces = {}  # As pieces' minimum distance is found, mark as explored
         open_locations_next_to_piece = self._find_open_spaces_adjacent_to_piece(self._piece_map)
@@ -1177,7 +1190,7 @@ class PuzzleSegment(object):
             column = piece_info.location.column - self._top_left.column
             piece_map[row, column] = piece_info.piece_id
 
-        return piece_map
+        self._piece_map = piece_map
 
     def _find_top_left_and_bottom_right_corner_of_segment_map(self):
         """

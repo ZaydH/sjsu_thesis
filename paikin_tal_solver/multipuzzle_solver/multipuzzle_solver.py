@@ -876,7 +876,7 @@ class MultiPuzzleSolver(object):
         solver.reset_timestamp()
 
         # noinspection PyProtectedMember
-        solver._find_initial_segments(go_to_placement=True)
+        solver._find_initial_segments(go_to_segmentation=True)
 
     @staticmethod
     def run_imported_stitching_piece_solving(image_filenames, puzzle_type):
