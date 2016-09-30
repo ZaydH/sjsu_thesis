@@ -269,17 +269,17 @@ class MultiPuzzleSolver(object):
         print_elapsed_time(self._start_timestamp, "entire multipuzzle solver.")
         return self._final_puzzles
 
-    def _find_initial_segments(self, skip_initialization=False, go_to_segmentation=False):
+    def _find_initial_segments(self, skip_initialization=False, go_directly_to_segmentation=False):
         """
         Through iterative single puzzle placing, this function finds a set of segments.
 
         Args:
             skip_initialization (bool): Skip the initial segments setup.
-            go_to_segmentation (bool): Skips right to segmentation.  This feature is largely for debug of
+            go_directly_to_segmentation (bool): Skips right to segmentation.  This feature is largely for debug of
                 segmentation via pickle.
         """
 
-        if not skip_initialization and not go_to_segmentation:
+        if not skip_initialization and not go_directly_to_segmentation:
             self._paikin_tal_solver.allow_placement_of_all_pieces()
 
             self._numb_segmentation_rounds = 0
@@ -288,7 +288,7 @@ class MultiPuzzleSolver(object):
         while True:
 
             time_segmentation_round_began = time.time()
-            if not go_to_segmentation:
+            if not go_directly_to_segmentation:
                 self._numb_segmentation_rounds += 1
 
                 logging.info("Beginning segmentation round #%d" % self._numb_segmentation_rounds)
@@ -299,13 +299,15 @@ class MultiPuzzleSolver(object):
 
                 # Perform placement as if there is only a single puzzle
                 self._paikin_tal_solver.run_single_puzzle_solver()
-                go_to_segmentation = False
+                go_directly_to_segmentation = False
 
                 if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PLACEMENT_PICKLE_EXPORT:
                     self._pickle_export_after_segmentation_puzzle_placement()
+            # Proceed with placement as normal.
+            go_directly_to_segmentation = False
 
             # Get the segments from this iteration of the loop
-            solved_segments = self._paikin_tal_solver.segment(perform_segment_cleaning=True)
+            solved_segments = self._paikin_tal_solver.segment(perform_segment_cleaning=False)
             max_segment_size = self._process_solved_segments(solved_segments[0])
 
             if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE:
@@ -876,7 +878,7 @@ class MultiPuzzleSolver(object):
         solver.reset_timestamp()
 
         # noinspection PyProtectedMember
-        solver._find_initial_segments(go_to_segmentation=True)
+        solver._find_initial_segments(go_directly_to_segmentation=True)
 
     @staticmethod
     def run_imported_stitching_piece_solving(image_filenames, puzzle_type):
@@ -932,6 +934,7 @@ class MultiPuzzleSolver(object):
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
+        solver.reset_timestamp()
 
         # noinspection PyProtectedMember
         solver._perform_hierarchical_clustering()
@@ -952,6 +955,7 @@ class MultiPuzzleSolver(object):
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
+        solver.reset_timestamp()
 
         # noinspection PyProtectedMember
         solver._select_starting_pieces_from_clusters()
@@ -972,6 +976,7 @@ class MultiPuzzleSolver(object):
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
+        solver.reset_timestamp()
 
         # noinspection PyProtectedMember
         solver._perform_placement_with_final_seed_pieces()

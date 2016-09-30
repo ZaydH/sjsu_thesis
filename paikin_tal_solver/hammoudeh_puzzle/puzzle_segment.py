@@ -739,9 +739,9 @@ class PuzzleSegment(object):
         # Optionally ensure the key exists before trying to remove it
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert key in self._pieces  # verify the piece to be deleted actually exists
-            assert piece_id != self._seed_piece.id_number   # Cannot delete the seed piece
+            assert piece_id != self._seed_piece.piece_id   # Cannot delete the seed piece
 
-        piece_location = self._pieces[key].puzzle_location
+        piece_location = self._pieces[key].location
 
         # Since a piece was removed, piece distance information no longer up to date
         self._piece_distance_from_open_space_up_to_date = False
@@ -777,7 +777,7 @@ class PuzzleSegment(object):
         # Remove the articulation pieces
         for node in articulation_points:
             # Cannot remove the seed piece so it becomes its own segment.
-            if node.piece_id == self._seed_piece.id_number:
+            if node.piece_id == self._seed_piece.piece_id:
                 return self._remove_all_pieces_except_seed()
             self.remove_piece(node.piece_id)
 
@@ -792,21 +792,21 @@ class PuzzleSegment(object):
 
         # Anything in the unexplored set at the end is disconnected
         unexplored_set = {}
-        for piece in self._pieces:
-            if piece.id_number != self._seed_piece.id_number:
-                unexplored_set[piece.key] = piece.id_number
+        for piece in self._pieces.values():
+            if piece.piece_id != self._seed_piece.piece_id:
+                unexplored_set[piece.key] = piece.piece_id
 
         # Run until no connected pool is empty
-        connected_pool = Queue.Queue()
-        connected_pool.put(self._seed_piece.puzzle_location)
-        while not connected_pool.empty():
-            piece_location = connected_pool.get()
+        connected_queue = Queue.Queue()
+        connected_queue.put(self._seed_piece.location)
+        while not connected_queue.empty():
+            piece_location = connected_queue.get()
             # If the piece is adjacent and unexplored, remove from unexplored list
             for adjacent_id in self._get_location_adjacency_list(piece_location):
                 adjacent_key = PuzzlePiece.create_key(adjacent_id)
                 if adjacent_key in unexplored_set:
                     del unexplored_set[adjacent_key]
-                    connected_pool.put(self._pieces[adjacent_key].puzzle_location)
+                    connected_queue.put(self._pieces[adjacent_key].location)
 
         # Remove the unexplored pieces
         for unexplored_piece_id in unexplored_set.values():
@@ -872,7 +872,7 @@ class PuzzleSegment(object):
 
         # Delete everything but the seed piece
         for piece_id in all_piece_ids:
-            if self._seed_piece.id_numb == piece_id:
+            if self._seed_piece.piece_id == piece_id:
                 continue
             self.remove_piece(piece_id)
         return self._build_removed_pieces_list()
