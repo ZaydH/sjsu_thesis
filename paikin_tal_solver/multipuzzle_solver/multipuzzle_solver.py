@@ -299,7 +299,6 @@ class MultiPuzzleSolver(object):
 
                 # Perform placement as if there is only a single puzzle
                 self._paikin_tal_solver.run_single_puzzle_solver()
-                go_directly_to_segmentation = False
 
                 if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PLACEMENT_PICKLE_EXPORT:
                     self._pickle_export_after_segmentation_puzzle_placement()
@@ -307,7 +306,7 @@ class MultiPuzzleSolver(object):
             go_directly_to_segmentation = False
 
             # Get the segments from this iteration of the loop
-            solved_segments = self._paikin_tal_solver.segment(perform_segment_cleaning=False)
+            solved_segments = self._paikin_tal_solver.segment(perform_segment_cleaning=True)
             max_segment_size = self._process_solved_segments(solved_segments[0])
 
             if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE:
