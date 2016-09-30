@@ -11,7 +11,7 @@ from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 from multipuzzle_solver.multipuzzle_solver import MultiPuzzleSolver
 
-_FORCE_RECALCULATE_DISTANCES = True
+_FORCE_RECALCULATE_DISTANCES = False
 
 
 def run_multipuzzle_solver_driver(image_files, puzzle_type, piece_width):
