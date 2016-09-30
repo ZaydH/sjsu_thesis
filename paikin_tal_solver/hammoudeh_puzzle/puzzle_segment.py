@@ -755,7 +755,7 @@ class PuzzleSegment(object):
 
         self._mark_piece_map_location_open(piece_location)
 
-    def remove_articulation_points_and_disconnected_pieces(self):
+    def remove_articulation_points_and_disconnected_pieces(self, is_pieces_best_buddies_func=None):
         """
         Removes from the segment any articulation points as well as those pieces that become disconnected from the seed
         upon removal of the articulation points.
@@ -763,12 +763,15 @@ class PuzzleSegment(object):
         Note that if the seed is an articulation point, all other pieces except the seed are removed from the
         segment.
 
+        Args:
+            is_pieces_best_buddies_func: Function used to check if two pieces are best buddies.
+
         Returns (List[int]): List of all pieces removed from the segment.
         """
 
         self._build_piece_map()
 
-        articulation_points = self._find_articulation_points()
+        articulation_points = self._find_articulation_points(is_pieces_best_buddies_func)
 
         # If no articulation pieces, this can be removed.
         if not articulation_points:
@@ -781,13 +784,16 @@ class PuzzleSegment(object):
                 return self._remove_all_pieces_except_seed()
             self.remove_piece(node.piece_id)
 
-        self._remove_disconnected_pieces()
+        self._remove_disconnected_pieces(is_pieces_best_buddies_func)
 
         return self._build_removed_pieces_list()
 
-    def _remove_disconnected_pieces(self):
+    def _remove_disconnected_pieces(self, is_pieces_best_buddies_func=None):
         """
         Removes from the segment any pieces that are not reachable from the seed.
+
+        Args:
+            is_pieces_best_buddies_func: Function used to check if two pieces are best buddies.
         """
 
         # Anything in the unexplored set at the end is disconnected
@@ -800,9 +806,17 @@ class PuzzleSegment(object):
         connected_queue = Queue.Queue()
         connected_queue.put(self._seed_piece.location)
         while not connected_queue.empty():
+
             piece_location = connected_queue.get()
+            current_piece_id = self._get_piece_at_segment_location(piece_location)
+
             # If the piece is adjacent and unexplored, remove from unexplored list
             for adjacent_id in self._get_location_adjacency_list(piece_location):
+
+                if is_pieces_best_buddies_func is not None \
+                        and not is_pieces_best_buddies_func(current_piece_id, adjacent_id):
+                    continue
+
                 adjacent_key = PuzzlePiece.create_key(adjacent_id)
                 if adjacent_key in unexplored_set:
                     del unexplored_set[adjacent_key]
@@ -812,9 +826,12 @@ class PuzzleSegment(object):
         for unexplored_piece_id in unexplored_set.values():
             self.remove_piece(unexplored_piece_id)
 
-    def _find_articulation_points(self):
+    def _find_articulation_points(self, is_pieces_best_buddies_func=None):
         """
         Gets the list of articulation points for a segment.
+
+        Args:
+            is_pieces_best_buddies_func: Function used to check if two pieces are best buddies.
 
         Returns (DepthFirstSearchNode): List of the nodes that are articulation points.
         """
@@ -824,12 +841,12 @@ class PuzzleSegment(object):
         dfs_tree = {tree_root.key: tree_root}
 
         # Perform depth first search to find the articulation points.
-        self._depth_first_search_for_articulation_points(dfs_tree, tree_root)
+        self._depth_first_search_for_articulation_points(dfs_tree, tree_root, is_pieces_best_buddies_func)
 
         # Build and return the list of articulation points.
         return [node for node in dfs_tree.values() if node.is_articulation_point]
 
-    def _depth_first_search_for_articulation_points(self, dfs_tree, current_node):
+    def _depth_first_search_for_articulation_points(self, dfs_tree, current_node, is_pieces_best_buddies_func=None):
         """
         Performs depth first search to find the articulation points (if any).
 
@@ -839,11 +856,16 @@ class PuzzleSegment(object):
             self (PuzzleSegment): Puzzle segment being analyzed
             dfs_tree (dict): Representation of DFS tree as a dictionary
             current_node (DepthFirstSearchNode): Current node in the DFS tree
+            is_pieces_best_buddies_func: Function used to check if two pieces are best buddies.
         """
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
             assert current_node.piece_id == self._get_piece_at_segment_location(current_node.location)
 
         for adjacent_id in self._get_location_adjacency_list(current_node.location):
+            
+            if is_pieces_best_buddies_func is not None \
+                    and not is_pieces_best_buddies_func(current_node.piece_id, adjacent_id):
+                continue
             # # Always skip the parent.
             # if current_node.has_parent(adjacent_id):
             #     continue
@@ -858,7 +880,7 @@ class PuzzleSegment(object):
             except KeyError:
                 child_node = current_node.create_child(self._pieces[adjacent_piece_key])
                 dfs_tree[child_node.key] = child_node
-                self._depth_first_search_for_articulation_points(dfs_tree, child_node)
+                self._depth_first_search_for_articulation_points(dfs_tree, child_node, is_pieces_best_buddies_func)
                 current_node.update_lowpoint(child_node, check_is_articulation=True)
 
     def _remove_all_pieces_except_seed(self):

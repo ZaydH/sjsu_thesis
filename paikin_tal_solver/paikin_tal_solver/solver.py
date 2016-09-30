@@ -1362,6 +1362,24 @@ class PaikinTalSolver(object):
 
         return self._segments
 
+    def _create_puzzle_from_segment(self, puzzle_id, segment_id):
+        """
+        Creates a puzzle from a puzzle segment.
+
+        Args:
+            puzzle_id (int): Identification number of the solved puzzle
+            segment_id (int): Identification number of the segment
+
+        Returns (Puzzle): Segment as a puzzle.
+        """
+        segment_piece_ids = self._segments[puzzle_id][segment_id].get_piece_ids()
+
+        # Get the pieces with the identification numbers in the segment
+        puzzle_pieces = [self._pieces[piece_id] for piece_id in segment_piece_ids]
+
+        # Build the reconstructed image
+        return Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
+
     def save_segment_to_image_file(self, puzzle_id, segment_id, filename_descriptor, image_filenames, start_timestamp):
         """
         Creates an image with just the contents of the solved image.
@@ -1375,13 +1393,9 @@ class PaikinTalSolver(object):
             image_filenames (List(str)): File names of the image
             start_timestamp (int): Timestamp the solver was started.
         """
-        segment_piece_ids = self._segments[puzzle_id][segment_id].get_piece_ids()
-
-        # Get the pieces with the identification numbers in the segment
-        puzzle_pieces = [self._pieces[piece_id] for piece_id in segment_piece_ids]
+        puzzle = self._create_puzzle_from_segment(puzzle_id, segment_id)
 
         # Build the reconstructed image
-        puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
         image_filename = Puzzle.make_image_filename(image_filenames, filename_descriptor,
                                                     Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                     self._puzzle_type, start_timestamp)
@@ -1416,15 +1430,11 @@ class PaikinTalSolver(object):
         piece_segment_priority = self._inter_piece_distance.get_placement_initial_starting_piece_order()
 
         # Initialize the segment placeholder
-        self._segments = []
-        while len(self._segments) < self._numb_puzzles:
-            self._segments.append([])
+        self._segments = [[] for _ in xrange(0, self._numb_puzzles)]
 
         # Initialize the seed and segment building information
         priority_cnt = 0
         segment_piece_queue = Queue.Queue()
-
-        # Continue segmenting
         while unassigned_pieces:
 
             # Find the next seed piece - Essentially a do while loop
@@ -1479,7 +1489,8 @@ class PaikinTalSolver(object):
                         del unassigned_pieces[neighbor_piece.key()]  # Piece now in the queue to be assigned
 
             if perform_segment_cleaning:  # Not yet supported.
-                removed_pieces = new_segment.remove_articulation_points_and_disconnected_pieces()
+                best_buddy_checker_func = self._is_segment_pieces_best_buddies
+                removed_pieces = new_segment.remove_articulation_points_and_disconnected_pieces(best_buddy_checker_func)
                 # Add back the deleted pieces tp the unassigned set
                 for piece_id_to_add_back in removed_pieces:
                     key = PuzzlePiece.create_key(piece_id_to_add_back)
@@ -1493,6 +1504,25 @@ class PaikinTalSolver(object):
         logging.info("Segmentation completed.")
         print_elapsed_time(start_time, "segmentation")
         self._log_segment_information()
+
+    def _is_segment_pieces_best_buddies(self, first_piece_id, second_piece_id):
+        """
+        Segmentation cleaning helper function to remove articulation pieces based off best buddies.
+
+        Args:
+            first_piece_id (int): Identification number of the first piece
+            second_piece_id (int): Identification number of the second piece
+
+        Returns (bool): True if the pieces are best buddies and False otherwise.
+        """
+        # Get the pieces and their locations from the lists
+        first_piece = self._pieces[first_piece_id]
+        second_piece = self._pieces[second_piece_id]
+        # Get their adjacent sides
+        first_piece_side = first_piece.side_adjacent_to_location(second_piece.puzzle_location)
+        second_piece_side = second_piece.side_adjacent_to_location(first_piece.puzzle_location)
+        # Return whether they are best buddies
+        return self._is_pieces_best_buddies(first_piece, first_piece_side, second_piece, second_piece_side)
 
     def _finding_stitching_pieces(self):
         """
