@@ -100,12 +100,12 @@ if __name__ == "__main__":
     # Setup the logger
     config.setup_logging()
 
-    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
+    images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
     images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, segmentation_round_numb=1)
     #
     # test_random_mcgill()
@@ -131,6 +131,18 @@ if __name__ == "__main__":
 
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//9.jpg", "805_pieces//10.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//5.jpg", "805_pieces//20.jpg", "805_pieces//1.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)

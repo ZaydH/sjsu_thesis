@@ -175,7 +175,7 @@ class StitchingPieceInfo(object):
 
 class MultiPuzzleSolver(object):
 
-    _MINIMUM_SEGMENT_SIZE = 10
+    _MINIMUM_SEGMENT_SIZE = 7
 
     # Variables related to the saving of puzzle images.
     _SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE = True
