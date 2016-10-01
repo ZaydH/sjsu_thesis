@@ -412,14 +412,14 @@ class PuzzleResultsInformation(object):
             # Calculate the direct accuracy
             numb_pieces_in_original_puzzle = self.numb_pieces
             piece_count_weight = direct_acc.numb_different_puzzle + numb_pieces_in_original_puzzle
-            return 100.0 * direct_acc.numb_correct_placements / piece_count_weight
+            return 1.0 * direct_acc.numb_correct_placements / piece_count_weight
 
         # Calculate and return the neighbor accuracy
         elif accuracy_type == ResultAccuracyType.ModifiedNeighborAccuracy:
             neighbor_acc = self.modified_neighbor_accuracy
             neighbor_count_weight = neighbor_acc.numb_pieces_in_original_puzzle + neighbor_acc.wrong_puzzle_id
             neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
-            return neighbor_acc.correct_neighbor_count / neighbor_count_weight
+            return 1.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight
 
         else:
             raise ValueError("Invalid accuracy type.")
