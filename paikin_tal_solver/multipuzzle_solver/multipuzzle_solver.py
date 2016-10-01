@@ -9,7 +9,7 @@ from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle import solver_helper
 from hammoudeh_puzzle.pickle_helper import PickleHelper
-from hammoudeh_puzzle.puzzle_importer import Puzzle
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleSolver
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
 from hierarchical_clustering import HierarchicalClustering
@@ -488,7 +488,8 @@ class MultiPuzzleSolver(object):
             output_puzzles (List[Puzzle]): Set of final solved puzzles
         """
         for puzzle in output_puzzles:
-            filename = Puzzle.make_image_filename(self._image_filenames,
+            filename = Puzzle.make_image_filename(PuzzleSolver.MultiPuzzle,
+                                                  self._image_filenames,
                                                   "multipuzzle_reconstructed",
                                                   Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                   self._paikin_tal_solver.puzzle_type,
@@ -561,8 +562,9 @@ class MultiPuzzleSolver(object):
         Returns (str):
             Standardized filename with directory
         """
-        return Puzzle.make_image_filename(self._image_filenames, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                          self._paikin_tal_solver.puzzle_type, self._start_timestamp)
+        return Puzzle.make_image_filename(PuzzleSolver.MultiPuzzle, self._image_filenames, filename_descriptor,
+                                          Puzzle.OUTPUT_IMAGE_DIRECTORY, self._paikin_tal_solver.puzzle_type,
+                                          self._start_timestamp)
 
     def _save_single_solved_puzzle_to_file(self, segmentation_round):
         """

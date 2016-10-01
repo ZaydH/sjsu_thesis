@@ -10,7 +10,7 @@ import time
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle.pickle_helper import PickleHelper
-from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection, PuzzleSolver
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
 from paikin_tal_solver.solver import PaikinTalSolver
@@ -23,6 +23,7 @@ DEFAULT_PUZZLE_PIECE_WIDTH = 28
 # Criteria for modifying the low
 FORCE_RECALCULATE_DISTANCES = False
 SKIP_PLACEMENT = False
+
 USE_KNOWN_PUZZLE_DIMENSIONS = False
 
 _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
@@ -145,16 +146,16 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
         else:
             orig_img_filename = None
             puzzle_id_filename = puzzle_id
-        filename = Puzzle.make_image_filename(image_files, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                              paikin_tal_solver.puzzle_type, timestamp,
+        filename = Puzzle.make_image_filename(PuzzleSolver.PaikinTal, image_files, filename_descriptor,
+                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type, timestamp,
                                               orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
         new_puzzle.save_to_file(filename)
 
         # Save the segmented file image
         filename_descriptor = "segmented"
-        segment_filename = Puzzle.make_image_filename(image_files, filename_descriptor, Puzzle.OUTPUT_IMAGE_DIRECTORY,
-                                                      paikin_tal_solver.puzzle_type, timestamp,
-                                                      orig_img_filename=orig_img_filename,
+        segment_filename = Puzzle.make_image_filename(PuzzleSolver.PaikinTal, image_files, filename_descriptor,
+                                                      Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type,
+                                                      timestamp, orig_img_filename=orig_img_filename,
                                                       puzzle_id=puzzle_id_filename)
         new_puzzle.save_segment_color_image(segment_filename)
 
@@ -165,7 +166,7 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
     orig_img_filename = image_files[0] if len(image_files) == 1 else None
     # Print the best buddy accuracy information
     paikin_tal_solver.best_buddy_accuracy.print_results()
-    paikin_tal_solver.best_buddy_accuracy.output_results_images(image_files, output_puzzles,
+    paikin_tal_solver.best_buddy_accuracy.output_results_images(PuzzleSolver.PaikinTal, image_files, output_puzzles,
                                                                 paikin_tal_solver.puzzle_type,
                                                                 timestamp, orig_img_filename=orig_img_filename)
 
@@ -176,7 +177,8 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
     # Print the results to the console
     results_information.print_results()
     # Print the results as image files
-    results_information.output_results_images(image_files, output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
+    results_information.output_results_images(PuzzleSolver.PaikinTal, image_files, output_puzzles,
+                                              paikin_tal_solver.puzzle_type, timestamp)
 
 
 if __name__ == "__main__":

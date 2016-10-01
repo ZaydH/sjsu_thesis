@@ -15,6 +15,11 @@ from enum import Enum
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
 
 
+class PuzzleSolver(Enum):
+    PaikinTal = "paikin_tal"
+    MultiPuzzle = "multipuzzle"
+
+
 class PuzzleType(Enum):
     """
     Type of the puzzle to solve.  Type 1 has no piece rotation while type 2 allows piece rotation.
@@ -117,11 +122,12 @@ class PuzzleResultsCollection(object):
         """
         return self._puzzle_results
 
-    def output_results_images(self, input_image_filenames, solved_puzzles, puzzle_type, timestamp):
+    def output_results_images(self, solver_type, input_image_filenames, solved_puzzles, puzzle_type, timestamp):
         """
         Creates images showing the results of the image.
 
         Args:
+            solver_type (SolverType): Type of solver being run
             input_image_filenames (List[str]): List of image files and directories.
             solved_puzzles (List[Puzzle]): A set of solved puzzles.
             puzzle_type (PuzzleType): Type of the solved image
@@ -161,7 +167,7 @@ class PuzzleResultsCollection(object):
 
                 # Determine whether the puzzle id should be used in the filename
                 solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
-                output_filename = Puzzle.make_image_filename(input_image_filenames, descriptor,
+                output_filename = Puzzle.make_image_filename(solver_type, input_image_filenames, descriptor,
                                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                              timestamp, orig_img_filename=results.original_filename,
                                                              puzzle_id=solved_puzzle_id)
@@ -189,7 +195,7 @@ class PuzzleResultsCollection(object):
             # Define the output filename
             descriptor = "neighbor_acc"
             solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
-            output_filename = Puzzle.make_image_filename(input_image_filenames, descriptor,
+            output_filename = Puzzle.make_image_filename(solver_type, input_image_filenames, descriptor,
                                                          Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                          timestamp, orig_img_filename=results.original_filename,
                                                          puzzle_id=solved_puzzle_id)
@@ -797,13 +803,14 @@ class BestBuddyResultsCollection(object):
         logging.debug(string_io.getvalue())
         string_io.close()
 
-    def output_results_images(self, all_input_image_filenames, solved_puzzles, puzzle_type,
+    def output_results_images(self, solver_type, all_input_image_filenames, solved_puzzles, puzzle_type,
                               timestamp, orig_img_filename=None, output_filenames=None):
         """
         Converts the results information to a data visualization to see where there are right and wrong
         best buddies.
 
         Args:
+            solver_type (SolverType): Type of solver being run
             all_input_image_filenames (List[str]): List of input image files and paths.
             solved_puzzles (List[Puzzle]): List of puzzles.
             puzzle_type (PuzzleType): Type of the solved puzzle.
@@ -834,7 +841,7 @@ class BestBuddyResultsCollection(object):
             filename_puzzle_id = puzzle_id if orig_img_filename is None else None
             descriptor = "best_buddy_acc"
             if output_filenames is None:
-                output_filename = Puzzle.make_image_filename(all_input_image_filenames, descriptor,
+                output_filename = Puzzle.make_image_filename(solver_type, all_input_image_filenames, descriptor,
                                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                              timestamp, orig_img_filename=orig_img_filename,
                                                              puzzle_id=filename_puzzle_id)
@@ -1959,12 +1966,13 @@ class Puzzle(object):
         return os.path.splitext(os.path.basename(filename_and_path))[0]
 
     @staticmethod
-    def make_image_filename(image_filenames, image_descriptor, output_directory, puzzle_type, timestamp,
+    def make_image_filename(solver_type, image_filenames, image_descriptor, output_directory, puzzle_type, timestamp,
                             orig_img_filename=None, puzzle_id=None):
         """
         Builds an image file name using a set of standard parameters.
 
         Args:
+            solver_type (SolverType): Type of solver being run
             image_filenames (list[str]): List of image files
             image_descriptor (str): Descriptor of the output puzzle.
             output_directory (str): Path where the file should be output
@@ -1982,9 +1990,9 @@ class Puzzle(object):
                 filenames_combined += "."
             filenames_combined += Puzzle.get_filename_without_extension(img_file)
 
-        image_directory = output_directory + filenames_combined + "_type" + str(puzzle_type.value) + "_"
+        image_directory = output_directory + solver_type.value + "_" + filenames_combined
         ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
-        image_directory += ts_str + "/"
+        image_directory += "_type" + str(puzzle_type.value) + "_" + ts_str + "/"
 
         # Store the reconstructed image
         output_filename = image_directory + image_descriptor + "_type" + str(puzzle_type.value)
