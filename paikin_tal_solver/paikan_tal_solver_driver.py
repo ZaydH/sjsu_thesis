@@ -10,7 +10,7 @@ import time
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle.pickle_helper import PickleHelper
-from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleResultsCollection, PuzzleSolver
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleSolver
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
 from paikin_tal_solver.solver import PaikinTalSolver
@@ -60,8 +60,8 @@ def paikin_tal_driver(img_files, puzzle_type=None, piece_width=None):
     paikin_tal_solver.segment(color_segments=True)
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
-    output_results_information_and_puzzles(PuzzleSolver.PaikinTal, image_filenames, paikin_tal_solver,
-                                           pieces_partitioned_by_puzzle_id)
+    Puzzle.output_results_information_and_puzzles(PuzzleSolver.PaikinTal, image_filenames, paikin_tal_solver,
+                                                  pieces_partitioned_by_puzzle_id)
 
 
 def run_paikin_tal_solver(image_filenames, puzzle_type, piece_width):
@@ -106,85 +106,6 @@ def run_paikin_tal_solver(image_filenames, puzzle_type, piece_width):
 
     # Export the solved results
     return paikin_tal_solver
-
-
-def output_results_information_and_puzzles(puzzle_solver_type, image_files, paikin_tal_solver,
-                                           pieces_partitioned_by_puzzle_id):
-    """
-    Generates the results information of the solved puzzles.
-
-    Args:
-        puzzle_solver_type (PuzzleSolver): Type of Solver
-
-        image_files (List[str]): List of paths to the input image files.
-
-        paikin_tal_solver (PaikinTalSolver): A completed Paikin & Tal solver object
-
-        pieces_partitioned_by_puzzle_id (List[List[PuzzlePieces]]): A list of lists of PuzzlePieces.  The pieces
-         are organized based off their output puzzle from the solver.
-    """
-
-    # Create a time stamp for the results
-    timestamp = time.time()
-
-    # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
-    output_puzzles = []
-    for puzzle_pieces in pieces_partitioned_by_puzzle_id:
-        # Get the first piece of the puzzle and extract information on it.
-        first_piece = puzzle_pieces[0]
-        puzzle_id = first_piece.puzzle_id
-
-        # Reconstruct the puzzle
-        new_puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
-
-        # Optionally display the images
-        if DISPLAY_IMAGES:
-            # noinspection PyProtectedMember
-            Puzzle.display_image(new_puzzle._img)
-
-        # Store the reconstructed image
-        filename_descriptor = "reconstructed"
-        if len(image_files) == 1:
-            orig_img_filename = image_files[0]
-            puzzle_id_filename = None
-        else:
-            orig_img_filename = None
-            puzzle_id_filename = puzzle_id
-        filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
-                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type, timestamp,
-                                              orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
-        new_puzzle.save_to_file(filename)
-
-        # Save the segmented file image
-        filename_descriptor = "segmented"
-        segment_filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
-                                                      Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type,
-                                                      timestamp, orig_img_filename=orig_img_filename,
-                                                      puzzle_id=puzzle_id_filename)
-        new_puzzle.save_segment_color_image(segment_filename)
-
-        # Append the puzzle to the list
-        output_puzzles.append(new_puzzle)
-
-    # Determine the image filename
-    orig_img_filename = image_files[0] if len(image_files) == 1 else None
-    # Print the best buddy accuracy information
-    paikin_tal_solver.best_buddy_accuracy.print_results()
-    paikin_tal_solver.best_buddy_accuracy.output_results_images(puzzle_solver_type, image_files, output_puzzles,
-                                                                paikin_tal_solver.puzzle_type,
-                                                                timestamp, orig_img_filename=orig_img_filename)
-
-    # Build the results information collection
-    results_information = PuzzleResultsCollection(puzzle_solver_type, paikin_tal_solver.puzzle_type,
-                                                  pieces_partitioned_by_puzzle_id, image_files)
-    # Calculate and print the accuracy results
-    results_information.calculate_accuracies(output_puzzles)
-    # Print the results to the console
-    results_information.print_results()
-    # Print the results as image files
-    results_information.output_results_images(puzzle_solver_type, image_files, output_puzzles,
-                                              paikin_tal_solver.puzzle_type, timestamp)
-    results_information.save_results_to_file()
 
 
 if __name__ == "__main__":

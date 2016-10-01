@@ -471,6 +471,10 @@ class MultiPuzzleSolver(object):
         """
         solved_puzzles, _ = self._paikin_tal_solver.get_solved_puzzles()
 
+        # Build the results information
+        Puzzle.output_results_information_and_puzzles(PuzzleSolver.MultiPuzzle, self._image_filenames,
+                                                      self._paikin_tal_solver, solved_puzzles)
+
         # Merge the pieces into a set of solved puzzles
         output_puzzles = [Puzzle.reconstruct_from_pieces(solved_puzzles[i], i) for i in xrange(0, len(solved_puzzles))]
 

@@ -7,6 +7,7 @@ import logging
 import math
 import os
 import random
+import time
 
 import cv2  # OpenCV
 import numpy as np
@@ -302,13 +303,13 @@ class PuzzleResultsCollection(object):
                        "Standard Direct Accuracy Puzzle #", "Standard Direct Accuracy Solved Puzzle Piece Count",
                        "Standard Direct Accuracy Score", "Standard Direct Accuracy Different Puzzle",
                        "Standard Direct Accuracy Wrong Location", "Standard Direct Accuracy Wrong Rotation",
-                       "Standard Direct Accuracy Piece Missing", "Modified Direct Accuracy Puzzle #",
+                       "Standard Direct Accuracy Piece Missing Count", "Modified Direct Accuracy Puzzle #",
                        "Modified Direct Accuracy Solved Puzzle Piece Count", "Modified Direct Accuracy Score",
                        "Modified Direct Accuracy Different Puzzle", "Modified Direct Accuracy Wrong Location",
-                       "Modified Direct Accuracy Wrong Rotation", "Modified Direct Accuracy Piece Missing",
+                       "Modified Direct Accuracy Wrong Rotation", "Modified Direct Accuracy Piece Missing Count",
                        "Modified Neighbor Accuracy Puzzle #", "Modified Neighbor Accuracy Solved Puzzle Piece Count",
                        "Modified Neighbor Accuracy Score", "Modified Neighbor Accuracy Missing Piece Count",
-                       "Modified Neighbor Accuracy Different Puzzle"]
+                       "Modified Neighbor Accuracy Edges from Different Puzzle"]
             # Print all header fields
             for (idx, field) in enumerate(headers):
                 # Comma separate
@@ -480,7 +481,7 @@ class PuzzleResultsInformation(object):
             count = direct_acc.numb_wrong_rotation
         elif result_type == DirectAccuracyResultType.MissingPieceScore:
             numb_pieces_in_original_puzzle = direct_acc.numb_pieces_in_original_puzzle
-            count = numb_pieces_in_original_puzzle - direct_acc.numb_pieces_from_original_puzzle_in_solved_puzzle
+            return numb_pieces_in_original_puzzle - direct_acc.numb_pieces_from_original_puzzle_in_solved_puzzle
         else:
             raise ValueError("Invalid accuracy result type.")
 
@@ -2408,6 +2409,79 @@ class Puzzle(object):
             # Concatenate to the list of all pieces.
             combined_pieces += puzzles[i].pieces
         return combined_pieces, puzzles
+
+    @staticmethod
+    def output_results_information_and_puzzles(puzzle_solver_type, image_files, paikin_tal_solver,
+                                               pieces_partitioned_by_puzzle_id):
+        """
+        Generates the results information of the solved puzzles.
+
+        Args:
+            puzzle_solver_type (PuzzleSolver): Type of Solver
+
+            image_files (List[str]): List of paths to the input image files.
+
+            paikin_tal_solver (PaikinTalSolver): A completed Paikin & Tal solver object
+
+            pieces_partitioned_by_puzzle_id (List[List[PuzzlePieces]]): A list of lists of PuzzlePieces.  The pieces
+             are organized based off their output puzzle from the solver.
+        """
+        # Create a time stamp for the results
+        timestamp = time.time()
+
+        # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
+        output_puzzles = []
+        for puzzle_pieces in pieces_partitioned_by_puzzle_id:
+            # Get the first piece of the puzzle and extract information on it.
+            first_piece = puzzle_pieces[0]
+            puzzle_id = first_piece.puzzle_id
+
+            # Reconstruct the puzzle
+            new_puzzle = Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
+
+            # Store the reconstructed image
+            filename_descriptor = "reconstructed"
+            if len(image_files) == 1:
+                orig_img_filename = image_files[0]
+                puzzle_id_filename = None
+            else:
+                orig_img_filename = None
+                puzzle_id_filename = puzzle_id
+            filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
+                                                  Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type, timestamp,
+                                                  orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
+            new_puzzle.save_to_file(filename)
+
+            # Save the segmented file image
+            filename_descriptor = "segmented"
+            segment_filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
+                                                          Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type,
+                                                          timestamp, orig_img_filename=orig_img_filename,
+                                                          puzzle_id=puzzle_id_filename)
+            new_puzzle.save_segment_color_image(segment_filename)
+
+            # Append the puzzle to the list
+            output_puzzles.append(new_puzzle)
+
+        # Determine the image filename
+        orig_img_filename = image_files[0] if len(image_files) == 1 else None
+        # Print the best buddy accuracy information
+        paikin_tal_solver.best_buddy_accuracy.print_results()
+        paikin_tal_solver.best_buddy_accuracy.output_results_images(puzzle_solver_type, image_files, output_puzzles,
+                                                                    paikin_tal_solver.puzzle_type,
+                                                                    timestamp, orig_img_filename=orig_img_filename)
+
+        # Build the results information collection
+        results_information = PuzzleResultsCollection(puzzle_solver_type, paikin_tal_solver.puzzle_type,
+                                                      pieces_partitioned_by_puzzle_id, image_files)
+        # Calculate and print the accuracy results
+        results_information.calculate_accuracies(output_puzzles)
+        # Print the results to the console
+        results_information.print_results()
+        # Print the results as image files
+        results_information.output_results_images(puzzle_solver_type, image_files, output_puzzles,
+                                                  paikin_tal_solver.puzzle_type, timestamp)
+        results_information.save_results_to_file()
 
 
 class PuzzleTester(object):
