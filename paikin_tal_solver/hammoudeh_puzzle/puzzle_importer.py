@@ -2412,7 +2412,7 @@ class Puzzle(object):
 
     @staticmethod
     def output_results_information_and_puzzles(puzzle_solver_type, image_files, paikin_tal_solver,
-                                               pieces_partitioned_by_puzzle_id):
+                                               pieces_partitioned_by_puzzle_id, timestamp, export_segment_images=False):
         """
         Generates the results information of the solved puzzles.
 
@@ -2425,9 +2425,11 @@ class Puzzle(object):
 
             pieces_partitioned_by_puzzle_id (List[List[PuzzlePieces]]): A list of lists of PuzzlePieces.  The pieces
              are organized based off their output puzzle from the solver.
+
+            timestamp (int): Timestamp to be used for indicating puzzle image information.
+
+            export_segment_images (bool): True if export_segment_images should be exported and False otherwise.
         """
-        # Create a time stamp for the results
-        timestamp = time.time()
 
         # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
         output_puzzles = []
@@ -2452,13 +2454,14 @@ class Puzzle(object):
                                                   orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
             new_puzzle.save_to_file(filename)
 
-            # Save the segmented file image
-            filename_descriptor = "segmented"
-            segment_filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
-                                                          Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type,
-                                                          timestamp, orig_img_filename=orig_img_filename,
-                                                          puzzle_id=puzzle_id_filename)
-            new_puzzle.save_segment_color_image(segment_filename)
+            if export_segment_images:
+                # Save the segmented file image
+                filename_descriptor = "segmented"
+                segment_filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
+                                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type,
+                                                              timestamp, orig_img_filename=orig_img_filename,
+                                                              puzzle_id=puzzle_id_filename)
+                new_puzzle.save_segment_color_image(segment_filename)
 
             # Append the puzzle to the list
             output_puzzles.append(new_puzzle)

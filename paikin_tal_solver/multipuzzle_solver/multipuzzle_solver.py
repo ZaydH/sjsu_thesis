@@ -473,7 +473,7 @@ class MultiPuzzleSolver(object):
 
         # Build the results information
         Puzzle.output_results_information_and_puzzles(PuzzleSolver.MultiPuzzle, self._image_filenames,
-                                                      self._paikin_tal_solver, solved_puzzles)
+                                                      self._paikin_tal_solver, solved_puzzles, self._start_timestamp)
 
         # Merge the pieces into a set of solved puzzles
         output_puzzles = [Puzzle.reconstruct_from_pieces(solved_puzzles[i], i) for i in xrange(0, len(solved_puzzles))]
@@ -589,7 +589,8 @@ class MultiPuzzleSolver(object):
         # Store the best buddy image.
         filename_descriptor += "_best_buddy_acc"
         output_filename = self._make_image_filename(filename_descriptor)
-        self._paikin_tal_solver.best_buddy_accuracy.output_results_images(self._image_filenames, [new_puzzle],
+        self._paikin_tal_solver.best_buddy_accuracy.output_results_images(PuzzleSolver.MultiPuzzle,
+                                                                          self._image_filenames, [new_puzzle],
                                                                           self._paikin_tal_solver.puzzle_type,
                                                                           self._start_timestamp,
                                                                           output_filenames=[output_filename])

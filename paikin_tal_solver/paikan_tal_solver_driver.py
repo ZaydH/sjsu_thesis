@@ -60,8 +60,9 @@ def paikin_tal_driver(img_files, puzzle_type=None, piece_width=None):
     paikin_tal_solver.segment(color_segments=True)
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
+    timestamp = time.time()
     Puzzle.output_results_information_and_puzzles(PuzzleSolver.PaikinTal, image_filenames, paikin_tal_solver,
-                                                  pieces_partitioned_by_puzzle_id)
+                                                  pieces_partitioned_by_puzzle_id, timestamp)
 
 
 def run_paikin_tal_solver(image_filenames, puzzle_type, piece_width):
