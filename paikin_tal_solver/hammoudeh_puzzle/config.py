@@ -6,6 +6,8 @@ PERFORM_ASSERT_CHECKS = True
 
 IMAGE_DIRECTORY = '.\\images\\'
 
+RESULTS_FILE = '.\\results.csv'
+
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
     """

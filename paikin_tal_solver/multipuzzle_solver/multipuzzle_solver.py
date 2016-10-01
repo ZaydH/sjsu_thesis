@@ -665,9 +665,9 @@ class MultiPuzzleSolver(object):
             filename_descriptor += "_puzzle_round_" + str(self._numb_segmentation_rounds).zfill(zfill_width)
 
             single_puzzle_id = 0
-            self._paikin_tal_solver.save_segment_to_image_file(single_puzzle_id, initial_segment_id,
-                                                               filename_descriptor, self._image_filenames,
-                                                               self._start_timestamp)
+            self._paikin_tal_solver.save_segment_to_image_file(PuzzleSolver.MultiPuzzle, single_puzzle_id,
+                                                               initial_segment_id, filename_descriptor,
+                                                               self._image_filenames, self._start_timestamp)
 
     def _get_stitching_pieces(self):
         """

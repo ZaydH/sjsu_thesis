@@ -177,8 +177,7 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
     # Print the results to the console
     results_information.print_results()
     # Print the results as image files
-    results_information.output_results_images(PuzzleSolver.PaikinTal, image_files, output_puzzles,
-                                              paikin_tal_solver.puzzle_type, timestamp)
+    results_information.output_results_images(image_files, output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
 
 
 if __name__ == "__main__":

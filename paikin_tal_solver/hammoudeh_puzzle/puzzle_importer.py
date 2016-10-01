@@ -12,12 +12,19 @@ import cv2  # OpenCV
 import numpy as np
 from enum import Enum
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, PuzzlePieceSide, SolidColor
 
 
 class PuzzleSolver(Enum):
     PaikinTal = "paikin_tal"
     MultiPuzzle = "multipuzzle"
+
+
+class ResultAccuracyType(Enum):
+    StandardDirectAccuracy = 1
+    ModifiedDirectAccuracy = 2
+    ModifiedNeighborAccuracy = 3
 
 
 class PuzzleType(Enum):
@@ -66,7 +73,19 @@ class PuzzleResultsCollection(object):
 
     _PERFORM_ASSERT_CHECKS = True
 
-    def __init__(self, pieces_partitioned_by_puzzle, image_file_paths):
+    def __init__(self, puzzle_solver, pieces_partitioned_by_puzzle, image_file_paths):
+        """
+        Constructs the puzzle results information.
+
+        Args:
+            puzzle_solver (PuzzleSolver): Type of Solver
+            pieces_partitioned_by_puzzle (List[List[PuzzlePieces]]): List of pieces in each of the puzzles
+            image_file_paths (List[Str])): Names of the image files.
+        """
+
+        self._puzzle_solver = puzzle_solver
+        self._image_filenames = image_file_paths
+
         self._puzzle_results = []
 
         # Iterate through all the solved puzzles
@@ -122,12 +141,12 @@ class PuzzleResultsCollection(object):
         """
         return self._puzzle_results
 
-    def output_results_images(self, solver_type, input_image_filenames, solved_puzzles, puzzle_type, timestamp):
+    def output_results_images(self, puzzle_solver_type, input_image_filenames, solved_puzzles, puzzle_type, timestamp):
         """
         Creates images showing the results of the image.
 
         Args:
-            solver_type (SolverType): Type of solver being run
+            puzzle_solver_type (PuzzleSolver): Type of solver being run
             input_image_filenames (List[str]): List of image files and directories.
             solved_puzzles (List[Puzzle]): A set of solved puzzles.
             puzzle_type (PuzzleType): Type of the solved image
@@ -167,7 +186,7 @@ class PuzzleResultsCollection(object):
 
                 # Determine whether the puzzle id should be used in the filename
                 solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
-                output_filename = Puzzle.make_image_filename(solver_type, input_image_filenames, descriptor,
+                output_filename = Puzzle.make_image_filename(puzzle_solver_type, input_image_filenames, descriptor,
                                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                              timestamp, orig_img_filename=results.original_filename,
                                                              puzzle_id=solved_puzzle_id)
@@ -195,7 +214,7 @@ class PuzzleResultsCollection(object):
             # Define the output filename
             descriptor = "neighbor_acc"
             solved_puzzle_id = solved_puzzle.id_number if len(self._puzzle_results) > 1 else None
-            output_filename = Puzzle.make_image_filename(solver_type, input_image_filenames, descriptor,
+            output_filename = Puzzle.make_image_filename(puzzle_solver_type, input_image_filenames, descriptor,
                                                          Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                          timestamp, orig_img_filename=results.original_filename,
                                                          puzzle_id=solved_puzzle_id)
@@ -203,6 +222,63 @@ class PuzzleResultsCollection(object):
             # Stores the results to a file.
             solved_puzzle.build_puzzle_image(use_results_coloring=True)
             solved_puzzle.save_to_file(output_filename)
+
+    def save_results_to_file(self):
+        """
+        Saves the results information to a CSV file for analysis.
+        """
+
+        # Build the header line.
+        if not os.path.exists(config.RESULTS_FILE):
+            PuzzleResultsCollection._write_results_file_header_line()
+
+        with open(config.RESULTS_FILE, "w") as results_stream:
+            results_stream.write(self._puzzle_solver.type)
+
+            # Write the image file names
+            results_stream.write(",")
+            for (image_file, idx) in enumerate(self._image_filenames):
+                if idx > 0:
+                    results_stream.write(" | ")
+                results_stream.write(Puzzle.get_filename_without_extension(image_file))
+
+            # Print information on the puzzle counts
+            numb_input_puzzles = len(self._image_filenames)
+            numb_solved_puzzles = len(self._puzzle_results)
+            for count_info in [numb_input_puzzles, numb_solved_puzzles, numb_input_puzzles - numb_solved_puzzles]:
+                results_stream.write("," + str(count_info))
+
+            # Print the Puzzle Results Information
+            for puzzle_result in self._puzzle_results:
+                results_stream.write(",Input Puzzle#" + str(puzzle_result.id_number))
+                results_stream.write("," + str(puzzle_result.numb_pieces))
+
+                # Add the results information
+                accuracy_types = [ResultAccuracyType.StandardDirectAccuracy, ResultAccuracyType.ModifiedDirectAccuracy,
+                                  ResultAccuracyType.ModifiedNeighborAccuracy]
+                for acc_type in accuracy_types:
+                    results_stream.write(",Input Puzzle#" + str(puzzle_result.get_accuracy_solved_puzzle_id(acc_type)))
+                    results_stream.write(",Input Puzzle#" + str(puzzle_result.get_accuracy_score(acc_type)))
+
+            # Close the line with a newline
+            results_stream.write('\n')
+
+    @staticmethod
+    def _write_results_file_header_line():
+        """
+        Writes the header line for the results file
+        """
+        with open(config.RESULTS_FILE, "w") as results_stream:
+            headers = ["Solver Type", "Image Filenames", "Number of Input Puzzles", "Number of Output Puzzles",
+                       "Diff Between Output and Expected Puzzle Count"]
+            # Print all header fields
+            for (field, idx) in enumerate(headers):
+                # Comma separate
+                if idx > 0:
+                    results_stream.write(",")
+                # Write the field
+                results_stream.write(field)
+            results_stream.write("\n")
 
     def print_results(self):
         """
@@ -219,13 +295,13 @@ class PuzzleResultsCollection(object):
             print >>string_io, "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
 
             # Print the standard accuracy information
-            for i in xrange(0, 2):
+            for accuracy_type in [ResultAccuracyType.StandardDirectAccuracy, ResultAccuracyType.ModifiedDirectAccuracy]:
 
                 # Select the type of direct accuracy to print >>string_io, .
-                if i == 0:
+                if accuracy_type == ResultAccuracyType.StandardDirectAccuracy:
                     acc_name = "\tStandard"
                     direct_acc = results.standard_direct_accuracy
-                elif i == 1:
+                elif accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy:
                     acc_name = "\tModified"
                     direct_acc = results.modified_direct_accuracy
 
@@ -286,12 +362,12 @@ class PuzzleResultsInformation(object):
     Encapsulates all of the accuracy results information for a puzzle.
     """
 
-    _PERFORM_ASSERT_CHECK = True
+    _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
 
     def __init__(self, puzzle_id, original_img_filename):
 
         # Store the number of pieces and the puzzle id
-        self.puzzle_id = puzzle_id
+        self.id_number = puzzle_id
         self._numb_pieces = 0
         self._original_img_filename = original_img_filename
 
@@ -315,6 +391,55 @@ class PuzzleResultsInformation(object):
     def numb_pieces(self, value):
         self._numb_pieces = value
 
+    def get_accuracy_score(self, accuracy_type):
+        """
+        Gets either the modified or direct accuracy score for a solved solution.
+
+        Args:
+            accuracy_type (ResultAccuracyType): Type of accuracy being accessed.
+
+        Returns (float): Accuracy score bounded between 0.0 and 1.0
+        """
+        if accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy or accuracy_type == ResultAccuracyType.ModifiedNeighborAccuracy:
+            if accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy:
+                direct_acc = self.modified_direct_accuracy
+            else:
+                direct_acc = self.standard_direct_accuracy
+
+            # Calculate the direct accuracy
+            numb_pieces_in_original_puzzle = self.numb_pieces
+            piece_count_weight = direct_acc.numb_different_puzzle + numb_pieces_in_original_puzzle
+            return 100.0 * direct_acc.numb_correct_placements / piece_count_weight
+
+        # Calculate and return the neighbor accuracy
+        elif accuracy_type == ResultAccuracyType.ModifiedNeighborAccuracy:
+            neighbor_acc = self.modified_neighbor_accuracy
+            neighbor_count_weight = neighbor_acc.numb_pieces_in_original_puzzle + neighbor_acc.wrong_puzzle_id
+            neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
+            return 100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight
+
+        else:
+            raise ValueError("Invalid accuracy type.")
+
+    def get_accuracy_solved_puzzle_id(self, accuracy_type):
+        """
+        Gets either the modified or direct accuracy score for a solved solution.
+
+        Args:
+            accuracy_type (ResultAccuracyType): Type of accuracy being accessed.
+
+        Returns (float): Accuracy score bounded between 0.0 and 1.0
+        """
+        if accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy:
+            acc_info = self.modified_direct_accuracy
+        elif accuracy_type == ResultAccuracyType.StandardDirectAccuracy:
+            acc_info = self.standard_direct_accuracy
+        elif accuracy_type == ResultAccuracyType.StandardDirectAccuracy:
+            acc_info = self.modified_neighbor_accuracy
+        else:
+            raise ValueError("Invalid Accuracy Type.")
+        return acc_info.solved_puzzle_id
+
     def resolve_neighbor_accuracies(self, solved_puzzle):
         """
         Neighbor Accuracy Resolved
@@ -331,7 +456,7 @@ class PuzzleResultsInformation(object):
         placed_piece_matrix, rotation_matrix = solved_puzzle.build_placed_piece_info()
 
         # Create a temporary neighbor accuracy info
-        neighbor_accuracy_info = ModifiedNeighborAccuracy(self.puzzle_id, solved_puzzle.id_number, self.numb_pieces)
+        neighbor_accuracy_info = ModifiedNeighborAccuracy(self.id_number, solved_puzzle.id_number, self.numb_pieces)
 
         # Iterate through the set of pieces
         for piece in solved_puzzle.pieces:
@@ -342,7 +467,7 @@ class PuzzleResultsInformation(object):
             neighbor_location_and_sides = sorted(neighbor_location_and_sides, key=lambda tup: tup[1].value)
 
             # Perform a check of the piece location information
-            if PuzzleResultsInformation._PERFORM_ASSERT_CHECK:
+            if PuzzleResultsInformation._PERFORM_ASSERT_CHECKS:
                 assert len(neighbor_location_and_sides) == len(original_neighbor_id_and_sides)
                 # Verify the side in each element is the same
                 for i in xrange(0, len(neighbor_location_and_sides)):
@@ -354,7 +479,7 @@ class PuzzleResultsInformation(object):
                 side = PuzzlePieceSide(side_numb)
 
                 # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
-                if piece.original_puzzle_id != self.puzzle_id:
+                if piece.original_puzzle_id != self.id_number:
                     # neighbor_accuracy_info.wrong_puzzle_id += 1
                     neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side)
                     continue
@@ -403,7 +528,7 @@ class PuzzleResultsInformation(object):
         """
 
         # Get the standard direct accuracy
-        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.puzzle_id, self.numb_pieces)
+        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.id_number, self.numb_pieces)
 
         # Update the stored standard direct accuracy if applicable
         if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.standard_direct_accuracy,
@@ -463,7 +588,7 @@ class PuzzleResultsInformation(object):
 
         # For all upper left coordinate candidates, determine the modified direct accuracy.
         for possible_upper_left in explored_set:
-            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.puzzle_id,
+            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.id_number,
                                                                                  possible_upper_left,
                                                                                  self.numb_pieces)
             # Update the standard direct accuracy
@@ -803,14 +928,14 @@ class BestBuddyResultsCollection(object):
         logging.debug(string_io.getvalue())
         string_io.close()
 
-    def output_results_images(self, solver_type, all_input_image_filenames, solved_puzzles, puzzle_type,
+    def output_results_images(self, puzzle_solver_type, all_input_image_filenames, solved_puzzles, puzzle_type,
                               timestamp, orig_img_filename=None, output_filenames=None):
         """
         Converts the results information to a data visualization to see where there are right and wrong
         best buddies.
 
         Args:
-            solver_type (SolverType): Type of solver being run
+            puzzle_solver_type (PuzzleSolver): Type of solver being run
             all_input_image_filenames (List[str]): List of input image files and paths.
             solved_puzzles (List[Puzzle]): List of puzzles.
             puzzle_type (PuzzleType): Type of the solved puzzle.
@@ -841,7 +966,7 @@ class BestBuddyResultsCollection(object):
             filename_puzzle_id = puzzle_id if orig_img_filename is None else None
             descriptor = "best_buddy_acc"
             if output_filenames is None:
-                output_filename = Puzzle.make_image_filename(solver_type, all_input_image_filenames, descriptor,
+                output_filename = Puzzle.make_image_filename(puzzle_solver_type, all_input_image_filenames, descriptor,
                                                              Puzzle.OUTPUT_IMAGE_DIRECTORY, puzzle_type,
                                                              timestamp, orig_img_filename=orig_img_filename,
                                                              puzzle_id=filename_puzzle_id)
@@ -1966,13 +2091,13 @@ class Puzzle(object):
         return os.path.splitext(os.path.basename(filename_and_path))[0]
 
     @staticmethod
-    def make_image_filename(solver_type, image_filenames, image_descriptor, output_directory, puzzle_type, timestamp,
+    def make_image_filename(puzzle_solver_type, image_filenames, image_descriptor, output_directory, puzzle_type, timestamp,
                             orig_img_filename=None, puzzle_id=None):
         """
         Builds an image file name using a set of standard parameters.
 
         Args:
-            solver_type (SolverType): Type of solver being run
+            puzzle_solver_type (PuzzleSolver): Type of solver being run
             image_filenames (list[str]): List of image files
             image_descriptor (str): Descriptor of the output puzzle.
             output_directory (str): Path where the file should be output
@@ -1990,7 +2115,7 @@ class Puzzle(object):
                 filenames_combined += "."
             filenames_combined += Puzzle.get_filename_without_extension(img_file)
 
-        image_directory = output_directory + solver_type.value + "_" + filenames_combined
+        image_directory = output_directory + puzzle_solver_type.value + "_" + filenames_combined
         ts_str = datetime.datetime.fromtimestamp(timestamp).strftime('%Y.%m.%d_%H.%M.%S')
         image_directory += "_type" + str(puzzle_type.value) + "_" + ts_str + "/"
 

@@ -1408,13 +1408,15 @@ class PaikinTalSolver(object):
         # Build the reconstructed image
         return Puzzle.reconstruct_from_pieces(puzzle_pieces, puzzle_id)
 
-    def save_segment_to_image_file(self, puzzle_id, segment_id, filename_descriptor, image_filenames, start_timestamp):
+    def save_segment_to_image_file(self, puzzle_solver_type, puzzle_id, segment_id, filename_descriptor,
+                                   image_filenames, start_timestamp):
         """
         Creates an image with just the contents of the solved image.
 
         Also creates the best buddy image.
 
         Args:
+            puzzle_solver_type (PuzzleSolver): Type of solver being run
             puzzle_id (int): Identification number of the solved puzzle
             segment_id (int): Identification number of the segment
             filename_descriptor (str): File descriptor for the image file.
@@ -1424,18 +1426,18 @@ class PaikinTalSolver(object):
         puzzle = self._create_puzzle_from_segment(puzzle_id, segment_id)
 
         # Build the reconstructed image
-        image_filename = Puzzle.make_image_filename(image_filenames, filename_descriptor,
+        image_filename = Puzzle.make_image_filename(puzzle_solver_type, image_filenames, filename_descriptor,
                                                     Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                     self._puzzle_type, start_timestamp)
         puzzle.save_to_file(image_filename)
 
         # Build the best buddy image
         filename_descriptor += "_best_buddy_acc"
-        image_filename = Puzzle.make_image_filename(image_filenames, filename_descriptor,
+        image_filename = Puzzle.make_image_filename(puzzle_solver_type, image_filenames, filename_descriptor,
                                                     Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                     self._puzzle_type, start_timestamp)
-        self.best_buddy_accuracy.output_results_images(image_filenames, [puzzle], self.puzzle_type, start_timestamp,
-                                                       output_filenames=[image_filename])
+        self.best_buddy_accuracy.output_results_images(puzzle_solver_type, image_filenames, [puzzle], self.puzzle_type,
+                                                       start_timestamp, output_filenames=[image_filename])
 
     def _perform_segmentation(self, perform_segment_cleaning):
         """
