@@ -52,6 +52,48 @@ class SegmentColor(Enum):
         return str(self.value)
 
 
+class Stack(object):
+
+    def __init__(self):
+        self._contents = []
+
+    def empty(self):
+        """
+        Gets whether the stack is empty.
+
+        Returns (bool): True if the stack is empty and False otherwise.
+        """
+        return len(self._contents) == 0
+
+    def push(self, value):
+        """
+        Puts a value on the top of the stack
+
+        Args:
+            value: Value to put at the top of the stack.
+        """
+        self._contents.append(value)
+
+    def pop(self):
+        """
+        Removes the top of the stack and returns it.
+
+        Returns:
+            Object at the top of the stack.
+        """
+        return self._contents.pop()
+
+    def peek(self):
+        """
+        Gets the top of the stack but does not remove it from the stack
+
+        Returns:
+            Object at the top of the stack.
+        """
+        last_index = len(self._contents) - 1
+        return self._contents[last_index]
+
+
 class DepthFirstSearchNode(object):
 
     def __init__(self, piece_id, puzzle_location, parent_id, depth):
@@ -73,6 +115,9 @@ class DepthFirstSearchNode(object):
 
         self._child_count = 0
         self._parent_id = parent_id
+
+        self._last_child_id = None
+        self.reset_child_id()
 
         self._depth = depth
         self._lowpoint = depth
@@ -166,6 +211,62 @@ class DepthFirstSearchNode(object):
         Returns (str): Key for a node.
         """
         return str(piece_id)
+
+    @property
+    def last_child_id(self):
+        """
+        Gets the last identification number of the last child piece.
+
+        This is used in the iterative version of the depth first search for articulation pieces.
+
+        Returns (int): Identification number of the last child.  If there is no last child, this returns "None".
+        """
+        return self._last_child_id
+
+    @last_child_id.setter
+    def last_child_id(self, child_piece_id):
+        """
+        Sets the identification of the last child piece.
+
+        This is used in the iterative version of the depth first search for articulation pieces.
+
+        Args:
+            child_piece_id (int): Identification number of the last child piece.
+        """
+        self._last_child_id = child_piece_id
+
+    def has_last_child_id(self):
+        """
+        Checks whether the node has a last child node.
+
+        This is used in the iterative version of the depth first search for articulation pieces.
+
+        Returns (bool): True if the node has a last child and false otherwise.
+        """
+        return self._last_child_id is not None
+
+    def reset_child_id(self):
+        """
+        Clears the last child identification number,
+
+        This is used in the iterative version of the depth first search for articulation pieces.
+        """
+        self._last_child_id = None
+
+    def is_last_child_id(self, piece_id):
+        """
+        Checks whether the specified piece identification number corresponds with this node last child identification
+        number.
+
+        This is used in the iterative version of the depth first search for articulation pieces.
+
+        Args:
+            piece_id (int): Identification number of the piece that may be the child
+
+        Returns (bool): "True" if the specified piece identification number corresponds with the last child and
+            "False" otherwise.
+        """
+        return self._last_child_id == piece_id
 
 
 class SegmentGridLocation(object):
@@ -841,14 +942,15 @@ class PuzzleSegment(object):
         dfs_tree = {tree_root.key: tree_root}
 
         # Perform depth first search to find the articulation points.
-        PuzzleSegment._depth_first_search_for_articulation_points(self, dfs_tree, tree_root,
-                                                                  is_pieces_best_buddies_func)
+        PuzzleSegment._depth_first_search_for_articulation_points_iterative(self, dfs_tree, tree_root,
+                                                                            is_pieces_best_buddies_func)
 
         # Build and return the list of articulation points.
         return [node for node in dfs_tree.values() if node.is_articulation_point]
 
     @staticmethod
-    def _depth_first_search_for_articulation_points(puzzle_segment, dfs_tree, current_node, is_pieces_best_buddies_func=None):
+    def _depth_first_search_for_articulation_points_recursive(puzzle_segment, dfs_tree, current_node,
+                                                              is_pieces_best_buddies_func=None):
         """
         Performs depth first search to find the articulation points (if any).
 
@@ -882,9 +984,89 @@ class PuzzleSegment(object):
             except KeyError:
                 child_node = current_node.create_child(puzzle_segment._pieces[adjacent_piece_key])
                 dfs_tree[child_node.key] = child_node
-                PuzzleSegment._depth_first_search_for_articulation_points(puzzle_segment, dfs_tree, child_node,
-                                                                          is_pieces_best_buddies_func)
+                PuzzleSegment._depth_first_search_for_articulation_points_recursive(puzzle_segment,
+                                                                                    dfs_tree,
+                                                                                    child_node,
+                                                                                    is_pieces_best_buddies_func)
                 current_node.update_lowpoint(child_node, check_is_articulation=True)
+
+    def _depth_first_search_for_articulation_points_iterative(self, dfs_tree, root_node,
+                                                              is_pieces_best_buddies_func=None):
+        """
+        Performs depth first search to find the articulation points (if any).
+
+        Based off the code here: https://en.wikipedia.org/wiki/Biconnected_component
+
+        Args:
+            dfs_tree (dict): Representation of DFS tree as a dictionary
+            root_node (DepthFirstSearchNode): Root of the DFS tree
+            is_pieces_best_buddies_func: Function used to check if two pieces are best buddies.
+        """
+
+        explored_piece_count = 0
+
+        # Create a stack and push the current key onto it.
+        piece_key_stack = Stack()
+        piece_key_stack.push(root_node.key)
+
+        # Run the solver until all pieces reached (i.e. stack is empty)
+        while not piece_key_stack.empty():
+
+            # Get the node off the stop of the stack.
+            current_piece_key = piece_key_stack.peek()
+            current_node = dfs_tree[current_piece_key]
+
+            # Clear the recursive call if applicable.
+            recursive_call_simulation = False
+
+            # Ensure the location is valid
+            if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+                assert current_node.piece_id == self._get_piece_at_segment_location(current_node.location)
+
+            # Iterate through all neighbors of the piece
+            for adjacent_id in self._get_location_adjacency_list(current_node.location):
+
+                # Only consider best buddies
+                if is_pieces_best_buddies_func is not None \
+                        and not is_pieces_best_buddies_func(current_node.piece_id, adjacent_id):
+                    continue
+
+                # Simulate what would have been done when returning from the recursive call.
+                if current_node.has_last_child_id():
+                    # Update the low point
+                    if current_node.is_last_child_id(adjacent_id):
+                        child_node = dfs_tree[PuzzlePiece.create_key(current_node.last_child_id)]
+                        current_node.update_lowpoint(child_node, check_is_articulation=True)
+                        current_node.reset_child_id()
+                    continue
+
+                adjacent_piece_key = DepthFirstSearchNode.create_key(adjacent_id)
+                # Check if the piece is visited
+                if adjacent_piece_key in dfs_tree:
+                    adjacent_node = dfs_tree[adjacent_piece_key]
+                    current_node.update_lowpoint(adjacent_node, check_is_articulation=False)
+
+                # Piece not visited
+                else:
+                    current_node.last_child_id = adjacent_id
+                    
+                    # Create the child node
+                    child_node = current_node.create_child(self._pieces[adjacent_piece_key])
+                    dfs_tree[child_node.key] = child_node
+
+                    # Simulate making the recursive call
+                    piece_key_stack.push(child_node.key)
+                    recursive_call_simulation = True
+                    break
+
+            # Pop off the stack
+            if not recursive_call_simulation:
+                piece_key_stack.pop()
+                explored_piece_count += 1
+
+        # Verify all pieces explored.
+        if PuzzleSegment._PERFORM_ASSERT_CHECKS:
+            assert explored_piece_count == self.numb_pieces
 
     def _remove_all_pieces_except_seed(self):
         """

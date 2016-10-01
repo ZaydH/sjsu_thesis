@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4dfada96-1563-4bd9-ba15-692e3a39ebe7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/Zayd.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/Zayd.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/paikin_tal_solver.iml" afterPath="$PROJECT_DIR$/.idea/paikin_tal_solver.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/paikin_tal_solver/solver.py" afterPath="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" afterPath="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" afterPath="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/multipuzzle_solver_driver.py" afterPath="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
     </list>
     <ignored path="paikin_tal_solver.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -19,8 +24,8 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Multipuzzle_Solver.coverage" NAME="Multipuzzle_Solver Coverage Results" MODIFIED="1475155551352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Driver.coverage" NAME="Paikin_Tal_Driver Coverage Results" MODIFIED="1474806741308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Multipuzzle_Solver.coverage" NAME="Multipuzzle_Solver Coverage Results" MODIFIED="1475323005828" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/paikin_tal_solver$Paikin_Tal_Driver.coverage" NAME="Paikin_Tal_Driver Coverage Results" MODIFIED="1475322330466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -34,8 +39,8 @@
       <file leaf-file-name="multipuzzle_solver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="526">
-              <caret line="924" column="0" selection-start-line="924" selection-start-column="0" selection-end-line="924" selection-end-column="0" />
+            <state relative-caret-position="492">
+              <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -43,23 +48,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pickle.py" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Miniconda2/Lib/pickle.py">
+      <file leaf-file-name="pickle_helper.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/pickle_helper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="1383" column="0" selection-start-line="1383" selection-start-column="0" selection-end-line="1383" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="357">
+              <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pickle_helper.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/pickle_helper.py">
+      <file leaf-file-name="puzzle_segment.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22">
-              <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+            <state relative-caret-position="243">
+              <caret line="1051" column="20" selection-start-line="1051" selection-start-column="20" selection-end-line="1051" selection-end-column="20" />
               <folding>
-                <element signature="e#0#14#0" expanded="true" />
+                <element signature="e#0#12#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -69,16 +76,16 @@
         <entry file="file://$PROJECT_DIR$/multipuzzle_solver_driver.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="232">
-              <caret line="109" column="26" selection-start-line="109" selection-start-column="26" selection-end-line="109" selection-end-column="26" />
+              <caret line="109" column="59" selection-start-line="109" selection-start-column="59" selection-end-line="109" selection-end-column="59" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="solver.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="solver.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
+            <state relative-caret-position="6392">
               <caret line="390" column="74" selection-start-line="390" selection-start-column="74" selection-end-line="390" selection-end-column="74" />
               <folding />
             </state>
@@ -115,12 +122,12 @@
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/best_buddy_image_analyzer.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/paikin_tal_tester.py" />
         <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_importer.py" />
-        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" />
         <option value="$PROJECT_DIR$/paikin_tal_solver/inter_piece_distance.py" />
         <option value="$PROJECT_DIR$/multipuzzle_solver/hierarchical_clustering.py" />
+        <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
         <option value="$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py" />
         <option value="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
-        <option value="$PROJECT_DIR$/paikin_tal_solver/solver.py" />
+        <option value="$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py" />
       </list>
     </option>
   </component>
@@ -180,7 +187,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -258,14 +264,15 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/multipuzzle_solver_driver.py" />
+    <property name="last_opened_file_path" value="C:/Program Files/Anaconda2/python.exe" />
   </component>
   <component name="RunManager" selected="Python.Multipuzzle_Solver">
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
@@ -317,6 +324,19 @@
       <module name="paikin_tal_solver" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="ADDITIONAL_ARGS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PyRemoteDebugConfigurationType" factoryName="Python Remote Debug">
+      <module name="" />
+      <option name="PORT" value="0" />
+      <option name="HOST" value="null" />
+      <PathMappingSettings>
+        <option name="pathMappings">
+          <list />
+        </option>
+      </PathMappingSettings>
+      <option name="REDIRECT_OUTPUT" value="true" />
+      <option name="SUSPEND_AFTER_CONNECT" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -482,9 +502,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\Zayd\Miniconda2\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
@@ -500,9 +520,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\Zayd\Miniconda2\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="paikin_tal_solver" />
@@ -545,11 +565,10 @@
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15191898" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15511727" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997833" sideWeight="0.5063966" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.49573562" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32936078" sideWeight="0.6321962" order="2" side_tool="false" content_ui="tabs" />
@@ -563,6 +582,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.49573562" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -617,11 +637,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py</url>
-          <line>131</line>
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py</url>
           <line>63</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
@@ -655,6 +670,11 @@
           <line>420</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py</url>
+          <line>1037</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -663,7 +683,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="47" />
+      <option name="time" value="50" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -690,9 +710,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#44#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -736,9 +753,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#44#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -782,9 +796,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#44#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -799,20 +810,8 @@
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_driver.py" />
-    <entry file="file://$USER_HOME$/Miniconda2/Lib/multiprocessing/pool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="250" column="0" selection-start-line="250" selection-start-column="0" selection-end-line="250" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Miniconda2/Lib/logging/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="861">
-          <caret line="1628" column="0" selection-start-line="1628" selection-start-column="0" selection-end-line="1628" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/multiprocessing/pool.py" />
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/logging/__init__.py" />
     <entry file="file://$PROJECT_DIR$/doc/_build/html/searchindex.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="197">
@@ -864,14 +863,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/numpy/core/numeric.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="302" column="0" selection-start-line="302" selection-start-column="0" selection-end-line="302" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/site-packages/numpy/core/numeric.py" />
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/solver_helper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="356">
@@ -918,9 +910,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="861">
           <caret line="816" column="0" selection-start-line="816" selection-start-column="0" selection-end-line="816" selection-end-column="0" />
-          <folding>
-            <element signature="e#28#44#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -928,7 +917,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="298">
           <caret line="1123" column="8" selection-start-line="1123" selection-start-column="8" selection-end-line="1123" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -936,77 +924,61 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="196">
           <caret line="371" column="8" selection-start-line="371" selection-start-column="8" selection-end-line="371" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Miniconda2/Lib/copy.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
-          <caret line="549" column="0" selection-start-line="549" selection-start-column="0" selection-end-line="549" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/copy.py" />
     <entry file="file://$PROJECT_DIR$/multipuzzle_solver/hierarchical_clustering.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="299">
           <caret line="236" column="36" selection-start-line="236" selection-start-column="36" selection-end-line="236" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Miniconda2/Lib/pickle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="1383" column="0" selection-start-line="1383" selection-start-column="0" selection-end-line="1383" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/Miniconda2/Lib/pickle.py" />
     <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/pickle_helper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="22" column="8" selection-start-line="22" selection-start-column="8" selection-end-line="22" selection-end-column="8" />
+        <state relative-caret-position="357">
+          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6392">
+          <caret line="390" column="74" selection-start-line="390" selection-start-column="74" selection-end-line="390" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/multipuzzle_solver_driver.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="232">
-          <caret line="109" column="26" selection-start-line="109" selection-start-column="26" selection-end-line="109" selection-end-column="26" />
+          <caret line="109" column="59" selection-start-line="109" selection-start-column="59" selection-end-line="109" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/multipuzzle_solver/multipuzzle_solver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="526">
-          <caret line="924" column="0" selection-start-line="924" selection-start-column="0" selection-end-line="924" selection-end-column="0" />
+        <state relative-caret-position="492">
+          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/paikin_tal_solver/solver.py">
+    <entry file="file://$PROJECT_DIR$/hammoudeh_puzzle/puzzle_segment.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="390" column="74" selection-start-line="390" selection-start-column="74" selection-end-line="390" selection-end-column="74" />
-          <folding />
+        <state relative-caret-position="243">
+          <caret line="1051" column="20" selection-start-line="1051" selection-start-column="20" selection-end-line="1051" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
