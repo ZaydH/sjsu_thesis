@@ -175,7 +175,8 @@ def output_results_information_and_puzzles(puzzle_solver_type, image_files, paik
                                                                 timestamp, orig_img_filename=orig_img_filename)
 
     # Build the results information collection
-    results_information = PuzzleResultsCollection(puzzle_solver_type, pieces_partitioned_by_puzzle_id, image_files)
+    results_information = PuzzleResultsCollection(puzzle_solver_type, paikin_tal_solver.puzzle_type,
+                                                  pieces_partitioned_by_puzzle_id, image_files)
     # Calculate and print the accuracy results
     results_information.calculate_accuracies(output_puzzles)
     # Print the results to the console
