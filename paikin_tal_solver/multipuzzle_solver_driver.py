@@ -133,25 +133,25 @@ if __name__ == "__main__":
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
     images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//9.jpg", "805_pieces//10.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//5.jpg", "805_pieces//20.jpg", "805_pieces//1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["805_pieces//9.jpg", "805_pieces//10.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["805_pieces//5.jpg", "805_pieces//20.jpg", "805_pieces//1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     test_random_mcgill()
