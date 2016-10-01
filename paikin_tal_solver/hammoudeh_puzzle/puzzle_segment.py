@@ -841,27 +841,29 @@ class PuzzleSegment(object):
         dfs_tree = {tree_root.key: tree_root}
 
         # Perform depth first search to find the articulation points.
-        self._depth_first_search_for_articulation_points(dfs_tree, tree_root, is_pieces_best_buddies_func)
+        PuzzleSegment._depth_first_search_for_articulation_points(self, dfs_tree, tree_root,
+                                                                  is_pieces_best_buddies_func)
 
         # Build and return the list of articulation points.
         return [node for node in dfs_tree.values() if node.is_articulation_point]
 
-    def _depth_first_search_for_articulation_points(self, dfs_tree, current_node, is_pieces_best_buddies_func=None):
+    @staticmethod
+    def _depth_first_search_for_articulation_points(puzzle_segment, dfs_tree, current_node, is_pieces_best_buddies_func=None):
         """
         Performs depth first search to find the articulation points (if any).
 
         Based off the code here: https://en.wikipedia.org/wiki/Biconnected_component
 
         Args:
-            self (PuzzleSegment): Puzzle segment being analyzed
+            puzzle_segment (PuzzleSegment): Puzzle segment being analyzed
             dfs_tree (dict): Representation of DFS tree as a dictionary
             current_node (DepthFirstSearchNode): Current node in the DFS tree
             is_pieces_best_buddies_func: Function used to check if two pieces are best buddies.
         """
         if PuzzleSegment._PERFORM_ASSERT_CHECKS:
-            assert current_node.piece_id == self._get_piece_at_segment_location(current_node.location)
+            assert current_node.piece_id == puzzle_segment._get_piece_at_segment_location(current_node.location)
 
-        for adjacent_id in self._get_location_adjacency_list(current_node.location):
+        for adjacent_id in puzzle_segment._get_location_adjacency_list(current_node.location):
             
             if is_pieces_best_buddies_func is not None \
                     and not is_pieces_best_buddies_func(current_node.piece_id, adjacent_id):
@@ -878,9 +880,10 @@ class PuzzleSegment(object):
 
             # Piece not visited
             except KeyError:
-                child_node = current_node.create_child(self._pieces[adjacent_piece_key])
+                child_node = current_node.create_child(puzzle_segment._pieces[adjacent_piece_key])
                 dfs_tree[child_node.key] = child_node
-                self._depth_first_search_for_articulation_points(dfs_tree, child_node, is_pieces_best_buddies_func)
+                PuzzleSegment._depth_first_search_for_articulation_points(puzzle_segment, dfs_tree, child_node,
+                                                                          is_pieces_best_buddies_func)
                 current_node.update_lowpoint(child_node, check_is_articulation=True)
 
     def _remove_all_pieces_except_seed(self):
