@@ -10,7 +10,9 @@ import time
 
 import numpy as np
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle.best_buddy_placer import BestBuddyPlacerCollection
+from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import PuzzleType, PuzzleDimensions, BestBuddyResultsCollection, Puzzle
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide, PuzzlePiece
 from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, SegmentColor
@@ -109,7 +111,7 @@ class PaikinTalSolver(object):
     DEFAULT_MINIMUM_MUTUAL_COMPATIBILITY_FOR_NEW_BOARD = 0.5
 
     # Used to simplify debugging without affecting test time by enabling assertion checks
-    _PERFORM_ASSERTION_CHECK = True
+    _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
 
     # Select whether to clear the BB heap on completion
     _CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
@@ -130,8 +132,14 @@ class PaikinTalSolver(object):
 
     max_numb_pieces_to_place_in_stitching_piece_solver = 100
 
+    _ALLOW_POST_INITIAL_CONSTRUCTION_PICKLE_EXPORT = True
+    _ALLOW_POST_STANDARD_RUN_PLACEMENT_COMPLETED = False
+
+    POST_INITIAL_CONSTRUCTOR_PICKLE_FILE_DESCRIPTOR = "paikin_tal_post_initial_constructor"
+    _POST_STANDARD_RUN_PICKLE_FILE_DESCRIPTOR = "paikin_tal_standard_placement_completed"
+
     def __init__(self, pieces, distance_function, numb_puzzles=None, puzzle_type=None,
-                 new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None):
+                 new_board_mutual_compatibility=None, fixed_puzzle_dimensions=None, image_filenames=None):
         """
         Constructor for the Paikin and Tal solver.
 
@@ -142,6 +150,7 @@ class PaikinTalSolver(object):
             puzzle_type (PuzzleType): Type of Paikin Tal Puzzle
             puzzle_type (float): Minimum mutual compatibility when new boards are spawned
             fixed_puzzle_dimensions(Optional [int]): Size of the puzzle as a Tuple (number_rows, number_columns)
+            image_filenames (List[str]): Name of the original files.  Used for pickle management.
         """
 
         if numb_puzzles is not None:
@@ -149,6 +158,8 @@ class PaikinTalSolver(object):
                 raise ValueError("At least a single puzzle is required.")
             if numb_puzzles > 1 and fixed_puzzle_dimensions is not None:
                 raise ValueError("When specifying puzzle dimensions, only a single puzzle is allowed.")
+
+        self._image_filenames = image_filenames
 
         # Store the number of pieces.  Shuffle for good measure.
         self._pieces = pieces
@@ -174,6 +185,9 @@ class PaikinTalSolver(object):
         # Calculates the asymmetric distance, asymmetric & mutual compatibility, best buddies, and starting piece
         # information
         self._calculate_initial_interpiece_distances(distance_function, new_board_mutual_compatibility)
+
+        if PaikinTalSolver._ALLOW_POST_INITIAL_CONSTRUCTION_PICKLE_EXPORT:
+            self._pickle_export_after_initial_construction()
 
     def _reset_solved_puzzle_info(self):
         """
@@ -356,9 +370,23 @@ class PaikinTalSolver(object):
         Args:
             skip_initial (bool): Used with Pickling.  Skips initial setup of running
         """
+
+        start_time = time.time()
+        logging.info("Standard Paikin & Tal Placer started")
+
         self._run_configurable(max_numb_output_puzzles=self._actual_numb_puzzles,
                                numb_pieces_to_place=self._numb_pieces,
                                skip_initial=skip_initial)
+
+        print_elapsed_time(start_time, "standard Paikin & Tal placement")
+
+        # Export the completed solver results
+        if PaikinTalSolver._ALLOW_POST_STANDARD_RUN_PLACEMENT_COMPLETED:
+            start_time = time.time()
+            self._pickle_export_after_standard_run_placement()
+
+            print_elapsed_time(start_time, "pickle completed solver export")
+            logging.info("Completed pickle export of the solved puzzle.")
 
     def _run_configurable(self, max_numb_output_puzzles, numb_pieces_to_place, skip_initial=False,
                           stop_solver_if_need_to_respawn=False):
@@ -429,7 +457,7 @@ class PaikinTalSolver(object):
             total_numb_bb_in_dataset = self._inter_piece_distance.get_total_best_buddy_count()
             logging.info("Total number of Best Buddies: %d" % total_numb_bb_in_dataset)
             # Once all pieces have been placed verify that no best buddies remain unaccounted for.
-            if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+            if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
                 for best_buddy_acc in self._best_buddy_accuracy:
                     assert best_buddy_acc.numb_open_best_buddies == 0
                 # Removed because when pieces excluded, this will not always be equal.
@@ -570,7 +598,7 @@ class PaikinTalSolver(object):
         bb_info = BestBuddyPoolInfo(piece_id)
 
         # Verify the key is in the pool.
-        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+        if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
             assert bb_info.key in self._best_buddies_pool
 
         # Delete the best buddy
@@ -738,7 +766,7 @@ class PaikinTalSolver(object):
                                                                                      neighbor_piece_id, neighbor_side)
 
                 # Ensure the number of best buddies does not exceed the number of neighbors
-                if PaikinTalSolver._PERFORM_ASSERTION_CHECK and numb_best_buddies > numb_neighbor_sides:
+                if PaikinTalSolver._PERFORM_ASSERT_CHECKS and numb_best_buddies > numb_neighbor_sides:
                     assert numb_best_buddies <= numb_neighbor_sides
 
                 # Normalize the mutual compatibility
@@ -790,7 +818,7 @@ class PaikinTalSolver(object):
         """
 
         # Optionally verify the piece exists in the specified location
-        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+        if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
             assert not self._is_slot_open(puzzle_location)
 
         piece_id = self._piece_locations[puzzle_location.puzzle_id][puzzle_location.location]
@@ -1135,7 +1163,7 @@ class PaikinTalSolver(object):
 
         board_dimensions = self._placed_puzzle_dimensions[puzzle_id]
         # Make sure the dimensions are somewhat plausible.
-        if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+        if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
             assert (board_dimensions.top_left[0] <= board_dimensions.bottom_right[0] and
                     board_dimensions.top_left[1] <= board_dimensions.bottom_right[1])
 
@@ -1474,7 +1502,7 @@ class PaikinTalSolver(object):
                     neighbor_piece = self._get_piece_in_puzzle_location(neighbor_loc)
 
                     # Verify the puzzle identification numbers match
-                    if self._PERFORM_ASSERTION_CHECK:
+                    if self._PERFORM_ASSERT_CHECKS:
                         assert neighbor_piece.puzzle_id == new_segment.puzzle_id
 
                     # If piece already assigned a segment go to next piece
@@ -1574,7 +1602,7 @@ class PaikinTalSolver(object):
                 neighbor_piece = self._get_piece_in_puzzle_location(neighbor_loc)
 
                 # Verify the pieces are from the same puzzle
-                if PaikinTalSolver._PERFORM_ASSERTION_CHECK:
+                if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
                     assert piece_puzzle_id == neighbor_piece.puzzle_id
                     assert PuzzleLocation.are_adjacent(piece.puzzle_location, neighbor_loc)
 
@@ -1698,3 +1726,78 @@ class PaikinTalSolver(object):
             Type of the puzzle (either 1 or 2)
         """
         return self._puzzle_type
+
+    def _pickle_export_after_initial_construction(self):
+        """
+        Export the Paikin Tal Solver after initial construction.
+        """
+        self._local_pickle_export_helper(PaikinTalSolver.POST_INITIAL_CONSTRUCTOR_PICKLE_FILE_DESCRIPTOR)
+
+    def _pickle_export_after_standard_run_placement(self):
+        """
+        Export the Paikin Tal Solver after a standard run (i.e. call to the method "run_standard") is completed.
+        """
+        self._local_pickle_export_helper(PaikinTalSolver._POST_STANDARD_RUN_PICKLE_FILE_DESCRIPTOR)
+
+    def _local_pickle_export_helper(self, pickle_file_descriptor):
+        """
+        Helper function that handles the pickle export for a specific file description.
+
+        Args:
+            pickle_file_descriptor (str): File descriptor for the pickle file
+        """
+        if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
+            # These are needed for pickle
+            assert self._image_filenames is not None
+
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor,
+                                                      self._image_filenames,
+                                                      self.puzzle_type)
+        PickleHelper.exporter(self, pickle_filename)
+
+    @staticmethod
+    def pickle_import_after_initial_construction(image_filenames, puzzle_type):
+        """
+        Imports a pickle file after initial construction.
+
+        Args:
+            image_filenames (List[str]): List of the image files.
+            puzzle_type (PuzzleType): Type of the puzzle
+
+        Returns (PaikinTalSolver): Paikin and Tal solver right after initial construction that is imported from
+            pickle defined by the supplied parameters.
+        """
+        file_descriptor = PaikinTalSolver.POST_INITIAL_CONSTRUCTOR_PICKLE_FILE_DESCRIPTOR
+        return PaikinTalSolver._local_pickle_import_helper(image_filenames, puzzle_type, file_descriptor)
+
+    @staticmethod
+    def pickle_import_after_standard_run_placement(image_filenames, puzzle_type):
+        """
+        Imports a pickle file after a standard run (i.e. call to the method "run_standard") is completed.
+
+        Args:
+            image_filenames (List[str]): List of the image files.
+            puzzle_type (PuzzleType): Type of the puzzle
+
+        Returns (PaikinTalSolver): Paikin and Tal solver right after a standard run that is imported from
+            pickle defined by the supplied parameters.
+        """
+        file_descriptor = PaikinTalSolver._POST_STANDARD_RUN_PICKLE_FILE_DESCRIPTOR
+        return PaikinTalSolver._local_pickle_import_helper(image_filenames, puzzle_type, file_descriptor)
+
+    @staticmethod
+    def _local_pickle_import_helper(image_filenames, puzzle_type, pickle_file_descriptor):
+        """
+        Helper function that handles the importing using Pickle of a Paikin & Tal Solver object.
+
+        Args:
+            image_filenames (List[str]): List of the image files.
+            puzzle_type (PuzzleType): Type of the puzzle
+            pickle_file_descriptor (str): Paikin & Tal solver specific pickle file descriptor.
+
+        Returns (PaikinTalSolver): Paikin and Tal solver imported from pickle defined by the supplied parameters.
+        """
+        pickle_filename = PickleHelper.build_filename(pickle_file_descriptor,
+                                                      image_filenames,
+                                                      puzzle_type)
+        return PickleHelper.importer(pickle_filename)

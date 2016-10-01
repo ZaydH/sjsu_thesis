@@ -500,46 +500,46 @@ class MultiPuzzleSolver(object):
         """
         Export the entire multipuzzle solver via pickle.
         """
-        self._local_pickle_expert_helper("segment_round_%d" % self._numb_segmentation_rounds)
+        self._local_pickle_export_helper("segment_round_%d" % self._numb_segmentation_rounds)
 
     def _pickle_export_after_segmentation_puzzle_placement(self):
         """
         Export the entire multipuzzle solver via pickle.
         """
-        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SEGMENTATION_PUZZLE_PLACEMENT_FILE_DESCRIPTOR
+        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SEGMENTATION_PUZZLE_PLACEMENT_FILE_DESCRIPTOR
                                          % self._numb_segmentation_rounds)
 
     def _pickle_export_after_all_segmentation_completed(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
-        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SEGMENTATION_COMPLETED_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SEGMENTATION_COMPLETED_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_stitching_piece_solving(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
-        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_similarity_matrix_calculation(self):
         """
         Exports the multipuzzle solver after the similarity matrix is calculated.
         """
-        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_hierarchical_clustering(self):
         """
         Exports the multipuzzle solver after hierarchical clustering is completed.
         """
-        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_select_starting_pieces(self):
         """
         Exports the multipuzzle solver after hierarchical clustering is completed.
         """
-        self._local_pickle_expert_helper(MultiPuzzleSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR)
 
-    def _local_pickle_expert_helper(self, pickle_file_descriptor):
+    def _local_pickle_export_helper(self, pickle_file_descriptor):
         """
         Helper function that handles the pickle export for a specific file description.
 

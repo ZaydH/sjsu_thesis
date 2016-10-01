@@ -1015,7 +1015,6 @@ class PuzzleSegment(object):
             # Get the node off the stop of the stack.
             current_piece_key = piece_key_stack.peek()
             current_node = dfs_tree[current_piece_key]
-
             # Clear the recursive call if applicable.
             recursive_call_simulation = False
 
@@ -1049,7 +1048,7 @@ class PuzzleSegment(object):
                 # Piece not visited
                 else:
                     current_node.last_child_id = adjacent_id
-                    
+
                     # Create the child node
                     child_node = current_node.create_child(self._pieces[adjacent_piece_key])
                     dfs_tree[child_node.key] = child_node
