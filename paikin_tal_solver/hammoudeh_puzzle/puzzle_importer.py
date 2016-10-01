@@ -73,17 +73,17 @@ class PuzzleResultsCollection(object):
 
     _PERFORM_ASSERT_CHECKS = True
 
-    def __init__(self, puzzle_solver, pieces_partitioned_by_puzzle, image_file_paths):
+    def __init__(self, puzzle_solver_type, pieces_partitioned_by_puzzle, image_file_paths):
         """
         Constructs the puzzle results information.
 
         Args:
-            puzzle_solver (PuzzleSolver): Type of Solver
+            puzzle_solver_type (PuzzleSolver): Type of Solver
             pieces_partitioned_by_puzzle (List[List[PuzzlePieces]]): List of pieces in each of the puzzles
             image_file_paths (List[Str])): Names of the image files.
         """
 
-        self._puzzle_solver = puzzle_solver
+        self._puzzle_solver_type = puzzle_solver_type
         self._image_filenames = image_file_paths
 
         self._puzzle_results = []
@@ -97,7 +97,7 @@ class PuzzleResultsCollection(object):
                 puzzle_exists = False
                 for i in range(0, len(self._puzzle_results)):
                     # Check if the puzzle ID matches this set of results information.
-                    if piece.original_puzzle_id == self._puzzle_results[i].puzzle_id:
+                    if piece.original_puzzle_id == self._puzzle_results[i].original_id_number:
                         puzzle_exists = True
                         self._puzzle_results[i].numb_pieces += 1
                         continue
@@ -110,7 +110,7 @@ class PuzzleResultsCollection(object):
                     self._puzzle_results.append(new_puzzle)
 
         # Sort by original puzzle id
-        self._puzzle_results = sorted(self._puzzle_results, key=lambda result: result.puzzle_id)
+        self._puzzle_results = sorted(self._puzzle_results, key=lambda result: result.original_id_number)
 
     def calculate_accuracies(self, solved_puzzles):
         """
@@ -232,12 +232,12 @@ class PuzzleResultsCollection(object):
         if not os.path.exists(config.RESULTS_FILE):
             PuzzleResultsCollection._write_results_file_header_line()
 
-        with open(config.RESULTS_FILE, "w") as results_stream:
-            results_stream.write(self._puzzle_solver.type)
+        with open(config.RESULTS_FILE, "a") as results_stream:
+            results_stream.write(self._puzzle_solver_type.value)
 
             # Write the image file names
             results_stream.write(",")
-            for (image_file, idx) in enumerate(self._image_filenames):
+            for (idx, image_file) in enumerate(self._image_filenames):
                 if idx > 0:
                     results_stream.write(" | ")
                 results_stream.write(Puzzle.get_filename_without_extension(image_file))
@@ -250,15 +250,15 @@ class PuzzleResultsCollection(object):
 
             # Print the Puzzle Results Information
             for puzzle_result in self._puzzle_results:
-                results_stream.write(",Input Puzzle#" + str(puzzle_result.id_number))
+                results_stream.write(",Input Puzzle#" + str(puzzle_result.original_id_number))
                 results_stream.write("," + str(puzzle_result.numb_pieces))
 
                 # Add the results information
                 accuracy_types = [ResultAccuracyType.StandardDirectAccuracy, ResultAccuracyType.ModifiedDirectAccuracy,
                                   ResultAccuracyType.ModifiedNeighborAccuracy]
                 for acc_type in accuracy_types:
-                    results_stream.write(",Input Puzzle#" + str(puzzle_result.get_accuracy_solved_puzzle_id(acc_type)))
-                    results_stream.write(",Input Puzzle#" + str(puzzle_result.get_accuracy_score(acc_type)))
+                    results_stream.write(",Solved Puzzle#" + str(puzzle_result.get_accuracy_solved_puzzle_id(acc_type)))
+                    results_stream.write("," + str(puzzle_result.get_accuracy_score(acc_type)))
 
             # Close the line with a newline
             results_stream.write('\n')
@@ -270,9 +270,12 @@ class PuzzleResultsCollection(object):
         """
         with open(config.RESULTS_FILE, "w") as results_stream:
             headers = ["Solver Type", "Image Filenames", "Number of Input Puzzles", "Number of Output Puzzles",
-                       "Diff Between Output and Expected Puzzle Count"]
+                       "Diff Between Output and Expected Puzzle Count", "Input Puzzle #", "Input Piece Count",
+                       "Standard Direct Accuracy Puzzle #", "Standard Direct Accuracy Score",
+                       "Modified Direct Accuracy Puzzle #", "Modified Direct Accuracy Score",
+                       "Modified Neighbor Accuracy Puzzle #", "Modified Neighbor Accuracy Score"]
             # Print all header fields
-            for (field, idx) in enumerate(headers):
+            for (idx, field) in enumerate(headers):
                 # Comma separate
                 if idx > 0:
                     results_stream.write(",")
@@ -292,7 +295,7 @@ class PuzzleResultsCollection(object):
         for results in self._puzzle_results:
             # Print the header line
             print >>string_io, "Original Filename: %s" % results.original_filename
-            print >>string_io, "Puzzle Identification Number: " + str(results.puzzle_id) + "\n"
+            print >>string_io, "Puzzle Identification Number: " + str(results.original_id_number) + "\n"
 
             # Print the standard accuracy information
             for accuracy_type in [ResultAccuracyType.StandardDirectAccuracy, ResultAccuracyType.ModifiedDirectAccuracy]:
@@ -367,7 +370,7 @@ class PuzzleResultsInformation(object):
     def __init__(self, puzzle_id, original_img_filename):
 
         # Store the number of pieces and the puzzle id
-        self.id_number = puzzle_id
+        self.original_id_number = puzzle_id
         self._numb_pieces = 0
         self._original_img_filename = original_img_filename
 
@@ -400,7 +403,7 @@ class PuzzleResultsInformation(object):
 
         Returns (float): Accuracy score bounded between 0.0 and 1.0
         """
-        if accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy or accuracy_type == ResultAccuracyType.ModifiedNeighborAccuracy:
+        if accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy or accuracy_type == ResultAccuracyType.StandardDirectAccuracy:
             if accuracy_type == ResultAccuracyType.ModifiedDirectAccuracy:
                 direct_acc = self.modified_direct_accuracy
             else:
@@ -416,7 +419,7 @@ class PuzzleResultsInformation(object):
             neighbor_acc = self.modified_neighbor_accuracy
             neighbor_count_weight = neighbor_acc.numb_pieces_in_original_puzzle + neighbor_acc.wrong_puzzle_id
             neighbor_count_weight *= PuzzlePieceSide.get_numb_sides()
-            return 100.0 * neighbor_acc.correct_neighbor_count / neighbor_count_weight
+            return neighbor_acc.correct_neighbor_count / neighbor_count_weight
 
         else:
             raise ValueError("Invalid accuracy type.")
@@ -434,7 +437,7 @@ class PuzzleResultsInformation(object):
             acc_info = self.modified_direct_accuracy
         elif accuracy_type == ResultAccuracyType.StandardDirectAccuracy:
             acc_info = self.standard_direct_accuracy
-        elif accuracy_type == ResultAccuracyType.StandardDirectAccuracy:
+        elif accuracy_type == ResultAccuracyType.ModifiedNeighborAccuracy:
             acc_info = self.modified_neighbor_accuracy
         else:
             raise ValueError("Invalid Accuracy Type.")
@@ -456,7 +459,7 @@ class PuzzleResultsInformation(object):
         placed_piece_matrix, rotation_matrix = solved_puzzle.build_placed_piece_info()
 
         # Create a temporary neighbor accuracy info
-        neighbor_accuracy_info = ModifiedNeighborAccuracy(self.id_number, solved_puzzle.id_number, self.numb_pieces)
+        neighbor_accuracy_info = ModifiedNeighborAccuracy(self.original_id_number, solved_puzzle.id_number, self.numb_pieces)
 
         # Iterate through the set of pieces
         for piece in solved_puzzle.pieces:
@@ -479,7 +482,7 @@ class PuzzleResultsInformation(object):
                 side = PuzzlePieceSide(side_numb)
 
                 # Verify the puzzle identification numbers match.  If not, mark all as wrong then go to next piece
-                if piece.original_puzzle_id != self.id_number:
+                if piece.original_puzzle_id != self.original_id_number:
                     # neighbor_accuracy_info.wrong_puzzle_id += 1
                     neighbor_accuracy_info.add_wrong_puzzle_id(piece.id_number, side)
                     continue
@@ -528,7 +531,7 @@ class PuzzleResultsInformation(object):
         """
 
         # Get the standard direct accuracy
-        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.id_number, self.numb_pieces)
+        new_direct_accuracy = puzzle.determine_standard_direct_accuracy(self.original_id_number, self.numb_pieces)
 
         # Update the stored standard direct accuracy if applicable
         if DirectAccuracyPuzzleResults.check_if_update_direct_accuracy(self.standard_direct_accuracy,
@@ -588,7 +591,7 @@ class PuzzleResultsInformation(object):
 
         # For all upper left coordinate candidates, determine the modified direct accuracy.
         for possible_upper_left in explored_set:
-            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.id_number,
+            modified_direct_accuracy = puzzle.determine_modified_direct_accuracy(self.original_id_number,
                                                                                  possible_upper_left,
                                                                                  self.numb_pieces)
             # Update the standard direct accuracy

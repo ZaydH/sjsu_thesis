@@ -60,7 +60,8 @@ def paikin_tal_driver(img_files, puzzle_type=None, piece_width=None):
     paikin_tal_solver.segment(color_segments=True)
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
-    output_results_information_and_puzzles(image_filenames, paikin_tal_solver, pieces_partitioned_by_puzzle_id)
+    output_results_information_and_puzzles(PuzzleSolver.PaikinTal, image_filenames, paikin_tal_solver,
+                                           pieces_partitioned_by_puzzle_id)
 
 
 def run_paikin_tal_solver(image_filenames, puzzle_type, piece_width):
@@ -107,11 +108,14 @@ def run_paikin_tal_solver(image_filenames, puzzle_type, piece_width):
     return paikin_tal_solver
 
 
-def output_results_information_and_puzzles(image_files, paikin_tal_solver, pieces_partitioned_by_puzzle_id):
+def output_results_information_and_puzzles(puzzle_solver_type, image_files, paikin_tal_solver,
+                                           pieces_partitioned_by_puzzle_id):
     """
     Generates the results information of the solved puzzles.
 
     Args:
+        puzzle_solver_type (PuzzleSolver): Type of Solver
+
         image_files (List[str]): List of paths to the input image files.
 
         paikin_tal_solver (PaikinTalSolver): A completed Paikin & Tal solver object
@@ -146,14 +150,14 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
         else:
             orig_img_filename = None
             puzzle_id_filename = puzzle_id
-        filename = Puzzle.make_image_filename(PuzzleSolver.PaikinTal, image_files, filename_descriptor,
+        filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
                                               Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type, timestamp,
                                               orig_img_filename=orig_img_filename, puzzle_id=puzzle_id_filename)
         new_puzzle.save_to_file(filename)
 
         # Save the segmented file image
         filename_descriptor = "segmented"
-        segment_filename = Puzzle.make_image_filename(PuzzleSolver.PaikinTal, image_files, filename_descriptor,
+        segment_filename = Puzzle.make_image_filename(puzzle_solver_type, image_files, filename_descriptor,
                                                       Puzzle.OUTPUT_IMAGE_DIRECTORY, paikin_tal_solver.puzzle_type,
                                                       timestamp, orig_img_filename=orig_img_filename,
                                                       puzzle_id=puzzle_id_filename)
@@ -166,18 +170,20 @@ def output_results_information_and_puzzles(image_files, paikin_tal_solver, piece
     orig_img_filename = image_files[0] if len(image_files) == 1 else None
     # Print the best buddy accuracy information
     paikin_tal_solver.best_buddy_accuracy.print_results()
-    paikin_tal_solver.best_buddy_accuracy.output_results_images(PuzzleSolver.PaikinTal, image_files, output_puzzles,
+    paikin_tal_solver.best_buddy_accuracy.output_results_images(puzzle_solver_type, image_files, output_puzzles,
                                                                 paikin_tal_solver.puzzle_type,
                                                                 timestamp, orig_img_filename=orig_img_filename)
 
     # Build the results information collection
-    results_information = PuzzleResultsCollection(pieces_partitioned_by_puzzle_id, image_files)
+    results_information = PuzzleResultsCollection(puzzle_solver_type, pieces_partitioned_by_puzzle_id, image_files)
     # Calculate and print the accuracy results
     results_information.calculate_accuracies(output_puzzles)
     # Print the results to the console
     results_information.print_results()
     # Print the results as image files
-    results_information.output_results_images(image_files, output_puzzles, paikin_tal_solver.puzzle_type, timestamp)
+    results_information.output_results_images(puzzle_solver_type, image_files, output_puzzles,
+                                              paikin_tal_solver.puzzle_type, timestamp)
+    results_information.save_results_to_file()
 
 
 if __name__ == "__main__":
