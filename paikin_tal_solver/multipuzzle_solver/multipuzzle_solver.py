@@ -13,7 +13,7 @@ from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleSolver
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
 from hierarchical_clustering import HierarchicalClustering
-from paikin_tal_solver.solver import PaikinTalSolver
+from paikin_tal_solver.paikin_tal_solver import PaikinTalSolver
 
 
 class StitchingPieceInfo(object):

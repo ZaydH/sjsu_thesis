@@ -7,6 +7,7 @@ import cStringIO
 import heapq
 import logging
 import time
+import copy
 
 import numpy as np
 
@@ -18,7 +19,7 @@ from hammoudeh_puzzle.puzzle_piece import PuzzlePieceRotation, PuzzlePieceSide, 
 from hammoudeh_puzzle.puzzle_segment import PuzzleSegment, SegmentColor
 from hammoudeh_puzzle.solver_helper import NextPieceToPlace, PuzzleLocation, NeighborSidePair, \
     print_elapsed_time
-from paikin_tal_solver.inter_piece_distance import InterPieceDistance
+from inter_piece_distance import InterPieceDistance
 
 
 class BestBuddyPoolInfo(object):
@@ -647,12 +648,12 @@ class PaikinTalSolver(object):
         else:
             logging.debug("Need to recalculate the compatibilities.  Number of pieces left: "
                           + str(self._numb_unplaced_valid_pieces) + "\n")
-            #
-            # piece_placed_with_open_neighbor = [False] * len(self._pieces)
-            # for open_location in self._open_locations:
-            #     piece_placed_with_open_neighbor[open_location.piece_id] = True
+
+            valid_to_place_or_open_slot_pieces = copy.copy(self._piece_valid_for_placement)
+            for open_location in self._open_locations:
+                valid_to_place_or_open_slot_pieces[open_location.piece_id] = True
             # Recalculate the inter-piece distances
-            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(self._piece_valid_for_placement)
+            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(valid_to_place_or_open_slot_pieces)
 
             # Get all unplaced pieces
             unplaced_pieces = []

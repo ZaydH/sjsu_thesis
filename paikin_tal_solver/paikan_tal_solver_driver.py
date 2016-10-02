@@ -13,7 +13,7 @@ from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PuzzleSolver
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
 from hammoudeh_puzzle.solver_helper import print_elapsed_time
-from paikin_tal_solver.solver import PaikinTalSolver
+from paikin_tal_solver.paikin_tal_solver import PaikinTalSolver
 
 # Select whether to display the images after reconstruction
 DISPLAY_IMAGES = False
