@@ -60,7 +60,7 @@ def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous
         run_multipuzzle_solver_driver(image_filenames, PUZZLE_TYPE, PIECE_WIDTH)
         run_paikin_tal_driver(image_filenames, PUZZLE_TYPE, PIECE_WIDTH)
 
-        puzzle_id_list = _increment_puzzle_id_list(puzzle_id_list, maximum_image_number)
+        puzzle_id_list = increment_puzzle_id_list(puzzle_id_list, maximum_image_number)
         # Make the tracking file.
         _write_progress_file(progress_filename, puzzle_id_list)
 
@@ -78,7 +78,7 @@ def _build_progress_filename(dataset_name, numb_simultaneous_puzzles):
     return _PROGRESS_TRACKING_FOLDER + dataset_name + "_numb_puzzles_" + str(numb_simultaneous_puzzles) + ".csv"
 
 
-def _increment_puzzle_id_list(puzzle_id_list, maximum_puzzle_id_number):
+def increment_puzzle_id_list(puzzle_id_list, maximum_puzzle_id_number):
     """
     Manages incrementing the list of puzzle identification number to cover all possible puzzle combinations.
 
@@ -89,30 +89,34 @@ def _increment_puzzle_id_list(puzzle_id_list, maximum_puzzle_id_number):
     Returns (List[int]): Incremented puzzle IDs.
     """
 
-    increment_previous = True
-    index_to_increment = len(puzzle_id_list)
-
-    # Increments puzzle identification numbers as necessary
-    while increment_previous:
-        # Go to previous puzzle
-        index_to_increment -= 1
-        increment_previous = False
-
-        # Increment puzzle id
-        puzzle_id_list[index_to_increment] += 1
-
-        # This is needed because only last index actually reaches max index.  Previous ones are offset from that
-        # since we are doing combinations.
-        max_id_offset = len(puzzle_id_list) - index_to_increment - 1
-        # Check for overflow
-        if puzzle_id_list[index_to_increment] > maximum_puzzle_id_number - max_id_offset:
-            if index_to_increment > 0:
-                puzzle_id_list[index_to_increment] = puzzle_id_list[index_to_increment - 1] + 2
-                increment_previous = True              # Prepare for next puzzle getting incremented
-            else:
-                puzzle_id_list[index_to_increment] += 1
-
+    index_to_increment = len(puzzle_id_list) - 1
+    _increment_previous_id(puzzle_id_list, index_to_increment, maximum_puzzle_id_number)
     return puzzle_id_list
+
+def _increment_previous_id(puzzle_id_list, index_to_increment, maximum_puzzle_id_number):
+    """
+    Recursive approach to increment puzzle identification numbers.  Handles the actual recursion.
+
+    All modifications are done in place.
+
+    Args:
+        puzzle_id_list (List[int)): List of identification numbers passed to the puzzle for solving.
+        index_to_increment (int): Index of the puzzle identification number to be incremented in this function call.
+        maximum_puzzle_id_number (int): Maximum puzzle identification number
+    """
+    puzzle_id_list[index_to_increment] += 1
+
+    if index_to_increment == 0:
+        return
+
+    # This is needed because only last index actually reaches max index.  Previous ones are offset from that
+    # since we are doing combinations.
+    max_id_offset = len(puzzle_id_list) - index_to_increment - 1
+    if puzzle_id_list[index_to_increment] > maximum_puzzle_id_number - max_id_offset:
+        # Recurse and increment previous then come back up the stack
+        _increment_previous_id(puzzle_id_list, index_to_increment - 1, maximum_puzzle_id_number)
+        puzzle_id_list[index_to_increment] = puzzle_id_list[index_to_increment - 1] + 1
+    return
 
 
 def _write_progress_file(progress_filename, puzzle_id_list):
