@@ -14,17 +14,28 @@ PIECE_WIDTH = 28  # pixels
 
 
 def run_comparison_driver():
-    _perform_single_puzzle_solving()
+    """
+    Primary function used by the comparison driver. It runs all of the planned comparison tests.
+    """
+    for numb_simultaneous_puzzles in [1, 2]:
+        _perform_805_piece_comparison_puzzle_solving("805_piece_bgu", numb_simultaneous_puzzles,
+                                                     config.MINIMUM_805_PIECE_IMAGE_NUMBER,
+                                                     config.MAXIMUM_805_PIECE_IMAGE_NUMBER,
+                                                     config.build_805_piece_filename)
 
 
 def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous_puzzles, minimum_image_number,
                                                  maximum_image_number, build_image_filename_function):
     """
-    Runs all possible combinations of the Paikin and Tal solver of the specified size.  This uses the 805 piece data
-    set from Ben Gurion University.
+    Runs all possible combinations of the Paikin and Tal solver of the specified size.  The dataset selected is fully
+    configurable and can support arbitrary numbers of puzzles simultaneously.
 
     Args:
-        numb_simultaneous_puzzles (int): Number of images to be supplied to the solver.s
+        dataset_name (str): Unique name for the dataset to be used to create the progress tracking file.
+        numb_simultaneous_puzzles (int): Number of puzzles that will be analyzed simultaneously by the solver
+        minimum_image_number (int): Minimum number (inclusive) for images in the dataset
+        maximum_image_number (int): Maximum number (inclusive) for images in the dataset
+        build_image_filename_function: Function used to get the name of the image file from the image number
     """
     if numb_simultaneous_puzzles < 1:
         raise ValueError("The number of simultaneous puzzle to solve must be greater than or equal to 1."
@@ -32,12 +43,11 @@ def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous
     if maximum_image_number < minimum_image_number:
         raise ValueError("The maximum image number is less than the minimum image number.")
 
-    if numb_simultaneous_puzzles < maximum_image_number - minimum_image_number + 1:
+    if numb_simultaneous_puzzles > maximum_image_number - minimum_image_number + 1:
         raise ValueError("The number of simultaneous images exceeds the specified size of the dataset.")
 
     # Run single puzzle solver
     while True:
-
         progress_filename = _build_progress_filename(dataset_name, numb_simultaneous_puzzles)
 
         # If file does not exist, then create the list of images
