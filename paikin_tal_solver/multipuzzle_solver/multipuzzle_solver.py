@@ -192,12 +192,12 @@ class MultiPuzzleSolver(object):
     _POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR = "post_select_starting_pieces"
 
     # Pickle Related variables
-    _ALLOW_POST_SEGMENTATION_PLACEMENT_PICKLE_EXPORT = False
-    _ALLOW_POST_SEGMENTATION_ROUND_PICKLE_EXPORT = False
-    _ALLOW_POST_SEGMENTATION_COMPLETED_PICKLE_EXPORT = False
-    _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = False
-    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = False
-    _ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT = False
+    _ALLOW_POST_SEGMENTATION_PLACEMENT_PICKLE_EXPORT = True
+    _ALLOW_POST_SEGMENTATION_ROUND_PICKLE_EXPORT = True
+    _ALLOW_POST_SEGMENTATION_COMPLETED_PICKLE_EXPORT = True
+    _ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT = True
+    _ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT = True
+    _ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT = True
     _ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT = False
 
     def __init__(self, image_filenames, pieces, distance_function, puzzle_type):
@@ -225,7 +225,8 @@ class MultiPuzzleSolver(object):
         self._numb_segmentation_rounds = None
 
         # Build the Paikin Tal Solver
-        self._paikin_tal_solver = PaikinTalSolver(pieces, distance_function, puzzle_type=puzzle_type)
+        self._paikin_tal_solver = PaikinTalSolver(pieces, distance_function, puzzle_type=puzzle_type,
+                                                  image_filenames=self._image_filenames)
 
         # Input to the hierarchical clustering algorithm.
         self._asymmetric_overlap_matrix = None
