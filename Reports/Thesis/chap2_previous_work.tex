@@ -1,0 +1,29 @@
+\chapter{Previous Work}\label{chap:previous_work}
+
+Computational jigsaw puzzle solvers have been studied since the 1960s when Freeman \& Gardner proposed a solver that relied only on piece shape and could puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
+
+Cho \textit{et al.} \cite{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s),'' which are pieces whose position is fixed in the correct location before the solver began.  Cho \textit{et al.}'s solver required that the user specify the puzzle's actual dimensions.  Future solvers would improve on Cho \textit{et al.}'s results while simultaneously reducing the amount of information (beyond the set of pieces) passed to the solver.
+
+A significant contribution of Cho \textit{et al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels.  LAB was selected due to its property of normalizing the lightness and color variation across all three pixel dimensions.  Cho \textit{et al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work (see Section~\ref{sec:piecePairwiseAffinity}).  
+
+Pomeranz \textit{et al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et al.} also generalized and improved on Cho \textit{et al.}'s piece pairwise distance measure by proposing a ``predictive distance measure.''  Finally, Pomeranz \textit{et al.} introduced the concept of ``best buddies,'' which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
+
+An additional key contribution of Pomeranz \textit{et al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images; the sizes of the images in the second and third benchmarks are 2,360 and 3,300 pieces respectively.
+
+In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles into four primary types.  The following is Gallagher's proposed terminology; his nomenclature is used throughout this thesis.
+
+\begin{itemize}
+
+	\item \textbf{Type~1 Puzzle}: The dimensions of the puzzle (i.e., the width and height of the ground-truth image in number of pixels) is known.  The orientation of each piece is also known, which means that there are exactly four pairwise relationships between any two pieces.  A single anchor piece, with a known, correct, location is required with additional anchor pieces being optional.  This type of puzzle is used by \cite{cho2010, pomeranz2011}.
+	
+	\item \textbf{Type~2 Puzzle}: This is an extension of a Type~1 puzzle, where pieces may be rotated in \numbwithdegreesymbol{90} increments (e.g., \numbwithdegreesymbol{0}, \numbwithdegreesymbol{90}, \numbwithdegreesymbol{180}, or \numbwithdegreesymbol{270}); in comparison to a Type~1 puzzle, this change alone increases the number of possible solutions by a factor of $4^n$, where $n$ is the number of puzzle pieces.  What is more, no piece locations are known in advance; this change eliminates the use of anchor piece(s).  Lastly, the dimensions of the ground-truth image may be unknown.
+	
+	\item \textbf{Type 3 Puzzle}: All puzzle piece locations are known and only the rotation of the pieces is unknown.  This is the least computationally complex of the puzzle variants and is generally considered the least interesting.  Type 3 puzzles are not explored as part of this thesis.
+	
+	\item \textbf{Mixed-Bag Puzzles}: The input set of pieces are from multiple puzzles, or there are extra pieces in the input set that belong to no puzzle.  The solver may output either a single, merged puzzle, or it may separate the input pieces into disjoint sets that ideally align the set of ground-truth puzzles.  This type of puzzle is the primary focus of this thesis.
+
+\end{itemize}
+
+Sholomon \textit{et al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type~1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et al.}, Sholomon \textit{et al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et al.} defined three new large image (e.g., 5,015, 10,375, and 22,834 piece) benchmarks \cite{sholomonBenchmarkImages}.
+
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support solving Mixed-Bag Puzzles. Paikin \& Tal's algorithm is used as the basis for much of this thesis and is discussed in significant depth in Section~\ref{sec:paikinTalSolver}.
