@@ -805,7 +805,7 @@ class MultiPuzzleSolver(object):
                     pieces_per_input_puzzle[original_puzzle_id] += 1
 
             # Print the number of pieces from each puzzle.
-            print >> string_io, ("\tCluster #%d contains segments: " + segment_list) % cluster.id_number
+            print >> string_io, ("\tCluster #%d contains segment(s): " + segment_list) % cluster.id_number
             for puzzle_id in xrange(0, len(self._image_filenames)):
                 print >> string_io, "\t\tPuzzle #%d Piece Count: %d" % (puzzle_id, pieces_per_input_puzzle[puzzle_id])
             print >> string_io, ""

@@ -1,0 +1,2 @@
+python solver_comparison_driver.py
+pause

@@ -171,7 +171,8 @@ class HierarchicalClustering(object):
         # Get the minimum and maximum index
         [min_index, second_index] = sorted([first_cluster_id, second_cluster_id])
 
-        logging.info("Merging clusters #%d and #%d together." % (min_index, second_index))
+        logging.info("Merging clusters #%d and #%d together." % (clusters[min_index].id_number,
+                                                                 clusters[second_index].id_number))
 
         # Build the merged cluster.
         clusters[min_index] = SegmentCluster.merge_clusters(clusters[first_cluster_id], clusters[second_cluster_id],
