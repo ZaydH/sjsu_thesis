@@ -112,54 +112,13 @@ if __name__ == "__main__":
     # Select the files to parse
 
     # # PaikinTalSolver.use_best_buddy_placer = False
-    images = ["muffins_300x200.jpg"]
-    run_paikin_tal_driver(images, PuzzleType.type1, 25)
+    # images = ["muffins_300x200.jpg"]
+    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = [config.build_805_piece_filename(2)]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # PaikinTalSolver.use_best_buddy_placer = True
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["duck.bmp"]
-    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
-    # images = ["cat_sleeping_boy.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type1, config.DEFAULT_PIECE_WIDTH)
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = ["kitten_white_background.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = [["book_tunnel_pixabay.jpg"],
-    #           ["dessert_pixabay.jpg"],
-    #           ["dandelion_pixabay.jpg"],
-    #           ["primula_pixabay.jpg"],
-    #           ["small_pink_flowers_pixabay.jpg"]]
-    # for image_arr in images:
-    #     run_paikin_tal_driver(image_arr, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = ["two_faced_cat.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
-    # run_paikin_tal_driver(images, PuzzleType.type2, 25)
-    # images = ["7.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["mcgill_20.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["7.jpg", "mcgill_20.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["mcgill_20.jpg", "two_faced_cat.jpg", "muffins_300x200.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type1, config.DEFAULT_PIECE_WIDTH)
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["mcgill_03.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["bgu_805_08.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["bgu_805_10.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["3300_1.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # images = ["boat_100x100.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type2, 25)
-    # images = ["che_100x100.jpg"]
-    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
-    # run_paikin_tal_driver(images, PuzzleType.type2, 25)
     #
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
@@ -167,12 +126,12 @@ if __name__ == "__main__":
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # # # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # # # # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
