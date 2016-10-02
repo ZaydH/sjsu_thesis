@@ -18,7 +18,6 @@ from paikin_tal_solver.solver import PaikinTalSolver
 # Select whether to display the images after reconstruction
 DISPLAY_IMAGES = False
 DEFAULT_PUZZLE_TYPE = PuzzleType.type2
-DEFAULT_PUZZLE_PIECE_WIDTH = 28
 
 # Criteria for modifying the low
 FORCE_RECALCULATE_DISTANCES = False
@@ -29,7 +28,7 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
 
 
-def paikin_tal_driver(img_files, puzzle_type=None, piece_width=None):
+def paikin_tal_driver(img_files, puzzle_type, piece_width):
     """
     Runs the Paikin and Tal image solver.
 
@@ -41,10 +40,6 @@ def paikin_tal_driver(img_files, puzzle_type=None, piece_width=None):
 
     image_filenames = config.add_image_folder_path(img_files)
 
-    # Define the variables needed through the driver
-    local_puzzle_type = puzzle_type if puzzle_type is not None else DEFAULT_PUZZLE_TYPE
-    local_piece_width = piece_width if piece_width is not None else DEFAULT_PUZZLE_PIECE_WIDTH
-
     # Print the names of the images being solved:
     logging.info("Standard Paikin & Tal Driver")
     puzzle_importer.log_puzzle_filenames(image_filenames)
@@ -52,9 +47,9 @@ def paikin_tal_driver(img_files, puzzle_type=None, piece_width=None):
     # When skipping placement, simply import the solved results.
     if SKIP_PLACEMENT:
         paikin_tal_solver = PaikinTalSolver.pickle_import_after_standard_run_placement(image_filenames,
-                                                                                       local_puzzle_type)
+                                                                                       puzzle_type)
     else:
-        paikin_tal_solver = run_paikin_tal_solver(image_filenames, local_puzzle_type, local_piece_width)
+        paikin_tal_solver = run_paikin_tal_solver(image_filenames, puzzle_type, piece_width)
 
     # Get the results
     paikin_tal_solver.segment(color_segments=True)

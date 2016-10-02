@@ -10,8 +10,8 @@ IMAGE_DIRECTORY = '.\\images\\'
 RESULTS_FILE = '.\\results.csv'
 
 NUMBER_805_PIECE_PUZZLES = 20
-_MIN_805_PIECE_IMAGE_NUMBER = 1
-_MAX_805_PIECE_IMAGE_NUMBER = _MIN_805_PIECE_IMAGE_NUMBER + NUMBER_805_PIECE_PUZZLES - 20
+MINIMUM_805_PIECE_IMAGE_NUMBER = 1
+MAXIMUM_805_PIECE_IMAGE_NUMBER = MINIMUM_805_PIECE_IMAGE_NUMBER + NUMBER_805_PIECE_PUZZLES - 20
 _DIRECTORY_805_PIECE_IMAGES = "805_pieces\\"
 _IMAGE_FILE_EXTENSION_805_PIECE_IMAGES = ".jpg"
 
@@ -56,7 +56,7 @@ def get_random_805_piece_image():
 
     Returns (str): File path to a random 805 piece image.
     """
-    rand_img_numb = random.randint(_MIN_805_PIECE_IMAGE_NUMBER, _MAX_805_PIECE_IMAGE_NUMBER)
+    rand_img_numb = random.randint(MINIMUM_805_PIECE_IMAGE_NUMBER, MAXIMUM_805_PIECE_IMAGE_NUMBER)
     return build_805_piece_filename(rand_img_numb)
 
 
@@ -72,7 +72,7 @@ def build_805_piece_filename(image_number):
     if not isinstance(image_number, int):
         raise ValueError("Image number must be an integer.")
 
-    if image_number < _MIN_805_PIECE_IMAGE_NUMBER or image_number > _MAX_805_PIECE_IMAGE_NUMBER:
+    if image_number < MINIMUM_805_PIECE_IMAGE_NUMBER or image_number > MAXIMUM_805_PIECE_IMAGE_NUMBER:
         raise ValueError("Invalid 805 piece image number")
 
     return _DIRECTORY_805_PIECE_IMAGES + str(image_number) + _IMAGE_FILE_EXTENSION_805_PIECE_IMAGES
