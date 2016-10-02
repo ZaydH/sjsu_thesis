@@ -1015,7 +1015,7 @@ my {\@worktype} for scholarly purposes.
 \noindent A \projectType\\ %\MakeUppercase{\@worktype}
 Presented to\\
 The Faculty of the Department of Computer Science\\
-San Jose Stat\'{e} University\\
+San Jos\'{e} State University\\
 }
 \end{center}
 
@@ -1070,7 +1070,7 @@ by\\
 \vspace{24pt}
 APPROVED FOR THE DEPARTMENT OF COMPUTER SCIENCE\\ %\vspace{-1.0em}\\
 \vspace{24pt}
-SAN JOSE STATE UNIVERSITY\\
+SAN JOSE STAT\'{E} UNIVERSITY\\
 \vspace{24pt}
 \graduationMonth\ {\@copyrightyear}\\
 \end{center}

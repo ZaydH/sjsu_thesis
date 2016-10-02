@@ -4,7 +4,7 @@ Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-
 
 In the final subsection, tools developed as part of this thesis to visualize the solver output quality are discussed.
 
-\subsection{Direct Accuracy}\label{sec:directAccuracy}
+\section{Direct Accuracy}\label{sec:directAccuracy}
 
 Direct accuracy is a relatively na\"{\i}ve quality; it is defined as the fraction of pieces placed in the same location in the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in their original (i.e., correct) location.
 
@@ -16,7 +16,7 @@ Direct accuracy is vulnerable to shifts in the solved image where even a few mis
 
 This thesis proposes two new direct accuracy metrics namely: Enhanced Direct Accuracy Score (EDAS) and Shiftable Enhanced Direct Accuracy Score (SEDAS).  They are described in the following two subsections; the complementary relationship between EDAS and SEDAS is described in the third subsection.
 
-\subsubsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
+\subsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
 
 The standard direct accuracy metric does not account for the possibility that there may be pieces from multiple puzzles in the same solver output.  For a given a puzzle $P_i$ in the set of input puzzles $P$ (where $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is in $S$, Enhanced Direct Accuracy Score (EDAS) is defined as shown in Equation~\eref{eq:enhancedDirectAccuracyScore}.
 
@@ -31,13 +31,14 @@ When solving only a single puzzle, EDAS and standard direct accuracy as defined 
 
 It is important to note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator of Equation~\eref{eq:enhancedDirectAccuracyScore} is greater than or equal to the number of pieces in both $P_i$ and $S_j$.
 
-\subsubsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
+\subsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
 
 As mentioned previously, the direct accuracy decreases if there are shifts in the solved image.  In many cases such, direct accuracy is overly punitive. 
 
 Figure~\ref{fig:directAccuracyOnePieceEffect} shows a ground-truth image and an actual solver output when the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this shifted all other pieces to the right one location causing the direct accuracy to drop to zero.  Had this same piece been misplaced along either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy has a serious flaw.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of direct accuracy. 
 
 \begin{figure}
+\centering
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
 	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=50.1mm]{./images/muffins_300x200_type1}}
 	\\ ~\\
@@ -59,11 +60,11 @@ In the standard definition of direct accuracy proposed by Cho \textit{et al.}, $
 
 Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can be significantly more computationally complex in particular in large puzzles with several thousand pieces.  Hence, this thesis' approach balances finding a meaningful direct accuracy score with computational efficiency.
 
-\subsubsection{The Necessity to Use Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
+\subsection{The Necessity to Use Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
 While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set $L$.  Hence, there is no additional time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, some shifts in the solved image may be quantified; this would not be possible if SEDAS was used alone.
 
-\subsection{Neighbor Accuracy}\label{sec:neighborAccuracy}
+\section{Neighbor Accuracy}\label{sec:neighborAccuracy}
 
 Cho \textit{et al.} \cite{cho2010} defined neighbor accuracy as the ratio of the number of puzzle piece sides adjacent to the same piece's side in both the ground-truth and solved image versus the total number of puzzle piece sides.  Formally, let $q$ be the number of sides each piece has (i.e., four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
 
@@ -73,7 +74,7 @@ NA = \frac{a}{n~q}
 
 Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the solved image since it considers only a piece's neighbors and not its absolute location.  However, the standard definition of neighbor accuracy cannot encompass the case where pieces from multiple input puzzles may be present in the same solver output.  
 
-\subsubsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
+\subsection{Enhanced Neighbor Accuracy Score}\label{sec:enhancedNeighborAccuracyScore}
 
 Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric by providing a framework to quantify the quality of Mixed-Bag solver outputs. 
 
@@ -85,7 +86,7 @@ Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}
 
 In the same fashion as the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including a summation of all $m_{k,j}$ in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and misplaced pieces.
 
-\subsection{Visualizing Solver Output Quality}\label{sec:visualizingSolverAccuracy}
+\section{Visualizing Solver Output Quality}\label{sec:visualizingSolverAccuracy}
 
 In images with thousands of pieces, it is often difficult to visually determine the location of individual pieces that are incorrectly placed.  What is more, visual tools help developers quickly detect and fix latent bugs.
 
@@ -95,9 +96,9 @@ The following two subsections describe the tools developed as part of this thesi
 
 In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a single value (i.e., correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a square filled with a solid color.  One additional refinement used in this thesis is to subdivide the ``incorrect'' placements into a set of subcategories; they are (in order of precedence): wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
 
-\begin{table}[h]
+\begin{table}[htb]
 	\begin{center}
-  		\begin{tabular}{ | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | }
+  		\begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
     		Wrong Puzzle & Wrong Location & Wrong Rotation & Correct Location  & No Piece Present  \\ \hline
 			{\cellcolor{blue}~} & {\cellcolor{red}~}  & {\cellcolor{orange}~}  & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
@@ -112,7 +113,6 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along 
 
 \begin{figure}
 \centering
-
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
   
 	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type2}} \\~\\
@@ -127,13 +127,13 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along 
 \label{fig:directAccuracyVisualization}
 \end{figure}
 
-\subsubsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
+\subsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
 The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies where each puzzle piece is divided into four equal-sized isosceles triangles (one for each side).  The triangles are assigned colors depending on whether their neighbors in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving Mixed-Big puzzles and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classifications of puzzle piece sides in neighbor accuracy visualizations.
 
-\begin{table}[h]
+\begin{table}[htb]
 \begin{center}
-  \begin{tabular}{ | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | >{\centering\arraybackslash}m{0.6in} | }
+  \begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
     Wrong Puzzle & Wrong Neighbor & Correct Neighbor  & No Piece Present  \\ \hline
 	{\cellcolor{blue}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
