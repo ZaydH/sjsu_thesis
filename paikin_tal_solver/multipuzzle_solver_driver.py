@@ -121,35 +121,32 @@ if __name__ == "__main__":
     # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
     # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
 
-    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["805_pieces//9.jpg", "805_pieces//10.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["805_pieces//5.jpg", "805_pieces//20.jpg", "805_pieces//1.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # This has issues in reconstruction.
-    images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
+    images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//9.jpg", "805_pieces//10.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//5.jpg", "805_pieces//20.jpg", "805_pieces//1.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    # # This has issues in reconstruction.
+    # images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     test_random_mcgill()
