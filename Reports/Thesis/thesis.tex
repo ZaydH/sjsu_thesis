@@ -9,14 +9,31 @@
 \usepackage{amsmath,amsthm, amsfonts, amssymb, amsxtra,amsopn}
 \usepackage{graphicx}
 \usepackage{multirow}
-\usepackage{algorithmic}
+%\usepackage{algorithmic}
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{cmap}
 \PassOptionsToPackage{hyphens}{url}
-\usepackage{hyperref}
-\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black,filecolor=black}
+\usepackage{xcolor, colortbl} % Used for coloring the cells of tables
+\usepackage{amsmath}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp} % Required for upquote.
+\usepackage{listings} % Used for printing source code in papers
+\usepackage{microtype}
+
+\usepackage{algorithm} % Used for writing algorithms in a paper
+\usepackage[noend]{algpseudocode} % Allows psuedocode keywords (e.g., "if", "while", "for", etc.) in algorithms.
+
+
+\usepackage{mdframed}
+\usepackage{array} % Needed for centering in the table
+\usepackage[export]{adjustbox} % loads also graphicx
+\usepackage{graphicx}
+
+\usepackage{hyperref} % Creates links in the PDF document.
+\hypersetup{hidelinks} % Do not include boxes around links
+
 \usepackage[T1]{fontenc}
 \usepackage[tableposition=top]{caption}
 % Top=1.25 inches - 0.05 inches for the header.
@@ -29,6 +46,8 @@
 \usepackage{microtype}
 \DisableLigatures{encoding = *, family = * }
 
+\DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
+\newcommand{\ENAS}{\mbox{\textit{ENAS}}}
 \newcommand{\numbwithdegreesymbol}[1]{#1$^\circ$}
 
 % no limit on percentage of floats per page
@@ -114,12 +133,14 @@
 %
 \newchapter{chap1_intro}
 \newchapter{chap2_previous_work}
-\newchapter{chap3}
+\newchapter{chap3_solver_overview}
+\newchapter{chap4_quantify_quality}
 
 %
 % ***** bibliography/references in file bib.tex
 %
-\input bib.tex
+%\input bib.tex
+\reffile{../references}
 
 %
 % ***** appendices in appA.tex, appB.tex, ...
