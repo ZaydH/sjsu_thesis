@@ -28,7 +28,7 @@ USE_KNOWN_PUZZLE_DIMENSIONS = False
 _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
 
 
-def paikin_tal_driver(img_files, puzzle_type, piece_width):
+def run_paikin_tal_driver(img_files, puzzle_type, piece_width):
     """
     Runs the Paikin and Tal image solver.
 
@@ -113,19 +113,19 @@ if __name__ == "__main__":
 
     # # PaikinTalSolver.use_best_buddy_placer = False
     images = ["muffins_300x200.jpg"]
-    paikin_tal_driver(images, PuzzleType.type1, 25)
-    paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    run_paikin_tal_driver(images, PuzzleType.type1, 25)
+    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # PaikinTalSolver.use_best_buddy_placer = True
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["duck.bmp"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
     # images = ["cat_sleeping_boy.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, config.DEFAULT_PIECE_WIDTH)
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type1, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = ["kitten_white_background.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = [["book_tunnel_pixabay.jpg"],
     #           ["dessert_pixabay.jpg"],
@@ -133,64 +133,64 @@ if __name__ == "__main__":
     #           ["primula_pixabay.jpg"],
     #           ["small_pink_flowers_pixabay.jpg"]]
     # for image_arr in images:
-    #     paikin_tal_driver(image_arr, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #     run_paikin_tal_driver(image_arr, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = ["two_faced_cat.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = ["7.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["mcgill_20.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["7.jpg", "mcgill_20.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["mcgill_20.jpg", "two_faced_cat.jpg", "muffins_300x200.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, config.DEFAULT_PIECE_WIDTH)
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type1, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["mcgill_03.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["bgu_805_08.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["bgu_805_10.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["3300_1.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # images = ["boat_100x100.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type2, 25)
     # images = ["che_100x100.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type1, 25)
-    # paikin_tal_driver(images, PuzzleType.type2, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type1, 25)
+    # run_paikin_tal_driver(images, PuzzleType.type2, 25)
     #
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # # # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = False
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = False
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    # paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
