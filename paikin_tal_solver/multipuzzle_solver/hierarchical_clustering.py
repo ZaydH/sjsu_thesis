@@ -1,4 +1,5 @@
 import copy
+import logging
 
 import sys
 
@@ -170,6 +171,8 @@ class HierarchicalClustering(object):
         # Get the minimum and maximum index
         [min_index, second_index] = sorted([first_cluster_id, second_cluster_id])
 
+        logging.info("Merging clusters #%d and #%d together." % (min_index, second_index))
+
         # Build the merged cluster.
         clusters[min_index] = SegmentCluster.merge_clusters(clusters[first_cluster_id], clusters[second_cluster_id],
                                                             similarity_matrix[min_index, second_index])
@@ -205,8 +208,8 @@ class HierarchicalClustering(object):
                                                                                           last_cluster_id,
                                                                                           other_cluster_id)
             # Use second index as the destination since folding the matrix
-            HierarchicalClustering._update_intercluster_similarity(similarity_matrix, first_cluster_id,
-                                                                   second_index, intercluster_similarity)
+            HierarchicalClustering._update_intercluster_similarity(similarity_matrix, second_index,
+                                                                   other_cluster_id, intercluster_similarity)
 
         # Remove the last cluster
         return clusters[:last_cluster_id], similarity_matrix[:last_cluster_id, :last_cluster_id]

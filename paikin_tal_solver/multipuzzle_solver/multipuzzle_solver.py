@@ -313,7 +313,6 @@ class MultiPuzzleSolver(object):
             if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE:
                 self._save_single_solved_puzzle_to_file(self._numb_segmentation_rounds)
 
-            logging.info("Beginning segmentation round #%d" % self._numb_segmentation_rounds)
             solver_helper.print_elapsed_time(time_segmentation_round_began,
                                              "segmentation round #%d" % self._numb_segmentation_rounds)
 

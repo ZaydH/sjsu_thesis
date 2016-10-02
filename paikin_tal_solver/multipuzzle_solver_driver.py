@@ -2,8 +2,6 @@ import logging
 import os
 import random
 
-import time
-
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle.pickle_helper import PickleHelper
@@ -74,8 +72,6 @@ def test_random_mcgill():
     """
 
     # Improve the seed quality
-    random.seed(time.time())
-
     while True:
         # Get a number of puzzles
         minimum_numb_puzzles = 2
@@ -85,11 +81,9 @@ def test_random_mcgill():
         logging.info("Number of 805 Piece Input Puzzles: %d" % numb_puzzles)
 
         # Build the puzzle list
-        DIRECTORY_805_PIECE_IMAGES = "805_pieces//"
-        IMAGE_FILE_EXTENSION = ".jpg"
         images_file_list = []
         while len(images_file_list) < numb_puzzles:
-            filename = DIRECTORY_805_PIECE_IMAGES + str(random.randint(1, 20)) + IMAGE_FILE_EXTENSION
+            filename = config.get_random_805_piece_image()
             # Ensure no duplicate puzzles
             if filename not in images_file_list:
                 images_file_list.append(filename)
@@ -105,10 +99,11 @@ if __name__ == "__main__":
     #
     # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # MultiPuzzleSolver.run_imported_final_puzzle_solving(images, PuzzleType.type2)
 
-    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
+    # MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, segmentation_round_numb=1)
     #
     # test_random_mcgill()
@@ -134,7 +129,7 @@ if __name__ == "__main__":
 
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
+    #
     # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
@@ -152,8 +147,9 @@ if __name__ == "__main__":
     #
     # images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    #
-    # images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
-    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    # This has issues in reconstruction.
+    images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
+    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     test_random_mcgill()
