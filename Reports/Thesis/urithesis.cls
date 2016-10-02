@@ -1116,7 +1116,7 @@ SAN JOSE STATE UNIVERSITY\\
 \def\acknowledgementpage{\@ifundefined{@acknowledgements}{}{
   \newpage
   \pagestyle{plain}
-  \chapter*{ACKNOWLEDGMENTS}
+  \chapter*{DEDICATION}
 %  \addcontentsline{toc}{chapterx}{ACKNOWLEDGMENTS}
   \input{\@acknowledgements}
 }}
