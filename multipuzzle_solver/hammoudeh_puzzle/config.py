@@ -77,7 +77,8 @@ def build_bgu_805_piece_filename(image_number):
     if image_number < MINIMUM_BGU_805_PIECE_IMAGE_NUMBER or image_number > MAXIMUM_BGU_805_PIECE_IMAGE_NUMBER:
         raise ValueError("Invalid 805 piece image number")
 
-    return _DIRECTORY_BGU_805_PIECE_IMAGES + str(image_number) + _IMAGE_FILE_EXTENSION_BGU_805_PIECE_IMAGES
+    folder_name = _DIRECTORY_BGU_805_PIECE_IMAGES.replace(os.sep, "")
+    return _DIRECTORY_BGU_805_PIECE_IMAGES + folder_name + "_" + str(image_number) + _IMAGE_FILE_EXTENSION_BGU_805_PIECE_IMAGES
 
 
 NUMBER_MCGILL_540_PIECE_PUZZLES = 20
@@ -102,7 +103,8 @@ def build_mcgill_540_piece_filename(image_number):
     if image_number < MINIMUM_MCGILL_540_PIECE_IMAGE_NUMBER or image_number > MAXIMUM_MCGILL_540_PIECE_IMAGE_NUMBER:
         raise ValueError("Invalid 805 piece image number")
 
-    return _DIRECTORY_MCGILL_540_PIECE_IMAGES + str(image_number) + _IMAGE_FILE_EXTENSION_MCGILL_540_PIECE_IMAGES
+    folder_name = _DIRECTORY_MCGILL_540_PIECE_IMAGES.replace(os.sep, "")
+    return _DIRECTORY_MCGILL_540_PIECE_IMAGES + folder_name + "_" + str(image_number) + _IMAGE_FILE_EXTENSION_MCGILL_540_PIECE_IMAGES
 
 
 NUMBER_CHO_432_PIECE_PUZZLES = 20
@@ -127,4 +129,5 @@ def build_cho_432_piece_filename(image_number):
     if image_number < MINIMUM_CHO_432_PIECE_IMAGE_NUMBER or image_number > MAXIMUM_CHO_432_PIECE_IMAGE_NUMBER:
         raise ValueError("Invalid 805 piece image number")
 
-    return _DIRECTORY_CHO_432_PIECE_IMAGES + str(image_number) + _IMAGE_FILE_EXTENSION_CHO_432_PIECE_IMAGES
+    folder_name = _DIRECTORY_CHO_432_PIECE_IMAGES.replace(os.sep, "")
+    return _DIRECTORY_CHO_432_PIECE_IMAGES + folder_name + "_" + str(image_number) + _IMAGE_FILE_EXTENSION_CHO_432_PIECE_IMAGES

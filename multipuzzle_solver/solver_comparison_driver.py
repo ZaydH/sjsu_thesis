@@ -6,7 +6,7 @@ from hammoudeh_puzzle.puzzle_importer import PuzzleType
 from multipuzzle_solver_driver import run_multipuzzle_solver_driver
 from paikan_tal_solver_driver import run_paikin_tal_driver
 
-_PROGRESS_TRACKING_FOLDER = ".\\progress_tracker\\"
+_PROGRESS_TRACKING_FOLDER = "." + os.sep + "progress_tracker" + os.sep
 _IMAGE_ID_FILE_SEPARATOR = ","
 
 PUZZLE_TYPE = PuzzleType.type2
@@ -103,6 +103,7 @@ def increment_puzzle_id_list(puzzle_id_list, maximum_puzzle_id_number):
     _increment_previous_id(puzzle_id_list, index_to_increment, maximum_puzzle_id_number)
     return puzzle_id_list
 
+
 def _increment_previous_id(puzzle_id_list, index_to_increment, maximum_puzzle_id_number):
     """
     Recursive approach to increment puzzle identification numbers.  Handles the actual recursion.
@@ -139,11 +140,13 @@ def _write_progress_file(progress_filename, puzzle_id_list):
         progress_filename (str): Name and path of the progress file to be created.
         puzzle_id_list (List[int]): Identification of the next puzzle IDs to be run through the solver
     """
-    # Create the
+    # Create the progress file directory if needed
     progress_file_dir = os.path.dirname(progress_filename)
     if not os.path.exists(progress_file_dir):
-        logging.info("Creating progress file directory: \"progress_file_dir\"")
+        logging.info("Creating progress file directory: \"" + progress_file_dir + "\"")
         os.makedirs(progress_filename)
+
+    # Write the progress file itself.
     with open(progress_filename, 'w') as progress_file:
         for idx, puzzle_id in enumerate(puzzle_id_list):
             if idx > 0:

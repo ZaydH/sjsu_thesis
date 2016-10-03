@@ -5,12 +5,13 @@ import cStringIO
 import numpy as np
 import sys
 import logging
+import os
 
 # noinspection PyUnresolvedReferences
 import time
 
 from hammoudeh_puzzle.pickle_helper import PickleHelper
-from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PieceSideBestBuddyAccuracyResult
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PieceSideBestBuddyAccuracyResult, PuzzleSolver
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
@@ -20,9 +21,6 @@ class ImageBestBuddyStatistics(object):
     """
     Class used to get the best buddy accuracy statistics for any image.
     """
-
-    # Location to export pickle files to.
-    PICKLE_DIRECTORY = ".\\pickle_files\\"
 
     def __init__(self, image_file_path, piece_width, puzzle_type, distance_function):
 
@@ -264,7 +262,7 @@ class ImageBestBuddyStatistics(object):
         orig_img_filename = self._filename_root + "." + self._file_extension
 
         descriptor = "image_best_buddies"
-        output_filename = Puzzle.make_image_filename([orig_img_filename], descriptor,
+        output_filename = Puzzle.make_image_filename(PuzzleSolver.PaikinTal, [orig_img_filename], descriptor,
                                                      Puzzle.OUTPUT_IMAGE_DIRECTORY, self.puzzle_type,
                                                      timestamp, orig_img_filename=orig_img_filename)
         # Stores the results to a file.
@@ -282,8 +280,7 @@ def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
         puzzle_type (PuzzleType): Type of the puzzle to solve
 
     """
-
-    pickle_file = ImageBestBuddyStatistics.PICKLE_DIRECTORY + "bb_accuracy.pk"
+    pickle_file = PickleHelper.build_filename("bb_accuracy", [image_file], puzzle_type)
 
     bb_results = ImageBestBuddyStatistics(image_file, piece_width, puzzle_type,
                                           PuzzlePiece.calculate_asymmetric_distance)
@@ -297,18 +294,18 @@ def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
 
 
 if __name__ == '__main__':
-    # run_best_buddies_analyzer(".\\images\\duck.bmp", 28, PuzzleType.type2)
+    # run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "duck.bmp", 28, PuzzleType.type2)
     #
-    # run_best_buddies_analyzer(".\\images\\muffins_300x200.jpg", 28, PuzzleType.type2)
+    # run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "muffins_300x200.jpg", 28, PuzzleType.type2)
     #
-    # run_best_buddies_analyzer(".\\images\\cat_sleeping_boy.jpg", 28, PuzzleType.type2)
+    # run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "cat_sleeping_boy.jpg", 28, PuzzleType.type2)
 
-    run_best_buddies_analyzer(".\\images\\book_tunnel_pixabay.jpg", 28, PuzzleType.type2)
+    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "book_tunnel_pixabay.jpg", 28, PuzzleType.type2)
 
-    run_best_buddies_analyzer(".\\images\\dessert_pixabay.jpg", 28, PuzzleType.type2)
+    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "dessert_pixabay.jpg", 28, PuzzleType.type2)
 
-    run_best_buddies_analyzer(".\\images\\dandelion_pixabay.jpg", 28, PuzzleType.type2)
+    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "dandelion_pixabay.jpg", 28, PuzzleType.type2)
 
-    run_best_buddies_analyzer(".\\images\\primula_pixabay.jpg", 28, PuzzleType.type2)
+    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "primula_pixabay.jpg", 28, PuzzleType.type2)
 
-    run_best_buddies_analyzer(".\\images\\small_pink_flowers_pixabay.jpg", 28, PuzzleType.type2)
+    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "small_pink_flowers_pixabay.jpg", 28, PuzzleType.type2)
