@@ -123,30 +123,58 @@ if __name__ == "__main__":
 
     # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["bgu_805//2.jpg", "bgu_805//1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["bgu_805//9.jpg", "bgu_805//10.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["bgu_805//5.jpg", "bgu_805//20.jpg", "bgu_805//1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # 
+    # images = ["bgu_805//8.jpg", "bgu_805//18.jpg", "bgu_805//15.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
+    # images = [config.build_cho_432_piece_filename(18)]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = ["primula_pixabay.jpg",
+              "dandelion_pixabay.jpg",
+              config.build_mcgill_540_piece_filename(15),
+              config.build_mcgill_540_piece_filename(11),
+              config.build_cho_432_piece_filename(18),
+              config.build_bgu_805_piece_filename(8),
+              config.build_bgu_805_piece_filename(10),
+              config.build_bgu_805_piece_filename(13),
+              config.build_bgu_805_piece_filename(14),
+              config.build_bgu_805_piece_filename(19)]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//2.jpg", "805_pieces//1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//9.jpg", "805_pieces//10.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//5.jpg", "805_pieces//20.jpg", "805_pieces//1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["805_pieces//8.jpg", "805_pieces//18.jpg", "805_pieces//15.jpg"]
+    images = ["primula_pixabay.jpg",
+              "dandelion_pixabay.jpg",
+              config.build_mcgill_540_piece_filename(15),
+              config.build_mcgill_540_piece_filename(11),
+              config.build_cho_432_piece_filename(18),
+              config.build_bgu_805_piece_filename(8),
+              config.build_bgu_805_piece_filename(10),
+              config.build_bgu_805_piece_filename(13),
+              config.build_bgu_805_piece_filename(14),
+              config.build_bgu_805_piece_filename(19),
+              "3300_1.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # # This has issues in reconstruction.
-    # images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
+    # images = ["bgu_805//2.jpg", "bgu_805//13.jpg", "bgu_805//14.jpg", "bgu_805//19.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    test_random_bgu_805_pieces_images()
+    # test_random_bgu_805_pieces_images()
