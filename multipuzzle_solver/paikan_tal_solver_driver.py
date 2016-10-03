@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # run_paikin_tal_driver(images, PuzzleType.type1, 25)
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [config.build_805_piece_filename(2)]
+    images = [config.build_bgu_805_piece_filename(2)]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     #

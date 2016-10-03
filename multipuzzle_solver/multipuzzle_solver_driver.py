@@ -66,7 +66,7 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
         return multipuzzle_solver
 
 
-def test_random_mcgill():
+def test_random_bgu_805_pieces_images():
     """
     Randomly selects a set of 805 piece puzzles and runs the multipuzzle solver on them.
     """
@@ -83,7 +83,7 @@ def test_random_mcgill():
         # Build the puzzle list
         images_file_list = []
         while len(images_file_list) < numb_puzzles:
-            filename = config.get_random_805_piece_image()
+            filename = config.get_random_bgu_805_piece_image()
             # Ensure no duplicate puzzles
             if filename not in images_file_list:
                 images_file_list.append(filename)
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     # MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, segmentation_round_numb=1)
     #
-    # test_random_mcgill()
+    # test_random_bgu_805_pieces_images()
 
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
@@ -121,8 +121,8 @@ if __name__ == "__main__":
     # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
     # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
 
-    images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
@@ -149,4 +149,4 @@ if __name__ == "__main__":
     # images = ["805_pieces//2.jpg", "805_pieces//13.jpg", "805_pieces//14.jpg", "805_pieces//19.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    test_random_mcgill()
+    test_random_bgu_805_pieces_images()

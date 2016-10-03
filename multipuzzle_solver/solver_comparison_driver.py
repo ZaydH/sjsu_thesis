@@ -19,9 +19,9 @@ def run_comparison_driver():
     """
     for numb_simultaneous_puzzles in [1, 2]:
         _perform_805_piece_comparison_puzzle_solving("805_piece_bgu", numb_simultaneous_puzzles,
-                                                     config.MINIMUM_805_PIECE_IMAGE_NUMBER,
-                                                     config.MAXIMUM_805_PIECE_IMAGE_NUMBER,
-                                                     config.build_805_piece_filename)
+                                                     config.MINIMUM_BGU_805_PIECE_IMAGE_NUMBER,
+                                                     config.MAXIMUM_BGU_805_PIECE_IMAGE_NUMBER,
+                                                     config.build_bgu_805_piece_filename)
 
 
 def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous_puzzles, minimum_image_number,
