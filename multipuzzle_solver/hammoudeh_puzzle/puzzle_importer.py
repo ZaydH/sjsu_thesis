@@ -1579,7 +1579,7 @@ class Puzzle(object):
     print_debug_messages = True
 
     # Used to store the Puzzle result images.
-    OUTPUT_IMAGE_DIRECTORY = ".\\solved\\"
+    OUTPUT_IMAGE_DIRECTORY = "." + os.sep + "solved" + os.sep
 
     # DEFAULT_PIECE_WIDTH = 28  # Width of a puzzle in pixels
     DEFAULT_PIECE_WIDTH = 25  # Width of a puzzle in pixels
@@ -2500,7 +2500,7 @@ class PuzzleTester(object):
     TEST_ARRAY_FIRST_PIXEL_VALUE = 0
 
     # Get the information on the test image
-    TEST_IMAGE_FILENAME = ".\\test\\test.jpg"
+    TEST_IMAGE_FILENAME = "." + os.sep + "test" + os.sep + "test.jpg"
     TEST_IMAGE_WIDTH = 300
     TEST_IMAGE_HEIGHT = 200
 

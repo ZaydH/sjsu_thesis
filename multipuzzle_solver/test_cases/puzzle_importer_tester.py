@@ -5,6 +5,7 @@
 import math
 import random
 import unittest
+import os
 
 import numpy as np
 
@@ -386,7 +387,7 @@ class PuzzleImporterTester(unittest.TestCase):
                 dummy_puzzle.pieces[0].rotation = PuzzlePieceRotation.degree_90
 
             # Build the results information collection
-            results_information = PuzzleResultsCollection([dummy_puzzle.pieces], ".\\dummy.jpg")
+            results_information = PuzzleResultsCollection([dummy_puzzle.pieces], "." + os.sep + "dummy.jpg")
             results_information.calculate_accuracies([dummy_puzzle])
 
             # Verify the neighbor results

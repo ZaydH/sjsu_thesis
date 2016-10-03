@@ -16,7 +16,7 @@ class PickleHelper(object):
 
     _PERFORM_ASSERT_CHECKS = config.PERFORM_ASSERT_CHECKS
 
-    _PICKLE_DIRECTORY = ".\\pickle_files\\"
+    _PICKLE_DIRECTORY = "." + os.sep + "pickle_files" + os.sep
 
     @staticmethod
     def importer(filename):
