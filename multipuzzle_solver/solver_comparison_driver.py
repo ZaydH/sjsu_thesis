@@ -38,8 +38,8 @@ def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous
         build_image_filename_function: Function used to get the name of the image file from the image number
     """
     if numb_simultaneous_puzzles < 1:
-        raise ValueError("The number of simultaneous puzzle to solve must be greater than or equal to 1."
-                         )
+        raise ValueError("The number of simultaneous puzzle to solve must be greater than or equal to 1.")
+
     if maximum_image_number < minimum_image_number:
         raise ValueError("The maximum image number is less than the minimum image number.")
 
@@ -141,7 +141,7 @@ def _write_progress_file(progress_filename, puzzle_id_list):
         puzzle_id_list (List[int]): Identification of the next puzzle IDs to be run through the solver
     """
     # Create the progress file directory if needed
-    progress_file_dir = os.path.dirname(progress_filename)
+    progress_file_dir = os.path.dirname(os.path.abspath(progress_filename))
     if not os.path.exists(progress_file_dir):
         logging.info("Creating progress file directory: \"" + progress_file_dir + "\"")
         os.makedirs(progress_filename)
