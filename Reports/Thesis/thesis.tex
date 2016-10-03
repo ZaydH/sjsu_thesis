@@ -9,7 +9,8 @@
 \usepackage{amsmath,amsthm, amsfonts, amssymb, amsxtra,amsopn}
 \usepackage{graphicx}
 \usepackage{multirow}
-%\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage{longtable}
 \usepackage{booktabs}
 \usepackage{listings}
@@ -54,6 +55,8 @@
 \renewcommand{\floatpagefraction}{1.0}
 \renewcommand{\topfraction}{1.0}
 \renewcommand{\textfraction}{0.0}
+
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
 
 % eref puts parenthesis around reference, like "equation (1)"
 \def\eref#1{(\ref{#1})}
@@ -147,7 +150,7 @@
 %
 % ***** appendices in appA.tex, appB.tex, ...
 %
-%\newappendix{appA}
+\newappendix{appA_segmenter_example}
 %\newappendix{appB}
 
 
