@@ -60,7 +60,7 @@ def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous
             puzzle_id_list = [int(puzzle_id_str) for puzzle_id_str in puzzle_id_str_list]
 
         # If all images already completed, then exit.
-        if puzzle_id_list[0] > maximum_image_number - numb_simultaneous_puzzles:
+        if puzzle_id_list[0] > maximum_image_number - numb_simultaneous_puzzles + 1:
             return
 
         # Build the image file
