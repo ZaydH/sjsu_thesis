@@ -56,7 +56,9 @@
 \renewcommand{\topfraction}{1.0}
 \renewcommand{\textfraction}{0.0}
 
-\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 
 % eref puts parenthesis around reference, like "equation (1)"
 \def\eref#1{(\ref{#1})}
