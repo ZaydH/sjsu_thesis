@@ -23,6 +23,8 @@ class SegmentColor(Enum):
     Dark_Blue = (0x80, 0x0, 0x0)
     Dark_Yellow = (0x00, 0x33, 0x66)
 
+    Brown = (0x26, 0x4D, 0x73)
+
     Red = (0x0, 0x0, 0xFF)
     Blue = (0xFF, 0x0, 0x0)
     Green = (0x0, 0xFF, 0x0)
@@ -38,9 +40,10 @@ class SegmentColor(Enum):
         Returns (List[SegmentColors]): All the valid segment colors
         """
         if PuzzleSegment.USE_DISTANCE_FROM_EDGE_BASED_COLORING:
-            return [SegmentColor.Dark_Red, SegmentColor.Dark_Blue, SegmentColor.Dark_Green, SegmentColor.Dark_Yellow]
+            return [SegmentColor.Dark_Red, SegmentColor.Dark_Blue, SegmentColor.Dark_Green,
+                    SegmentColor.Dark_Yellow, SegmentColor.Brown]
         else:
-            return [SegmentColor.Red, SegmentColor.Blue, SegmentColor.Green, SegmentColor.Yellow]
+            return [SegmentColor.Red, SegmentColor.Blue, SegmentColor.Green, SegmentColor.Yellow, SegmentColor.Brown]
 
     def key(self):
         """

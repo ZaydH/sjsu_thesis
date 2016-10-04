@@ -7,7 +7,6 @@ import logging
 import math
 import os
 import random
-import time
 
 import cv2  # OpenCV
 import numpy as np
