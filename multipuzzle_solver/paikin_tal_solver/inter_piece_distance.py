@@ -518,7 +518,7 @@ class InterPieceDistance(object):
     _PERFORM_ASSERT_CHECKS = True
 
     # These are used for picking the starting piece.
-    _USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
+    _USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     _NEIGHBOR_COMPATIBILITY_SCALAR = 4  # If using only neighbors for start piece, this value does not matter if >0
 
     # Items related to multi-process computation to improve performance
