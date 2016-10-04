@@ -2,8 +2,20 @@
 
 Jigsaw puzzles were first introduced in the 1760s when they were made from wood; their name derives from the jigsaws that were used to carve the wooden pieces.   The 1930s saw the introduction of the modern jigsaw puzzle where an image was printed on a cardboard sheet that was cut into a set of interlocking pieces \cite{williams1990, williams2004}.  Although jigsaw puzzles had been solved by children for two centuries, it was not until 1964 that the first automated jigsaw puzzle solver was proposed by Freeman \& Gardner \cite{freeman1964}.  While an automated jigsaw puzzle solver may seem trivial, the problem has been shown by Altman \cite{altman1990} and Demaine \& Demaine \cite{demaine2007} to be strongly NP-complete when pairwise compatibility between pieces is not a reliable metric for determining adjacency.
 
-Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares.  Jig swap puzzles are substantially more challenging to solve since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
+Jig swap puzzles are a specific type of jigsaw puzzle where all pieces are equally sized, non-overlapping squares; an example of these puzzles is shown in Figure~\ref{fig:jigSwapExample}.  These puzzles are substantially more challenging to solve than standard jigsaw puzzles since piece shape cannot be considered when determining affinity between pieces.  Rather, only the image information on each individual piece is used when solving the puzzle.  
 
 Solving a jigsaw puzzle simplifies to reconstructing an object from a set of component pieces.  As such, techniques developed for jigsaw puzzles can be generalized to many practical problems.  Examples where jigsaw puzzle solving strategies have been used include: reassembly of archaeological artifacts \cite{brown2008, koller2006}, forensic analysis of deleted files \cite{garfinkel2010}, image editing \cite{cho2008}, reconstruction of shredded documents \cite{zhu2008}, DNA fragment reassembly \cite{marande2007}, and speech descrambling \cite{zhao2007}.  In most of these practical applications, the original, also known as ``ground-truth,'' input is unknown.  This significantly increases the difficulty of the problem as the structure of the complete solution must be determined solely from the bag of component pieces.
+
+\begin{figure}
+\centering
+  \begin{tabular}{ >{\centering\arraybackslash}m{3in} >{\centering\arraybackslash}m{3in} }
+	\fbox{\includegraphics[width=0.4\textwidth]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=0.4\textwidth]{./images/muffins_scrambled.jpg}}
+	\\ ~\\
+	(a) Ground-Truth Image & (b) Randomized Jig Swap Puzzle
+	\\ ~\\
+  \end{tabular}
+\caption{Jig Swap Puzzle Example}
+\label{fig:directAccuracyOnePieceEffect}
+\end{figure}
 
 This thesis outlines the first fully-automated jigsaw puzzle solver algorithm for multiple puzzles; unlike all previous solvers, this thesis' implementation is provided no no makes no assumptions regarding the set of input pieces, including the number of ground-truth (i.e., original) puzzles.  What is more, it defines a set of new metrics specifically tailored to quantify the quality of outputs of multi-puzzle solvers.

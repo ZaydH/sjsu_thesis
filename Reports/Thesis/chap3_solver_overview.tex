@@ -31,41 +31,42 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 \begin{algorithm}
 \caption{Pseudocode for the Segmentation Algorithm}\label{alg:segmentation}
 \begin{algorithmic}[1]
-\Procedure{Segmentation}{$all\_pieces$}
-    \State $\textit{saved\_segments} \gets \{ \}$
+\Function{Segmentation}{$all\_pieces$}
+    \State $\textit{solved\_segments} \gets \{ \}$
     \State $\textit{unassigned\_pieces} \gets \{ \textit{all\_pieces} \}$
-    \Do
+    \Repeat
         \State $\textit{solved\_puzzle} \gets \textbf{run\_single\_assembly}(\textit{unassigned\_pieces})$
-        \State $\textit{solved\_segments} \gets \textbf{segment\_puzzle}(\textit{solved\_puzzle})$
+        \State $\textit{puzzle\_segments} \gets \textbf{segment}(\textit{solved\_puzzle})$
         \State $\textit{max\_segment\_size} \gets \text{maximum size of segment in } \textit{solved\_segments}$
-        \ForEach{$\textit{segment} \in \textit{solved\_segments}$}
+        \ForEach{$\textit{segment} \in \textit{puzzle\_segments}$}
             \If{$|\textit{segment}| \text{>} \alpha \times \textit{max\_segment\_size}$}
-                \State $\text{add } \textit{segment} \text{ to } \textit{saved\_segments}$
+                \State $\text{add } \textit{segment} \text{ to } \textit{solved\_segments}$
                 \State $\text{remove pieces in } \textit{segment} \text{ from } \textit{unplaced\_pieces}$
             \EndIf
         \EndFor
-    \doWhile{$\textit{max\_segment\_size} \text{>} \textit{smallest\_allowed} \textbf{ and } |\textit{unplaced\_pieces}| \text{>} 0$}
-\EndProcedure
+    \Until{$\textit{max\_segment\_size} \text{>} \textit{smallest\_allowed} \textbf{ and } |\textit{unplaced\_pieces}| \text{>} 0$}
+    \State \Return $\textit{solved\_segments}$
+\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{{segment\_puzzle} Procedure}\label{sec:segmentPuzzle}
+\subsection{The segment Function}\label{sec:segmentPuzzle}
 
-The \texttt{segment\_puzzle} procedure shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure modified by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
+The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure modified by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
 
 \begin{algorithm}
-\caption{Pseudocode for the segment\_puzzle Function}\label{alg:segmentPuzzle}
+\caption{Pseudocode for the segment Function}\label{alg:segmentPuzzle}
 \begin{algorithmic}[1]
-\Procedure{segment\_puzzle}{$solved\_puzzle$}
-    \State $\textit{solved\_segments} \gets \{ \}$
+\Function{segment}{$solved\_puzzle$}
+    \State $\textit{puzzle\_segments} \gets \{ \}$
     \State $\textit{unassigned\_pieces} \gets \{ \text{all pieces in } \textit{solved\_puzzle} \}$
 \item[]
-    \While{$|\textit{unassigned\_pieces}| \text{>} 0$}
+    \While{$|\textit{unassigned\_pieces}| \text{ > } 0$}
         \State $\textit{segment} \gets \text{ new empty segment}$
         \State $\textit{seed\_piece} \gets \text{next piece in } \textit{unassigned\_pieces}$
         \State $\textit{queue} \gets [\textit{seed\_piece}]$
 \item[]
-        \While{$|\textit{queue}| \text{>} 0$}
+        \While{$|\textit{queue}| \text{ > } 0$}
             \State $\textit{piece} \gets \text{next piece in }\textit{queue}$
             \State $\text{add } \textit{piece} \text{ to } \textit{segment}$
 \item[]
@@ -81,11 +82,14 @@ The \texttt{segment\_puzzle} procedure shown in Algorithm~\ref{alg:segmentPuzzle
         \State $\text{remove } \textit{articulation\_points} \text{ from } \textit{segment}$
 \item[]
 		\State $\textit{disconnected\_pieces} \gets \textbf{find\_disconnected\_pieces}(\textit{segment},\textit{seed\_piece})$        
-        \State $\text{remove } \textit{disconnected\_points} \text{ from } \textit{segment}$
+        \State $\text{add } \textit{segment} \text{ to } \textit{puzzle\_segments}$
 \item[]
+		\State $\text{remove } \textit{disconnected\_points} \text{ from } \textit{segment}$
         \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$
     \EndWhile
-\EndProcedure
+\item[]
+    \State \Return $\textit{puzzle\_segments}$
+\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
@@ -97,57 +101,60 @@ Once these single piece bridges have been broken, one or more pieces become disc
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
-A segment can be model as a single connected graph, with the vertices being the puzzle pieces and the edges being the best buddy relationships.  An articulation point is any vertex (\textit{i.e.}, puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormen} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
+A segment can be model as a single connected graph, with the vertices being the puzzle pieces and the edges being the best buddy relationships.  An articulation point is any vertex (\textit{i.e.}, puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
 \section{Stiching Piece Solving}\label{sec:stitchingPieceSolving}
 
 As defined previously, a segment represents a partial assembly where there is a particularly high degree of confidence that the placement is correct. During the segmentation stage, puzzle pieces from a single ground truth image segment may be partitioned into multiple segments. If two segments are similar, it is likely that if one segment is allowed to grow that it would eventually merge with its adjacent segment.  However, uncontrolled segment expansion can cause a segment to grow beyond the boundaries of its ground truth image and merge with a segment from a different input image.  This thesis controls segmentation growth through the use of multiple ``mini solvers,'' which each have a ``stitching piece'' as their seed.  The output from these mini solvers are used to determine inter-segment similarity as described in the following subsection.
 
-\subsection{Stitching Pieces}
+\subsection{Definition of a Stitching Piece}
 
-As the name indicates, stitching pieces are a set of pieces whose role is to assisting in the ``stitching'' together of associated segments.  Since segments are disjoint, a segment will need to grow in order to join with another segment.  
+As the name indicates, the set of stitching pieces assist in the ``stitching'' together of associated segments.  Since segments are disjoint, a segment will need to grow in order to join with another segment.  
 
-Stitching pieces should be near the edge of a segment to increase the likelihood of growth to a neighboring segment.  However,  if they are placed too close to the edge of the segment, the algorithm may find erroneous segment pairings that are not meaningful.  To determine the distance each piece is from the edge of the segment, this thesis uses an iterative boundary tracing technique shown in Algorithm~\ref{alg:stitchingPieceDistance}.
+\subsection{defi}
+
+
+
+An ``open location'' with respect to a segment is any puzzle location that is not populated with a member of that segment.  
+
+\subsection{Determine the }
+
+Stitching pieces should be near the edge of a segment to increase the likelihood of growth towards a neighboring segment.  However,  if a stitching piece is too close to the edge of the segment, the algorithm may make erroneous segmentation associations.   
+
+As outlined in Algorithm~\ref{alg:stitchingPieceDistance}, the Mixed-Bag Solver uses iterative boundary tracing to determine each stitching piece's distance to the nearest puzzle location that is not populated with a piece that is a member of the stitching piece's segment..
 
 The algorithm begins by finding set of puzzle locations adjacent to pieces in the segment that are not filled by segment members.  These locations represent the .
 
 \begin{algorithm}
-\caption{Pseudocode for the segment\_puzzle Function}\label{alg:segmentPuzzle}
+\caption{Pseudocode for Determining a Segment Point's Manhattan Distance to the Nearest Open Location}\label{alg:findDistanceToOpen}
 \begin{algorithmic}[1]
-\Procedure{segment\_puzzle}{$solved\_puzzle$}
-    \State $\textit{solved\_segments} \gets \{ \}$
-    \State $\textit{unassigned\_pieces} \gets \{ \text{all pieces in } \textit{solved\_puzzle} \}$
+\Procedure{FindPieceDistanceToOpen}{$segment\_pieces$}
+    \State $\textit{explored\_pieces} \gets \{ \}$
+    \State $\textit{locations\_at\_prev\_dist} \gets \{ \textit{segment\_pieces} \}$
+    \State $\textit{distance\_to\_open} \gets 1$
 \item[]
-    \While{$|\textit{unassigned\_pieces}| \text{>} 0$}
-        \State $\textit{segment} \gets \text{ new empty segment}$
-        \State $\textit{seed\_piece} \gets \text{next piece in } \textit{unassigned\_pieces}$
-        \State $\textit{queue} \gets [\textit{seed\_piece}]$
+    \While{$|\textit{explored\_pieces}| \text{ > } 0$}
+        \State $\textit{locations\_at\_current\_dist} \gets \{ \}$
 \item[]
-        \While{$|\textit{queue}| \text{>} 0$}
-            \State $\textit{piece} \gets \text{next piece in }\textit{queue}$
-            \State $\text{add } \textit{piece} \text{ to } \textit{segment}$
+        \ForEach{$\textit{prev\_dist\_loc} \in \textit{locations\_at\_prev\_dist}$}
+        	\ForEach{$\textit{adjacent\_loc} \textbf{ of } \textit{prev\_dist\_loc}$}
+        		\If{$\exists \text{ } \textit{piece} \text{ at }\textit{adjacent\_loc} \textbf{ and } \textit{piece} \notin \textit{explored\_pieces}$}
+        		
+        			\State $\text{set } \textit{distance\_to\_open} \text{ for } \textit{piece}$
+        			\State $\text{remove } \textit{piece} \text{ from } \textit{explored\_pieces}$
+        			\State $\text{add } \textit{adjacent\_loc} \text{ to } \textit{locations\_at\_current\_dist}$
+        		\EndIf
+        	\EndFor
+        \EndFor
 \item[]
-            \ForEach{$\textit{neighbor\_piece} \text{ of } \textit{piece}$}
-            	\If{$\textbf{is\_best\_buddies}(\textit{neighbor\_piece}, \textit{piece})$}
-            		\State $\text{add } \textit{neighbor\_piece} \text{ to } \textit{queue}$
-            		\State $\text{remove } \textit{neighbor\_piece} \text{ from } \textit{unassigned\_pieces}$
-            	\EndIf
-            \EndFor
-        \EndWhile
-\item[]
-        \State $\textit{articulation\_points} \gets \textbf{find\_articulation\_points}(\textit{segment})$
-        \State $\text{remove } \textit{articulation\_points} \text{ from } \textit{segment}$
-\item[]
-		\State $\textit{disconnected\_pieces} \gets \textbf{find\_disconnected\_pieces}(\textit{segment},\textit{seed\_piece})$        
-        \State $\text{remove } \textit{disconnected\_points} \text{ from } \textit{segment}$
-\item[]
-        \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$
+    \State $\textit{locations\_at\_prev\_dist} \gets locations\_at\_current\_dist$
+    \State $\textit{distance\_to\_open} \gets \textit{distance\_to\_open} + 1$
     \EndWhile
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
-Algorithm~\ref{} has $O(n)$ time complexity where $n$ is the number of pieces in the segment.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
+Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A single iteration of the algorithm has time complexity of $O(n)$, where $n$ is the number of pieces in the segment.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
 
 \subsection{Stitching Pieces}
 
@@ -161,8 +168,60 @@ Figure~\ref{} shows an original image along with an segment found during the seg
 
 \section{Hierarchical Clustering of Segments}
 
-\subsection{The Similarity Matrix}
+Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each clustering round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic flow of the hierarchical clustering algorithm of the Mixed-Bag Solver; it is adapted from \cite{tanIntroToDataMining}.  
 
-\section{Selection of Starting Pieces}
+The only inputs to the hierarchical clustering algorithm are the segments found in the segmentation stage and the Segment Overlap Matrix from the Stitching stage.
+
+\begin{algorithm}
+\caption{Pseudocode for the Hierarchical Clustering Algorithm}\label{alg:hierarchicalClustering}
+\begin{algorithmic}[1]
+\Function{PerformHierarchicalClustering}{$solved\_segments, overlap\_matrix$}
+	\State $\textit{segment\_clusters} = \{ \}$	
+	\ForEach{$segment_i \in \textit{solved\_segments}$}
+		\State $\text{add new segment cluster } \Phi_i \text{ containing } segment_i \text{ to } \textit{segment\_clusters}$
+	\EndFor
+    \State $\text{Compute the similarity matrix, } \Gamma$
+\item[]
+    \While{$\text{maximum similarity in } \Gamma \text{ > } \textit{min\_cluster\_similarity}$}
+    	\State $\text{Merge the two most similar clusters } \Phi_i \text{ and } \Phi_j \text{ in } \textit{segment\_clusters}$
+    	\State $\text{Update the similarity matrix, } \Gamma \text{ for the merged clusters}$
+	\EndWhile
+\item[]
+    \State \Return $\textit{cluster\_segments}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Calculating the Initial Similarity Matrix}
+
+The Segment Overlap Matrix is a form of hollow matrix, where all elements in the matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering merges segments using a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines the similarity, $\omega_(i,j)$ between any two clusters $\Phi_i$ to $\Phi_j$.
+
+\begin{equation} \label{eq:segmentSimilarity}
+\omega_{i,j} = \frac{Overlap(\Phi_i, \Phi_j) + Overlap(\Phi_j, \Phi_i)}{2} 
+\end{equation}
+
+If there are $n$ solved segments found during segmentation, then the initial similarity matrix $\Gamma$ is size $n$ by $n$.  Each element in $\Gamma$ is defined by Equation~\eref{eq:similarityMatrix}.  Both $i$ and $j$ are bounded between $1$ and $n$ inclusive.  What is more, all elements in $\Gamma$ are normalized between 0 and 1, also inclusive.
+
+\begin{equation} \label{eq:similarityMatrix}
+\Gamma = \begin{cases} 
+	0 & j >= i
+\\
+	\omega_{i,j} & i < j
+\end{cases} 
+\end{equation}
+
+\section{Updating the Similarity Matrix via Single Linking}
+
+The Mixed-Bag Solver uses the Single Link version of hierarchical clustering.  Hence, the similarity between any two cluster segments is defined as the similarity between the two most similar segments in either cluster.  This approach is required because two segments clusters may only be adjacent along the border of two of the composite segments.  
+
+Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merged cluster containing segment clusters, $\Psi_x$ and $\Psi_y$, and any other segment cluster $\Psi_z$.  Note that segment $\Phi_i$ is a member of the union of $\Psi_x$ and $Psi_y$ while segment $\Phi_j$ is a member of segment cluster $\Psi_z$.
+
+\begin{equation} \label{eq:segmentClusterMerge}
+	\omega_{x \cup y,z} = \argmax_{\Phi_i \in \Psi_x \cup \Psi_y} \bigg( \argmax_{\Phi_j \in \Psi_z} \omega_{i,j} \bigg) 
+\end{equation}
+
+\section{Terminating Hierarchical Clustering}
+
+Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always merge all segment clusters  until only a cluster remains. Instead clustering continues until the similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
 
 \section{Final Assembly}
