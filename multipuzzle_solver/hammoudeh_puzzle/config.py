@@ -10,6 +10,8 @@ IMAGE_DIRECTORY = '.' + os.sep + 'images' + os.sep
 
 RESULTS_FILE = '.' + os.sep + 'results.csv'
 
+IS_SOLVER_COMPARISON_RUNNING = False
+
 
 def setup_logging(filename="solver_driver.log", log_level=logging.DEBUG):
     """

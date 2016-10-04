@@ -157,4 +157,15 @@ def _write_progress_file(progress_filename, puzzle_id_list):
 if __name__ == '__main__':
     config.setup_logging()
 
+    config.IS_SOLVER_COMPARISON_RUNNING = True
+
+    images = [config.build_bgu_805_piece_filename(1), config.build_bgu_805_piece_filename(2)]
+    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = [config.build_bgu_805_piece_filename(1), config.build_bgu_805_piece_filename(3)]
+    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
+    images = [config.build_bgu_805_piece_filename(1), config.build_bgu_805_piece_filename(4)]
+    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+
     run_comparison_driver()

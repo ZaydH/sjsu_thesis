@@ -270,6 +270,12 @@ class PaikinTalSolver(object):
         for piece in self._pieces:
             piece.reset_placement()
 
+    def reset_actual_puzzle_count(self):
+        """
+        Resets the actual puzzle count to the number of input image files.
+        """
+        self._actual_numb_puzzles = len(self._image_filenames)
+
     def _initialize_best_buddy_placer(self):
         """
         If the use of the best buddy placer is selected, then this function initializes all data structures associated

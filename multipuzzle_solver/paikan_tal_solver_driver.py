@@ -52,7 +52,7 @@ def run_paikin_tal_driver(img_files, puzzle_type, piece_width):
         paikin_tal_solver = run_paikin_tal_solver(image_filenames, puzzle_type, piece_width)
 
     # Get the results
-    paikin_tal_solver.segment(color_segments=True)
+    paikin_tal_solver.segment(color_segments=True, perform_segment_cleaning=True)
     (pieces_partitioned_by_puzzle_id, _) = paikin_tal_solver.get_solved_puzzles()
 
     timestamp = time.time()
@@ -96,6 +96,9 @@ def run_paikin_tal_solver(image_filenames, puzzle_type, piece_width):
 
     else:
         paikin_tal_solver = PaikinTalSolver.pickle_import_after_initial_construction(image_filenames, puzzle_type)
+
+        if config.IS_SOLVER_COMPARISON_RUNNING:
+            paikin_tal_solver.reset_actual_puzzle_count()
 
     # Run the Solver
     paikin_tal_solver.run_standard()
