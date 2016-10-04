@@ -78,24 +78,25 @@ class PuzzleResultsCollection(object):
 
     _PERFORM_ASSERT_CHECKS = True
 
-    def __init__(self, puzzle_solver_type, puzzle_type, pieces_partitioned_by_puzzle, image_file_paths):
+    def __init__(self, puzzle_solver_type, puzzle_type, solved_puzzles, image_file_paths):
         """
         Constructs the puzzle results information.
 
         Args:
             puzzle_solver_type (PuzzleSolver): Type of Solver
-            pieces_partitioned_by_puzzle (List[List[PuzzlePieces]]): List of pieces in each of the puzzles
+            solved_puzzles (List[List[PuzzlePieces]]): List of pieces in each of the puzzles output by the solver
             image_file_paths (List[Str])): Names of the image files.
         """
 
         self._puzzle_solver_type = puzzle_solver_type
         self._puzzle_type = puzzle_type
         self._image_filenames = image_file_paths
+        self._numb_output_puzzles = len(solved_puzzles)
 
         self._puzzle_results = []
 
         # Iterate through all the solved puzzles
-        for set_of_pieces in pieces_partitioned_by_puzzle:
+        for set_of_pieces in solved_puzzles:
             # Iterate through all of the pieces in the puzzle
             for piece in set_of_pieces:
 
@@ -255,7 +256,7 @@ class PuzzleResultsCollection(object):
 
             # Print information on the puzzle counts
             numb_input_puzzles = len(self._image_filenames)
-            numb_solved_puzzles = len(self._puzzle_results)
+            numb_solved_puzzles = self._numb_output_puzzles
             for count_info in [numb_input_puzzles, numb_solved_puzzles, numb_input_puzzles - numb_solved_puzzles]:
                 results_stream.write("," + str(count_info))
 
@@ -2411,7 +2412,7 @@ class Puzzle(object):
 
     @staticmethod
     def output_results_information_and_puzzles(puzzle_solver_type, image_files, paikin_tal_solver,
-                                               pieces_partitioned_by_puzzle_id, timestamp, export_segment_images=False):
+                                               solved_puzzles, timestamp, export_segment_images=False):
         """
         Generates the results information of the solved puzzles.
 
@@ -2422,7 +2423,7 @@ class Puzzle(object):
 
             paikin_tal_solver (PaikinTalSolver): A completed Paikin & Tal solver object
 
-            pieces_partitioned_by_puzzle_id (List[List[PuzzlePieces]]): A list of lists of PuzzlePieces.  The pieces
+            solved_puzzles (List[List[PuzzlePieces]]): A list of lists of PuzzlePieces.  The pieces
              are organized based off their output puzzle from the solver.
 
             timestamp (int): Timestamp to be used for indicating puzzle image information.
@@ -2432,7 +2433,7 @@ class Puzzle(object):
 
         # Iterate through all the puzzles.  Reconstruct them and get their accuracies.
         output_puzzles = []
-        for puzzle_pieces in pieces_partitioned_by_puzzle_id:
+        for puzzle_pieces in solved_puzzles:
             # Get the first piece of the puzzle and extract information on it.
             first_piece = puzzle_pieces[0]
             puzzle_id = first_piece.puzzle_id
@@ -2475,7 +2476,7 @@ class Puzzle(object):
 
         # Build the results information collection
         results_information = PuzzleResultsCollection(puzzle_solver_type, paikin_tal_solver.puzzle_type,
-                                                      pieces_partitioned_by_puzzle_id, image_files)
+                                                      solved_puzzles, image_files)
         # Calculate and print the accuracy results
         results_information.calculate_accuracies(output_puzzles)
         # Print the results to the console

@@ -159,13 +159,13 @@ if __name__ == '__main__':
 
     config.IS_SOLVER_COMPARISON_RUNNING = True
 
-    images = [config.build_bgu_805_piece_filename(1), config.build_bgu_805_piece_filename(2)]
+    images = [".\\images\\bgu_805\\bgu_805_1.jpg", ".\\images\\bgu_805\\bgu_805_2.jpg"]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [config.build_bgu_805_piece_filename(1), config.build_bgu_805_piece_filename(3)]
+    images = [".\\images\\bgu_805\\bgu_805_1.jpg", ".\\images\\bgu_805\\bgu_805_3.jpg"]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [config.build_bgu_805_piece_filename(1), config.build_bgu_805_piece_filename(4)]
+    images = [".\\images\\bgu_805\\bgu_805_1.jpg", ".\\images\\bgu_805\\bgu_805_4.jpg"]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     run_comparison_driver()
