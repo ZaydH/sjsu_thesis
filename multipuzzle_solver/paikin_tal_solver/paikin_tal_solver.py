@@ -1372,7 +1372,7 @@ class PaikinTalSolver(object):
                         # Push the best buddy onto the heap
                         heapq.heappush(self._best_buddy_open_slot_heap, bb_heap_info)
 
-    def segment(self, perform_segment_cleaning=False, color_segments=False):
+    def segment(self, perform_segment_cleaning, color_segments=False):
         """
         This function divides the set of solved puzzles into a set of disjoint segments.
 
@@ -1519,7 +1519,7 @@ class PaikinTalSolver(object):
                         segment_piece_queue.put(neighbor_piece)
                         del unassigned_pieces[neighbor_piece.key()]  # Piece now in the queue to be assigned
 
-            if perform_segment_cleaning:  # Not yet supported.
+            if perform_segment_cleaning:
                 best_buddy_checker_func = self._is_segment_pieces_best_buddies
                 removed_pieces = new_segment.remove_articulation_points_and_disconnected_pieces(best_buddy_checker_func)
                 # Add back the deleted pieces tp the unassigned set
