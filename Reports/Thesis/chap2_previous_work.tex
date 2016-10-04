@@ -6,7 +6,25 @@ Cho \textit{et al.} \cite{cho2010} proposed in 2010 one of the first modern comp
 
 A significant contribution of Cho \textit{et al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels.  LAB was selected due to its property of normalizing the lightness and color variation across all three pixel dimensions.  Cho \textit{et al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most of the future work.  
 
-Pomeranz \textit{et al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et al.} also generalized and improved on Cho \textit{et al.}'s piece pairwise distance measure by proposing a ``predictive distance measure.''  Finally, Pomeranz \textit{et al.} introduced the concept of ``best buddies,'' which are any two pieces that are more similar to each other than they are to any other piece.  Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' placers \cite{paikin2015}.
+Pomeranz \textit{et al.} \cite{pomeranz2011} proposed an iterative, greedy jig swap puzzle solver in 2011.  Their solver did not rely on anchor pieces, and the only information passed to the solver were the pieces, their orientation, and the size of the puzzle.  Pomeranz \textit{et al.} also generalized and improved on Cho \textit{et al.}'s piece pairwise distance measure by proposing a ``predictive distance measure.''  Finally, Pomeranz \textit{et al.} introduced the concept of ``best buddies''. Side $s_x$ of puzzle piece $p_i$ is best buddies with side $s_y$ of piece $p_j$ if and only if they satisfy the Equation~eref{eq:bestBuddies}.  $C(p_i, p_j, s_x, s_y)$ represents the compatibility (i.e., similarity) between side $s_x$ of piece $p_i$ and side $s_y$ of piece $p_j$.
+
+\begin{equation} \label{eq:pomeranzBestBuddyDefinition}
+\centering
+\begin{split}
+	\begin{matrix}
+		\forall{x_{k}}\forall{s_c},C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
+		\\
+		\\
+		\textnormal{and}
+		\\
+		\\
+		\forall{x_{k}}\forall{s_c},C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
+	\end{matrix}
+\end{split}
+\end{equation} 
+
+
+Best buddies have served as both an estimation metric for the quality of solver result as well as the foundation of some solvers' assemblers \cite{paikin2015}.
 
 An additional key contribution of Pomeranz \textit{et al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty 805 piece images; the sizes of the images in the second and third benchmarks are 2,360 and 3,300 pieces respectively.
 
