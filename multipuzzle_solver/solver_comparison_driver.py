@@ -129,6 +129,7 @@ def _perform_random_comparison_puzzle_solving(dataset_name, numb_simultaneous_pu
             temp_id = random.randint(minimum_image_number, maximum_image_number)
             if temp_id not in img_ids:
                 img_ids.append(temp_id)
+        img_ids = sorted(img_ids)  # Sort so it is easier to sort later.
         image_filenames = [build_image_filename_function(temp_id) for temp_id in img_ids]
 
         # Run the Multipuzzle Solver.  Paikin Tal will then use MultiPuzzle's pickle export.
