@@ -5,14 +5,14 @@ import cStringIO
 import numpy as np
 import sys
 import logging
-import os
 
 # noinspection PyUnresolvedReferences
 import time
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType, PieceSideBestBuddyAccuracyResult, PuzzleSolver
-from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
+from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation, top_level_calculate_asymmetric_distance
 from hammoudeh_puzzle.puzzle_piece import PuzzlePieceSide
 from paikin_tal_solver.inter_piece_distance import InterPieceDistance
 
@@ -29,6 +29,8 @@ class ImageBestBuddyStatistics(object):
         self._file_extension = Puzzle.get_file_extension(image_file_path)
         # File extension should not include the period
         assert "." not in self._file_extension
+
+        logging.info("Performing best buddy analysis for image: %s" % self._filename_root)
 
         self.puzzle_type = puzzle_type
 
@@ -282,8 +284,9 @@ def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
     """
     pickle_file = PickleHelper.build_filename("bb_accuracy", [image_file], puzzle_type)
 
-    bb_results = ImageBestBuddyStatistics(image_file, piece_width, puzzle_type,
-                                          PuzzlePiece.calculate_asymmetric_distance)
+    filename_with_image_folder = config.add_image_folder_path([image_file])
+    bb_results = ImageBestBuddyStatistics(filename_with_image_folder[0], piece_width, puzzle_type,
+                                          top_level_calculate_asymmetric_distance)
 
     PickleHelper.exporter(bb_results, pickle_file)
 
@@ -294,18 +297,15 @@ def run_best_buddies_analyzer(image_file, piece_width, puzzle_type):
 
 
 if __name__ == '__main__':
+    config.setup_logging()
+
     # run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "duck.bmp", 28, PuzzleType.type2)
     #
     # run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "muffins_300x200.jpg", 28, PuzzleType.type2)
     #
     # run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "cat_sleeping_boy.jpg", 28, PuzzleType.type2)
 
-    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "book_tunnel_pixabay.jpg", 28, PuzzleType.type2)
-
-    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "dessert_pixabay.jpg", 28, PuzzleType.type2)
-
-    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "dandelion_pixabay.jpg", 28, PuzzleType.type2)
-
-    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "primula_pixabay.jpg", 28, PuzzleType.type2)
-
-    run_best_buddies_analyzer("." + os.sep + "images" + os.sep + "small_pink_flowers_pixabay.jpg", 28, PuzzleType.type2)
+    puzzle_ids = [12, 8, 13]
+    for puzzle_id in puzzle_ids:
+        filename = config.build_pomeranz_805_piece_filename(puzzle_id)
+        run_best_buddies_analyzer(filename, 28, PuzzleType.type2)
