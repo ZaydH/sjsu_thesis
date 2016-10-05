@@ -44,4 +44,12 @@ In 2012, Gallagher \cite{gallagher2012} formally categorized jig swap puzzles in
 
 Sholomon \textit{et al.} \cite{sholomon2013} in 2013 proposed a genetic algorithm based solver for Type~1 puzzles.  By moving away from the greedy approach used by Pomeranz \textit{et al.}, Sholomon \textit{et al.}'s approach is more immune to suboptimal decisions early in the placement process. Sholomon \textit{et al.}'s algorithm is able to solve puzzles of significantly larger size than previous techniques (e.g., greater than 23,000 pieces).  What is more, Sholomon \textit{et al.} defined three new large image benchmarks; the specific puzzle sizes are 5,015, 10,375, and 22,834 pieces \cite{sholomonBenchmarkImages}.
 
-Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support Mixed-Bag Puzzles. Their algorithm is used as the assembler for this thesis' algorithm as described in Section~\ref{sec:SolverAssembler}.
+Paikin \& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support Mixed-Bag Puzzles.  While Paikin \& Tal's algorithm represents the current state-of-the-art, it has serious limitations:
+
+\begin{itemize}
+
+	\item 
+
+\end{itemize}
+
+These limitations are addressed by this thesis' Mixed-Bag Solver.  Since Paikin \&  Tal's algorithm represents the current state of the art, it is used as thesis' assembler.  What is more, it is used as the baseline of performance. 

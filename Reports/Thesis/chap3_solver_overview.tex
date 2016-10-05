@@ -32,7 +32,7 @@ For all experiments in this thesis, we used the solver proposed by Paikin \& Tal
 
 \section{Segmentation}\label{sec:Segmentation}
 
-As shown in Algorithm~\ref{}, segmentation takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of stage is to provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
+As shown in Algorithm~\ref{alg:mixedBagSolver}, segmentation stages takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of stage is to provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
 
 Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework.  The algorithm is iterative and will have one or more rounds.  In each round, all pieces that have not yet been assigned to a segment are assembled as if they all belong to a single ground truth image.  This is done as it eliminates the need to make any assumptions regarding the input at this early stage of the solver.  While it may lead to a single puzzle being divided into multiple segments, these segments can be merged together later in a later stage of the solver.
 
@@ -49,8 +49,8 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
     \State $\textit{solved\_segments} \gets \{ \}$
     \State $unassigned\_pieces \gets \{ \textit{all\_pieces} \}$
     \Repeat
-        \State $solved\_puzzle \gets \textbf{run\_single\_puzzle\_assembly}(unassigned\_pieces)$
-        \State $puzzle\_segments \gets \textbf{segment}(solved\_puzzle\text)$
+        \State $solved\_puzzle \gets \textproc{RunSinglePuzzleAssembly}(unassigned\_pieces)$
+        \State $puzzle\_segments \gets \textproc{SegmentPuzzle}(solved\_puzzle\text)$
         \State $max\_segment\_size \gets \text{maximum size of segment in } solved\_segments$
         \ForEach{$segment \in puzzle\_segments$}
             \If{$|segment| \text{ > } \alpha \times max\_segment\_size$}
@@ -64,39 +64,39 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{The segment Function}\label{sec:segmentPuzzle}
+\subsection{The $\textproc{SegmentPuzzle}$ Function}\label{sec:segmentPuzzle}
 
-The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure modified by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
+The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
 
 \begin{algorithm}
 \caption{Pseudocode for the segment Function}\label{alg:segmentPuzzle}
 \begin{algorithmic}[1]
-\Function{segment}{$solved\_puzzle$}
-    \State $\textit{puzzle\_segments} \gets \{ \}$
-    \State $\textit{unassigned\_pieces} \gets \{ \text{all pieces in } \textit{solved\_puzzle} \}$
+\Function{SegmentPuzzle}{$solved\_puzzle$}
+    \State $puzzle\_segments \gets \{ \}$
+    \State $unassigned\_pieces \gets \{ \text{all pieces in } solved\_puzzle \}$
 \item[]
-    \While{$|\textit{unassigned\_pieces}| \text{ > } 0$}
-        \State $\textit{segment} \gets \text{ new empty segment}$
-        \State $\textit{seed\_piece} \gets \text{next piece in } \textit{unassigned\_pieces}$
-        \State $\textit{queue} \gets [\textit{seed\_piece}]$
+    \While{$|unassigned\_pieces| \text{ > } 0$}
+        \State $segment \gets \text{ new empty segment}$
+        \State $seed\_piece \gets \text{next piece in } unassigned\_pieces$
+        \State $queue \gets [seed\_piece]$
 \item[]
-        \While{$|\textit{queue}| \text{ > } 0$}
-            \State $\textit{piece} \gets \text{next piece in }\textit{queue}$
-            \State $\text{add } \textit{piece} \text{ to } \textit{segment}$
+        \While{$|queue| \text{ > } 0$}
+            \State $piece \gets \text{next piece in } queue$
+            \State $\text{add } piece \text{ to } segment$
 \item[]
-            \ForEach{$\textit{neighbor\_piece} \text{ of } \textit{piece}$}
-            	\If{$\textbf{is\_best\_buddies}(\textit{neighbor\_piece}, \textit{piece})$}
-            		\State $\text{add } \textit{neighbor\_piece} \text{ to } \textit{queue}$
-            		\State $\text{remove } \textit{neighbor\_piece} \text{ from } \textit{unassigned\_pieces}$
+            \ForEach{$neighbor\_piece \text{ of } piece$}
+            	\If{$\textproc{IsBestBuddies}(neighbor\_piece, piece)$}
+            		\State $\text{add } neighbor\_piece \text{ to } \textit{queue}$
+            		\State $\text{remove } neighbor\_piece \text{ from } unassigned\_pieces$
             	\EndIf
             \EndFor
         \EndWhile
 \item[]
-        \State $\textit{articulation\_points} \gets \textbf{find\_articulation\_points}(\textit{segment})$
+        \State $\textit{articulation\_points} \gets \textproc{FindArticulationPoints}(\textit{segment})$
         \State $\text{remove } \textit{articulation\_points} \text{ from } \textit{segment}$
 \item[]
-		\State $\textit{disconnected\_pieces} \gets \textbf{find\_disconnected\_pieces}(\textit{segment},\textit{seed\_piece})$        
-        \State $\text{add } \textit{segment} \text{ to } \textit{puzzle\_segments}$
+		\State $\textit{disconnected\_pieces} \gets \textproc{FindDisconnectedPieces}(\textit{segment},\textit{seed\_piece})$        
+        \State $\text{add } segment \text{ to } puzzle\_segments$
 \item[]
 		\State $\text{remove } \textit{disconnected\_points} \text{ from } \textit{segment}$
         \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$
@@ -115,7 +115,7 @@ Once these single piece bridges have been broken, one or more pieces become disc
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
-A segment can be model as a single connected graph, with the vertices being the puzzle pieces and the edges being the best buddy relationships.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
+A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships as defined in Chapter~\ref{} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
 \section{Stiching}\label{sec:stitchingPieceSolving}
 
