@@ -1,14 +1,28 @@
 \chapter{Mixed-Bag Solver Overview}
 
-This thesis' Mixed-Bag Solver supports Type~1, Type~2, and Mixed-Bag Puzzles.  It consists of five distinct stages namely: segmentation, stitching piece solving, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.
+This thesis' Mixed-Bag Solver supports Type~1, Type~2, and Mixed-Bag Puzzles.  It consists of five distinct stages namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}; the pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}.
 
-The following subsections describe each of the components solver architecture.  It also discusses the assembler which is an independent but associated component of the architecture.
+The following subsections describe each of Mixed Bag Solver's stages/subfunctions.  It also discusses the assembler which is a separate but associated component of the architecture.
 
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=1.0\textwidth]{images/cropped_algorithm_structure_overview.pdf}
 	\caption{Components of the Mixed-Bag Puzzle Solver}\label{fig:multipuzzleSolverArchitecture}
 \end{figure}
+
+\begin{algorithm}
+\caption{Pseudocode for the Mixed Bag Solver}\label{alg:mixedBagSolver}
+\begin{algorithmic}[1]
+\Function{MixedBagSolver}{$all\_pieces$}
+    \State $solved\_segments \gets \textbf{segmentation}\text{(} all\_pieces \text{)}$
+	\State $overlap\_matrix \gets \textbf{stitching}\text{(} solved\_segments \text{, } all\_pieces \text{)}$
+	\State $segment\_clusters \gets \textbf{hierarchical\_clustering} \text{(} solved\_segments \text{, } overlap\_matrix \text{)}$
+	\State $puzzle\_start\_pieces \gets \textbf{find\_starting\_pieces} \text{(} segment_clusters \text{)}$
+	\State $solved\_puzzles \gets \textbf{final\_assembly} \text{(} puzzle\_start\_pieces \text{, } all\_pieces \text{)}$
+    \State \Return $solved\_puzzles$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \section{Assembler}\label{sec:SolverAssembler}
 
@@ -22,7 +36,7 @@ As the first stage in the Mixed-Bag Solver, segmentation takes as input only the
 
 Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework.  The algorithm is iterative and will have one or more rounds.  In each round, all pieces that have not yet been assigned to a segment are assembled as if they all belong to a single ground truth image.  This is done as it eliminates the need to make any assumptions regarding the input at this early stage of the solver.  While it may lead to a single puzzle being divided into multiple segments, these segments can be merged together later in a later stage of the solver.
 
-After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~ \label{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{This thesis found that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
+After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\label{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{This thesis found that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
 
 The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which segments other than the largest one constructed puzzle are immediately passed to the next solver stage.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round (and larger than the minimum segment size) is saved.  This scalar value provides sufficient balance between ensuring the largest segments for analysis with limiting the execution time of this stage.
 
@@ -101,9 +115,9 @@ Once these single piece bridges have been broken, one or more pieces become disc
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
-A segment can be model as a single connected graph, with the vertices being the puzzle pieces and the edges being the best buddy relationships.  An articulation point is any vertex (\textit{i.e.}, puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
+A segment can be model as a single connected graph, with the vertices being the puzzle pieces and the edges being the best buddy relationships.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
-\section{Stiching Piece Solving}\label{sec:stitchingPieceSolving}
+\section{Stiching}\label{sec:stitchingPieceSolving}
 
 As defined previously, a segment represents a partial assembly where there is a particularly high degree of confidence that the placement is correct. During the segmentation stage, puzzle pieces from a single ground truth image segment may be partitioned into multiple segments. If two segments are similar, it is likely that if one segment is allowed to grow that it would eventually merge with its adjacent segment.  However, uncontrolled segment expansion can cause a segment to grow beyond the boundaries of its ground truth image and merge with a segment from a different input image.  This thesis controls segmentation growth through the use of multiple ``mini solvers,'' which each have a ``stitching piece'' as their seed.  The output from these mini solvers are used to determine inter-segment similarity as described in the following subsection.
 
