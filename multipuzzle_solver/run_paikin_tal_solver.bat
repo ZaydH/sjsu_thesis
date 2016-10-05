@@ -1,2 +1,2 @@
-python paikan_tal_solver_driver.py
+python paikin_tal_solver_driver.py
 pause

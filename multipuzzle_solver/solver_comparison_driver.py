@@ -5,7 +5,7 @@ import random
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
 from multipuzzle_solver_driver import run_multipuzzle_solver_driver
-from paikan_tal_solver_driver import run_paikin_tal_driver
+from paikin_tal_solver_driver import run_paikin_tal_driver
 
 _PROGRESS_TRACKING_FOLDER = "." + os.sep + "progress_tracker" + os.sep
 _IMAGE_ID_FILE_SEPARATOR = ","
@@ -24,8 +24,8 @@ def run_comparison_driver():
     #                                                         config.MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
     #                                                         config.build_pomeranz_805_piece_filename)
 
-    numb_simultaneous_puzzles = [5, 4, 3]
-    numb_iterations = [5, 10, 20]
+    numb_simultaneous_puzzles = [2, 3, 4, 5]
+    numb_iterations = [50, 20, 10, 5]
     for i in xrange(0, len(numb_simultaneous_puzzles)):
         _perform_random_comparison_puzzle_solving("805_piece_pomeranz", numb_simultaneous_puzzles[i],
                                                   numb_iterations[i], config.MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
