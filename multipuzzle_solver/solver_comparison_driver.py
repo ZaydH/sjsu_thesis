@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
@@ -17,15 +18,23 @@ def run_comparison_driver():
     """
     Primary function used by the comparison driver. It runs all of the planned comparison tests.
     """
-    for numb_simultaneous_puzzles in [1, 2]:
-        _perform_805_piece_comparison_puzzle_solving("805_piece_bgu", numb_simultaneous_puzzles,
-                                                     config.MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
-                                                     config.MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
-                                                     config.build_pomeranz_805_piece_filename)
+    # for numb_simultaneous_puzzles in [1, 2]:
+    #     _perform_all_combinations_comparison_puzzle_solving("805_piece_poermanz", numb_simultaneous_puzzles,
+    #                                                         config.MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
+    #                                                         config.MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
+    #                                                         config.build_pomeranz_805_piece_filename)
+
+    numb_simultaneous_puzzles = [5, 4, 3]
+    numb_iterations = [5, 10, 20]
+    for i in xrange(0, len(numb_simultaneous_puzzles)):
+        _perform_random_comparison_puzzle_solving("805_piece_pomeranz", numb_simultaneous_puzzles[i],
+                                                  numb_iterations[i], config.MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
+                                                  config.MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
+                                                  config.build_pomeranz_805_piece_filename)
 
 
-def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous_puzzles, minimum_image_number,
-                                                 maximum_image_number, build_image_filename_function):
+def _perform_all_combinations_comparison_puzzle_solving(dataset_name, numb_simultaneous_puzzles, minimum_image_number,
+                                                        maximum_image_number, build_image_filename_function):
     """
     Runs all possible combinations of the Paikin and Tal solver of the specified size.  The dataset selected is fully
     configurable and can support arbitrary numbers of puzzles simultaneously.
@@ -46,7 +55,6 @@ def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous
     if numb_simultaneous_puzzles > maximum_image_number - minimum_image_number + 1:
         raise ValueError("The number of simultaneous images exceeds the specified size of the dataset.")
 
-    # Run single puzzle solver
     while True:
         progress_filename = _build_progress_filename(dataset_name, numb_simultaneous_puzzles)
 
@@ -67,12 +75,82 @@ def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous
         image_filenames = [build_image_filename_function(puzzle_id) for puzzle_id in puzzle_id_list]
 
         # Run the Multipuzzle Solver.  Paikin Tal will then use MultiPuzzle's pickle export.
-        run_multipuzzle_solver_driver(image_filenames, PUZZLE_TYPE, PIECE_WIDTH)
-        run_paikin_tal_driver(image_filenames, PUZZLE_TYPE, PIECE_WIDTH)
+        _perform_multipuzzle_solver_and_paikin_solvers(image_filenames, PUZZLE_TYPE, PIECE_WIDTH)
 
         puzzle_id_list = increment_puzzle_id_list(puzzle_id_list, maximum_image_number)
         # Make the tracking file.
         _write_progress_file(progress_filename, puzzle_id_list)
+
+
+def _perform_random_comparison_puzzle_solving(dataset_name, numb_simultaneous_puzzles, max_numb_iterations,
+                                              minimum_image_number, maximum_image_number, build_image_filename_function):
+    """
+    Runs all possible combinations of the Paikin and Tal solver of the specified size.  The dataset selected is fully
+    configurable and can support arbitrary numbers of puzzles simultaneously.
+
+    Args:
+        dataset_name (str): Unique name for the dataset to be used to create the progress tracking file.
+        numb_simultaneous_puzzles (int): Number of puzzles that will be analyzed simultaneously by the solver
+        max_numb_iterations (int): Number of random iterations to run.
+        minimum_image_number (int): Minimum number (inclusive) for images in the dataset
+        maximum_image_number (int): Maximum number (inclusive) for images in the dataset
+        build_image_filename_function: Function used to get the name of the image file from the image number
+    """
+    if numb_simultaneous_puzzles < 1:
+        raise ValueError("The number of simultaneous puzzle to solve must be greater than or equal to 1.")
+
+    if maximum_image_number < minimum_image_number:
+        raise ValueError("The maximum image number is less than the minimum image number.")
+
+    if numb_simultaneous_puzzles > maximum_image_number - minimum_image_number + 1:
+        raise ValueError("The number of simultaneous images exceeds the specified size of the dataset.")
+
+    if max_numb_iterations < 1:
+        raise ValueError("At least a single iteration must be run")
+
+    while True:
+        progress_filename = _build_progress_filename(dataset_name, numb_simultaneous_puzzles)
+
+        # If file does not exist, then create the list of images
+        if not os.path.exists(progress_filename):
+            iteration_count = 0
+        else:
+            # Get the next puzzle from the file
+            with open(progress_filename, 'r') as progress_file:
+                iteration_count = int(progress_file.readline())
+
+        # If all images already completed, then exit.
+        if iteration_count >= max_numb_iterations:
+            return
+
+        # Build the image file
+        img_ids = []
+        while len(img_ids) < numb_simultaneous_puzzles:
+            temp_id = random.randint(minimum_image_number, maximum_image_number)
+            if temp_id not in img_ids:
+                img_ids.append(temp_id)
+        image_filenames = [build_image_filename_function(temp_id) for temp_id in img_ids]
+
+        # Run the Multipuzzle Solver.  Paikin Tal will then use MultiPuzzle's pickle export.
+        _perform_multipuzzle_solver_and_paikin_solvers(image_filenames, PUZZLE_TYPE, PIECE_WIDTH)
+
+        # Make the tracking file.
+        _write_progress_file(progress_filename, [iteration_count])
+        iteration_count += 1
+
+
+def _perform_multipuzzle_solver_and_paikin_solvers(image_filenames, puzzle_type, piece_width):
+    """
+    Runs the Paikin and Tal and Multipuzzle Solver with the specified conditions
+
+    Args:
+        image_filenames (List[str]): Name and path of the images to run in the solver
+        puzzle_type (PuzzleType): Puzzle type to be run
+        piece_width (int): Width of the puzzle in pieces.
+    """
+    # Run the Multipuzzle Solver.  Paikin Tal will then use MultiPuzzle's pickle export.
+    run_multipuzzle_solver_driver(image_filenames, puzzle_type, piece_width)
+    run_paikin_tal_driver(image_filenames, puzzle_type, piece_width)
 
 
 def _build_progress_filename(dataset_name, numb_simultaneous_puzzles):
@@ -158,14 +236,5 @@ if __name__ == '__main__':
     config.setup_logging()
 
     config.IS_SOLVER_COMPARISON_RUNNING = True
-
-    images = [".\\images\\pomeranz_805\\pomeranz_805_1.jpg", ".\\images\\pomeranz_805\\pomeranz_805_2.jpg"]
-    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = [".\\images\\pomeranz_805\\pomeranz_805_1.jpg", ".\\images\\pomeranz_805\\pomeranz_805_3.jpg"]
-    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = [".\\images\\pomeranz_805\\pomeranz_805_1.jpg", ".\\images\\pomeranz_805\\pomeranz_805_4.jpg"]
-    run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     run_comparison_driver()
