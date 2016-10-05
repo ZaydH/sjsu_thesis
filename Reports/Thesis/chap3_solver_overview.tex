@@ -2,7 +2,7 @@
 
 This thesis' Mixed-Bag Solver supports Type~1, Type~2, and Mixed-Bag Puzzles.  It consists of five distinct stages namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}; the pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}.
 
-The following subsections describe each of Mixed Bag Solver's stages/subfunctions.  It also discusses the assembler which is a separate but associated component of the architecture.
+The following subsections describe each of Mixed Bag Solver's stages/subfunctions.  It also discusses the assembler, which is a separate but associated component of the architecture.
 
 \begin{figure}[ht!]
 	\centering
@@ -14,11 +14,11 @@ The following subsections describe each of Mixed Bag Solver's stages/subfunction
 \caption{Pseudocode for the Mixed Bag Solver}\label{alg:mixedBagSolver}
 \begin{algorithmic}[1]
 \Function{MixedBagSolver}{$all\_pieces$}
-    \State $solved\_segments \gets \textbf{segmentation}\text{(} all\_pieces \text{)}$
-	\State $overlap\_matrix \gets \textbf{stitching}\text{(} solved\_segments \text{, } all\_pieces \text{)}$
-	\State $segment\_clusters \gets \textbf{hierarchical\_clustering} \text{(} solved\_segments \text{, } overlap\_matrix \text{)}$
-	\State $puzzle\_start\_pieces \gets \textbf{find\_starting\_pieces} \text{(} segment_clusters \text{)}$
-	\State $solved\_puzzles \gets \textbf{final\_assembly} \text{(} puzzle\_start\_pieces \text{, } all\_pieces \text{)}$
+    \State $solved\_segments \gets \textproc{Segmentation}\text{(} all\_pieces \text{)}$
+	\State $overlap\_matrix \gets \textproc{Stitching}\text{(} solved\_segments \text{, } all\_pieces \text{)}$
+	\State $segment\_clusters \gets \textproc{PerformHierarchicalClustering} \text{(} solved\_segments \text{, } overlap\_matrix \text{)}$
+	\State $puzzle\_start\_pieces \gets \textproc{FindStartingPieces} \text{(} segment_clusters \text{)}$
+	\State $solved\_puzzles \gets \textproc{RunFinalAssembly} \text{(} puzzle\_start\_pieces \text{, } all\_pieces \text{)}$
     \State \Return $solved\_puzzles$
 \EndFunction
 \end{algorithmic}
@@ -26,17 +26,17 @@ The following subsections describe each of Mixed Bag Solver's stages/subfunction
 
 \section{Assembler}\label{sec:SolverAssembler}
 
-The role of the assembler assigns the placement (and optionally rotation) of the puzzle pieces in the solved puzzle.  This solver architecture is largely independent of the assembler used.  Hence, as assemblers improve, they can be incorporated into this solver to improve the overall performance.  The same also applies if particular assembler(s) perform better for particular types of puzzles.  This enables significant flexibility to balance competing concerns, while maintaining upgradability.
+The assembler assigns the placement (and optionally rotation) of the puzzle pieces in the solved puzzle.  This solver architecture is largely independent of the particular assembler used.  Hence, any improvements or modifications to the assembler can be directly incorporated into the Mixed-Bag Solver to improve its performance.  What is more, if a particular solver performs better than another for a particular application, the solvers can be interchanged.  This provides the Mixed-Bag Solver with significant flexibility and upgradability to maximize performance across a wide range of applications.
 
 For all experiments in this thesis, we used the solver proposed by Paikin \& Tal \cite{paikin2015}.  It was selected because it the current state-of-the-art.  What is more, since it supports mixed bag puzzles, it can be used for direct comparison of performance.
 
 \section{Segmentation}\label{sec:Segmentation}
 
-As the first stage in the Mixed-Bag Solver, segmentation takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of stage is to provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
+As shown in Algorithm~\ref{}, segmentation takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of stage is to provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
 
 Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework.  The algorithm is iterative and will have one or more rounds.  In each round, all pieces that have not yet been assigned to a segment are assembled as if they all belong to a single ground truth image.  This is done as it eliminates the need to make any assumptions regarding the input at this early stage of the solver.  While it may lead to a single puzzle being divided into multiple segments, these segments can be merged together later in a later stage of the solver.
 
-After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\label{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{This thesis found that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
+After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\label{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
 
 The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which segments other than the largest one constructed puzzle are immediately passed to the next solver stage.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round (and larger than the minimum segment size) is saved.  This scalar value provides sufficient balance between ensuring the largest segments for analysis with limiting the execution time of this stage.
 
@@ -47,19 +47,19 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 \begin{algorithmic}[1]
 \Function{Segmentation}{$all\_pieces$}
     \State $\textit{solved\_segments} \gets \{ \}$
-    \State $\textit{unassigned\_pieces} \gets \{ \textit{all\_pieces} \}$
+    \State $unassigned\_pieces \gets \{ \textit{all\_pieces} \}$
     \Repeat
-        \State $\textit{solved\_puzzle} \gets \textbf{run\_single\_assembly}(\textit{unassigned\_pieces})$
-        \State $\textit{puzzle\_segments} \gets \textbf{segment}(\textit{solved\_puzzle})$
-        \State $\textit{max\_segment\_size} \gets \text{maximum size of segment in } \textit{solved\_segments}$
-        \ForEach{$\textit{segment} \in \textit{puzzle\_segments}$}
-            \If{$|\textit{segment}| \text{>} \alpha \times \textit{max\_segment\_size}$}
-                \State $\text{add } \textit{segment} \text{ to } \textit{solved\_segments}$
-                \State $\text{remove pieces in } \textit{segment} \text{ from } \textit{unplaced\_pieces}$
+        \State $solved\_puzzle \gets \textbf{run\_single\_puzzle\_assembly}(unassigned\_pieces)$
+        \State $puzzle\_segments \gets \textbf{segment}(solved\_puzzle\text)$
+        \State $max\_segment\_size \gets \text{maximum size of segment in } solved\_segments$
+        \ForEach{$segment \in puzzle\_segments$}
+            \If{$|segment| \text{ > } \alpha \times max\_segment\_size$}
+                \State $\text{add } segment \text{ to } solved\_segments$
+                \State $\text{remove pieces in } segment \text{ from } unassigned\_pieces$
             \EndIf
         \EndFor
-    \Until{$\textit{max\_segment\_size} \text{>} \textit{smallest\_allowed} \textbf{ and } |\textit{unplaced\_pieces}| \text{>} 0$}
-    \State \Return $\textit{solved\_segments}$
+    \Until{$max\_segment\_size \text{ < } smallest\_allowed \textbf{ or } |unplaced\_pieces| \text{ < } 0$}
+    \State \Return $solved\_segments$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -224,7 +224,7 @@ If there are $n$ solved segments found during segmentation, then the initial sim
 \end{cases} 
 \end{equation}
 
-\section{Updating the Similarity Matrix via Single Linking}
+\subsection{Updating the Similarity Matrix via Single Linking}
 
 The Mixed-Bag Solver uses the Single Link version of hierarchical clustering.  Hence, the similarity between any two cluster segments is defined as the similarity between the two most similar segments in either cluster.  This approach is required because two segments clusters may only be adjacent along the border of two of the composite segments.  
 
@@ -234,8 +234,10 @@ Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merg
 	\omega_{x \cup y,z} = \argmax_{\Phi_i \in \Psi_x \cup \Psi_y} \bigg( \argmax_{\Phi_j \in \Psi_z} \omega_{i,j} \bigg) 
 \end{equation}
 
-\section{Terminating Hierarchical Clustering}
+\subsection{Terminating Hierarchical Clustering}
 
 Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always merge all segment clusters  until only a cluster remains. Instead clustering continues until the similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
+
+\section{Selecting Seed Pieces}
 
 \section{Final Assembly}

@@ -1,4 +1,4 @@
-\chapter{Quantifying the Quality of a Mixed-Bag Solver Output}\label{sec:quantifyingSolverQuantify}
+\chapter{Quantifying and Visualizing the Quality of a Mixed-Bag Solver Output}\label{sec:quantifyingSolverQuantify}
 
 Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 and Mixed-Bag puzzles.
 
@@ -92,7 +92,7 @@ In images with thousands of pieces, it is often difficult to visually determine 
 
 The following two subsections describe the tools developed as part of this thesis for visualizing direct accuracy and neighbor accuracy.
 
-\subsubsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
+\subsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
 
 In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a single value (i.e., correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a square filled with a solid color.  One additional refinement used in this thesis is to subdivide the ``incorrect'' placements into a set of subcategories; they are (in order of precedence): wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
 
@@ -165,3 +165,43 @@ Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solvin
 \end{figure}
 
 All pieces that came from the rainforest house image are shown as blue despite being assembled correctly; this is because they are not from the puzzle of interest.  All neighbors from the puzzle of interest (i.e., the glass and stone building) that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are shown with red triangles.
+
+\subsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
+
+There is currently no standard for visualizing an image's best buddies.  This thesis proposes such a standard for the first time.  As a nomenclature, any best buddies that are neighbors in the ground-truth image are referred to as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies.''
+
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  
+
+Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization.  The color scheme used to denote the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
+
+
+\begin{figure}
+  \centering
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+     \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
+     \\~\\
+     (a) Original Image & (b) Best Buddy Visualization
+  \end{tabular}
+\caption{Visualization of Best Buddies in an Image}
+\label{fig:bestBuddyVisualization}
+\end{figure}
+
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{ | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | }
+  
+   \hline
+    No Best Buddy & Non-Adjacent Best Buddy & Adjacent Best Buddy & No Piece Present  \\ \hline
+	{\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+	{\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+ \hline
+
+  \end{tabular}
+\end{center}
+\caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}\label{tab:bestBuddyColors}
+\end{table}
+
+In previous research, all best buddies (in particular best buddy errors) were treated the same.  However, non-adjacent best buddies are more likely to occur on piece sides that are adjacent to an open space (i.e., where there is no neighbor piece).  Hence, such piece sides are more like to couple with unrelated pieces at a higher rate.  For example, the image \cite{pixabay} in Figure~\ref{fig:bestBuddyVisualization} has 4 interior and 14 exterior non-adjacent best buddies despite there being 16-times more interior sides. 
+
+When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors a higher weight.
