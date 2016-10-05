@@ -119,40 +119,40 @@ if __name__ == "__main__":
     # run_paikin_tal_driver(images, PuzzleType.type1, 25)
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [config.build_bgu_805_piece_filename(2)]
+    images = [config.build_pomeranz_805_piece_filename(2)]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     #
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = True
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # # # # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # # # # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg"]
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = True
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = False
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 1
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     #
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # PaikinTalSolver._CLEAR_BEST_BUDDY_HEAP_ON_SPAWN = False
     # InterPieceDistance._USE_ONLY_NEIGHBORS_FOR_STARTING_PIECE_TOTAL_COMPATIBILITY = False
     # InterPieceDistance._NEIGHBOR_COMPATIBILITY_SCALAR = 4
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg"]
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)

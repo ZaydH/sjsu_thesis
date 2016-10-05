@@ -19,9 +19,9 @@ def run_comparison_driver():
     """
     for numb_simultaneous_puzzles in [1, 2]:
         _perform_805_piece_comparison_puzzle_solving("805_piece_bgu", numb_simultaneous_puzzles,
-                                                     config.MINIMUM_BGU_805_PIECE_IMAGE_NUMBER,
-                                                     config.MAXIMUM_BGU_805_PIECE_IMAGE_NUMBER,
-                                                     config.build_bgu_805_piece_filename)
+                                                     config.MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
+                                                     config.MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
+                                                     config.build_pomeranz_805_piece_filename)
 
 
 def _perform_805_piece_comparison_puzzle_solving(dataset_name, numb_simultaneous_puzzles, minimum_image_number,
@@ -159,13 +159,13 @@ if __name__ == '__main__':
 
     config.IS_SOLVER_COMPARISON_RUNNING = True
 
-    images = [".\\images\\bgu_805\\bgu_805_1.jpg", ".\\images\\bgu_805\\bgu_805_2.jpg"]
+    images = [".\\images\\pomeranz_805\\pomeranz_805_1.jpg", ".\\images\\pomeranz_805\\pomeranz_805_2.jpg"]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [".\\images\\bgu_805\\bgu_805_1.jpg", ".\\images\\bgu_805\\bgu_805_3.jpg"]
+    images = [".\\images\\pomeranz_805\\pomeranz_805_1.jpg", ".\\images\\pomeranz_805\\pomeranz_805_3.jpg"]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [".\\images\\bgu_805\\bgu_805_1.jpg", ".\\images\\bgu_805\\bgu_805_4.jpg"]
+    images = [".\\images\\pomeranz_805\\pomeranz_805_1.jpg", ".\\images\\pomeranz_805\\pomeranz_805_4.jpg"]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     run_comparison_driver()

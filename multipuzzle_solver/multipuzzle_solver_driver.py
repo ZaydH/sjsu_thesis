@@ -66,7 +66,7 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
         return multipuzzle_solver
 
 
-def test_random_bgu_805_pieces_images():
+def test_random_pomeranz_805_pieces_images():
     """
     Randomly selects a set of 805 piece puzzles and runs the multipuzzle solver on them.
     """
@@ -83,7 +83,7 @@ def test_random_bgu_805_pieces_images():
         # Build the puzzle list
         images_file_list = []
         while len(images_file_list) < numb_puzzles:
-            filename = config.get_random_bgu_805_piece_image()
+            filename = config.get_random_pomeranz_805_piece_image()
             # Ensure no duplicate puzzles
             if filename not in images_file_list:
                 images_file_list.append(filename)
@@ -106,12 +106,12 @@ if __name__ == "__main__":
     # MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
     # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, segmentation_round_numb=1)
     #
-    # test_random_bgu_805_pieces_images()
+    # test_random_pomeranz_805_pieces_images()
 
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # MultiPuzzleSolver.run_imported_hierarchical_clustering(images, PuzzleType.type2)
     # MultiPuzzleSolver.run_imported_select_starting_pieces(images, PuzzleType.type2)
@@ -127,22 +127,22 @@ if __name__ == "__main__":
     # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # 
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # 
-    # images = ["bgu_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
+    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # 
-    # images = ["bgu_805//2.jpg", "bgu_805//1.jpg"]
+    # images = ["pomeranz_805//2.jpg", "pomeranz_805//1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # 
-    # images = ["bgu_805//9.jpg", "bgu_805//10.jpg"]
+    # images = ["pomeranz_805//9.jpg", "pomeranz_805//10.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # 
-    # images = ["bgu_805//5.jpg", "bgu_805//20.jpg", "bgu_805//1.jpg"]
+    # images = ["pomeranz_805//5.jpg", "pomeranz_805//20.jpg", "pomeranz_805//1.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
     # 
-    # images = ["bgu_805//8.jpg", "bgu_805//18.jpg", "bgu_805//15.jpg"]
+    # images = ["pomeranz_805//8.jpg", "pomeranz_805//18.jpg", "pomeranz_805//15.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = [config.build_cho_432_piece_filename(18)]
@@ -153,11 +153,11 @@ if __name__ == "__main__":
               config.build_mcgill_540_piece_filename(15),
               config.build_mcgill_540_piece_filename(11),
               config.build_cho_432_piece_filename(18),
-              config.build_bgu_805_piece_filename(8),
-              config.build_bgu_805_piece_filename(10),
-              config.build_bgu_805_piece_filename(13),
-              config.build_bgu_805_piece_filename(14),
-              config.build_bgu_805_piece_filename(19)]
+              config.build_pomeranz_805_piece_filename(8),
+              config.build_pomeranz_805_piece_filename(10),
+              config.build_pomeranz_805_piece_filename(13),
+              config.build_pomeranz_805_piece_filename(14),
+              config.build_pomeranz_805_piece_filename(19)]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     images = ["primula_pixabay.jpg",
@@ -165,16 +165,16 @@ if __name__ == "__main__":
               config.build_mcgill_540_piece_filename(15),
               config.build_mcgill_540_piece_filename(11),
               config.build_cho_432_piece_filename(18),
-              config.build_bgu_805_piece_filename(8),
-              config.build_bgu_805_piece_filename(10),
-              config.build_bgu_805_piece_filename(13),
-              config.build_bgu_805_piece_filename(14),
-              config.build_bgu_805_piece_filename(19),
+              config.build_pomeranz_805_piece_filename(8),
+              config.build_pomeranz_805_piece_filename(10),
+              config.build_pomeranz_805_piece_filename(13),
+              config.build_pomeranz_805_piece_filename(14),
+              config.build_pomeranz_805_piece_filename(19),
               "3300_1.jpg"]
     run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # # This has issues in reconstruction.
-    # images = ["bgu_805//2.jpg", "bgu_805//13.jpg", "bgu_805//14.jpg", "bgu_805//19.jpg"]
+    # images = ["pomeranz_805//2.jpg", "pomeranz_805//13.jpg", "pomeranz_805//14.jpg", "pomeranz_805//19.jpg"]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    # test_random_bgu_805_pieces_images()
+    # test_random_pomeranz_805_pieces_images()
