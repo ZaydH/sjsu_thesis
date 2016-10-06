@@ -1,0 +1,2 @@
+python best_buddy_image_analyzer.py
+pause
