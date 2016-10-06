@@ -24,8 +24,8 @@ def run_comparison_driver():
     #                                                         config.MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
     #                                                         config.build_pomeranz_805_piece_filename)
 
-    numb_simultaneous_puzzles = [2, 3, 4, 5]
-    numb_iterations = [50, 20, 10, 5]
+    numb_simultaneous_puzzles = [5, 4, 3]
+    numb_iterations = [1, 2, 10]
     for i in xrange(0, len(numb_simultaneous_puzzles)):
         _perform_random_comparison_puzzle_solving("805_piece_pomeranz", numb_simultaneous_puzzles[i],
                                                   numb_iterations[i], config.MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER,
@@ -223,7 +223,7 @@ def _write_progress_file(progress_filename, puzzle_id_list):
     progress_file_dir = os.path.dirname(os.path.abspath(progress_filename))
     if not os.path.exists(progress_file_dir):
         logging.info("Creating progress file directory: \"" + progress_file_dir + "\"")
-        os.makedirs(progress_dir)
+        os.makedirs(progress_file_dir)
 
     # Write the progress file itself.
     with open(progress_filename, 'w') as progress_file:
