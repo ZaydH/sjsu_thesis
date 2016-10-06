@@ -34,13 +34,13 @@ For all experiments in this thesis, we used the solver proposed by Paikin \& Tal
 
 As shown in Algorithm~\ref{alg:mixedBagSolver}, segmentation stages takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of stage is to provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
 
-Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework.  The algorithm is iterative and will have one or more rounds.  In each round, all pieces that have not yet been assigned to a segment are assembled as if they all belong to a single ground truth image.  This is done as it eliminates the need to make any assumptions regarding the input at this early stage of the solver.  While it may lead to a single puzzle being divided into multiple segments, these segments can be merged together later in a later stage of the solver.
+Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework.  The algorithm is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a segment are assembled as if they all belong to a single ground truth image.  This eliminates the need to make any assumptions regarding the input at this early stage of the solver.  What is more, pieces from the same input puzzle may be assigned to two separate segments.  As discussed in Section~\ref{sec:hierarchicalClustering}, hierarchical clustering works to the one or more disjoint segments from the same puzzle into a single cluster.
 
 After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\label{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
 
-The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which segments other than the largest one constructed puzzle are immediately passed to the next solver stage.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round (and larger than the minimum segment size) is saved.  This scalar value provides sufficient balance between ensuring the largest segments for analysis with limiting the execution time of this stage.
+The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which segments in a given segmentation round are passed to the next stage of the Mixed-Bag Solver.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round (and larger than the minimum segment size) is saved.  This scalar value provides sufficient balance between ensuring the largest segments for analysis with limiting the execution time of this stage.
 
-Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the next segmentation round.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size.
+Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the next segmentation round.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size. At the end of segmentation, each piece will be assigned to exactly one segment.
 
 \begin{algorithm}
 \caption{Pseudocode for the Segmentation Algorithm}\label{alg:segmentation}
@@ -69,7 +69,7 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
 
 \begin{algorithm}
-\caption{Pseudocode for the segment Function}\label{alg:segmentPuzzle}
+\caption{Pseudocode for the \textproc{SegmentPuzzle} Function}\label{alg:segmentPuzzle}
 \begin{algorithmic}[1]
 \Function{SegmentPuzzle}{$solved\_puzzle$}
     \State $puzzle\_segments \gets \{ \}$
@@ -107,23 +107,35 @@ The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adap
 \end{algorithmic}
 \end{algorithm}
 
-Whenever a piece is added to a segment, it is removed from the set of unassigned pieces. What is more, the algorithm check's all pieces directly adjacent to the added piece.  If the adjacent piece and the added piece are ``best buddies'' (i.e., each is more similar to the other on their respective sides than they are to any other piece as defined by \cite{pomeranz2011} and \cite{paikin2015}), then the adjacent piece is also added to the segment.  This process continues until no there are no pieces adjacent to a segment member that fulfill the best buddy criteria.
-
-If Pomeranz \textit{et al.}'s original segmentation algorithm is used for Mixed-Bag puzzles, two correctly assembled segments from different input puzzles can be merged into a single segment.  This is usually in the form of narrow bridges no wider than a single piece. This necessitates that each segment goes through post-processing to identify and remove these single point bridges; the procedure for doing this is described in Section~\ref{sec:ArticulationPoints}.  
-
-Once these single piece bridges have been broken, one or more pieces become disconnected from the segment.  These pieces are then returned to the set of unassigned pieces to be assigned to a different segment.  At the end of segment, each piece in the puzzle will be assigned to exactly one segment.
+Whenever a piece is added to a segment, the algorithm examines all of the piece's neighbors.  Any of the adjacent pieces that satisfy the ``best buddy'' criteria as defined in Chapter~\ref{chap:previousWork} are also added to the segment.  This process continues until the segment has no neighboring best buddies. In Pomeranz \textit{et al.}'s algorithm, no changes were made to the segment after it reached the maximum size.  This approach can be sufficient when solving only a single puzzle at a time as they did.  However, it is common in Mixed-Bag puzzles that two or more correctly assembled segments are joined into a single cluster by very linking, usually in the form of narrow bridges no wider than a single piece.  These tenuous links are broken to prevent erroneous segment merging.  
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
 A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships as defined in Chapter~\ref{} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
-\section{Stiching}\label{sec:stitchingPieceSolving}
+Any time an articulation point is removed, one or more pieces will necessarily become disconnected from the segment's seed.  Any such pieces are removed from the segment and returned to the set of unassigned pieces.  
 
-As defined previously, a segment represents a partial assembly where there is a particularly high degree of confidence that the placement is correct. During the segmentation stage, puzzle pieces from a single ground truth image segment may be partitioned into multiple segments. If two segments are similar, it is likely that if one segment is allowed to grow that it would eventually merge with its adjacent segment.  However, uncontrolled segment expansion can cause a segment to grow beyond the boundaries of its ground truth image and merge with a segment from a different input image.  This thesis controls segmentation growth through the use of multiple ``mini solvers,'' which each have a ``stitching piece'' as their seed.  The output from these mini solvers are used to determine inter-segment similarity as described in the following subsection.
+\section{Stitching}\label{sec:stitching}
 
-\subsection{Definition of a Stitching Piece}
+As mentioned previously, pieces from the same ground-truth image may be assigned to different segments.  Hence, it is necessary to quantify the strength to which any two pairs of segments are related.  This section describes how the Mixed-Bag Solver uses Stitching to determine inter-segment bonds.
 
-As the name indicates, the set of stitching pieces assist in the ``stitching'' together of associated segments.  Since segments are disjoint, a segment will need to grow in order to join with another segment.  
+\subsection{Definition of a Stitching Pieces}
+
+As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that the placement is correct. If two segments are similar, it is likely that if one segment is allowed to grow that it would eventually merge with its adjacent segment. Since it is not known in which relative direction other segments may be located, the segment should be allowed to grow in all directions; however, the segment should not be forced to expand in a certain direction as it may lead to the formation of erroneous inter-segment relationships.
+
+For each segment, the Mixed-Bag Solver selects a set of well-spaced ``Stitching Pieces'' near the boundaries of each segment.  Each of these pieces is then used as a seed of a ``mini solver,'' wherein the assembler places a limited number of pieces.\footnote{This thesis' implementation of the Mixed-Bag Solver uses 100 as the number of pieces placed by the assembler for each stitching piece.}  As the name indicates, the mini-solver output from each of the stitching pieces assists in ``stitching'' together any associated segments, by quantifying inter-segment similarity.  
+
+\subsection{Selecting the Stitching Pieces} 
+
+As it relates to a segment, an ``open location'' refers to any valid puzzle location that has either a piece from a different segment or no piece at all.  
+
+These During the segmentation stage, puzzle pieces from a single ground truth image segment may be partitioned into multiple segments.   However, uncontrolled segment expansion can cause a segment to grow beyond the boundaries of its ground truth image and merge with a segment from a different input image.  This thesis controls segmentation growth through the use of multiple ``mini solvers,'' which each have a ``stitching piece'' as their seed.  The output from these mini solvers are used to determine inter-segment similarity as described in the following subsection.
+
+
+
+As mentioned 
+
+
 
 \subsection{defi}
 
@@ -170,15 +182,14 @@ The algorithm begins by finding set of puzzle locations adjacent to pieces in th
 
 Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A single iteration of the algorithm has time complexity of $O(n)$, where $n$ is the number of pieces in the segment.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
 
-\subsection{Stitching Pieces}
-
-If stitching pieces are placed to close together, the solver will perform many redundant solvings.  While this may not have a deleterious effect on the solver output, it can significantly increase the execution time of this stage.  In contrast, if stitching pieces are placed too far apart, subtle segment pairings may be missed.  To achieve 
-
-Figure~\ref{} shows an original image along with an segment found during the segmentation.  This figure also shows the location of the stitching pieces (denoted with a white cross).  
 
 \subsection{Quantifying Inter-Segment Similarity}
 
+The 
 
+\begin{equation} \label{eq:segmentSimilarity}
+\Overlap_{\Phi_i,\Phi_j} = \argmax_{\eta_x \in \Phi_i} {\frac{|P_{}|}{\text{min}(|P_{\eta_x}|, |\Phi_j|)}}
+\end{equation}
 
 \section{Hierarchical Clustering of Segments}
 
@@ -228,7 +239,7 @@ If there are $n$ solved segments found during segmentation, then the initial sim
 
 The Mixed-Bag Solver uses the Single Link version of hierarchical clustering.  Hence, the similarity between any two cluster segments is defined as the similarity between the two most similar segments in either cluster.  This approach is required because two segments clusters may only be adjacent along the border of two of the composite segments.  
 
-Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merged cluster containing segment clusters, $\Psi_x$ and $\Psi_y$, and any other segment cluster $\Psi_z$.  Note that segment $\Phi_i$ is a member of the union of $\Psi_x$ and $Psi_y$ while segment $\Phi_j$ is a member of segment cluster $\Psi_z$.
+Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merged cluster containing segment clusters, $\Psi_x$ and $\Psi_y$, and any other segment cluster $\Psi_z$.  Note that segment $\Phi_i$ is a member of the union of $\Psi_x$ and $\Psi_y$ while segment $\Phi_j$ is a member of segment cluster $\Psi_z$.
 
 \begin{equation} \label{eq:segmentClusterMerge}
 	\omega_{x \cup y,z} = \argmax_{\Phi_i \in \Psi_x \cup \Psi_y} \bigg( \argmax_{\Phi_j \in \Psi_z} \omega_{i,j} \bigg) 
@@ -238,6 +249,6 @@ Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merg
 
 Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always merge all segment clusters  until only a cluster remains. Instead clustering continues until the similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
 
-\section{Selecting Seed Pieces}
+\section{Final Seed Piece Selection}
 
 \section{Final Assembly}
