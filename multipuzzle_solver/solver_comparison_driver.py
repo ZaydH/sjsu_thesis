@@ -223,7 +223,7 @@ def _write_progress_file(progress_filename, puzzle_id_list):
     progress_file_dir = os.path.dirname(os.path.abspath(progress_filename))
     if not os.path.exists(progress_file_dir):
         logging.info("Creating progress file directory: \"" + progress_file_dir + "\"")
-        os.makedirs(progress_filename)
+        os.makedirs(progress_dir)
 
     # Write the progress file itself.
     with open(progress_filename, 'w') as progress_file:
