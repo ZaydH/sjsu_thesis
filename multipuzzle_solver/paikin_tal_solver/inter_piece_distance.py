@@ -900,7 +900,8 @@ class InterPieceDistance(object):
         """
 
         # Determine whether anything for this piece needs to be recalculated.
-        min_or_second_best_distance_changed = [[False] * PuzzlePieceSide.get_numb_sides()] * self._numb_pieces
+        numb_sides = PuzzlePieceSide.get_numb_sides()
+        min_or_second_best_distance_changed = [[False for _ in xrange(0, numb_sides)] for _ in xrange(0, self._numb_pieces)]
 
         # Iterate through all of the pieces
         all_sides = PuzzlePieceSide.get_all_sides()
@@ -916,9 +917,9 @@ class InterPieceDistance(object):
                 # If best or second best piece eligible, also skip
                 # This is determined by the fact that both piece/side combinations are still eligible for calculation
                 # Meaning they would still be found to be the best.
-                best_piece_info = self._piece_distance_info[p_i].minimum_distance_piece_info
+                best_piece_info = self._piece_distance_info[p_i].minimum_distance_piece_info[side.value]
                 best_dist_unchanged = recalculate_mutual_compatibility[best_piece_info[0]][best_piece_info[1].value]
-                second_best_piece_info = self._piece_distance_info[p_i].minimum_distance_piece_info
+                second_best_piece_info = self._piece_distance_info[p_i].minimum_distance_piece_info[side.value]
                 second_dist_unchanged = recalculate_mutual_compatibility[second_best_piece_info[0]][second_best_piece_info[1].value]
                 if best_dist_unchanged and second_dist_unchanged:
                     continue

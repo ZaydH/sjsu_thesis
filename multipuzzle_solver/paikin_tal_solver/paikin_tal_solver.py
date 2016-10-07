@@ -248,10 +248,15 @@ class PaikinTalSolver(object):
         Initializes all placed piece information.  This includes the data structures inside the Paikin and Tal solver
         as well as those local to the individual pieces.
         """
-        self._piece_valid_for_placement = [True] * self._numb_pieces
+        self._piece_valid_for_placement = [True for _ in xrange(0, self._numb_pieces)]
         self._numb_initial_placeable_pieces = len(self._pieces)
 
-        self._piece_eligible_for_mutual_compat_calc = [[True] * PuzzlePieceSide.get_numb_sides()] * self._numb_pieces
+        self._piece_eligible_for_mutual_compat_calc = []
+        for _ in xrange(0, self._numb_pieces):
+            temp_list = []
+            for _ in xrange(0, PuzzlePieceSide.get_numb_sides()):
+                temp_list.append(True)
+            self._piece_eligible_for_mutual_compat_calc.append(temp_list)
 
         # Use the pieces not allowed for placement based off placement being disallowed
         all_piece_sides = PuzzlePieceSide.get_all_sides()
