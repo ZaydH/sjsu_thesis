@@ -251,7 +251,7 @@ class PaikinTalSolver(object):
         self._piece_valid_for_placement = [True] * self._numb_pieces
         self._numb_initial_placeable_pieces = len(self._pieces)
 
-        self._piece_eligible_for_mutual_compat_calc = [True * PuzzlePieceSide.get_numb_sides()] * self._numb_pieces
+        self._piece_eligible_for_mutual_compat_calc = [[True] * PuzzlePieceSide.get_numb_sides()] * self._numb_pieces
 
         # Use the pieces not allowed for placement based off placement being disallowed
         all_piece_sides = PuzzlePieceSide.get_all_sides()
@@ -381,6 +381,8 @@ class PaikinTalSolver(object):
         Args:
             skip_initial (bool): Used with Pickling.  Skips initial setup of running
         """
+
+        self._initialize_placed_pieces()
 
         start_time = time.time()
         logging.info("Standard Paikin & Tal Placer started")
@@ -583,7 +585,7 @@ class PaikinTalSolver(object):
             open_slot_info = self._open_locations[i]
             open_slot_puzzle_id = open_slot_info.location.puzzle_id
             open_slot_loc = open_slot_info.location.location
-            
+
             # If this open slot has the same location, remove it.
             # noinspection PyUnresolvedReferences
             if open_slot_puzzle_id == puzzle_id and open_slot_loc == loc_to_remove:

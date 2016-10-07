@@ -900,7 +900,7 @@ class InterPieceDistance(object):
         """
 
         # Determine whether anything for this piece needs to be recalculated.
-        min_or_second_best_distance_changed = [[False * PuzzlePieceSide.get_numb_sides()] * self._numb_pieces]
+        min_or_second_best_distance_changed = [[False] * PuzzlePieceSide.get_numb_sides()] * self._numb_pieces
 
         # Iterate through all of the pieces
         all_sides = PuzzlePieceSide.get_all_sides()
