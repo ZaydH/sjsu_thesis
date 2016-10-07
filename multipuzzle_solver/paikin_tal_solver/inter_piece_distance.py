@@ -437,13 +437,16 @@ class PieceDistanceInformation(object):
 
         # Determine which sides of p_i can be skipped if any
         all_sides = PuzzlePieceSide.get_all_sides()
-        skip_p_i_side = [PieceDistanceInformation.skip_piece_side(self._id, side, recalculate_mutual_compatibility) for side in all_sides]
-        # Verify whether p_i can be skipped entirely
-        skip_p_i = True
-        for skip_side in skip_p_i_side:
-            skip_p_i = skip_p_i and skip_side
-        if skip_p_i:
-            return
+        if recalculate_mutual_compatibility is None:
+            recalculate_p_i_side = [True for _ in all_sides]
+        else:
+            recalculate_p_i_side = [recalculate_mutual_compatibility[self._id][side.value] for side in all_sides]
+            # Verify whether p_i can be skipped entirely
+            recalculate_p_i = False
+            for recalculate_side in recalculate_p_i_side:
+                recalculate_p_i = recalculate_p_i or recalculate_side
+            if not recalculate_p_i:
+                return
 
         # Calculate the asymmetric compatibility
         for p_j in range(0, self._numb_pieces):
@@ -455,14 +458,14 @@ class PieceDistanceInformation(object):
             for idx, p_i_side in enumerate(all_sides):
 
                 # Do not compare a piece to itself or if it is already placed
-                if skip_p_i_side[idx]:
+                if not recalculate_p_i_side[idx]:
                     continue
 
                 set_of_neighbor_sides = InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side)
                 for p_j_side in set_of_neighbor_sides:
 
                     # Do not compare a piece to itself or if it is already placed
-                    if PieceDistanceInformation.skip_piece_side(p_j, p_j_side, recalculate_mutual_compatibility):
+                    if recalculate_mutual_compatibility is not None and not recalculate_mutual_compatibility[p_j][p_j_side.value]:
                         continue
 
                     # Calculate the compatibility
@@ -488,9 +491,11 @@ class PieceDistanceInformation(object):
                     self._asymmetric_compatibility_has_changed = True
 
         # Build an empty array to store the piece to piece distances
-        compatibilities_matrix_dimensions = (PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings)
-        self._mutual_compatibilities = np.full(compatibilities_matrix_dimensions, fill_value=np.finfo(np.float32).max,
-                                               dtype=np.float32)
+        if self._mutual_compatibilities is None:
+            compatibilities_matrix_dimensions = (PuzzlePieceSide.get_numb_sides(), self._numb_pieces, numb_possible_pairings)
+            self._mutual_compatibilities = np.full(compatibilities_matrix_dimensions,
+                                                   fill_value=np.finfo(np.float32).max,
+                                                   dtype=np.float32)
 
     @staticmethod
     def skip_piece(p_j, piece_eligible_for_recalculation):
@@ -780,7 +785,7 @@ class InterPieceDistance(object):
                 bb_total_count += len(piece_dist_info.best_buddies(side))
         return bb_total_count
 
-    def _calculate_mutual_compatibility_single_process(self, is_piece_valid_for_placement=None):
+    def _calculate_mutual_compatibility_single_process(self, pieces_with_min_or_second_dist_changed=None):
         """
         Single Process Mutual Compatibility Calculator
 
@@ -789,8 +794,8 @@ class InterPieceDistance(object):
         <b>Note:</b> This is done in a single process only.  Hence, it operates on the results data structures directly.
 
         Args:
-            is_piece_valid_for_placement (List[bool]): List indicating whether each piece is valid for placement
-                or should be ignored.
+            pieces_with_min_or_second_dist_changed (List[bool]): List indicating whether each piece is valid for
+                placement or should be ignored.
         """
         for p_i in range(0, self._numb_pieces):
             # Go through all the valid sides
@@ -802,15 +807,14 @@ class InterPieceDistance(object):
                     # Check all valid p_j sides depending on the puzzle type.
                     for p_j_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, p_i_side):
 
-                        skip_calc = PieceDistanceInformation.skip_piece_side(p_i, p_i_side, is_piece_valid_for_placement) \
-                                    and PieceDistanceInformation.skip_piece_side(p_j, p_j_side, is_piece_valid_for_placement)
-                        if skip_calc:
-                            continue
+                        if pieces_with_min_or_second_dist_changed is not None:
+                            dist_changed = pieces_with_min_or_second_dist_changed[p_i][p_i_side.value] \
+                                           or pieces_with_min_or_second_dist_changed[p_j][p_j_side.value]
+                            if not dist_changed:
+                                continue
 
-                        p_i_to_p_j = self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j,
-                                                                                             p_j_side)
-                        p_j_to_p_i = self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i,
-                                                                                             p_i_side)
+                        p_i_to_p_j = self._piece_distance_info[p_i].asymmetric_compatibility(p_i_side, p_j, p_j_side)
+                        p_j_to_p_i = self._piece_distance_info[p_j].asymmetric_compatibility(p_j_side, p_i, p_i_side)
                         # Check if the calculation can be skipped for speed-up
                         if p_i_to_p_j == -sys.maxint or p_j_to_p_i == -sys.maxint:
                             mutual_compat = -sys.maxint
@@ -878,10 +882,8 @@ class InterPieceDistance(object):
                 compatibility should be recalculated.
         """
 
-        recalculate_mutual_compat = piece_eligible_for_mutual_compat_calc
-
         # Find the minimum and second best distance information for the placed pieces
-        pieces_with_min_or_second_dist_changed = self._update_min_and_second_best_distances(recalculate_mutual_compat)
+        pieces_with_min_or_second_dist_changed = self._update_min_and_second_best_distances(piece_eligible_for_mutual_compat_calc)
 
         # Calculate the asymmetric compatibilities using the updated min and second best distances.
         self._recalculate_asymmetric_compatibilities(pieces_with_min_or_second_dist_changed)

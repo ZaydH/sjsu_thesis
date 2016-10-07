@@ -968,11 +968,14 @@ class PaikinTalSolver(object):
         # Get the first object from the pool
         for idx, piece in enumerate(self._pieces):
 
-            if not self._piece_valid_for_placement[idx]:
-                continue
-
             # When not best buddy, next piece ID is the pool object itself.
             next_piece_id = piece.id_number
+
+            if not self._piece_valid_for_placement[idx]:
+                continue
+            else:
+                for side in PuzzlePieceSide.get_all_sides():
+                    assert self._piece_eligible_for_mutual_compat_calc[next_piece_id][side.value]
 
             # For each piece check each open slot
             for open_slot in self._open_locations:
@@ -984,6 +987,9 @@ class PaikinTalSolver(object):
                 # Get the information on the piece adjacent to the open slot
                 neighbor_piece_id = open_slot.piece_id
                 neighbor_side = open_slot.open_side
+
+                if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
+                    assert self._piece_eligible_for_mutual_compat_calc[neighbor_piece_id][neighbor_side.value]
 
                 # Check the set of valid sides for each slot.
                 for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
