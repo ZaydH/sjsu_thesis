@@ -213,7 +213,7 @@ class PuzzlePiece(object):
 
         # Used to speed up piece to piece calculations
         self._border_average_color = None
-        self._predicted_border_values = [None] * PuzzlePieceSide.get_numb_sides()
+        self._predicted_border_values = [None for _ in xrange(0, PuzzlePieceSide.get_numb_sides())]
         self._calculate_border_color_average()
 
         # Rotation gets set later.

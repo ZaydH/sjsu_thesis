@@ -793,7 +793,7 @@ class MultiPuzzleSolver(object):
         # Log the segments in cluster
         for cluster in self._segment_clusters:
             # Build a list of segments in the cluster.
-            pieces_per_input_puzzle = [0] * len(self._image_filenames)
+            pieces_per_input_puzzle = [0 for _ in xrange(0, len(self._image_filenames))]
             segment_list = ""
             for segment_id in cluster.get_segments():
                 if segment_list:
@@ -823,7 +823,7 @@ class MultiPuzzleSolver(object):
         for segment in self._segments:
             print >> string_io, "\tSegment #%d contains %d pieces." % (segment.id_number, len(segment.get_piece_ids()))
             # Get the pieces in the cluster from the original puzzle
-            pieces_per_input_puzzle = [0] * len(self._image_filenames)
+            pieces_per_input_puzzle = [0 for _ in xrange(0, len(self._image_filenames))]
             for piece_id in segment.get_piece_ids():
                 original_puzzle_id = self._paikin_tal_solver.get_piece_original_puzzle_id(piece_id)
                 pieces_per_input_puzzle[original_puzzle_id] += 1

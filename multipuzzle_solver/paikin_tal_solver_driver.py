@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # run_paikin_tal_driver(images, PuzzleType.type1, 25)
     # run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = [config.build_pomeranz_805_piece_filename(2)]
+    images = [config.build_pomeranz_805_piece_filename(8), config.build_mcgill_540_piece_filename(20)]
     run_paikin_tal_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     #

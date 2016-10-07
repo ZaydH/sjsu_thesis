@@ -132,7 +132,7 @@ class MultisidePuzzleOpenSlot(object):
             puzzle_location (PuzzleLocation): Puzzle location information in the PuzzleLocation class format.
         """
         self._puzzle_location = puzzle_location
-        self._neighbor_side_list = [None] * PuzzlePieceSide.get_numb_sides()
+        self._neighbor_side_list = [None for _ in xrange(0, PuzzlePieceSide.get_numb_sides())]
         self._numb_neighbors = 0
 
     def update_side_neighbor_info(self, side, neighbor_side_info):

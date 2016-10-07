@@ -7,7 +7,6 @@ import cStringIO
 import heapq
 import logging
 import time
-import copy
 
 import numpy as np
 
@@ -249,14 +248,24 @@ class PaikinTalSolver(object):
         Initializes all placed piece information.  This includes the data structures inside the Paikin and Tal solver
         as well as those local to the individual pieces.
         """
-        self._piece_valid_for_placement = [True] * len(self._pieces)
+        self._piece_valid_for_placement = [True for _ in xrange(0, self._numb_pieces)]
         self._numb_initial_placeable_pieces = len(self._pieces)
 
+        self._piece_eligible_for_mutual_compat_calc = []
+        for _ in xrange(0, self._numb_pieces):
+            temp_list = []
+            for _ in xrange(0, PuzzlePieceSide.get_numb_sides()):
+                temp_list.append(True)
+            self._piece_eligible_for_mutual_compat_calc.append(temp_list)
+
         # Use the pieces not allowed for placement based off placement being disallowed
+        all_piece_sides = PuzzlePieceSide.get_all_sides()
         for i in xrange(0, len(self._pieces)):
             if self._pieces[i].placement_disallowed:
                 self._piece_valid_for_placement[i] = False
                 self._numb_initial_placeable_pieces -= 1
+                for side in all_piece_sides:
+                    self._piece_eligible_for_mutual_compat_calc[i][side.value] = False
 
         self._numb_unplaced_valid_pieces = self._numb_initial_placeable_pieces
 
@@ -377,6 +386,8 @@ class PaikinTalSolver(object):
         Args:
             skip_initial (bool): Used with Pickling.  Skips initial setup of running
         """
+
+        self._initialize_placed_pieces()
 
         start_time = time.time()
         logging.info("Standard Paikin & Tal Placer started")
@@ -579,9 +590,13 @@ class PaikinTalSolver(object):
             open_slot_info = self._open_locations[i]
             open_slot_puzzle_id = open_slot_info.location.puzzle_id
             open_slot_loc = open_slot_info.location.location
+
             # If this open slot has the same location, remove it.
             # noinspection PyUnresolvedReferences
             if open_slot_puzzle_id == puzzle_id and open_slot_loc == loc_to_remove:
+                # Side is not open so exclude from future calculations
+                self._piece_eligible_for_mutual_compat_calc[open_slot_info.piece_id][open_slot_info.open_side.value] = False
+
                 del self._open_locations[i]
 
             # If not the same location then go to the next open slot
@@ -655,20 +670,12 @@ class PaikinTalSolver(object):
             logging.debug("Need to recalculate the compatibilities.  Number of pieces left: "
                           + str(self._numb_unplaced_valid_pieces) + "\n")
 
-            valid_to_place_or_open_slot_pieces = copy.copy(self._piece_valid_for_placement)
-            for open_location in self._open_locations:
-                valid_to_place_or_open_slot_pieces[open_location.piece_id] = True
             # Recalculate the inter-piece distances
-            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(valid_to_place_or_open_slot_pieces)
+            recalculate_piece_distance = self._piece_eligible_for_mutual_compat_calc
+            self._inter_piece_distance.recalculate_remaining_piece_compatibilities(recalculate_piece_distance)
 
-            # Get all unplaced pieces
-            unplaced_pieces = []
-            for p_i in range(0, len(self._pieces)):
-                # If the piece is not placed, then append to the list
-                if self._piece_valid_for_placement[p_i]:
-                    unplaced_pieces.append(p_i)
             # Use the unplaced pieces to determine the best location.
-            return self._get_next_piece_from_pool(unplaced_pieces)
+            return self._get_next_piece_using_mutual_compatibility()
 
     def _select_piece_using_best_buddies(self):
         """
@@ -948,13 +955,10 @@ class PaikinTalSolver(object):
 
         self._last_best_buddy_heap_housekeeping = None
 
-    def _get_next_piece_from_pool(self, unplaced_pieces):
+    def _get_next_piece_using_mutual_compatibility(self):
         """
         When the best buddy pool is empty, pick the best piece from the unplaced pieces as the next
         piece to be placed.
-
-        Args:
-            unplaced_pieces ([BestBuddyPoolInfo]): Set of unplaced pieces
 
         Returns (NextPieceToPlace):
             Information on the piece that was selected as the best to be placed.
@@ -962,13 +966,16 @@ class PaikinTalSolver(object):
         is_best_buddy = False
         best_piece = None
         # Get the first object from the pool
-        for pool_obj in unplaced_pieces:
-            # Get the piece id of the next piece to place
-            if is_best_buddy:
-                next_piece_id = pool_obj.piece_id
+        for idx, piece in enumerate(self._pieces):
+
             # When not best buddy, next piece ID is the pool object itself.
+            next_piece_id = piece.id_number
+
+            if not self._piece_valid_for_placement[idx]:
+                continue
             else:
-                next_piece_id = pool_obj
+                for side in PuzzlePieceSide.get_all_sides():
+                    assert self._piece_eligible_for_mutual_compat_calc[next_piece_id][side.value]
 
             # For each piece check each open slot
             for open_slot in self._open_locations:
@@ -980,6 +987,9 @@ class PaikinTalSolver(object):
                 # Get the information on the piece adjacent to the open slot
                 neighbor_piece_id = open_slot.piece_id
                 neighbor_side = open_slot.open_side
+
+                if PaikinTalSolver._PERFORM_ASSERT_CHECKS:
+                    assert self._piece_eligible_for_mutual_compat_calc[neighbor_piece_id][neighbor_side.value]
 
                 # Check the set of valid sides for each slot.
                 for next_piece_side in InterPieceDistance.get_valid_neighbor_sides(self._puzzle_type, neighbor_side):
@@ -1299,7 +1309,11 @@ class PaikinTalSolver(object):
             piece_side = location_side[1]
 
             open_slot_loc = PuzzleLocation(puzzle_id, location[0], location[1])
-            if self._is_slot_open(open_slot_loc):
+            if not self._is_slot_open(open_slot_loc):
+                # Side is not open so exclude from future calculations
+                self._piece_eligible_for_mutual_compat_calc[piece_id][piece_side.value] = False
+            else:
+
                 # noinspection PyTypeChecker
                 self._open_locations.append(PuzzleOpenSlot(open_slot_loc, piece_id, piece_side))
 
