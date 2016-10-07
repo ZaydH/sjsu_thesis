@@ -376,8 +376,8 @@ class PieceDistanceInformation(object):
 
         # Set invalid piece distance info to ensure it is reset later.
         all_sides = PuzzlePieceSide.get_all_sides()
-        self._second_best_distance_piece_info = [(sys.maxint, side) for side in all_sides]
-        self._min_distance_piece_info = [(sys.maxint, side) for side in all_sides]
+        self._second_best_distance_piece_info = [None for _ in all_sides]
+        self._min_distance_piece_info = [None for _ in all_sides]
 
     def _find_min_and_second_best_distances(self, piece_valid_for_placement):
         """
@@ -920,11 +920,16 @@ class InterPieceDistance(object):
                 # This is determined by the fact that both piece/side combinations are still eligible for calculation
                 # Meaning they would still be found to be the best.
                 best_piece_info = self._piece_distance_info[p_i].minimum_distance_piece_info[side.value]
-                best_dist_unchanged = recalculate_mutual_compatibility[best_piece_info[0]][best_piece_info[1].value]
                 second_best_piece_info = self._piece_distance_info[p_i].minimum_distance_piece_info[side.value]
-                second_dist_unchanged = recalculate_mutual_compatibility[second_best_piece_info[0]][second_best_piece_info[1].value]
-                if best_dist_unchanged and second_dist_unchanged:
-                    continue
+                if best_piece_info is not None and second_best_piece_info is not None:
+                    distances_unchanged = True
+                    # Check if both sets are still available for recalculation.
+                    for dist_info in [best_piece_info, second_best_piece_info]:
+                        if not recalculate_mutual_compatibility[dist_info[0]][dist_info[1].value]:
+                            distances_unchanged = False
+                            break
+                    if distances_unchanged:
+                        continue
 
                 prev_min_dist = self._piece_distance_info[p_i].minimum_distance[side.value]
                 prev_second_best_dist = self._piece_distance_info[p_i].second_best_distance[side.value]
