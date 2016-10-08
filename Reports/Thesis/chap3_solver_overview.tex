@@ -10,7 +10,7 @@ The following subsections describe each of Mixed-Bag Solver's stages/subfunction
 	\caption{Components of the Mixed-Bag Puzzle Solver}\label{fig:multipuzzleSolverArchitecture}
 \end{figure}
 
-\begin{algorithm}
+\begin{algorithm}[tb]
 \caption{Pseudocode for the Mixed Bag Solver}\label{alg:mixedBagSolver}
 \begin{algorithmic}[1]
 \Function{MixedBagSolver}{$all\_pieces$}
@@ -35,7 +35,7 @@ For all experiments in this thesis, the assembler proposed proposed by Paikin~\&
 
 \subsection{Assembler Implementation}\label{sec:assemblerImplementation}
 
-The implementation of Paikin~\&~Tal's algorithm is not open-source.  Hence, their algorithm was implemented as part of this thesis based off of the description in~\cite{paikin2015}.  This thesis' implementation is in the Python programming language and is fully open-source.
+As of this publication, the implementation of Paikin~\&~Tal's algorithm is not open-source.  Hence, their algorithm was implemented as part of this thesis based off of the description in~\cite{paikin2015}.  This thesis' implementation is in the Python programming language and is fully open-source.
 
 \section{Segmentation}\label{sec:Segmentation}
 
@@ -49,7 +49,7 @@ The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which
 
 Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the next segmentation round.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size.
 
-\begin{algorithm}
+\begin{algorithm}[tb]
 \caption{Pseudocode for the Segmentation Algorithm}\label{alg:segmentation}
 \begin{algorithmic}[1]
 \Function{Segmentation}{$all\_pieces$}
@@ -73,10 +73,10 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 
 \subsection{The \textproc{SegmentPuzzle} Function}\label{sec:segmentPuzzle}
 
-The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
+The \texttt{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
 
-\begin{algorithm}
-\caption{Pseudocode for the \textproc{SegmentPuzzle} Function}\label{alg:segmentPuzzle}
+\begin{algorithm}[tb]
+\caption{Pseudocode to Segment a Solved Puzzle}\label{alg:segmentPuzzle}
 \begin{algorithmic}[1]
 \Function{SegmentPuzzle}{$solved\_puzzle$}
     \State $puzzle\_segments \gets \{ \}$
@@ -158,7 +158,7 @@ Algorithm~\ref{alg:findDistanceToOpen} uses iterative boundary tracing to determ
 
 The algorithm begins by finding set of puzzle locations adjacent to pieces in the segment that are not filled by segment members.  These locations represent the .
 
-\begin{algorithm}
+\begin{algorithm}[tb]
 \caption{Pseudocode for Determining a Segment Point's Manhattan Distance to the Nearest Open Location}\label{alg:findDistanceToOpen}
 \begin{algorithmic}[1]
 \Procedure{FindPieceDistanceToOpen}{$segment\_pieces$}
@@ -187,7 +187,7 @@ The algorithm begins by finding set of puzzle locations adjacent to pieces in th
 \end{algorithmic}
 \end{algorithm}
 
-Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A single iteration of the algorithm has time complexity of $O(n)$, where $n$ is the number of pieces in the segment.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
+Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A single iteration of the algorithm has time complexity of $O(|S_i|)$, where $|S_i|$ is the number of pieces in segment $S_i$.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
 
 
 \subsection{Quantifying Inter-Segment Relationships}
@@ -258,7 +258,7 @@ Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merg
 
 \subsection{Terminating Hierarchical Clustering}
 
-Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always merge all segment clusters  until only a cluster remains. Instead clustering continues until the similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
+Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always continuing merging the segment clusters  until only a cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
 
 \section{Final Seed Piece Selection}\label{sec:finalSeedPiece}
 
