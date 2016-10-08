@@ -1,24 +1,24 @@
 \chapter{Quantifying and Visualizing the Quality of a Mixed-Bag Solver Output}\label{sec:quantifyingSolverQuantify}
 
-Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho \textit{et al.} \cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 and Mixed-Bag puzzles.
+Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in most cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho~\textit{et al.}~\cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section describes the existing quality metrics, their weaknesses, and proposes enhancements to these metrics to make them more meaningful for Type~2 and Mixed-Bag puzzles.  This thesis also proposes the first metrics for quantifying the best buddy attributes of an image.
 
 In the final subsection, tools developed as part of this thesis to visualize the solver output quality are discussed.
 
 \section{Direct Accuracy}\label{sec:directAccuracy}
 
-Direct accuracy is a relatively na\"{\i}ve quality; it is defined as the fraction of pieces placed in the same location in the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces placed in their original (i.e., correct) location.
+Direct accuracy is a relatively na\"{\i}ve quality metric; it is defined as the fraction of pieces placed in the same location in both the ground-truth (i.e., original) and solved image with respect to the total number of pieces.  Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the total number of pieces and $c$ is the number of pieces in the solved image that are placed in their original (i.e., correct) location.
 
 \begin{equation} \label{eq:directAccuracy}
 DA = \frac{c}{n}
 \end{equation}
 
-Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in accuracy.  As shown in Section~\ref{sec:shiftableEnhancedDirectAccuracy}, this can be particularly true when the ground-truth image's dimensions are not known by the solver.
+Direct accuracy is vulnerable to shifts in the solved image where even a few misplaced pieces can cause a significant decrease in accuracy.  As shown in Figure~\ref{fig:directAccuracyOnePieceEffect}, this can be particularly true when the ground-truth image's dimensions are not known by the solver.
 
 This thesis proposes two new direct accuracy metrics namely: Enhanced Direct Accuracy Score (EDAS) and Shiftable Enhanced Direct Accuracy Score (SEDAS).  They are described in the following two subsections; the complementary relationship between EDAS and SEDAS is described in the third subsection.
 
 \subsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
 
-The standard direct accuracy metric does not account for the possibility that there may be pieces from multiple puzzles in the same solver output.  For a given a puzzle $P_i$ in the set of input puzzles $P$ (where $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is in $S$, Enhanced Direct Accuracy Score (EDAS) is defined as shown in Equation~\eref{eq:enhancedDirectAccuracyScore}.
+The standard direct accuracy metric does not account for the possibility that there may be pieces from multiple input puzzles in the same solver output image.  For a given a puzzle $P_i$ in the set of input puzzles $P$ (i.e., $P_i \in P$) and a set of solved puzzles $S$ where $S_j$ is in $S$, Enhanced Direct Accuracy Score (EDAS) is defined as shown in Equation~\eref{eq:enhancedDirectAccuracyScore}.
 
 \begin{equation} \label{eq:enhancedDirectAccuracyScore}
 EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
@@ -86,17 +86,39 @@ Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}
 
 In the same fashion as the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including a summation of all $m_{k,j}$ in the denominator of \eref{eq:enhancedNeighborAccuracyScore}, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and misplaced pieces.
 
-\section{Visualizing Solver Output Quality}\label{sec:visualizingSolverAccuracy}
+\section{Best Buddy Metrics}\label{sec:bestBuddyMetrics}
 
-In images with thousands of pieces, it is often difficult to visually determine the location of individual pieces that are incorrectly placed.  What is more, visual tools help developers quickly detect and fix latent bugs.
+Chapter~\ref{chap:previousWork} explains that two puzzle pieces are best buddies on their respective sides if they are both more similar to each other than they are to any other pieces.  This thesis refers to a best buddy relationship as ``adjacent'' if the two pieces are neighbors on their respective sides.  In contrast, ``non-adjacent'' best buddies are not neighbors.  It is also possible that a piece has no best buddy at all on one or more sides.
 
-The following two subsections describe the tools developed as part of this thesis for visualizing direct accuracy and neighbor accuracy.
+Best buddy relationships have been used for segmentation~\cite{pomeranz2011}, placement~cite{paikin 2015}, and as an estimation metric~\cite{sholomon2013}.  To date, no specific metrics or additional subclassifications of best buddy relationships has been proposed.  The following subsections propose new metrics for studying the best buddy profile of both input and solved puzzles.
+
+\subsection{Interior and Exterior Best Buddies}\label{sec:bestBuddyInteriorExterior}
+
+If an image has fewer non-adjacent best buddies, it means that best buddy relationships become a more accurate determiner of puzzle piece adjacency.  It is expected that a pair of best buddies are more likely to be non-adjacent if they are have no neighbor at all (i.e., the piece(s) is next to an open location like the edge of the image).  This is because those puzzle piece sides have no true neighbor leaving them more inclined to couple with an unrelated piece, which is often another piece's side with no neighbor.  This is illustrated by the example described in Section~\ref{sec:visualizingBestBuddies}.
+
+This thesis subcategorizes non-adjacent best buddies depending on whether they are internal (i.e., the piece has an actual neighbor) or external (i.e., the piece has no neighbor).  Interior non-adjacent best buddies are generally more concerning since they are used for segmentation and potentially as an estimation metric. 
+
+\subsection{Best Buddy Density}\label{sec:bestBuddyDensity}
+
+As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the best buddy density, $BBD$ given the image has $b$ total best buddies.   $BBD$ is bounded between 0 and 1 (inclusive); a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
+
+\begin{equation} \label{eq:bestBuddyDensity}
+BBD = \frac{b}{n~q}
+\end{equation}
+
+Ideally, a puzzle would have only adjacent best buddies, and that all neighboring puzzle piece sides were also adjacent best buddies.  In such cases, the best buddy density would be less than one; the exact to which it would be below one is dependent on the puzzle dimensions and any missing pieces.  $BBD$ could be further refined to only consider adjacent best buddies in the term $b$.  
+
+Best buddy density may vary across an image with some areas showing lower density than others. Equation~\eref{} can be adjusted to a more local metric by reducing the value of $b$ and $n$ based off the best buddy profile of a connected subset of pieces.
+
+\section{Visualizing Solver Output Quality and Best Buddies Relationships}\label{sec:visualizingSolverAccuracy}
+
+In images with thousands of pieces, it is often difficult to visually determine the location of individual pieces that are incorrectly placed.  What is more, visual tools help developers quickly detect and fix latent bugs.  The following two subsections describe the tools developed as part of this thesis for visualizing direct and neighbor accuracy as well as for visualizing best buddies.
 
 \subsection{Visualizing EDAS and SEDAS}\label{sec:visualizingEdasSedas}
 
 In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a single value (i.e., correct or incorrect).  Due to that, the direct accuracy visualization represents each puzzle by a square filled with a solid color.  One additional refinement used in this thesis is to subdivide the ``incorrect'' placements into a set of subcategories; they are (in order of precedence): wrong puzzle, wrong location, and wrong rotation.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.
 
-\begin{table}[htb]
+\begin{table}[tb]
 	\begin{center}
   		\begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
@@ -129,9 +151,9 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along 
 
 \subsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
-The visualization for neighbor accuracy is very similar to the techniques described in Section~\ref{sec:visualizingBestBuddies} for visualizing best buddies where each puzzle piece is divided into four equal-sized isosceles triangles (one for each side).  The triangles are assigned colors depending on whether their neighbors in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving Mixed-Big puzzles and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classifications of puzzle piece sides in neighbor accuracy visualizations.
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose neighbor accuracy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  The triangles are assigned colors depending on whether their neighbors in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving Mixed-Big puzzles and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classifications of puzzle piece sides in neighbor accuracy visualizations.
 
-\begin{table}[htb]
+\begin{table}[t]
 \begin{center}
   \begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
@@ -146,7 +168,7 @@ The visualization for neighbor accuracy is very similar to the techniques descri
 
 Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  Note that that the puzzle of interest $P_i$ is the glass and stone building while the other puzzle $P_k$ is a rainforest house.
 
-\begin{figure}
+\begin{figure}[t]
 \centering
 
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
@@ -168,26 +190,10 @@ All pieces that came from the rainforest house image are shown as blue despite b
 
 \subsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
 
-There is currently no standard for visualizing an image's best buddies.  This thesis proposes such a standard for the first time.  As a nomenclature, any best buddies that are neighbors in the ground-truth image are referred to as ``adjacent best buddies'' while any best buddies that are not neighbors are referred to as ``non-adjacent best buddies.''
-
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the best buddy visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose best buddy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  
-
-Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization.  The color scheme used to denote the different best buddy relationships is shown in Table~\ref{tab:bestBuddyColors}.
+The visualization for best buddies is similar to that of neighbor accuracy described in Section~\ref{sec:visualizingNeighborAccuracy}.  Hence, each puzzle piece in the best buddy visualization is divided into four isosceles triangles with each representing the piece's best buddy relationship with its neighbor.  Table~\ref{tab:bestBuddyColors} defines the color scheme used to denote the three best buddy relationships outlined in Section~\ref{sec:bestBuddyMetrics}.  
 
 
-\begin{figure}
-  \centering
-  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
-     \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
-     \\~\\
-     (a) Original Image & (b) Best Buddy Visualization
-  \end{tabular}
-\caption{Visualization of Best Buddies in an Image}
-\label{fig:bestBuddyVisualization}
-\end{figure}
-
-
-\begin{table}
+\begin{table}[t]
 \begin{center}
   \begin{tabular}{ | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | }
   
@@ -202,6 +208,16 @@ Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visual
 \caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}\label{tab:bestBuddyColors}
 \end{table}
 
-In previous research, all best buddies (in particular best buddy errors) were treated the same.  However, non-adjacent best buddies are more likely to occur on piece sides that are adjacent to an open space (i.e., where there is no neighbor piece).  Hence, such piece sides are more like to couple with unrelated pieces at a higher rate.  For example, the image \cite{pixabay} in Figure~\ref{fig:bestBuddyVisualization} has 4 interior and 14 exterior non-adjacent best buddies despite there being 16-times more interior sides. 
 
-When using best buddy accuracy as an estimation metric, this thesis differentiates between interior and exterior best buddy errors by giving interior best buddy errors a higher weight.
+\begin{figure}[t]
+  \centering
+  \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
+     \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
+     \\~\\
+     (a) Original Image~\cite{pixabay} & (b) Best Buddy Visualization
+  \end{tabular}
+\caption{Visualization of Best Buddies in an Image}
+\label{fig:bestBuddyVisualization}
+\end{figure}
+
+Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization.  Note that the image has 4 interior and 14 exterior non-adjacent best buddies.  This is despite having 16-times more interior interior sides.  What is more, one can see that the best buddy density is high and generally uniform.

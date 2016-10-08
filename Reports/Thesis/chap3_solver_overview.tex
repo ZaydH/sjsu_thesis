@@ -28,7 +28,12 @@ The following subsections describe each of Mixed Bag Solver's stages/subfunction
 
 The assembler assigns the placement (and optionally rotation) of the puzzle pieces in the solved puzzle.  This solver architecture is largely independent of the particular assembler used.  Hence, any improvements or modifications to the assembler can be directly incorporated into the Mixed-Bag Solver to improve its performance.  What is more, if a particular solver performs better than another for a particular application, the solvers can be interchanged.  This provides the Mixed-Bag Solver with significant flexibility and upgradability to maximize performance across a wide range of applications.
 
-For all experiments in this thesis, we used the solver proposed by Paikin \& Tal \cite{paikin2015}.  It was selected because it the current state-of-the-art.  What is more, since it supports mixed bag puzzles, it can be used for direct comparison of performance.
+For all experiments in this thesis, we used the solver proposed by Paikin \& Tal \cite{paikin2015}.  It was selected because it the current state-of-the-art.  What is more, since it is one of the few that support
+
+
+\section{Segmentation}\label{sec:Segmentation}
+
+The implementation of Paikin~\&~Tal's algorithm is not open-source.  Hence, their algorithm was implemented as part of this thesis based off their description in~\cite{paikin2015}.  This thesis' implementation is in the Python programming language and is fully open-source.
 
 \section{Segmentation}\label{sec:Segmentation}
 
@@ -111,7 +116,7 @@ Whenever a piece is added to a segment, the algorithm examines all of the piece'
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
-A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships as defined in Chapter~\ref{} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
+A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the interpiece best buddy relationships as defined in Chapter~\ref{} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
 Any time an articulation point is removed, one or more pieces will necessarily become disconnected from the segment's seed.  Any such pieces are removed from the segment and returned to the set of unassigned pieces.  
 
@@ -183,13 +188,17 @@ The algorithm begins by finding set of puzzle locations adjacent to pieces in th
 Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A single iteration of the algorithm has time complexity of $O(n)$, where $n$ is the number of pieces in the segment.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
 
 
-\subsection{Quantifying Inter-Segment Similarity}
+\subsection{Quantifying Inter-Segment Relationships}
 
-The 
+As mentioned previously, each segment, $\Phi_i$ will have one or more stitching pieces, $\eta_x$, where $eta_x \in \Phi_i$.  Each stitching piece $\eta_x$ for segment $\Phi_i$ will have a corresponding mini-solver output puzzle, $MS_{\eta_x}$.  As each mini-solver is run, the solver output may grow towards neighboring segments.  If the solver output includes pieces from a different segment, there is a significantly increased likelihood the two segments came from the same input puzzle. 
+
+Equation~\eref{eq:segmentSimilarity} defines an overlap coefficient based on the mini-solver outputs to quantify the quantify the relationship between any two segments $\Phi_i$ and $\Phi_j$. The intersection between the mini-solver output and the corresponding segment needs to be normalized by the mini-solver's size.  It must also take into account the size of the corresponding segment since that can dictate in some cases dictate the maximum overlap if $|\Phi_j| < |MS_{\eta_x}|$.
 
 \begin{equation} \label{eq:segmentSimilarity}
-\Overlap_{\Phi_i,\Phi_j} = \argmax_{\eta_x \in \Phi_i} {\frac{|P_{}|}{\text{min}(|P_{\eta_x}|, |\Phi_j|)}}
+Overlap_{\Phi_i,\Phi_j} = \argmax_{\eta_x \in \Phi_i} {\frac{|MS_{\eta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\eta_x}|, |\Phi_j|)}}
 \end{equation}
+
+The mini-solver outputs will vary between segments based off their respective stitching piece selection as well as potentially the size of the segments.  Hence, in most cases, the overlap coefficient is asymmetric meaning that often $Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}$.  Section~\ref{sec:quantifyingSegmentSimilarity} defines how the overlap coefficients are normalized to quantify inter-segment similarity.
 
 \section{Hierarchical Clustering of Segments}
 
@@ -217,7 +226,7 @@ The only inputs to the hierarchical clustering algorithm are the segments found 
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Calculating the Initial Similarity Matrix}
+\subsection{Calculating the Initial Similarity Matrix}\label{sec:quantifyingSegmentSimilarity}
 
 The Segment Overlap Matrix is a form of hollow matrix, where all elements in the matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering merges segments using a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines the similarity, $\omega_(i,j)$ between any two clusters $\Phi_i$ to $\Phi_j$.
 
