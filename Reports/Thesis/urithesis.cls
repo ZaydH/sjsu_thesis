@@ -1070,7 +1070,7 @@ by\\
 \vspace{24pt}
 APPROVED FOR THE DEPARTMENT OF COMPUTER SCIENCE\\ %\vspace{-1.0em}\\
 \vspace{24pt}
-SAN JOSE STAT\'{E} UNIVERSITY\\
+SAN JOS\'{E} STATE UNIVERSITY\\
 \vspace{24pt}
 \graduationMonth\ {\@copyrightyear}\\
 \end{center}

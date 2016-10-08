@@ -1,8 +1,8 @@
-\chapter{Mixed-Bag Solver Overview}
+\chapter{Mixed-Bag Solver Overview}\label{chap:mixedBagSolver}
 
-This thesis' Mixed-Bag Solver supports Type~1, Type~2, and Mixed-Bag Puzzles.  It consists of five distinct stages namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}; the pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}.
+This thesis' Mixed-Bag Solver supports Type~1, Type~2, and Mixed-Bag puzzles.  It consists of five distinct stages, namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}; the pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}.
 
-The following subsections describe each of Mixed Bag Solver's stages/subfunctions.  It also discusses the assembler, which is a separate but associated component of the architecture.
+The following subsections describe each of Mixed-Bag Solver's stages/subfunctions.  It also discusses the assembler (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}), which is a separate but associated component of the architecture.
 
 \begin{figure}[ht!]
 	\centering
@@ -16,8 +16,8 @@ The following subsections describe each of Mixed Bag Solver's stages/subfunction
 \Function{MixedBagSolver}{$all\_pieces$}
     \State $solved\_segments \gets \textproc{Segmentation}\text{(} all\_pieces \text{)}$
 	\State $overlap\_matrix \gets \textproc{Stitching}\text{(} solved\_segments \text{, } all\_pieces \text{)}$
-	\State $segment\_clusters \gets \textproc{PerformHierarchicalClustering} \text{(} solved\_segments \text{, } overlap\_matrix \text{)}$
-	\State $puzzle\_start\_pieces \gets \textproc{FindStartingPieces} \text{(} segment_clusters \text{)}$
+	\State $clusters \gets \textproc{HierarchicalClustering} \text{(}solved\_segments \text{, } overlap\_matrix \text{)}$
+	\State $puzzle\_start\_pieces \gets \textproc{FindStartingPieces} \text{(} clusters \text{)}$
 	\State $solved\_puzzles \gets \textproc{RunFinalAssembly} \text{(} puzzle\_start\_pieces \text{, } all\_pieces \text{)}$
     \State \Return $solved\_puzzles$
 \EndFunction
@@ -26,26 +26,28 @@ The following subsections describe each of Mixed Bag Solver's stages/subfunction
 
 \section{Assembler}\label{sec:SolverAssembler}
 
-The assembler assigns the placement (and optionally rotation) of the puzzle pieces in the solved puzzle.  This solver architecture is largely independent of the particular assembler used.  Hence, any improvements or modifications to the assembler can be directly incorporated into the Mixed-Bag Solver to improve its performance.  What is more, if a particular solver performs better than another for a particular application, the solvers can be interchanged.  This provides the Mixed-Bag Solver with significant flexibility and upgradability to maximize performance across a wide range of applications.
+The assembler assigns the placement (and optionally rotation) of the puzzle pieces in the solved puzzle.  The Mixed-Bag Solver's architecture is largely independent of the particular assembler used.  Hence, any improvements or modifications to the assembler can be directly incorporated into the Mixed-Bag Solver to improve the solver's performance.  What is more, if a particular assembler performs better than others for a particular application, the assemblers can be interchanged.  This provides the Mixed-Bag Solver with significant flexibility and upgradability to maximize performance across a wide range of applications.
 
-For all experiments in this thesis, we used the solver proposed by Paikin \& Tal \cite{paikin2015}.  It was selected because it the current state-of-the-art.  What is more, since it is one of the few that support
+For all experiments in this thesis, the assembler proposed proposed by Paikin~\& Tal~\cite{paikin2015}.  As mentioned in Chapter~\ref{chap:previousWork}, their assembler is the current state of the art and is one of the few algorithms that natively supports Mixed-Bag puzzles.
 
+\subsection{Assembler Time Complexity}
+
+
+\subsection{Assembler Implementation}\label{sec:assemblerImplementation}
+
+The implementation of Paikin~\&~Tal's algorithm is not open-source.  Hence, their algorithm was implemented as part of this thesis based off of the description in~\cite{paikin2015}.  This thesis' implementation is in the Python programming language and is fully open-source.
 
 \section{Segmentation}\label{sec:Segmentation}
 
-The implementation of Paikin~\&~Tal's algorithm is not open-source.  Hence, their algorithm was implemented as part of this thesis based off their description in~\cite{paikin2015}.  This thesis' implementation is in the Python programming language and is fully open-source.
+As detailed in Algorithm~\ref{alg:mixedBagSolver}, segmentation stages takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of segmentation is to a basic provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
 
-\section{Segmentation}\label{sec:Segmentation}
+Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a segment are assembled as if they all belong to a single ground truth image.  This eliminates the need to make any assumptions regarding the input at this early stage of the solver.  It is expected that pieces from the same input puzzle may be assigned to multiple separate segments.  Section~\ref{} describes how these multiple segments are merged using hierarchical clustering.
 
-As shown in Algorithm~\ref{alg:mixedBagSolver}, segmentation stages takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of stage is to provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
-
-Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework.  The algorithm is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a segment are assembled as if they all belong to a single ground truth image.  This eliminates the need to make any assumptions regarding the input at this early stage of the solver.  What is more, pieces from the same input puzzle may be assigned to two separate segments.  As discussed in Section~\ref{sec:hierarchicalClustering}, hierarchical clustering works to the one or more disjoint segments from the same puzzle into a single cluster.
-
-After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\label{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
+After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\ref{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
 
 The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which segments in a given segmentation round are passed to the next stage of the Mixed-Bag Solver.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round (and larger than the minimum segment size) is saved.  This scalar value provides sufficient balance between ensuring the largest segments for analysis with limiting the execution time of this stage.
 
-Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the next segmentation round.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size. At the end of segmentation, each piece will be assigned to exactly one segment.
+Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the next segmentation round.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size.
 
 \begin{algorithm}
 \caption{Pseudocode for the Segmentation Algorithm}\label{alg:segmentation}
@@ -63,13 +65,13 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
                 \State $\text{remove pieces in } segment \text{ from } unassigned\_pieces$
             \EndIf
         \EndFor
-    \Until{$max\_segment\_size \text{ < } smallest\_allowed \textbf{ or } |unplaced\_pieces| \text{ < } 0$}
+    \Until{$max\_segment\_size \text{ < } smallest\_allowed \textbf{ or } |unassigned\_pieces| \text{ == } 0$}
     \State \Return $solved\_segments$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{The $\textproc{SegmentPuzzle}$ Function}\label{sec:segmentPuzzle}
+\subsection{The \textproc{SegmentPuzzle} Function}\label{sec:segmentPuzzle}
 
 The \texttt{segment} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
 
@@ -116,7 +118,7 @@ Whenever a piece is added to a segment, the algorithm examines all of the piece'
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
-A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the interpiece best buddy relationships as defined in Chapter~\ref{} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \ref{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
+A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the interpiece best buddy relationships as defined in Chapter~\ref{chap:previousWork} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \cite{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
 Any time an articulation point is removed, one or more pieces will necessarily become disconnected from the segment's seed.  Any such pieces are removed from the segment and returned to the set of unassigned pieces.  
 
@@ -152,7 +154,7 @@ An ``open location'' with respect to a segment is any puzzle location that is no
 
 Stitching pieces should be near the edge of a segment to increase the likelihood of growth towards a neighboring segment.  However,  if a stitching piece is too close to the edge of the segment, the algorithm may make erroneous segmentation associations.   
 
-As outlined in Algorithm~\ref{alg:stitchingPieceDistance}, the Mixed-Bag Solver uses iterative boundary tracing to determine each stitching piece's distance to the nearest puzzle location that is not populated with a piece that is a member of the stitching piece's segment..
+Algorithm~\ref{alg:findDistanceToOpen} uses iterative boundary tracing to determine each stitching piece's distance to the nearest puzzle location that is not populated with a piece that is a member of the stitching piece's segment..
 
 The algorithm begins by finding set of puzzle locations adjacent to pieces in the segment that are not filled by segment members.  These locations represent the .
 
@@ -190,26 +192,26 @@ Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A singl
 
 \subsection{Quantifying Inter-Segment Relationships}
 
-As mentioned previously, each segment, $\Phi_i$ will have one or more stitching pieces, $\eta_x$, where $eta_x \in \Phi_i$.  Each stitching piece $\eta_x$ for segment $\Phi_i$ will have a corresponding mini-solver output puzzle, $MS_{\eta_x}$.  As each mini-solver is run, the solver output may grow towards neighboring segments.  If the solver output includes pieces from a different segment, there is a significantly increased likelihood the two segments came from the same input puzzle. 
+As mentioned previously, each segment, $\Phi_i$ will have one or more stitching pieces, $\zeta_x$, where $\zeta_x \in \Phi_i$.  Each stitching piece $\zeta_x$ for segment $\Phi_i$ will have a corresponding mini-solver output puzzle, $MS_{\zeta_x}$.  As each mini-solver is run, the solver output may grow towards neighboring segments.  If the solver output includes pieces from a different segment, there is a significantly increased likelihood the two segments came from the same input puzzle. 
 
-Equation~\eref{eq:segmentSimilarity} defines an overlap coefficient based on the mini-solver outputs to quantify the quantify the relationship between any two segments $\Phi_i$ and $\Phi_j$. The intersection between the mini-solver output and the corresponding segment needs to be normalized by the mini-solver's size.  It must also take into account the size of the corresponding segment since that can dictate in some cases dictate the maximum overlap if $|\Phi_j| < |MS_{\eta_x}|$.
+Equation~\eref{eq:segmentOverlap} defines an overlap coefficient based on the mini-solver outputs to quantify the quantify the relationship between any two segments $\Phi_i$ and $\Phi_j$. The intersection between the mini-solver output and the corresponding segment needs to be normalized by the mini-solver's size.  It must also take into account the size of the corresponding segment since that can dictate in some cases dictate the maximum overlap if $|\Phi_j| < |MS_{\zeta_x}|$.
 
-\begin{equation} \label{eq:segmentSimilarity}
-Overlap_{\Phi_i,\Phi_j} = \argmax_{\eta_x \in \Phi_i} {\frac{|MS_{\eta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\eta_x}|, |\Phi_j|)}}
+\begin{equation} \label{eq:segmentOverlap}
+Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|MS_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\zeta_x}|, |\Phi_j|)}}
 \end{equation}
 
 The mini-solver outputs will vary between segments based off their respective stitching piece selection as well as potentially the size of the segments.  Hence, in most cases, the overlap coefficient is asymmetric meaning that often $Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}$.  Section~\ref{sec:quantifyingSegmentSimilarity} defines how the overlap coefficients are normalized to quantify inter-segment similarity.
 
-\section{Hierarchical Clustering of Segments}
+\section{Hierarchical Clustering of Segments}\label{{sec:hierarchicalClustering}}
 
 Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each clustering round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic flow of the hierarchical clustering algorithm of the Mixed-Bag Solver; it is adapted from \cite{tanIntroToDataMining}.  
 
 The only inputs to the hierarchical clustering algorithm are the segments found in the segmentation stage and the Segment Overlap Matrix from the Stitching stage.
 
-\begin{algorithm}
-\caption{Pseudocode for the Hierarchical Clustering Algorithm}\label{alg:hierarchicalClustering}
+\begin{algorithm}[tb]
+\caption{Pseudocode for the Hierarchical Clustering of Segments}\label{alg:hierarchicalClustering}
 \begin{algorithmic}[1]
-\Function{PerformHierarchicalClustering}{$solved\_segments, overlap\_matrix$}
+\Function{HierarchicalClustering}{$solved\_segments, overlap\_matrix$}
 	\State $\textit{segment\_clusters} = \{ \}$	
 	\ForEach{$segment_i \in \textit{solved\_segments}$}
 		\State $\text{add new segment cluster } \Phi_i \text{ containing } segment_i \text{ to } \textit{segment\_clusters}$
@@ -228,7 +230,7 @@ The only inputs to the hierarchical clustering algorithm are the segments found 
 
 \subsection{Calculating the Initial Similarity Matrix}\label{sec:quantifyingSegmentSimilarity}
 
-The Segment Overlap Matrix is a form of hollow matrix, where all elements in the matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering merges segments using a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines the similarity, $\omega_(i,j)$ between any two clusters $\Phi_i$ to $\Phi_j$.
+The Segment Overlap Matrix is a form of hollow matrix, where all elements in the matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering merges segments using a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines the similarity, $\omega_{i,j}$ between any two clusters $\Phi_i$ to $\Phi_j$.
 
 \begin{equation} \label{eq:segmentSimilarity}
 \omega_{i,j} = \frac{Overlap(\Phi_i, \Phi_j) + Overlap(\Phi_j, \Phi_i)}{2} 
@@ -248,16 +250,18 @@ If there are $n$ solved segments found during segmentation, then the initial sim
 
 The Mixed-Bag Solver uses the Single Link version of hierarchical clustering.  Hence, the similarity between any two cluster segments is defined as the similarity between the two most similar segments in either cluster.  This approach is required because two segments clusters may only be adjacent along the border of two of the composite segments.  
 
-Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merged cluster containing segment clusters, $\Psi_x$ and $\Psi_y$, and any other segment cluster $\Psi_z$.  Note that segment $\Phi_i$ is a member of the union of $\Psi_x$ and $\Psi_y$ while segment $\Phi_j$ is a member of segment cluster $\Psi_z$.
+Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merged cluster containing segment clusters, $\Sigma_x$ and $\Sigma_y$, and any other segment cluster $\Sigma_z$.  Note that segment $\Phi_i$ is a member of the union of segment clusters $\Sigma_x$ and $\Sigma_y$ while segment $\Phi_j$ is a member of segment cluster $\Sigma_z$.
 
 \begin{equation} \label{eq:segmentClusterMerge}
-	\omega_{x \cup y,z} = \argmax_{\Phi_i \in \Psi_x \cup \Psi_y} \bigg( \argmax_{\Phi_j \in \Psi_z} \omega_{i,j} \bigg) 
+	\omega_{x \cup y,z} = \argmax_{\Phi_i \in (\Sigma_x \cup \Sigma_y)} \bigg( \argmax_{\Phi_j \in \Sigma_z} \omega_{i,j} \bigg) 
 \end{equation}
 
 \subsection{Terminating Hierarchical Clustering}
 
-Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always merge all segment clusters  until only a cluster remains. Instead clustering continues until the similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
+Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always merge all segment clusters  until only a cluster remains. Instead clustering continues until the similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
 
-\section{Final Seed Piece Selection}
+\section{Final Seed Piece Selection}\label{sec:finalSeedPiece}
+
+As ne
 
 \section{Final Assembly}

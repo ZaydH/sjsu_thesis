@@ -108,7 +108,7 @@ BBD = \frac{b}{n~q}
 
 Ideally, a puzzle would have only adjacent best buddies, and that all neighboring puzzle piece sides were also adjacent best buddies.  In such cases, the best buddy density would be less than one; the exact to which it would be below one is dependent on the puzzle dimensions and any missing pieces.  $BBD$ could be further refined to only consider adjacent best buddies in the term $b$.  
 
-Best buddy density may vary across an image with some areas showing lower density than others. Equation~\eref{} can be adjusted to a more local metric by reducing the value of $b$ and $n$ based off the best buddy profile of a connected subset of pieces.
+Best buddy density may vary across an image with some areas showing lower density than others. Equation~\eref{eq:bestBuddyDensity} can be adjusted to a more local metric by reducing the value of $b$ and $n$ based off the best buddy profile of a connected subset of pieces.
 
 \section{Visualizing Solver Output Quality and Best Buddies Relationships}\label{sec:visualizingSolverAccuracy}
 
@@ -131,7 +131,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 \caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along with the associated EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, almost all pieces had the wrong location according to EDAS; the only exception is a single piece that had the right location but wrong rotation.  In contrast, almost all pieces have the correct location in the SEDAS representation; note that the piece in the correct location but with wrong rotation in EDAS has the wrong location in SEDAS.
+Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output as well as its associated EDAS and SEDAS visualizations. Since four puzzle pieces were erroneously placed on the left of the image, all but one had the wrong location according to EDAS; the only exception is a single piece that had the right location but wrong rotation.  In contrast, almost all pieces have the correct location in the SEDAS representation; note that the piece in the correct location but wrong rotation in EDAS has the wrong location in SEDAS.
 
 \begin{figure}
 \centering
@@ -151,7 +151,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output along 
 
 \subsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose neighbor accuracy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  The triangles are assigned colors depending on whether their neighbors in the solver output and ground-truth image match.  The visualization includes a subcategory known as ``wrong puzzle'' which is a special case that occurs when solving Mixed-Big puzzles and some of the pieces in the solved puzzle are not from the puzzle of interest, $P_i$.  Table~\ref{tab:neighborAccuracyColors} defines the colors used to represent the different classifications of puzzle piece sides in neighbor accuracy visualizations.
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose neighbor accuracy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  Table~\ref{tab:neighborAccuracyColors} defines the color assigned to each triangle depending on whether a piece's neighbors in the solver output and ground-truth image match.  The ``wrong puzzle'' classfication applies only to Mixed-Bag puzzles and occurs when a piece in the solver output is does not from the puzzle of interest, $P_i$. 
 
 \begin{table}[t]
 \begin{center}
@@ -166,7 +166,7 @@ In a jig swap puzzle, a piece may have best buddies on up to four sides (since t
 \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  Note that that the puzzle of interest $P_i$ is the glass and stone building while the other puzzle $P_k$ is a rainforest house.
+Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  Note that that the puzzle of interest ($P_i$) is the glass and stone building while the other puzzle ($P_k$) is a rainforest house.
 
 \begin{figure}[t]
 \centering
@@ -186,11 +186,11 @@ Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solvin
 \label{fig:neigborAccuracyVisualization}
 \end{figure}
 
-All pieces that came from the rainforest house image are shown as blue despite being assembled correctly; this is because they are not from the puzzle of interest.  All neighbors from the puzzle of interest (i.e., the glass and stone building) that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are shown with red triangles.
+All pieces that came from the rainforest house image are shown as blue despite being assembled correctly; this is because they are not from the puzzle of interest.  All neighbors from the puzzle of interest (i.e., the glass and stone building) that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are represented by red triangles.
 
 \subsection{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
 
-The visualization for best buddies is similar to that of neighbor accuracy described in Section~\ref{sec:visualizingNeighborAccuracy}.  Hence, each puzzle piece in the best buddy visualization is divided into four isosceles triangles with each representing the piece's best buddy relationship with its neighbor.  Table~\ref{tab:bestBuddyColors} defines the color scheme used to denote the three best buddy relationships outlined in Section~\ref{sec:bestBuddyMetrics}.  
+The visualization for best buddies is similar to that of neighbor accuracy.  Hence, each puzzle piece in the best buddy visualization is divided into four isosceles triangles with each triangle representing the piece's best buddy relationship with its neighbor.  Table~\ref{tab:bestBuddyColors} defines the color scheme used to denote the three best buddy relationships outlined in Section~\ref{sec:bestBuddyMetrics}.  
 
 
 \begin{table}[t]
@@ -220,4 +220,4 @@ The visualization for best buddies is similar to that of neighbor accuracy descr
 \label{fig:bestBuddyVisualization}
 \end{figure}
 
-Figure~\ref{fig:bestBuddyVisualization} shows an image and its best buddy visualization.  Note that the image has 4 interior and 14 exterior non-adjacent best buddies.  This is despite having 16-times more interior interior sides.  What is more, one can see that the best buddy density is high and generally uniform.
+Figure~\ref{fig:bestBuddyVisualization} shows an example image and its best buddy visualization.  Note that the image has 4 interior and 14 exterior non-adjacent best buddies.  This is despite having 16-times more interior interior sides.  What is more, one can see that the best buddy density is high and generally uniform.
