@@ -1,1 +1,9 @@
-\chapter{Conclusions}
+\chapter{Conclusions and Future Work}
+
+This thesis presented the first fully-automated solver for Mixed-Bag jigsaw puzzles.  No other solver today has formalized an algorithm estimate the number of input images; what is more, the algorithm has been shown to be able to successfully solve twice as many puzzles as the current state, despite receiving less information.  What is more, the solver does not relay on a specific assembly strategy, meaning the solver's performance will improve as better solvers are proposed. 
+
+Opportunities currently exist to further improve the Mixed-Bag Solver's performance.  First, the ceiling on the quality of solved outputs is significantly affected by the assembler.  This solver was designed to being largely independent of the assembler used, meaning the solver's performance will improve as better solvers are proposed. As such, an improved solver that further prioritizes assembly based off best buddies is currently under development.  What is more, Paikin~\& Tal's algorithm often poorly assembles areas with low best buddy density, which this new assembler should also improve.
+
+Another area where future investigation is planned is the threshold for hierarchical clustering, which is currently set at a fixed value.  It is expected that a more dynamic approach may improve the clustering overall.
+
+One final area where further work is planned is around the selection of seed pieces.  As explained in Section~\ref{sec:stitchingPieceSelection}, a stitching piece is by definition a member of a saved segment.  In some cases, the mini-assembly may not actually expand the segment, which would in turn prevent segment clustering. An improved approach may involve selecting stitching pieces that belong to no segment, with the expectation that such pieces may have superior stitching properties.
