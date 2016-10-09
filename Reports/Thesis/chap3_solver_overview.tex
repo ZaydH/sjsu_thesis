@@ -41,11 +41,9 @@ As of this publication, the implementation of Paikin~\&~Tal's algorithm is not o
 
 As detailed in Algorithm~\ref{alg:mixedBagSolver}, segmentation stages takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of segmentation is to a basic provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
 
-Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a saved segment are assembled as if they all belong to a single ground-truth image.  This eliminates the need to make any assumptions regarding the input at this early stage of the solver.  It is expected that pieces from the same input puzzle may be assigned to multiple separate segments.  Section~\ref{} describes how these multiple segments are merged using hierarchical clustering.
+Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a saved segment are assembled as if they all belong to a single ground-truth image.  This strategy eliminates the need to make any assumptions regarding the input at this early stage.  What is more, it is expected that pieces from the same input puzzle may be assigned to multiple disjoint segments.  Section~\ref{sec:hierarchicalClustering} describes how these segments are merged using hierarchical clustering.
 
-After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\ref{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
-
-The term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} defines which segments in a given segmentation round are passed to the next stage of the Mixed-Bag Solver.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round (and larger than the minimum segment size) is saved.  This scalar value provides sufficient balance between ensuring the largest segments for analysis with limiting the execution time of this stage.
+After the puzzle is assembled in a given round, the solved puzzle is then partitioned into segments; the segmentation procedure is described in Section~\ref{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the Stitching stage described in Section~\ref{sec:stitching}.  Similarly, the term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} dictates the segments in a given segmentation round, other than the largest one, that are also passed to the next stage of the Mixed-Bag Solver.  In this thesis, \textit{$\alpha$} was set to 0.5, meaning any segment that was at least half the size of the largest segment in that round is saved.  This scalar value provides sufficient balance between finding the largest possible segments for analysis and limiting overall execution time.
 
 Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the next segmentation round.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size.
 
@@ -53,11 +51,11 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 \caption{Pseudocode for the Segmentation Algorithm}\label{alg:segmentation}
 \begin{algorithmic}[1]
 \Function{Segmentation}{$all\_pieces$}
-    \State $\textit{saved\_segments} \gets \{ \}$
-    \State $unassigned\_pieces \gets \{ \textit{all\_pieces} \}$
+    \State $saved\_segments \gets \{ \}$
+    \State $unassigned\_pieces \gets \{ all\_pieces \}$
     \Loop
         \State $solved\_puzzle \gets \textproc{RunSinglePuzzleAssembly}(unassigned\_pieces)$
-        \State $puzzle\_segments \gets \textproc{SegmentPuzzle}(solved\_puzzle\text)$
+        \State $puzzle\_segments \gets \textproc{SegmentPuzzle}(solved\_puzzle)$
 \item[]
         \State $max\_segment\_size \gets \text{maximum size of segment in } solved\_segments$
         \If{$max\_segment\_size \text{ < } smallest\_allowed$}
@@ -77,7 +75,7 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 
 \subsection{The \textproc{SegmentPuzzle} Function}\label{sec:segmentPuzzle}
 
-The \texttt{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
+The \textproc{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle} is adapted from the kernel growing segmentation procedure proposed by Pomeranz \textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors \cite{pomeranz2011}. The kernel of each segment is a single seed piece.
 
 \begin{algorithm}[tb]
 \caption{Pseudocode to Segment a Solved Puzzle}\label{alg:segmentPuzzle}
@@ -103,17 +101,17 @@ The \texttt{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle} i
             \EndFor
         \EndWhile
 \item[]
-        \State $\textit{articulation\_points} \gets \textproc{FindArticulationPoints}(\textit{segment})$
-        \State $\text{remove } \textit{articulation\_points} \text{ from } \textit{segment}$
+        \State $articulation\_points \gets \textproc{FindArticulationPoints}(segment)$
+        \State $\text{remove } articulation\_points \text{ from } \textit{segment}$
 \item[]
-		\State $\textit{disconnected\_pieces} \gets \textproc{FindDisconnectedPieces}(\textit{segment},\textit{seed\_piece})$ 
-		\State $\text{remove } \textit{disconnected\_points} \text{ from } \textit{segment}$
+		\State $disconnected\_pieces \gets \textproc{FindDisconnectedPieces}(segment, seed\_piece)$ 
+		\State $\text{remove } disconnected\_points \text{ from } segment$
 \item[]
         \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$               	
 		\State $\text{add } segment \text{ to } puzzle\_segments$	
     \EndWhile
 \item[]
-    \State \Return $\textit{puzzle\_segments}$
+    \State \Return $puzzle\_segments$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -122,76 +120,93 @@ Whenever a piece is added to a segment, the algorithm examines all of the piece'
 
 \subsection{Articulation Points}\label{sec:ArticulationPoints}
 
-A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the interpiece best buddy relationships as defined in Chapter~\ref{chap:previousWork} and determined in Algorithm~\ref{} by the function ``$\textproc{IsBestBuddies}$''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \cite{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
+A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the interpiece best buddy relationships as defined in Chapter~\ref{chap:previousWork} and determined in Algorithm~\ref{} by the function ``\textproc{IsBestBuddies}''.  An articulation point is any vertex (i.e., puzzle piece) whose removal increases the number of connected components.  The Mixed-Bag Solver uses the algorithm proposed by \cite{cormenIntroToAlgorithms} for identifying articulation points.  While most implementations of this algorithm are recursive, this thesis instead uses an iterative approach as segment can be several thousand pieces in sizes.  As such, a recursive implementation is prone to stack overflows.
 
 Any time an articulation point is removed, one or more pieces will necessarily become disconnected from the segment's seed.  Any such pieces are removed from the segment and returned to the set of unassigned pieces.  
 
 \section{Stitching}\label{sec:stitching}
 
-As mentioned previously, pieces from the same ground-truth image may be assigned to different segments.  Hence, it is necessary to quantify the strength to which any two pairs of segments are related.  This section describes how the Mixed-Bag Solver uses Stitching to determine inter-segment bonds.
+As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that the placement is correct.  In some areas of an image (e.g., a sky where there is little variation between pieces), the segmenter may not have high confidence that the puzzle is assembled correctly.  This often leads to a single ground-truth image being comprised of multiple segments. Since the Mixed-Bag Solver is not supplied with the number of input puzzles, it must quantify the extent to which any pairs of segments are related to ensure it can accurately estimate the number of ground-truth inputs.  
 
-\subsection{Definition of a Stitching Pieces}
+It is expected that two segments that were adjacent in their ground-truth image would eventually merge if one segment were allowed to expand. Since it is not known in which relative direction adjacent segment(s) may be located, the segment should be allowed to grow in all directions; however, the segment should not be forced to expand in a certain direction as it may lead to the formation of erroneous inter-segment coupling.  This concept serves the foundation of the inter-segment stitching used by the Mixed-Bag Solver.  The stitching process is described in the following subsections.
 
-As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that the placement is correct. If two segments are similar, it is likely that if one segment is allowed to grow that it would eventually merge with its adjacent segment. Since it is not known in which relative direction other segments may be located, the segment should be allowed to grow in all directions; however, the segment should not be forced to expand in a certain direction as it may lead to the formation of erroneous inter-segment relationships.
+\subsection{Stitching Pieces}
 
-For each segment, the Mixed-Bag Solver selects a set of well-spaced ``Stitching Pieces'' near the boundaries of each segment.  Each of these pieces is then used as a seed of a ``mini solver,'' wherein the assembler places a limited number of pieces.\footnote{This thesis' implementation of the Mixed-Bag Solver uses 100 as the number of pieces placed by the assembler for each stitching piece.}  As the name indicates, the mini-solver output from each of the stitching pieces assists in ``stitching'' together any associated segments, by quantifying inter-segment similarity.  
+As mentioned previously, a segment should be allowed, but not forced, to expand in all directions to try to identify related segments.  To achieve this, the Mixed-Bag Solver introduces the concept of a ``mini-assembly,'' which is similar to the standard assembly process described in Section~\ref{sec:SolverAssembler} with the expectation that it only places a limited number of pieces.\footnote{This thesis' implementation of the Mixed-Bag Solver uses 100 as the number of pieces placed during a mini-assembly.}  The seed piece of each of these assemblies is referred to as a ``stitching piece'' since they serve the role of ``stitching'' together associated segments.
 
-\subsection{Selecting the Stitching Pieces} 
+\subsection{Stitching Piece Selection} 
 
-As it relates to a segment, an ``open location'' refers to any valid puzzle location that has either a piece from a different segment or no piece at all.  
+Poor selection of stitching pieces can cause more subtle inter-segment links to be missed or lead to unnecessary execution time.  Algorithm~\ref{alg:selectStitchingPieces} outlines the procedure used by the Mixed-Bag Solver to select the stitching pieces.  It ensures that stitching pieces are sufficiently spaced from one another as well as from segment boundaries to minimize execution time while simultaneously ensuring sufficient coverage to detect subtle inter-segment relationships.  The following two subsections describe the two primary aspects of this algorithm, namely determining the distance of each piece to the nearest boundary as well as subpartitioning the segment for optimal inter-stitching piece spacing.
 
-These During the segmentation stage, puzzle pieces from a single ground truth image segment may be partitioned into multiple segments.   However, uncontrolled segment expansion can cause a segment to grow beyond the boundaries of its ground truth image and merge with a segment from a different input image.  This thesis controls segmentation growth through the use of multiple ``mini solvers,'' which each have a ``stitching piece'' as their seed.  The output from these mini solvers are used to determine inter-segment similarity as described in the following subsection.
+\begin{algorithm}[tb]
+\caption{Pseudocode for Selecting the Stitching Pieces in a Segment}
+\label{alg:selectStitchingPieces}
+\begin{algorithmic}[1]
+\Procedure{FindStitchingPieces}{$segment\_pieces$}
+	\State $\textproc{FindPieceDistanceToOpen}(segment\_pieces)$
+	\State $segment\_stitching\_pieces \gets \{ \}$
+    \State $segment\_grid\_cells \gets \textproc{PartitionIntoGrid}(segment, grid\_cell\_width)$
+	\ForEach{$grid\_cell \in segment\_grid\_cells$}
+		\If{$\textproc{HasPieceAdjacentToOpen}(grid\_cell)$}
+			\State $candidates \gets \text{set of pieces with } distance\_to\_open \text{ closest to target}$
+			\State $stitching\_piece \gets piece \in candidates \text{ closest to center of } grid\_cell$
+			\State $\text{add } stitching\_piece \text{ to } segment\_stitching\_pieces$
+		\EndIf
+	\EndFor
+	\State \Return $segment\_stitching\_pieces$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
 
+\subsubsection{Spacing between Stitching Pieces}\label{sec:spacingBetweenStitchingPieces}
 
-As mentioned 
+If stitching pieces are too close together, the outputs from several mini-assemblers will be essentially identical.  In contrast, if stitching pieces are too far apart, the segment may not be able to grow towards any segments.
 
+To address inter-stitching piece spacing, Algorithm~\ref{alg:selectStitchingPieces} sub-partitions each segment into a grid of adjacent regions.  The grid spans the entire segment starting from the piece in the upper left corner of the segment.\footnote{For this thesis, the target length and width of each grid cell was 10 pieces.}  As such, some grid cells along the right and bottom boundary of the segment will be narrower than the target grid cell width if the segment dimensions are not evenly divisible by the target. This grid system allows the algorithm to easily space out stitching pieces at some maximum spacing based off the grid cell width. 
 
+Stitching pieces will only be selected from those grid cells that have at least one puzzle piece adjacent to an ``open location,'' which are all valid puzzle locations that has either a piece from a different segment or no piece at all. Section~\ref{sec:determiningSpacingToNearestOpenLocation} outlines the procedure used by the Mixed-Bag Solver to determine the distance each piece is from an open location.  Once this information has been found, finds the set of pieces (if any) who distance to the nearest open location matches the target value.  If no pieces satisfy that criteria, then the target value is decremented until at least one piece satisfies the criteria.     From amongst the pieces that matched the open location distance criteria, the piece that is closest to the center of the grid cell is selected as the stitching piece for that cell.  
 
-\subsection{defi}
+\subsubsection{Spacing the Stitching Pieces from Open Locations}\label{sec:determiningSpacingToNearestOpenLocation}
 
+It is not sufficient for stitching pieces to be placed solely around the external perimeter of a segment as it is common for segments to have internal where no pieces are present.  As such, stitching pieces are placed near all ``open locations,'' which are all valid puzzle locations that has either a piece from a different segment or no piece at all. 
 
+If a stitching piece is too close to the edge of a segment, erroneous coupling between unrelated segments may occur.  To address this, Algorithm~\ref{alg:findDistanceToOpen} is used by the Mixed-Bag Solver to determine the distance between each piece in the segment and the nearest open location.  The algorithm follows an iterative boundary tracing technique; hence, during each iteration of the \textbf{while} loop on line~\ref{op:distanceRoundWhileLoop}, all segment pieces whose distance to the nearest open location is equal to $distance\_to\_open$ are explored.  Therefore, any pieces explored in the first iteration of the \textbf{while} loop would have a distance of 1 to the nearest open while those explored in the second iteration would have distance 2.  For this thesis, the target distance between a stitching piece and the nearest open location was 3; as explained in Section~\ref{sec:.
 
-An ``open location'' with respect to a segment is any puzzle location that is not populated with a member of that segment.  
-
-\subsection{Determine the }
-
-Stitching pieces should be near the edge of a segment to increase the likelihood of growth towards a neighboring segment.  However,  if a stitching piece is too close to the edge of the segment, the algorithm may make erroneous segmentation associations.   
-
-Algorithm~\ref{alg:findDistanceToOpen} uses iterative boundary tracing to determine each stitching piece's distance to the nearest puzzle location that is not populated with a piece that is a member of the stitching piece's segment..
-
-The algorithm begins by finding set of puzzle locations adjacent to pieces in the segment that are not filled by segment members.  These locations represent the .
+There are two primary reasons iterative boundary tracing was used for Algorithm~\ref{alg:findDistanceToOpen}.  First, the algorithm is robust enough to handle segment voids as well as potential necking within the segment where two large segment components are joined by a narrower bridge. What is more, since each piece is explored only once, the execution time of this algorithm is $O(n)$, where $n$ is the number of pieces in the segment.
 
 \begin{algorithm}[tb]
 \caption{Pseudocode for Determining a Segment Point's Manhattan Distance to the Nearest Open Location}\label{alg:findDistanceToOpen}
 \begin{algorithmic}[1]
 \Procedure{FindPieceDistanceToOpen}{$segment\_pieces$}
-    \State $\textit{explored\_pieces} \gets \{ \}$
-    \State $\textit{locations\_at\_prev\_dist} \gets \{ \textit{segment\_pieces} \}$
-    \State $\textit{distance\_to\_open} \gets 1$
+    \State $explored\_pieces \gets \{ \}$
+    \State $locations\_at\_prev\_dist \gets \{ \text{all open locations adjacent to } segment\_pieces \}$
+    \State $distance\_to\_open \gets 1$
 \item[]
-    \While{$|\textit{explored\_pieces}| \text{ > } 0$}
-        \State $\textit{locations\_at\_current\_dist} \gets \{ \}$
+    \While{$|explored\_pieces| \text{ > } 0$} \label{op:distanceRoundWhileLoop}
+        \State $locations\_at\_current\_dist \gets \{ \}$
 \item[]
-        \ForEach{$\textit{prev\_dist\_loc} \in \textit{locations\_at\_prev\_dist}$}
-        	\ForEach{$\textit{adjacent\_loc} \textbf{ of } \textit{prev\_dist\_loc}$}
-        		\If{$\exists \text{ } \textit{piece} \text{ at }\textit{adjacent\_loc} \textbf{ and } \textit{piece} \notin \textit{explored\_pieces}$}
+        \ForEach{$prev\_dist\_loc \in locations\_at\_prev\_dist$}
+        	\ForEach{$adjacent\_loc \textbf{ of } prev\_dist\_loc$}
+        		\If{$\exists \text{ } piece \text{ at }adjacent\_loc \textbf{ and } piece \notin explored\_pieces$}
         		
-        			\State $\text{set } \textit{distance\_to\_open} \text{ for } \textit{piece}$
-        			\State $\text{remove } \textit{piece} \text{ from } \textit{explored\_pieces}$
-        			\State $\text{add } \textit{adjacent\_loc} \text{ to } \textit{locations\_at\_current\_dist}$
+        			\State $\text{set } distance\_to\_open \text{ for } piece$
+        			\State $\text{remove } piece \text{ from } explored\_pieces$
+        			\State $\text{add } adjacent\_loc \text{ to } locations\_at\_current\_dist$
         		\EndIf
         	\EndFor
         \EndFor
 \item[]
-    \State $\textit{locations\_at\_prev\_dist} \gets locations\_at\_current\_dist$
-    \State $\textit{distance\_to\_open} \gets \textit{distance\_to\_open} + 1$
+    \State $locations\_at\_prev\_dist \gets locations\_at\_current\_dist$
+    \State $distance\_to\_open \gets distance\_to\_open + 1$
     \EndWhile
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
-Algorithm~\ref{alg:findDistanceToOpen} is run for each of the segments.  A single iteration of the algorithm has time complexity of $O(|S_i|)$, where $|S_i|$ is the number of pieces in segment $S_i$.  What is more, the algorithm is robust enough to handle voids within a segment as well as potential necking within the segment where two large segment components are joined by a narrower bridge.
+
+
+
 
 
 \subsection{Quantifying Inter-Segment Relationships}
