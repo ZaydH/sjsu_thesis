@@ -41,7 +41,7 @@ As of this publication, the implementation of Paikin~\&~Tal's algorithm is not o
 
 As detailed in Algorithm~\ref{alg:mixedBagSolver}, segmentation stages takes as input only the bag of puzzle pieces created from the original images; unlike all other solvers to date, this algorithm takes no other inputs.  The role of segmentation is to a basic provide structure to the unordered input.  This is done by partitioning the pieces into disjoint sets, referred to here as segments.  These segments are groups of puzzle pieces where there is a high degree of confidence that the pieces are assembled correctly.
 
-Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a segment are assembled as if they all belong to a single ground truth image.  This eliminates the need to make any assumptions regarding the input at this early stage of the solver.  It is expected that pieces from the same input puzzle may be assigned to multiple separate segments.  Section~\ref{} describes how these multiple segments are merged using hierarchical clustering.
+Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a saved segment are assembled as if they all belong to a single ground-truth image.  This eliminates the need to make any assumptions regarding the input at this early stage of the solver.  It is expected that pieces from the same input puzzle may be assigned to multiple separate segments.  Section~\ref{} describes how these multiple segments are merged using hierarchical clustering.
 
 After the single puzzle is assembled in each round, the solved puzzle is then divided into segments; the procedure for this is described in Section~\ref{sec:segmentPuzzle}.  Assuming the largest segment exceeds the minimum allowed size\footnote{For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.}, it is passed to the next stage of the Mixed-Bag Solver.  
 
@@ -53,20 +53,24 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
 \caption{Pseudocode for the Segmentation Algorithm}\label{alg:segmentation}
 \begin{algorithmic}[1]
 \Function{Segmentation}{$all\_pieces$}
-    \State $\textit{solved\_segments} \gets \{ \}$
+    \State $\textit{saved\_segments} \gets \{ \}$
     \State $unassigned\_pieces \gets \{ \textit{all\_pieces} \}$
-    \Repeat
+    \Loop
         \State $solved\_puzzle \gets \textproc{RunSinglePuzzleAssembly}(unassigned\_pieces)$
         \State $puzzle\_segments \gets \textproc{SegmentPuzzle}(solved\_puzzle\text)$
+\item[]
         \State $max\_segment\_size \gets \text{maximum size of segment in } solved\_segments$
+        \If{$max\_segment\_size \text{ < } smallest\_allowed$}
+			\State \Return $saved\_segments$
+        \EndIf
+\item[]
         \ForEach{$segment \in puzzle\_segments$}
             \If{$|segment| \text{ > } \alpha \times max\_segment\_size$}
-                \State $\text{add } segment \text{ to } solved\_segments$
+                \State $\text{add } segment \text{ to } saved\_segments$
                 \State $\text{remove pieces in } segment \text{ from } unassigned\_pieces$
             \EndIf
         \EndFor
-    \Until{$max\_segment\_size \text{ < } smallest\_allowed \textbf{ or } |unassigned\_pieces| \text{ == } 0$}
-    \State \Return $solved\_segments$
+	\EndLoop
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
@@ -102,11 +106,11 @@ The \texttt{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle} i
         \State $\textit{articulation\_points} \gets \textproc{FindArticulationPoints}(\textit{segment})$
         \State $\text{remove } \textit{articulation\_points} \text{ from } \textit{segment}$
 \item[]
-		\State $\textit{disconnected\_pieces} \gets \textproc{FindDisconnectedPieces}(\textit{segment},\textit{seed\_piece})$        
-        \State $\text{add } segment \text{ to } puzzle\_segments$
-\item[]
+		\State $\textit{disconnected\_pieces} \gets \textproc{FindDisconnectedPieces}(\textit{segment},\textit{seed\_piece})$ 
 		\State $\text{remove } \textit{disconnected\_points} \text{ from } \textit{segment}$
-        \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$
+\item[]
+        \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$               	
+		\State $\text{add } segment \text{ to } puzzle\_segments$	
     \EndWhile
 \item[]
     \State \Return $\textit{puzzle\_segments}$
@@ -216,7 +220,8 @@ The only inputs to the hierarchical clustering algorithm are the segments found 
 	\ForEach{$segment_i \in \textit{solved\_segments}$}
 		\State $\text{add new segment cluster } \Phi_i \text{ containing } segment_i \text{ to } \textit{segment\_clusters}$
 	\EndFor
-    \State $\text{Compute the similarity matrix, } \Gamma$
+\item[]
+    \State $\text{Compute the similarity matrix } \Gamma \text{ from } overlap\_matrix$
 \item[]
     \While{$\text{maximum similarity in } \Gamma \text{ > } \textit{min\_cluster\_similarity}$}
     	\State $\text{Merge the two most similar clusters } \Phi_i \text{ and } \Phi_j \text{ in } \textit{segment\_clusters}$
@@ -260,8 +265,12 @@ Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merg
 
 Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always continuing merging the segment clusters  until only a cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
 
+The number of segments clusters remaining at the end of hierarchical clustering represents the expected number of ground-truth images provided to the solver.  The segment clusters are then passed to the next stage to determine the final seed pieces for each output puzzle.
+
 \section{Final Seed Piece Selection}\label{sec:finalSeedPiece}
 
-As ne
+Most of the modern jigsaw puzzle solvers \cite{pomeranz2011, sholomon2013, paikin2015} rely on a kernel growing model, where a kernel is a partial assembly of one or more pieces.  As such, once the Mixed-Bag Solver has determined the expected number of input puzzles via hierarchical clustering, the algorithm then selects the seed piece for each of the output solutions. 
+
+In Chapter~\ref{chap:previousWork}, it was explained that Paikin~\& Tal select a piece as an output puzzle's seed if seed piece to be the ``is both distinctive and lies in a distinctive region.''  They apply this criteria greedily during runtime.  Hence, their algorithm often picks suboptimal seeds (e.g., pieces from the same input puzzle are selected as seeds for multiple output puzzles).  In contrast, the combination of segmentation and hierarchical clustering in the Mixed-Bag Solver partitions the set of input pieces into disjoint sets, with each set roughly approximating a single solved puzzle.  Therefore, the Mixed-Bag Solver selects the seed for each output puzzle from the members of its associated segment cluster.  The algorithm uses the same approach as Paikin~\& Tal wherein the selected seed from the segment cluster is a ``piece that is both distinctive and lies in a distinctive region.''  However, since this selection is not made greedily and instead uses the segment clusters, the quality of the selection is superior.
 
 \section{Final Assembly}

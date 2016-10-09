@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TexmakerSession quickmode="12">
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap2_previous_work.tex" hasfocus="false" line="0" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:\Users\Zayd\Desktop\Courses\Thesis\Reports\Thesis\abstract.tex" hasfocus="false" line="2" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap6_conclusions.tex" hasfocus="false" line="0" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap3_solver_overview.tex" hasfocus="false" line="70" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap4_quantify_quality.tex" hasfocus="false" line="0" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap1_intro.tex" hasfocus="false" line="0" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/dedication.tex" hasfocus="false" line="0" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/thesis.tex" hasfocus="true" line="64" master="true" bookmark1="0" bookmark2="0" bookmark3="0"/>
-    <document file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap5_experimental_results.tex" hasfocus="false" line="0" master="false" bookmark1="0" bookmark2="0" bookmark3="0"/>
+    <document line="0" bookmark1="0" bookmark2="0" bookmark3="0" master="true" hasfocus="true" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/thesis.tex"/>
+    <document line="133" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap4_quantify_quality.tex"/>
+    <document line="0" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:\Users\Zayd\Desktop\Courses\Thesis\Reports\Thesis\appA_segmenter_example.tex"/>
+    <document line="20" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap1_intro.tex"/>
+    <document line="0" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/dedication.tex"/>
+    <document line="273" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap3_solver_overview.tex"/>
+    <document line="2" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:\Users\Zayd\Desktop\Courses\Thesis\Reports\Thesis\abstract.tex"/>
+    <document line="44" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:\Users\Zayd\Desktop\Courses\Thesis\Reports\Thesis\references.bib"/>
+    <document line="0" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap6_conclusions.tex"/>
+    <document line="48" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap2_previous_work.tex"/>
+    <document line="0" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:/Users/Zayd/Desktop/Courses/Thesis/Reports/Thesis/chap5_experimental_results.tex"/>
+    <document line="15" bookmark1="0" bookmark2="0" bookmark3="0" master="false" hasfocus="false" file="C:\Users\Zayd\Desktop\Courses\Thesis\Reports\Thesis\app_10_image_result.tex"/>
 </TexmakerSession>
