@@ -104,7 +104,7 @@ The \textproc{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle}
             \EndFor
         \EndWhile
 \item[]
-        \State $articulation\_points \gets \textproc{FindArticulationPoints}(segment)$
+        \State $articulation\_points \gets \textproc{FindarticulationPoints}(segment)$
         \State $\text{remove } articulation\_points \text{ from } \textit{segment}$
 \item[]
 		\State $disconnected\_pieces \gets \textproc{FindDisconnectedPieces}(segment, seed\_piece)$ 
@@ -121,7 +121,7 @@ The \textproc{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle}
 
 Whenever a piece is added to a segment, the algorithm examines all of that piece's neighbors.  Any of the adjacent pieces are added to the segment if they satisfy the ``best buddy'' criteria, as determined by the predicate \textproc{IsBestBuddies}.  Pieces continue to be added to the segment until there are no more neighboring best buddies that have yet to be added. In Pomeranz \textit{et al.}'s algorithm, no changes were made to the segment after it reached the maximum size.  Their approach is sufficient when solving only a single puzzle at a time.  However, it is common in Mixed-Bag puzzles that two or more correctly assembled segments from different ground-truth inputs to be be joined into a single cluster by very tenuous linking, usually in the form of narrow bridges no wider than a single piece.  As described in the next section, the Mixed-Bag Solver post processes each segment after it has grown to its maximum size to prevent erroneous segment merging.
 
-\subsection{Articulation Points}\label{sec:ArticulationPoints}
+\subsection{Articulation Points}\label{sec:articulationPoints}
 
 A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships between adjacent.  An articulation point is any vertex (i.e., puzzle piece) in the graph whose removal increases the number of connected components.  The Mixed-Bag Solver identifies the articulation points using the the algorithm proposed by \cite{cormenIntroToAlgorithms}; once they have been identified, all articulation points are removed from the segment and returned to the set of unassigned pieces.  This necessarily causes some other pieces to become disconnected from the segment's seed.  Any disconnected pieces are also removed from the segment and marked as unassigned.  
 
