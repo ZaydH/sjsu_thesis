@@ -24,10 +24,11 @@ The standard direct accuracy metric does not account for the possibility that th
 EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
-
 Standard direct accuracy (see Equation~\eref{eq:directAccuracy}) and EDAS are equivalent when solving a single puzzle. For Mixed-Bag solvers, EDAS necessarily marks as incorrect any pieces from $P_i$ that are not in $S_j$ by dividing by $n_i$.  What is more, the summation of $m_{k,j}$ in EDAS penalizes for any puzzle pieces in the solver output $S_j$ that are not from input puzzle $P_i$.  Therefore, EDAS takes into account both extra and missing pieces in the solver output.
 
 It is important to note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator of Equation~\eref{eq:enhancedDirectAccuracyScore} is greater than or equal to the number of pieces in both $P_i$ and $S_j$.
+
+Similar to the standard direct accuracy metric, an image is considered to be ``perfectly reconstructed'' if it has an EDAS of 1.
 
 \subsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
 
@@ -58,7 +59,7 @@ In the standard definition of direct accuracy proposed by Cho \textit{et al.}, $
 
 Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can take significantly longer to compute in particular when the solved puzzle has several thousand pieces.  SEDAS balances the need for a meaningful direct accuracy score against computation efficiency.
 
-\subsection{The Necessity to Use Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
+\subsection{Necessity of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
 While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS.  Rather, EDAS and SEDAS serve complementary roles.  First, EDAS must necessarily be calculated as part of SEDAS since the upper left corner location is inherently a member of the set $L$.  Hence, there is no additional time required to calculate EDAS.  What is more, by continuing to use EDAS along with SEDAS, some shifts in the solved image may be quantified; this would not be possible if SEDAS was used alone.
 
