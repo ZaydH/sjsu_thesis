@@ -1,6 +1,6 @@
 \chapter{Mixed-Bag Solver Overview}\label{chap:mixedBagSolver}
 
-This thesis' Mixed-Bag Solver supports Type~1, Type~2, and Mixed-Bag puzzles.  It consists of five distinct stages, namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}; the pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}.
+When humans solves jigsaw puzzles, it is common for them to try to correctly assemble small regions of the puzzle and then merge those smaller regions to form larger regions.  The Mixed-Bag Solver presented in this thesis is based of this solving strategy.  The solver consists of five distinct stages, namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}; the pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}.  The techniques used by the Mixed-Bag Solver are valid for Type~1, Type~2, and Mixed-Bag puzzles.  
 
 The following subsections describe each of Mixed-Bag Solver's stages/subfunctions.  It also discusses the assembler (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}), which is a separate but associated component of the architecture.
 
@@ -104,10 +104,10 @@ The \textproc{SegmentPuzzle} function shown in Algorithm~\ref{alg:segmentPuzzle}
             \EndFor
         \EndWhile
 \item[]
-        \State $articulation\_points \gets \textproc{FindarticulationPoints}(segment)$
+        \State $articulation\_points \gets \textproc{FindArticulationPoints}(segment)$
         \State $\text{remove } articulation\_points \text{ from } \textit{segment}$
 \item[]
-		\State $disconnected\_pieces \gets \textproc{FindDisconnectedPieces}(segment, seed\_piece)$ 
+		\State $disconnected\_pieces \gets \textproc{FindDisconnectedPieces}(segment)$ 
 		\State $\text{remove } disconnected\_points \text{ from } segment$
 \item[]
         \State $\text{add } \textit{articulation\_points} \text{ and } \textit{disconnected\_pieces} \text{ to } \textit{unassigned\_pieces}$               	
@@ -178,7 +178,7 @@ There are two primary reasons iterative boundary tracing was used for Algorithm~
 \begin{algorithmic}[1]
 \Procedure{FindPieceDistanceToOpen}{$segment\_pieces$}
     \State $explored\_pieces \gets \{ \}$
-    \State $locations\_at\_prev\_dist \gets \{ \text{all open locations adjacent to } segment\_pieces \}$
+    \State $locations\_at\_prev\_dist \gets \{ \text{open locations adjacent to } segment\_pieces \}$
     \State $distance\_to\_open \gets 1$
 \item[]
     \While{$|explored\_pieces| \text{ > } 0$} \label{op:distanceRoundWhileLoop}
