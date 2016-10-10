@@ -30,7 +30,7 @@ The assembler assigns the placement (and optionally rotation) of the puzzle piec
 
 For all experiments in this thesis, the assembler proposed proposed by Paikin~\& Tal~\cite{paikin2015}.  As mentioned in Chapter~\ref{chap:previousWork}, their assembler is the current state of the art and is one of the few algorithms that natively supports Mixed-Bag puzzles.
 
-\subsection{Assembler Time Complexity}
+\subsection{Assembler Time Complexity}\label{sec:assemblerTimeComplexity}
 
 Paikin~\& Tal's assembler relies on a set of inter-puzzle piece distance and similarity metrics.  Similar to all other jig swap solvers, these distances are calculated between all pairs of possible pieces, making the time complexity of this stage at $O(n^2)$, where $n$ is the number of puzzle pieces.  If an input image has sufficient inter-piece variation, then assembly is expected to take $Theta(n \text{lg}(n)$ as a heap is used to determine the next piece to be placed.  However, if most pieces are sufficient similar that there are fewer best buddies (see Chapter~\ref{chap:previousWork}, then assembly can be as slow as $O(n^3)$ as the inter-piece similarity may need to be recalculated after each piece is placed.
 

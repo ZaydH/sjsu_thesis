@@ -4,7 +4,7 @@ All experiments in this thesis used a set of standard conditions.  First, the le
 
 \section{Accuracy Determining the Number of Input Puzzles}
 
-For the Mixed-Bag Solver to provide meaningful outputs, it must be able to identify the number of ground-truth inputs provided to the solver.  The test dataset used to measure the solver's performance in this area was published by Pomeranz \textit{et al.} in \cite{pomeranzBenchmarkImages}; the dataset consists of 20~images, each of which has 805~pieces.
+For the Mixed-Bag Solver to provide meaningful outputs, it must be able to identify the number of ground-truth inputs provided to the solver.  The test dataset used to measure the solver's performance in this area was published by Pomeranz~\textit{et al.} in~\cite{pomeranzBenchmarkImages}; the dataset consists of 20~images, each of which has 805~pieces.
 
 The next subsection discusses the solver's performance when provided only a single image.  This is separated from the more general discussion as the algorithm's performance on a single image marks the ceiling of its performance.  The algorithm's performance when solving two to five puzzles is discussed in a separate subsection.
 
@@ -32,7 +32,75 @@ It is important to note that the difficulty the Mixed-Bag Solver has reconstruct
 
 \subsection{Multiple Puzzle Solving}
 
-When testing the ability of the Mixed-Bag Solver to accurately determine the number of input puzzles, images were randomly selected from the 805~piece, 20~image dataset 
+When testing the ability of the Mixed-Bag Solver to accurately determine the number of input puzzles, images were randomly selected from the 805~piece, 20~image dataset, without replacement.  In total, Table~\ref{tab:numberSolverIterations} shows the number of times the solver was run for each input size.  As explained in Section~\ref{sec:assemblerTimeComplexity}, Paikin~\& Tal's solver can execution time can grow cubicly, in particular if Best Buddy Density is low.  As such, the solver was performed few times as the new number of input puzzles increased.
+
+\begin{table}[tb]
+\begin{center}
+\begin{tabular}{ c||c|c|c|c } 
+ \toprule
+ \# Puzzles    &  2 &  3 & 4 & 5 \\ 
+\hline \hline
+ \# Iterations & 55 & 25 & 8 & 5 \\ 
+ \bottomrule
+\end{tabular}
+\end{center}
+\caption{Number of Solver Iterations for Each Puzzle Input Count}\label{tab:numberSolverIterations}
+\end{table}
+
+Figure~\ref{fig:inputPuzzleCountErrorFrequency} shows the frequency with which the Mixed-Bag Solver estimated the number of input puzzles.  A correct estimation of the number of puzzles would represent an error of ``0.''  An over estimate of a single puzzle (e.g., identifying four puzzles when only three were input to the solver) would represent an error of ``1.''  Across all of the experiments, the Mixed-Bag Solver never under estimated the number of input puzzles.  
+
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}
+  \begin{axis}[
+        ybar, axis on top,
+        height=8cm, width=12cm,
+        bar width=0.4cm,
+        ymajorgrids, tick align=inside,
+        major grid style={draw=white},
+        enlarge y limits={value=.1,upper},
+        ymin=0, ymax=100,
+        axis x line*=bottom,
+        axis y line*=left,
+        y axis line style={opacity=1},
+        tickwidth=0pt,
+        enlarge x limits=0.2,
+        legend style={
+            at={(0.5,-0.2)},
+            anchor=north,
+            legend columns=-1,
+            /tikz/every even column/.append style={column sep=0.5cm}
+        },
+        xlabel={Size of Input Puzzle Count Error},
+        ylabel={Frequency (\%)},
+        symbolic x coords={
+           0, 1, 2, 3},
+       xtick=data,
+       nodes near coords={
+        \pgfmathprintnumber[precision=0]{\pgfplotspointmeta}
+       }
+    ]
+\addplot [fill=blue!30]
+	coordinates {(0,74.5) (1,16.4)
+		 (2,7.3) (3,1.8)};
+\addplot [fill=red!30]
+	coordinates {(0,44) (1,48)
+		 (2,4) (3,4)};
+\addplot [fill=green!30]
+	coordinates {(0,50) (1,50)
+		 (2,0) (3,0)};
+\addplot 
+	coordinates {(0,80) (1,0)
+		 (2,0) (3,20)};
+\legend{2 Puzzles, 3 Puzzles, 4 Puzzles, 5 Puzzles}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\caption{Mixed-Bag Solver's Input Puzzle Count Error Frequency}
+\label{fig:inputPuzzleCountErrorFrequency}
+\end{figure}
+
+In this set of experiments, the Mixed-Bag solver correctly determined the number of input puzzles in 65\% of the tests.  Likewise, in less than 8\% of the tests did the solver over-estimate the number of input puzzles by more than one.  Since the solver never underestimated the number of input puzzles, it is expected that the performance of the solver would be improved by reducing the minimum clustering threshold discussed in Section~\ref{sec:hierarchicalClustering}. 
 
 \section{Ten Puzzle Solving}
 
