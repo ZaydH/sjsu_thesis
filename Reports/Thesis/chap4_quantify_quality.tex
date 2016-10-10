@@ -98,13 +98,13 @@ This thesis subcategorizes non-adjacent best buddies depending on whether they a
 
 \subsection{Best Buddy Density}\label{sec:bestBuddyDensity}
 
-As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the best buddy density, $BBD$ given the image has $b$ total best buddies.   $BBD$ is bounded between 0 and 1 (inclusive); a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
+As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the best buddy density (BBD) given the image has $b$ total best buddies.   BBD is bounded between 0 and 1 (inclusive); a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
 
 \begin{equation} \label{eq:bestBuddyDensity}
 BBD = \frac{b}{n~q}
 \end{equation}
 
-Ideally, a puzzle would have only adjacent best buddies, and that all neighboring puzzle piece sides were also adjacent best buddies.  In such cases, the best buddy density would be less than one; the exact to which it would be below one is dependent on the puzzle dimensions and any missing pieces.  $BBD$ could be further refined to only consider adjacent best buddies in the term $b$.  
+Ideally, a puzzle would have only adjacent best buddies, and that all neighboring puzzle piece sides were also adjacent best buddies.  In such cases, the best buddy density would be less than one; the extent to which it would be below one is dependent on the puzzle dimensions as well as the number missing pieces (if any). 
 
 Best buddy density may vary across an image with some areas showing lower density than others. Equation~\eref{eq:bestBuddyDensity} can be adjusted to a more local metric by reducing the value of $b$ and $n$ based off the best buddy profile of a connected subset of pieces.
 
