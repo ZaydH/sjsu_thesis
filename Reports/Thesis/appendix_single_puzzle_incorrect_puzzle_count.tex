@@ -1,8 +1,6 @@
 \chapter{Incorrectly Classified Single Puzzle Images}\label{chap:incorreclyClassifiedSingleImages}
 
-The Mixed-Bag Solver's ability to determine the number of ground-truth images passed to the solver was tested using the Pomeranz \textit{et al.} dataset~\cite{pomeranzBenchmarkImages} containing 20 images each with 805 pieces.  This test measures the performance ceiling of the solver to determine the number of input puzzles.  
-
-The Mixed-Bag Solver (MBS) correctly identified that was only a single ground-truth input for 17 out of the 20 images.  Figure~\ref{fig:groundTruthSingleImageIncorrectlyIdentified} shows the three images that the Mixed-Bag Solver were unable to identify being a single image.  Figure~\ref{fig:mixedBagSolverOuputsSingleImageIncorrectlyIdentified} contains the Mixed-Bag Solver's output for these images; clearly, the solver struggled with the large areas of the image where there was little variation (e.g., blue sky, smooth water).  Paikin~\& Tal note in~\cite{paikin2015} that their assembler does not perform well on such images.  Therefore, it is expected the Mixed-Bag Solver's performance on these images may have improved had a different assembler been used.
+To determine the Mixed-Bag Solver's performance ceiling, twenty images from Pomeranz \textit{et al.}'s 805 piece dataset were individually input into the solver.  The Mixed-Bag Solver (MBS) correctly identified that there was only a single ground-truth input for 17~out of the 20~images.  Figure~\ref{fig:groundTruthSingleImageIncorrectlyIdentified} shows the three images that the Mixed-Bag Solver misidentified.  Figure~\ref{fig:mixedBagSolverOuputsSingleImageIncorrectlyIdentified} contains the Mixed-Bag Solver's output for these images.  Threse three images all have large areas with little variation (e.g., clear sky, smooth water).  Paikin~\& Tal note in~\cite{paikin2015} that their assembler does not perform well on such images.  Therefore, it is expected the Mixed-Bag Solver's performance on these images may improve if a different assembler is used.
 
 \begin{figure}
 \centering
@@ -16,7 +14,7 @@ The Mixed-Bag Solver (MBS) correctly identified that was only a single ground-tr
 	Input Image~(c) \\~\\
   \end{tabular}
 
-\caption{805 Piece Images that were Incorrectly Identified by the Mixed Bag Solver}
+\caption{805~Piece Images that were Incorrectly Identified by the Mixed-Bag Solver}
 \label{fig:groundTruthSingleImageIncorrectlyIdentified}
 \end{figure}
 
@@ -34,6 +32,6 @@ The Mixed-Bag Solver (MBS) correctly identified that was only a single ground-tr
 	MBS Output (c1) & MBS Output (c2) \\~\\
   \end{tabular}
 
-\caption{Multi-Bag Solver Outputs for the Images not Correctly Identified as Single Inputs}
+\caption{Mixed-Bag Solver Outputs for the Incorrectly Identified Images}
 \label{fig:mixedBagSolverOuputsSingleImageIncorrectlyIdentified}
 \end{figure}

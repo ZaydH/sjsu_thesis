@@ -17,8 +17,8 @@ The following subsections describe each of Mixed-Bag Solver's stages/subfunction
     \State $saved\_segments \gets \textproc{Segmentation}\text{(} puzzle\_pieces \text{)}$
 	\State $overlap\_matrix \gets \textproc{Stitching}\text{(} saved\_segments \text{, } puzzle\_pieces \text{)}$
 	\State $clusters \gets \textproc{HierarchicalClustering} \text{(}saved\_segments \text{, } overlap\_matrix \text{)}$
-	\State $puzzle\_seed\_pieces \gets \textproc{FindSeedPieces} \text{(} clusters \text{)}$
-	\State $solved\_puzzles \gets \textproc{RunFinalAssembly} \text{(} puzzle\_seed\_pieces \text{, } puzzle\_pieces \text{)}$
+	\State $seed\_pieces \gets \textproc{FindSeedPieces} \text{(} clusters \text{)}$
+	\State $solved\_puzzles \gets \textproc{RunFinalAssembly} \text{(} seed\_pieces \text{, } puzzle\_pieces \text{)}$
     \State \Return $solved\_puzzles$
 \EndFunction
 \end{algorithmic}
@@ -129,6 +129,10 @@ In Pomeranz \textit{et al.}'s algorithm, no changes were made to a segment after
 
 A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships between adjacent pieces.  An articulation point is any vertex (i.e., puzzle piece) in the graph whose removal increases the number of connected components.  The Mixed-Bag Solver identifies the articulation points using the algorithm proposed by \cite{cormenIntroToAlgorithms}; these articulation pieces are then removed from the segment and returned to the set of unassigned pieces.  This necessarily causes some other pieces to become disconnected from the segment's seed.  Any disconnected pieces are also removed from the segment and marked as unassigned.  
 
+\subsection{Segmentation Example}
+
+Appendix~\ref{app:segmentedOutput} shows an example of a single round of segmentation for a two puzzle input. It also contains the single puzzle solver and segmentation outputs.
+
 \section{Stitching}\label{sec:stitching}
 
 As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that the placement is correct.  In some areas of an image (e.g., a sky where there is little variation between pieces), the segmenter may not have high confidence that the puzzle is assembled correctly.  This often leads to a single ground-truth image being comprised of multiple segments. Since the Mixed-Bag Solver is not supplied with the number of input puzzles, it must quantify the extent to which any pairs of segments are related to ensure it can accurately estimate the number of ground-truth inputs.  
@@ -154,9 +158,8 @@ If stitching pieces are poorly selected, two negative, yet divergent outcomes ma
 \item []
 	\ForEach{$grid\_cell \in segment\_grid\_cells$}
 		\If{$\textproc{HasPieceAdjacentToOpen}(grid\_cell)$}
-			\State $candidates \gets \{pieces \} \in grid\_cell \text{ closest to target } distance\_to\_open$
+			\State $candidates \gets \{ pieces \} \in grid\_cell \text{ closest to } target\_distance\_to\_open$
 			\State $stitching\_piece \gets piece \in candidates \text{ closest to center of } grid\_cell$
-\item []
 			\State $\text{add } stitching\_piece \text{ to } segment\_stitching\_pieces$
 		\EndIf
 	\EndFor
@@ -284,7 +287,7 @@ The number of segments clusters remaining at the end of hierarchical clustering 
 
 Most of the modern jigsaw puzzle solvers \cite{pomeranz2011, sholomon2013, paikin2015} rely on a kernel growing model, where a kernel is a partial assembly of one or more pieces. In Chapter~\ref{chap:previousWork}, it was explained that Paikin~\& Tal select the puzzle seeds using a greedy condition at run time. Hence, their algorithm often picks suboptimal seeds (e.g., pieces from the same input puzzle are selected as seeds for multiple output puzzles). 
 
-In contrast, through the combination of segmentation and hierarchical clustering, the Mixed-Bag Solver partitions the set of input pieces into disjoint sets, with each set roughly approximating a single input puzzle.  As such, the Mixed Bag Solver selects a single piece from each segment cluster to be used as the seed of a puzzle during final segment.  Within a given segment cluster, the Mixed-Bag Solvers uses the same approach proposed by Paikin~\& Tal wherein the selected seed must have best buddies on each of its sides and each of its best buddies must also best buddies on each of their sides.  This approach of selecting seeds using segment clusters provides vastly superior results as shown in Section~\ref{sec:comparisonOfSolverOutputQuality}.
+In contrast, through the combination of segmentation and hierarchical clustering, the Mixed-Bag Solver partitions the set of input pieces into disjoint sets, with each set roughly approximating a single input puzzle.  As such, the Mixed-Bag Solver selects a single piece from each segment cluster to be used as the seed of a puzzle during final segment.  Within a given segment cluster, the Mixed-Bag Solvers uses the same approach proposed by Paikin~\& Tal wherein the selected seed must have best buddies on each of its sides and each of its best buddies must also best buddies on each of their sides.  This approach of selecting seeds using segment clusters provides vastly superior results as shown in Section~\ref{sec:comparisonOfSolverOutputQuality}.
 
 \section{Final Assembly}
 
