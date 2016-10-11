@@ -213,34 +213,32 @@ Stitching pieces will only be selected from those grid cells that have at least 
 
 As mentioned previously, a mini-assembly will be performed for each stitching piece $\zeta_x$ in segment $\Phi_i$ where $\zeta_x \in \Phi_i$.  The output from this mini-assembly, $MA_{\zeta_x}$, will contain puzzle pieces from one or more segments.  If the solver output includes pieces from a different segment, there is a significantly increased likelihood that the two segments came from the same ground-truth input. 
 
-Equation~\eref{eq:segmentOverlap} defines the overlap between segment, $\Phi_i$, and any other segment, $\Phi_j$. The intersection between the mini-assembly output and segment $\Phi_j$ needs is normalized with respect to both the the number of pieces in mini-assembly as well as potentially the size of segment $\Phi_j$, since the latter will dictate the maximum overlap if $|\Phi_j| < |MS_{\zeta_x}|$.
+Equation~\eref{eq:segmentOverlap} defines the overlap coefficients between segment, $\Phi_i$, and any other segment, $\Phi_j$. The intersection between the mini-assembly output and segment $\Phi_j$ needs is normalized with respect to both the the number of pieces in mini-assembly as well as potentially the size of segment $\Phi_j$, since the latter will dictate the maximum overlap if $|\Phi_j| < |MS_{\zeta_x}|$.  
 
 \begin{equation} \label{eq:segmentOverlap}
 Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|MS_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\zeta_x}|, |\Phi_j|)}}
 \end{equation}
 
-The outputs of the mini-assemblies will vary between segments based off their respective stitching pieces as well as potentially the size of the segments.  Hence, in most cases, the overlap coefficient is asymmetric meaning: $Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}$.  Section~\ref{sec:quantifyingSegmentSimilarity} defines how the overlap coefficients are normalized to quantify inter-segment similarity.
+The outputs of the mini-assemblies will vary between segments based off their respective stitching pieces as well as potentially the segment sizes.  Hence, in most cases, the overlap coefficient is asymmetric, meaning: $Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}$.  All of these asymmetric inter-segment overlap coefficients are combined into an $m$ by $m$ matrix, where $m$ is the number of segments.  Section~\ref{sec:quantifyingSegmentSimilarity} defines how this ``Segment Overlap Matrix'' is normalized to quantify inter-segment similarity.  
 
 \section{Hierarchical Clustering of Segments}\label{sec:hierarchicalClustering}
 
-Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each clustering round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic flow of the hierarchical clustering algorithm of the Mixed-Bag Solver; it is adapted from \cite{tanIntroToDataMining}.  
-
-The only inputs to the hierarchical clustering algorithm are the segments found in the segmentation stage and the Segment Overlap Matrix from the Stitching stage.
+Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic hierarchical clustering procedure used by the Mixed-Bag Solver; it is adapted from~\cite{tanIntroToDataMining}.  The only inputs to this hierarchical clustering algorithm are the segments found during segmentation and the Segment Overlap Matrix calculated during the Stitching stage.
 
 \begin{algorithm}[tb]
 \caption{Pseudocode for the Hierarchical Clustering of Segments}\label{alg:hierarchicalClustering}
 \begin{algorithmic}[1]
 \Function{HierarchicalClustering}{$solved\_segments, overlap\_matrix$}
 	\State $\textit{segment\_clusters} = \{ \}$	
-	\ForEach{$segment_i \in \textit{solved\_segments}$}
-		\State $\text{add new segment cluster } \Phi_i \text{ containing } segment_i \text{ to } \textit{segment\_clusters}$
+	\ForEach{$\text{segment } \Phi_i \in \textit{solved\_segments}$}
+		\State $\text{add new segment cluster } \Sigma_i \text{ containing } \Phi_i \text{ to } segment\_clusters$
 	\EndFor
 \item[]
     \State $\text{Compute the similarity matrix } \Gamma \text{ from } overlap\_matrix$
 \item[]
     \While{$\text{maximum similarity in } \Gamma \text{ > } \textit{min\_cluster\_similarity}$}
-    	\State $\text{Merge the two most similar clusters } \Phi_i \text{ and } \Phi_j \text{ in } \textit{segment\_clusters}$
-    	\State $\text{Update the similarity matrix, } \Gamma \text{ for the merged clusters}$
+    	\State $\text{Merge the two most similar clusters } \Phi_i \text{ and } \Sigma_j \text{ in } \textit{segment\_clusters}$
+    	\State $\text{Update the similarity matrix } \Gamma \text{ for the merged clusters}$
 	\EndWhile
 \item[]
     \State \Return $\textit{cluster\_segments}$
@@ -248,15 +246,15 @@ The only inputs to the hierarchical clustering algorithm are the segments found 
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Calculating the Initial Similarity Matrix}\label{sec:quantifyingSegmentSimilarity}
+\subsection{Building the Initial Similarity Matrix}\label{sec:quantifyingSegmentSimilarity}
 
-The Segment Overlap Matrix is a form of hollow matrix, where all elements in the matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering merges segments using a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines the similarity, $\omega_{i,j}$ between any two clusters $\Phi_i$ to $\Phi_j$.
+The Segment Overlap Matrix is a form of hollow matrix, where all elements in the matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering merges segments using a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines the similarity, $\omega_{i,j}$, between any two segments $\Phi_i$ and $\Phi_j$.
 
 \begin{equation} \label{eq:segmentSimilarity}
 \omega_{i,j} = \frac{Overlap(\Phi_i, \Phi_j) + Overlap(\Phi_j, \Phi_i)}{2} 
 \end{equation}
 
-If there are $n$ solved segments found during segmentation, then the initial similarity matrix $\Gamma$ is size $n$ by $n$.  Each element in $\Gamma$ is defined by Equation~\eref{eq:similarityMatrix}.  Both $i$ and $j$ are bounded between $1$ and $n$ inclusive.  What is more, all elements in $\Gamma$ are normalized between 0 and 1, also inclusive.
+If $m$ segments were found during segmentation, then the initial segment similarity matrix $\Gamma$ is size $m$ by $m$.  Each element in $\Gamma$ is defined by Equation~\eref{eq:similarityMatrix}.  Both $i$ and $j$ are integers bounded between $1$ and $m$ (inclusive).  What is more, all elements in $\Gamma$ are bounded between 0 and 1, also inclusive.
 
 \begin{equation} \label{eq:similarityMatrix}
 \Gamma = \begin{cases} 
@@ -268,9 +266,9 @@ If there are $n$ solved segments found during segmentation, then the initial sim
 
 \subsection{Updating the Similarity Matrix via Single Linking}
 
-The Mixed-Bag Solver uses the Single Link version of hierarchical clustering.  Hence, the similarity between any two cluster segments is defined as the similarity between the two most similar segments in either cluster.  This approach is required because two segments clusters may only be adjacent along the border of two of the composite segments.  
+Whenever two clusters are merged, the Mixed-Bag Solver uses the Single Link paradigm when updating the similarity matrix.  Hence, the similarity between any pair of segment clusters is equal to the similarity of the two most similar segments in each cluster.  This approach is required because two segment clusters may only be adjacent along the border of two of the composite segments.  
 
-Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merged cluster containing segment clusters, $\Sigma_x$ and $\Sigma_y$, and any other segment cluster $\Sigma_z$.  Note that segment $\Phi_i$ is a member of the union of segment clusters $\Sigma_x$ and $\Sigma_y$ while segment $\Phi_j$ is a member of segment cluster $\Sigma_z$.
+If segment clusters $\Sigma_x$ and $\Sigma_y$ are merged, then Equation~\eref{eq:segmentClusterMerge} defines the similarity between this new merged cluster any other segment cluster $\Sigma_z$.  Note that segment $\Phi_i$ is a member of the union of segment clusters $\Sigma_x$ and $\Sigma_y$ while segment $\Phi_j$ is a member of segment cluster $\Sigma_z$.
 
 \begin{equation} \label{eq:segmentClusterMerge}
 	\omega_{x \cup y,z} = \argmax_{\Phi_i \in (\Sigma_x \cup \Sigma_y)} \bigg( \argmax_{\Phi_j \in \Sigma_z} \omega_{i,j} \bigg) 
@@ -278,16 +276,16 @@ Equation~\eref{eq:segmentClusterMerge} defines the similarity between any a merg
 
 \subsection{Terminating Hierarchical Clustering}
 
-Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not always continuing merging the segment clusters  until only a cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
+Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not necessarily continuing merging the segment clusters  until only a single cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy without merging unrelated segments.
 
-The number of segments clusters remaining at the end of hierarchical clustering represents the expected number of ground-truth images provided to the solver.  The segment clusters are then passed to the next stage to determine the final seed pieces for each output puzzle.
+The number of segments clusters remaining at the end of hierarchical clustering represents the Mixed-Bag Solver's estimate of the number of ground-truth inputs.  The segment clusters are then passed to the next stage to determine the final seed pieces for each output puzzle.
 
 \section{Final Seed Piece Selection}\label{sec:finalSeedPiece}
 
-Most of the modern jigsaw puzzle solvers \cite{pomeranz2011, sholomon2013, paikin2015} rely on a kernel growing model, where a kernel is a partial assembly of one or more pieces.  As such, once the Mixed-Bag Solver has determined the expected number of input puzzles via hierarchical clustering, the algorithm then selects the seed piece for each of the output solutions. 
+Most of the modern jigsaw puzzle solvers \cite{pomeranz2011, sholomon2013, paikin2015} rely on a kernel growing model, where a kernel is a partial assembly of one or more pieces. In Chapter~\ref{chap:previousWork}, it was explained that Paikin~\& Tal select the puzzle seeds using a greedy condition at run time. Hence, their algorithm often picks suboptimal seeds (e.g., pieces from the same input puzzle are selected as seeds for multiple output puzzles). 
 
-In Chapter~\ref{chap:previousWork}, it was explained that Paikin~\& Tal require that an output puzzle's seed piece be ``both distinctive and [lie] in a distinctive region.''  Their algorithm applies this criteria greedily at run time.  Hence, their algorithm often picks suboptimal seeds (e.g., pieces from the same input puzzle are selected as seeds for multiple output puzzles).  In contrast, the combination of segmentation and hierarchical clustering in the Mixed-Bag Solver partitions the set of input pieces into disjoint sets, with each set roughly approximating a single solved puzzle.  Therefore, the Mixed-Bag Solver selects the seed for each output puzzle from the members of its associated segment cluster.  The algorithm uses the same approach as Paikin~\& Tal wherein the selected seed from the segment cluster is a ``piece that is both distinctive and lies in a distinctive region.''  However, since this selection is not made greedily and instead uses the segment clusters, the quality of the selection is superior.
+In contrast, through the combination of segmentation and hierarchical clustering, the Mixed-Bag Solver partitions the set of input pieces into disjoint sets, with each set roughly approximating a single input puzzle.  As such, the Mixed Bag Solver selects a single piece from each segment cluster to be used as the seed of a puzzle during final segment.  Within a given segment cluster, the Mixed-Bag Solvers uses the same approach proposed by Paikin~\& Tal wherein the selected seed must have best buddies on each of its sides and each of its best buddies must also best buddies on each of their sides.  This approach of selecting seeds using segment clusters provides vastly superior results as shown in Section~\ref{sec:comparisonOfSolverOutputQuality}.
 
 \section{Final Assembly}
 
-Once the seed pieces have been selected from the segment clusters, the seeds are used as the initial kernel for the solver outputs.  Assembly then proceeds simultaneously across all boards.  The fully-assembled boards, with all pieces placed, are the Mixed-Bag Solver's final output.
+Once the seed pieces have been selected from the segment clusters, the seeds are used as the initial kernel for the solver outputs.  Assembly then proceeds simultaneously across all boards normally.  The fully-assembled boards, with all pieces placed, are the Mixed-Bag Solver's final output.
