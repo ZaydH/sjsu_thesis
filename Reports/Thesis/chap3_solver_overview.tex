@@ -131,11 +131,11 @@ As discussed previously, a segment represents an ordering of pieces where there 
 
 It is expected that two segments that were adjacent in their ground-truth image would eventually merge if one segment were allowed to expand. Since it is not known in which relative direction adjacent segment(s) may be located, the segment should be allowed to grow in all directions; however, the segment should not be forced to expand in a certain direction as it may lead to the formation of erroneous inter-segment coupling.  This concept serves the foundation of the inter-segment stitching used by the Mixed-Bag Solver.  The stitching process is described in the following subsections.
 
-\subsection{Stitching Pieces}
+\subsection{Stitching Pieces Overview}
 
 As mentioned previously, a segment should be allowed, but not forced, to expand in all directions to try to identify related segments.  To achieve this, the Mixed-Bag Solver introduces the concept of a ``mini-assembly,'' which is similar to the standard assembly process described in Section~\ref{sec:SolverAssembler} with the expectation that it only places a limited number of pieces.\footnote{This thesis' implementation of the Mixed-Bag Solver uses 100 as the number of pieces placed during a mini-assembly.}  The seed piece of each of these assemblies is referred to as a ``stitching piece'' since they serve the role of ``stitching'' together associated segments.
 
-\subsection{Stitching Piece Selection}\label{sec:stitchingPieceSelection}
+\subsection{Selection of Stitching Pieces}\label{sec:stitchingPieceSelection}
 
 Poor selection of stitching pieces can cause more subtle inter-segment links to be missed or lead to unnecessary execution time.  Algorithm~\ref{alg:selectStitchingPieces} outlines the procedure used by the Mixed-Bag Solver to select the stitching pieces.  It ensures that stitching pieces are sufficiently spaced from one another as well as from segment boundaries to minimize execution time while simultaneously ensuring sufficient coverage to detect subtle inter-segment relationships.  The following two subsections describe implementation of this algorithm.
 

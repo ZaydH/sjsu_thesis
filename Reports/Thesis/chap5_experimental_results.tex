@@ -1,4 +1,4 @@
-\chapter{Experimental Results}
+\chapter{Experimental Results}\label{chap:experimentalResults}
 
 All experiments in this thesis used a set of standard conditions.  First, the length and width of each puzzle piece was set to 28~pixels per the standard established by~\cite{cho2010} and subsequently used by~\cite{pomeranz2011, gallagher2012, sholomon2013, paikin2015}. What is more, the Mixed-Bag Solver was passed no information concerning piece location nor rotation.  Furthermore, no information concerning the size of the dimensions or number of pieces in each ground-truth image is provided to the solver.  Concerning the number of input puzzles, Paikin~\& Tal's algorithm requires this information; as such, all runs of their algorithm were supplied this, meaning their algorithm is by definition solving a simpler problem.  Despite that, the Mixed-Bag Solver still generally outperforms their algorithm.
 
@@ -23,7 +23,7 @@ For the Mixed-Bag Solver to provide meaningful outputs, it must be able to ident
 
 The next subsection discusses the solver's performance when provided only a single image.  This is separated from the more general discussion as the algorithm's performance on a single image marks the ceiling of its performance.  The algorithm's performance when solving two to five puzzles is discussed in a separate subsection.
 
-\subsection{Single Puzzle Solving}
+\subsection{Single Puzzle Solving}\label{sec:singlePuzzleSolving}
 
 The Mixed-Bag solver was able to correctly identify the single ground-truth image for  17~out of the 20~images (i.e., 85\% accuracy).  For the remaining 3~images, the solver estimated that there were 2~images, meaning the error was at most only a single puzzle.  Appendix~\ref{chap:incorreclyClassifiedSingleImages} shows the ground-truth image as well as the outputs from Paikin~\& Tal's algorithm as well as this thesis' Mixed-Bag Solver.  
 
