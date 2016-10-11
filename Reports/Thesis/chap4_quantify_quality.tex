@@ -55,7 +55,7 @@ SEDAS_{P_i} = \argmax_{l \in L} \bigg( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i +
 \end{equation}
 
 \noindent
-In the standard definition of direct accuracy proposed by Cho \textit{et al.}, $l$ is fixed at the upper left corner of the image.  In contrast, SEDAS shifts this reference point within a radius of the upper left corner of the image in order to find a more meaningful value for direct accuracy. 
+In the standard definition of direct accuracy proposed by Cho~\textit{et al.}, $l$ is fixed at the upper left corner of the image.  In contrast, SEDAS shifts this reference point within a radius of the upper left corner of the image in order to find a more meaningful value for direct accuracy. 
 
 Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the point anywhere in the image that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can take significantly longer to compute in particular when the solved puzzle has several thousand pieces.  SEDAS balances the need for a meaningful direct accuracy score against computation efficiency.
 
@@ -99,7 +99,7 @@ This thesis subcategorizes non-adjacent best buddies depending on whether they a
 
 \subsection{Best Buddy Density}\label{sec:bestBuddyDensity}
 
-As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the best buddy density (BBD) given the image has $b$ total best buddies.   BBD is bounded between 0 and 1 (inclusive); a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
+As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the Best Buddy Density (BBD) for an image that has $b$ total best buddies.   BBD is bounded between 0 and 1 (inclusive); a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
 
 \begin{equation} \label{eq:bestBuddyDensity}
 BBD = \frac{b}{n~q}
@@ -150,7 +150,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output as wel
 
 \subsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
-In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose neighbor accuracy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  Table~\ref{tab:neighborAccuracyColors} defines the color assigned to each triangle depending on whether a piece's neighbors in the solver output and ground-truth image match.  The ``wrong puzzle'' classfication applies only to Mixed-Bag puzzles and occurs when a piece in the solver output is does not from the puzzle of interest, $P_i$. 
+In a jig swap puzzle, a piece may have best buddies on up to four sides (since the pieces are square).  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose neighbor accuracy is being represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  Table~\ref{tab:neighborAccuracyColors} defines the color assigned to each triangle depending on whether a piece's neighbors in the solver output and ground-truth image match.  The ``wrong puzzle'' classification applies only to Mixed-Bag puzzles and occurs when a piece in the solver output is does not from the puzzle of interest, $P_i$. 
 
 \begin{table}[t]
 \begin{center}
