@@ -13,7 +13,6 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{longtable}
 \usepackage{booktabs}
-\usepackage{listings}
 \usepackage{cmap}
 \PassOptionsToPackage{hyphens}{url}
 \usepackage{xcolor, colortbl} % Used for coloring the cells of tables
@@ -37,7 +36,6 @@
 \usepackage{hyperref} % Creates links in the PDF document.
 \hypersetup{hidelinks} % Do not include boxes around links
 
-\usepackage[T1]{fontenc}
 \usepackage[tableposition=top]{caption}
 % Top=1.25 inches - 0.05 inches for the header.
 %
@@ -47,7 +45,7 @@
             textwidth=6in,
             textheight=5.25in]{geometry}
 \usepackage{microtype}
-\DisableLigatures{encoding = *, family = * }
+\DisableLigatures[f]{encoding = *, family = * }
 
 \DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
 \DeclareMathOperator*{\argmin}{arg\,min} % The "*" means the limits go underneath "arg min"
@@ -151,6 +149,7 @@
 % ***** bibliography/references in file bib.tex
 %
 %\input bib.tex
+\bibliographystyle{ieeetr}
 \reffile{../references}
 
 %

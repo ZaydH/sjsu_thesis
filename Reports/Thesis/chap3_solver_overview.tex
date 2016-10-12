@@ -121,7 +121,7 @@ The function ``\textproc{SegmentPuzzle}'' in Algorithm~\ref{alg:segmentPuzzle} p
 \end{algorithmic}
 \end{algorithm}
 
-When each new segment is created, a single seed piece is added. Whenever any piece, including the seed, is added to a segment, the algorithm examines all of that piece's neighbors.  These adjacent pieces are also added to the segment if they are in the pool of unassigned pieces and if their neighbor inside the segment is a ``best buddy'' (as determined by the predicate ``\textproc{IsBestBuddies}'').  The growth of a segment terminates when there are no neighboring pieces that satisfy these two criteria. 
+Whenever any piece, including the seed, is added to a segment, the algorithm examines all of that piece's neighbors.  These adjacent pieces are also added to the segment if they are in the pool of unassigned pieces and if their neighbor inside the segment is a ``best buddy'' (as determined by the predicate ``\textproc{IsBestBuddies}'').  The growth of a segment terminates when there are no neighboring pieces that satisfy these two criteria. 
 
 In Pomeranz \textit{et al.}'s segmentation algorithm, no changes were made to a segment after it reached its maximum size.  Their approach is sufficient when solving only a single puzzle at a time.  However, in Mixed-Bag puzzles, it is common that correctly assembled regions from different ground-truth inputs are joined into a single segment; this is usually through very tenuous linking in the form of narrow bridges no wider than a single piece.  As described in the next section, the Mixed-Bag Solver post processes each segment after it has grown to its maximum size to prevent this erroneous segment merging.
 
@@ -240,7 +240,7 @@ Agglomerative hierarchical clustering is a bottom-up clustering algorithm where 
     \State $\text{Compute the similarity matrix } \Gamma \text{ from } overlap\_matrix$
 \item[]
     \While{$\text{maximum similarity in } \Gamma \text{ > } \textit{min\_cluster\_similarity}$}
-    	\State $\text{Merge the two most similar clusters } \Phi_i \text{ and } \Sigma_j \text{ in } \textit{segment\_clusters}$
+    	\State $\text{Merge the two most similar clusters } \Sigma_i \text{ and } \Sigma_j \text{ in } \textit{segment\_clusters}$
     	\State $\text{Update the similarity matrix } \Gamma \text{ for the merged clusters}$
 	\EndWhile
 \item[]

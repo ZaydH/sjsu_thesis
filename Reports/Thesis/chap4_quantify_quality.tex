@@ -1,4 +1,4 @@
-\chapter{Quantifying and Visualizing the Quality of a Mixed-Bag Solver Output}\label{sec:quantifyingSolverQuantify}
+\chapter{Quantifying and Visualizing the Quality of a Mixed-Bag Solver Output}\label{chap:quantifyingSolverQuantify}
 
 Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input in many cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho~\textit{et al.}~\cite{cho2010} defined two such metrics namely: direct accuracy and neighbor accuracy. These metrics have been used by others including \cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This section discusses the existing quality metrics and outlines a set of enhancements to make these metrics more applicable to Mixed-Bag puzzles.  This thesis also proposes advanced metrics for quantifying the best buddy attributes of an image.  The final two sections propose new standards to visualize the quality of solver accuracy as well as the best buddy profile of images.
 
@@ -62,7 +62,7 @@ While EDAS can be misleadingly punitive, it cannot be wholly replaced by SEDAS. 
 Cho~\textit{et al.}~\cite{cho2010} defined neighbor accuracy as the ratio of puzzle pieces sides that are adjacent in both the original and solved images versus the total number of puzzle piece sides.  Formally, let $q$ be the number of sides each piece has (i.e., four in a jig swap puzzle) and $n$ be the number of pieces.  If $a$ is the number of puzzle piece sides adjacent in both the ground-truth and solved images, then the neighbor accuracy, $NA$, is defined as shown in Equation~\eref{eq:neighborAccuracy}.
 
 \begin{equation} \label{eq:neighborAccuracy}
-NA = \frac{a}{n~q}
+NA = \frac{a}{n \cdot q}
 \end{equation}
 
 Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the solved image since it considers only a piece's neighbors and not its absolute location.  However, the standard definition of neighbor accuracy does not encompass the case where pieces from multiple input puzzles may be present in the same solver output.  
@@ -74,7 +74,7 @@ Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric by
 Let $n_i$ be the number of puzzles pieces in the input puzzle $P_i$ and $a_{i,j}$ be the number of puzzle piece sides adjacent in $P_i$ and solved output $S_j$.  If $m_{k,j}$ is the number of puzzle pieces in $S_j$ from an input puzzle $P_k$ (where $k \ne i$), then the ENAS for $P_i$ is defined as shown in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
 
 \begin{equation} \label{eq:enhancedNeighborAccuracyScore}
-\ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q ~ (n_i + \sum_{k \ne i}(m_{k,j})}
+\ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q (n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
 In the same fashion as the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including in the denominator of Equation~\eref{eq:enhancedNeighborAccuracyScore} a summation of all $m_{k,j}$, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for extra and missing pieces.
@@ -93,10 +93,10 @@ This thesis subcategorizes non-adjacent best buddies depending on whether they a
 
 \subsection{Best Buddy Density}\label{sec:bestBuddyDensity}
 
-As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the Best Buddy Density (BBD) for an image that has $b$ puzzle piece sides with best buddies.   BBD is bounded between 0 and 1 (inclusive), and a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
+As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces each of which has $q$ sides \footnote{In a jig swap puzzle, $q$ is equal to 4.}, Equation~\eref{eq:bestBuddyDensity} defines the best buddy density (BBD) for an image that has $b$ puzzle piece sides with best buddies.   BBD is bounded between 0 and 1 (inclusive), and a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
 
 \begin{equation} \label{eq:bestBuddyDensity}
-BBD = \frac{b}{n~q}
+BBD = \frac{b}{n \cdot q}
 \end{equation}
 
 Ideally, all adjacent puzzle piece sides would be best buddies, and there would be no exterior best buddies. In such cases, the best buddy density would actually be less than~1; the extent to which it would be below~1 is dependent on the puzzle dimensions. 
