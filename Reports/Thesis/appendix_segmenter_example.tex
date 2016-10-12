@@ -1,15 +1,15 @@
 \chapter{Example Outputs of a Single Segmentation Round\label{app:segmentedOutput}}
 
-This appendix is provided as example to assist in visualizing the different outputs generated during segmentation.  Figure~\ref{fig:segmentationGroundTruthImages} shows the two ground-truth images that were provided to the Mixed-Bag Solver for this example.  As explained in Section~\ref{sec:Segmentation}, the solver assembles the pieces from these images as if they had come from a single puzzle; the assembler output for the first round of segmentation is shown in Figure~\ref{fig:segmentationAssemblerOutput}.  Figure~\ref{fig:segmentationRepresentation} shows the segments found in the assembler output (the segments are colored to make then easier to identify).  For a given segment, the pieces that are further away from an open location are lighter in color while those closer to a boundary are darker.  The stitching pieces that would have resulted from each segment (assuming it exceeded the minimum segment size) are marked with white crosses.
+This appendix is provided as example to assist in visualizing the different outputs generated during segmentation.  Figure~\ref{fig:segmentationGroundTruthImages} shows the two ground-truth images that were provided to the Mixed-Bag Solver for this example.  As explained in Section~\ref{sec:Segmentation}, the solver assembles the pieces from these images as if they had come from a single puzzle; the assembler output for the first round of segmentation is shown in Figure~\ref{fig:segmentationAssemblerOutput}.  Figure~\ref{fig:segmentationRepresentation} shows the segments found in the assembler output (the segments are colored to make then easier to identify).  For a given segment, the pieces that are further away from an open location are lighter in color while those closer to a boundary are darker.  Although this is not strictly a part of the segmentation, the stitching pieces that would have resulted from each segment (assuming it exceeded the minimum segment size) are marked with white crosses as a reference.
 
-Figure~\ref{fig:bestBuddiesAssemblerOutput} is the best buddy visualization of the assembler output.  Note that the right and left sides of image~(a) have stripes of best buddies that extend only in the horizontal direction.  All of the pieces in these stripes are articulation points.  As such, they were trimmed from the main segment in the center of the image as described in Section~\ref{sec:articulationPoints}.
+Figure~\ref{fig:bestBuddiesAssemblerOutput} is the best buddy visualization of the assembler output.  Note that the right and left sides of image~(a) have stripes of best buddies that extend only in the horizontal direction.  All of the pieces in these stripes are articulation points.  As such, they were removed from the main segment in the center of the image as described in Section~\ref{sec:articulationPoints}.
 
 \begin{figure}
 \centering
   \begin{tabular}{ >{\centering\arraybackslash}m{0.47\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
 
 	\fbox{\includegraphics[scale=0.16]{./images/segmentation/pomeranz_805_8.jpg}} & \fbox{\includegraphics[scale=0.16]{./images/segmentation/mcgill_540_20.jpg}} \\~\\
-	Image~(a) \textendash { }805 Pieces \ & Image~(b) \textendash { }540 Pieces\\~\\
+	Image~(a) \textendash { }805~Pieces~\cite{pomeranzBenchmarkImages} \ & Image~(b) \textendash { }540 Pieces~\cite{mcgillImageDatabase}\\~\\
   \end{tabular}
 
 \caption{Ground-Truth Images Used in the Segmentation Example}
@@ -31,7 +31,7 @@ Figure~\ref{fig:bestBuddiesAssemblerOutput} is the best buddy visualization of t
   \begin{tabular}{ >{\centering\arraybackslash}m{0.95\textwidth} }
 	\fbox{\includegraphics[scale=0.16]{./images/segmentation/segmentation_assembler_output.jpg}} \\~\\
   \end{tabular}
-\caption{Segmentation of the Assembler Output with Coloring for Distance to the Nearest Open and Marking of the Articulation Points}
+\caption{Segmentation of the Assembler Output with Marking of the Articulation Points and the Lightness of Piece Coloring Dependent on Distance to the Nearest Open Location}
 \label{fig:segmentationRepresentation}
 \end{figure}
 

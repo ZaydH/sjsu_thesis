@@ -1,8 +1,8 @@
 \chapter{Mixed-Bag Solver Overview}\label{chap:mixedBagSolver}
 
-When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller regions to form larger regions.  The Mixed-Bag Solver presented in this thesis is based off this solving strategy.  The solver consists of five distinct stages, namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  The pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}; in addition to Mixed-Bag puzzles, the algorithm supports Type~1 and Type~2 puzzles without modification. 
+When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller regions to form larger regions.  The Mixed-Bag Solver presented in this thesis is based off this solving strategy.  The solver consists of five distinct stages, namely: segmentation, stitching, hierarchical clustering of segments, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  The pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}. 
 
-The following subsections describe each of Mixed-Bag Solver's stages/subfunctions.  It also discusses the assembler (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}), which is a separate but associated component of the architecture.
+The following subsections describe each of Mixed-Bag Solver's stages/subfunctions.  An additional associated component referred to as the ``assembler'' (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}) is also discussed.
 
 \begin{figure}[ht!]
 	\centering
@@ -32,9 +32,9 @@ This thesis uses the assembler proposed by Paikin~\& Tal~\cite{paikin2015} for a
 
 \subsection{Assembler Time Complexity}\label{sec:assemblerTimeComplexity}
 
-Paikin~\& Tal's assembler relies on a set of inter-puzzle piece similarity metrics.  Similar to all other jig swap solvers, these distances are calculated between all pairs of pieces, making the time required to calculate inter-piece similarity $O(n^2)$, where $n$ is the number of puzzle pieces.  If an input image has sufficient inter-piece variation, then the time complexity to place all is $\Theta(n \text{lg}(n))$, as a heap is used to determine the next piece to be placed.  However, if most pieces are sufficiently similar that there are relatively few best buddies, then piece placement can be as slow as $O(n^3)$ as the inter-piece similarity may need to be recalculated after each piece is placed.
+Paikin~\& Tal's assembler relies on a set of inter-puzzle piece similarity metrics.  Similar to all other jig swap solvers, these distances are calculated between all pairs of pieces, making the time required to calculate inter-piece similarity $O(n^2)$, where $n$ is the number of puzzle pieces.  If an input image has sufficient inter-piece variation, then the time complexity to place all pieces is $\Theta(n \text{lg}(n))$, since a heap is used to determine the piece placement order.  However, if most pieces are sufficiently similar that there are relatively few best buddies, then piece placement can be as slow as $O(n^3)$ as the inter-piece similarity may need to be recalculated after each piece is placed.
 
-The Mixed-Bag Solver performs assembly at least once during the segmentation stage (usually more times), and placement must be repeated during the final assembly stage.  Hence, while the execution time for the Mixed-Bag solver is longer than any assembler that may be used, they both share the same time complexity since the number of times placement must be performed is not directly dependent on the number of puzzle pieces.
+The Mixed-Bag Solver performs assembly at least once during the segmentation stage (usually more times), and placement is performed another time during the final assembly stage.  Hence, while the execution time for the Mixed-Bag solver is necessarily longer than any assembler that may be used, they both share the same time complexity since the number of times placement is performed is not directly related to the number of puzzle pieces.
 
 \subsection{Assembler Implementation}\label{sec:assemblerImplementation}
 
@@ -42,15 +42,15 @@ Paikin~\& Tal wrote their algorithm in Java, and as of this publication, the sou
 
 \section{Segmentation}\label{sec:Segmentation}
 
-Segmentation provides basic structure to the bag of puzzle pieces by partitioning these pieces into disjoint sets, referred to here as segments.  These segments are partial assemblies where there is a high degree of confidence that the pieces are placed correctly. As detailed in Algorithm~\ref{alg:mixedBagSolver}, the only input to the segmentation stage is the bag of puzzle pieces; the solver takes no other inputs.  It is expected that pieces from the same input puzzle may be assigned to multiple, disjoint segments.  Section~\ref{sec:hierarchicalClustering} describes how these segments are merged using hierarchical clustering.
+Segmentation provides basic structure to the bag of puzzle pieces by partitioning these pieces into disjoint sets, referred to here as segments.  These segments are partial assemblies where there is a high degree of confidence that the pieces are placed correctly. As detailed in Algorithm~\ref{alg:mixedBagSolver}, the only input to the segmentation stage is the bag of puzzle pieces; the solver takes no other inputs.  It is expected that pieces from the same ground-truth input may be assigned to multiple segments.  Section~\ref{sec:hierarchicalClustering} describes how these segments are merged using hierarchical clustering.
 
 \subsection{Overview of the Segmentation Procedure}
 
 Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a saved segment are assembled as if they all belong to a single ground-truth image.  This strategy eliminates the need to make any assumptions at this early stage regarding the number of input puzzles. 
 
-Section~\ref{sec:segmentPuzzle} describes the procedure used to create the individual segments. The largest segment in each round is passed to the Stitching stage described in Section~\ref{sec:stitching}.\footnote{All saved segments must exceed a minimum size.  For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.} Similarly, the multiplicative scalar term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} dictates which other segments are also passed to the Stitching stage.  In this thesis, \textit{$\alpha$} was set to~0.5, meaning that all segments that are at least half the size of the largest segment are also saved.  This approach provided sufficient balance between finding the largest possible segments while limiting overall execution time.
+Section~\ref{sec:segmentPuzzle} describes the procedure used to create the individual segments. The largest segment in each round is passed to the Stitching stage described in Section~\ref{sec:stitching}.\footnote{All saved segments must exceed a minimum size.  For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.} Similarly, the multiplicative scalar term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} dictates which other segments are also passed to the Stitching stage.  In this thesis, \textit{$\alpha$} was set to~0.5, meaning that all segments that were at least half the size of the largest segment were also saved.  This approach provided sufficient balance between finding the largest possible segments while limiting overall execution time.
 
-Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in the future segmentation rounds.  Segmentation continues until all pieces have been assigned to sufficiently large segments, or no segment exceeds the minimum allowed segment size.
+Once a piece is assigned to a saved segment, it is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in future segmentation rounds.  Segmentation continues until all pieces have been assigned to sufficiently large segments or no segment exceeds the minimum allowed segment size.
 
 \begin{algorithm}[tb]
 \caption{Pseudocode for the Complete Segmentation Algorithm}\label{alg:segmentation}
@@ -68,7 +68,7 @@ Once a piece is assigned to a saved segment, it is removed from the set of unass
         \EndIf
 \item[]
         \ForEach{$segment \in puzzle\_segments$}
-            \If{$|segment| \text{ > } \alpha \times max\_segment\_size \textbf{ and } |segment| \text{ > } 0$}
+            \If{$|segment| \text{ > } \text{max}(\alpha {} \cdot {} max\_segment\_size, \text{ } smallest\_allowed)$}
                 \State $\text{add } segment \text{ to } saved\_segments$
                 \State $\text{remove pieces in } segment \text{ from } unassigned\_pieces$
             \EndIf
@@ -98,9 +98,9 @@ The function ``\textproc{SegmentPuzzle}'' in Algorithm~\ref{alg:segmentPuzzle} p
             \State $piece \gets \text{next piece in } queue$
             \State $\text{add } piece \text{ to } segment$
 \item[]
-            \ForEach{$neighbor\_piece \text{ of } piece$}
-            	\If{$\textproc{IsBestBuddies}(neighbor\_piece, piece)$}
-            		\State $\text{add } neighbor\_piece \text{ to } \textit{queue}$
+            \ForEach{$neighbor \text{ of } piece$}
+            	\If{$\textproc{IsBestBuddies}(neighbor, piece)$}
+            		\State $\text{add } neighbor \text{ to } queue$
             		\State $\text{remove } neighbor\_piece \text{ from } unassigned\_pieces$
             	\EndIf
             \EndFor
@@ -121,23 +121,23 @@ The function ``\textproc{SegmentPuzzle}'' in Algorithm~\ref{alg:segmentPuzzle} p
 \end{algorithmic}
 \end{algorithm}
 
-Whenever any piece, including the seed, is added to a segment, the algorithm examines all of that piece's neighbors.  These adjacent pieces are also added to the segment if they are in the pool of unassigned pieces and if their neighbor inside the segment is a ``best buddy'' (as determined by the predicate ``\textproc{IsBestBuddies}'').  The growth of a segment terminates when there are no neighboring pieces that satisfy these two criteria. 
+Whenever a piece, including the seed, is added to a segment, the algorithm examines all of that piece's neighbors.  These adjacent pieces are also added to the segment if they are in the pool of unassigned pieces and if their neighbor inside the segment is a ``best buddy'' (as checked by the predicate ``\textproc{IsBestBuddies}'' in Algorithm~\ref{alg:segmentPuzzle}).  The growth of a segment terminates when there are no neighboring pieces that satisfy these two criteria. 
 
-In Pomeranz \textit{et al.}'s segmentation algorithm, no changes were made to a segment after it reached its maximum size.  Their approach is sufficient when solving only a single puzzle at a time.  However, in Mixed-Bag puzzles, it is common that correctly assembled regions from different ground-truth inputs are joined into a single segment; this is usually through very tenuous linking in the form of narrow bridges no wider than a single piece.  As described in the next section, the Mixed-Bag Solver post processes each segment after it has grown to its maximum size to prevent this erroneous segment merging.
+In Pomeranz \textit{et al.}'s segmentation algorithm, no changes were made to a segment after it reached its maximum size.  Their approach is sufficient when solving only a single puzzle at a time.  However, in Mixed-Bag puzzles, it is common that correctly assembled regions from different ground-truth inputs are joined into a single segment; this is usually through very tenuous linking in the form of narrow bridges no wider than a single piece.  Section~\ref{sec:articulationPoints} describes how the Mixed-Bag Solver post-processes each segment to prevent this erroneous segment merging.
 
 \subsection{Articulation Points}\label{sec:articulationPoints}
 
-A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships between adjacent pieces.  An articulation point is any vertex (i.e., puzzle piece) in the graph whose removal increases the number of connected components.  The Mixed-Bag Solver identifies the articulation points using the algorithm proposed by~\cite{cormenIntroToAlgorithms}; these articulation pieces are then removed from the segment and returned to the set of unassigned pieces.  This step necessarily causes some other pieces to become disconnected from the segment's seed.  Any disconnected pieces are then also removed from the segment and marked as unassigned. Once this has been completed, the segment is in its final form.
+A segment can be modeled as a graph with a single connected component.  The individual puzzle pieces represent the vertices while the edges are the best buddy relationships between adjacent pieces.  An articulation point is any vertex (i.e., puzzle piece) in the graph whose removal increases the number of connected components.  The Mixed-Bag Solver identifies the articulation points using the algorithm proposed by~\cite{cormenIntroToAlgorithms}; these articulation pieces are then removed from the segment and returned to the set of unassigned pieces.  This step necessarily causes some other pieces to become disconnected from the segment's seed.  These disconnected pieces are also removed from the segment and marked as unassigned. Once this has been completed, the segment is in its final form.
 
 \subsection{Segmentation Example}
 
-Appendix~\ref{app:segmentedOutput} shows an example of a single round of segmentation for a two puzzle input. It also contains the single puzzle solver and segmentation outputs.
+Appendix~\ref{app:segmentedOutput} shows an example of a single round of segmentation with two images as the input. This is included to provide a visual reference of the segmentation process.
 
 \section{Stitching}\label{sec:stitching}
 
-As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that the placement is correct.  In some areas of an image (e.g., a sky where there is little variation between pieces), the segmenter may not have high confidence that the puzzle is assembled correctly.  This often leads to a single ground-truth image being comprised of multiple segments. Since the Mixed-Bag Solver is not supplied with the number of input puzzles, it must quantify the extent to which any pairs of segments are related to ensure it can accurately estimate the number of ground-truth inputs.  
+As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that the placement is correct.  In areas of an image with little inter-piece variation, the segmenter may not have high confidence that the puzzle is assembled correctly.  This often leads to a single ground-truth image being partitioned into multiple segments. Since the Mixed-Bag Solver is not supplied with the number of input images, it must quantify the extent to which any pairs of segments are related to ensure it can accurately estimate the number of ground-truth inputs.  
 
-It is expected that two segments that were adjacent in a ground-truth image would eventually merge if one segment were allowed to expand. Since it is not known in which relative direction adjacent segment(s) may be located, the segment should be allowed to grow in all directions; however, the segment should not be forced to expand in a certain direction as it may lead to the formation of erroneous inter-segment coupling.  This concept serves as the foundation of the inter-segment stitching used by the Mixed-Bag Solver.  The stitching process is described in the following subsections.
+It is expected that two segments that were adjacent in a ground-truth image would eventually merge if one segment were allowed to expand. Since it is not known in which relative direction the adjacent segment may be located, the segment should be allowed to grow in all directions; however, the segment should not be forced to expand in a certain direction as it may lead to the formation of erroneous inter-segment coupling.  This concept is the foundation of the inter-segment stitching used by the Mixed-Bag Solver.  This stitching process is described in the following subsections.
 
 \subsection{Mini-Assemblies and Stitching Pieces}
 
@@ -145,7 +145,7 @@ As mentioned previously, a segment should be allowed, but not forced, to expand 
 
 \subsection{Selection of Stitching Pieces}\label{sec:stitchingPieceSelection}
 
-If stitching pieces are poorly selected, two negative, yet divergent outcomes may happen.  First, placing the stitching pieces too close to one another can add significant overhead without creating much tangible value.  In contrast, if the stitching pieces are too far apart, the solver may not be able to detect subtle inter-segment relationships.  Algorithm~\ref{alg:selectStitchingPieces} describes the procedure used by the Mixed-Bag Solver to select the stitching pieces that balances these two concerns.  The implementation of this algorithm is described in detail in the following two subsections.
+If stitching pieces are poorly selected, two divergent, yet deleterious outcomes may occur.  First, placing the stitching pieces too close to one another can add significant overhead without creating much tangible value.  In contrast, if the stitching pieces are too far apart, the solver may not be able to detect subtle inter-segment relationships.  Algorithm~\ref{alg:selectStitchingPieces} describes the procedure used by the Mixed-Bag Solver to select the stitching pieces that balances these two concerns.  The implementation of this algorithm is described in detail in the following two subsections.
 
 \begin{algorithm}[tb]
 \caption{Pseudocode for Selecting the Stitching Pieces in a Segment}
@@ -231,9 +231,9 @@ Agglomerative hierarchical clustering is a bottom-up clustering algorithm where 
 \begin{algorithm}[tb]
 \caption{Pseudocode for the Hierarchical Clustering of Segments}\label{alg:hierarchicalClustering}
 \begin{algorithmic}[1]
-\Function{HierarchicalClustering}{$solved\_segments, overlap\_matrix$}
+\Function{HierarchicalClustering}{$saved\_segments, overlap\_matrix$}
 	\State $\textit{segment\_clusters} = \{ \}$	
-	\ForEach{$\text{segment } \Phi_i \in \textit{solved\_segments}$}
+	\ForEach{$\text{segment } \Phi_i \in \textit{saved\_segments}$}
 		\State $\text{add new segment cluster } \Sigma_i \text{ containing } \Phi_i \text{ to } segment\_clusters$
 	\EndFor
 \item[]
