@@ -2,7 +2,7 @@
 
 Computational jigsaw puzzle solvers have been studied since the 1960s when Freeman~\&~Gardner proposed a solver that relied only on piece shape and could solve puzzles with up to nine pieces \cite{freeman1964}.  Since then, the focus of research has gradually shifted from traditional jigsaw puzzles to jig swap puzzles.  
 
-Cho~\textit{et al.}~\cite{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s),'' which are pieces whose position is fixed in the correct location before the solver begins.  Their solver also required that the user specify the actual dimensions of the input puzzle.  Future solvers would improve on Cho~\textit{et al.}'s results while simultaneously reducing the amount of information (i.e., beyond the set of pieces) passed to the solver.
+Cho~\textit{et al.}~\cite{cho2010} proposed in 2010 one of the first modern computational jig swap puzzle solvers; their approach relied on a graphical model built around a set of one or more ``anchor piece(s),'' which are pieces whose position is fixed in the correct location before the placement of other pieces begins.  Their solver also required that the user specify the actual dimensions of the input puzzle.  Future solvers would improve on Cho~\textit{et al.}'s results while simultaneously reducing the amount of information (i.e., beyond the set of pieces) passed to the solver.
 
 A significant contribution of Cho~\textit{et al.} is that they were first to use the LAB  (\underline{L}ightness and the \underline{A}/\underline{B} opponent color dimensions) colorspace to encode image pixels.  LAB was selected due to its property of normalizing the lightness and color variation across all three pixel dimensions.  Cho~\textit{et al.} also proposed a measure for quantifying the pairwise distance between two puzzle pieces that became the basis of most future work.  
 
@@ -12,19 +12,18 @@ Pomeranz \textit{et al.}~\cite{pomeranz2011} proposed an iterative, greedy, jig 
 \centering
 \begin{split}
 	\begin{matrix}
-		\forall{x_{k}}\forall{s_c},C(x_i, s_a, x_j, s_b) \geq C(x_i, s_a, x_k, s_c)
+		\forall{p_{k}}\forall{s_z},C(p_i, s_x, p_j, s_y) \geq C(p_i, s_x, p_k, s_z)
 		\\
 		\\
 		\textnormal{and}
 		\\
 		\\
-		\forall{x_{k}}\forall{s_c},C(x_j, s_b, x_i, s_a) \geq C(x_j, s_b, x_k, s_c)
+		\forall{p_{k}}\forall{s_z},C(p_j, s_y, p_i, s_x) \geq C(p_j, s_y, p_k, s_z)
 	\end{matrix}
 \end{split}
 \end{equation} 
 
-
-Best buddies have served as both as a metric for estimating the quality of a solver output~\cite{sholomon2013} as well as the foundation of some solvers' assemblers~\cite{paikin2015}.  Best buddies are discussed extensively in sections~\ref{sec:segmentPuzzle},~\ref{sec:bestBuddyMetrics} and~\ref{sec:singlePuzzleSolving} of this thesis.
+Best buddies have served as both as a metric for estimating the quality of a solver output~\cite{sholomon2013} as well as the foundation of some solvers' assemblers~\cite{paikin2015}.  Best buddies are discussed extensively in Sections~\ref{sec:segmentPuzzle},~\ref{sec:bestBuddyMetrics}, and~\ref{sec:singlePuzzleSolving} of this thesis.
 
 An additional key contribution of Pomeranz~\textit{et al.} is the creation of three image benchmarks.  The first benchmark is comprised of twenty, 805 piece images; this benchmark is used as the test set for the experiments described in Chapter~\ref{chap:experimentalResults}. The other two benchmarks each consist of three images; the first dataset has images containing 2,360 pieces while the other consists of images with 3,300 pieces.
 
@@ -46,6 +45,6 @@ In 2013, Sholomon~\textit{et al.}\cite{sholomon2013} proposed a genetic algorith
 
 Paikin~\& Tal \cite{paikin2015} published in 2015 a greedy solver that handles both Type~1 and Type~2 puzzles, even if those puzzles are missing pieces.  What is more, their algorithm is one of the first to support Mixed-Bag Puzzles.  While Paikin~\&~Tal's algorithm represents the current state of the art, it has serious limitations that affects its performance for these puzzles.  For example, similar to previous solvers, Paikin~\&~Tal's algorithm must be told the number of input puzzles.  In many practical applications, this information may not be known.
 
-Another limitation arises from the fact that Paikin~\& Tal's algorithm places pieces using a single-pass kernel growing approach.  As such, a single piece is used as the seed of each output puzzle, and all subsequent pieces are placed around the expanding kernel.  Because of that, poor seed selection can catastrophically degrade the quality of the solver output.  However, their algorithm only requires that a seed piece have best buddies on each of its sides and that each of the seed's best buddies also have best buddies on each of their sides.  Therefore, the selection of the seed is based off essentially 13 pieces.  What is more, the selection of the seed is performed greedily at run time.  Through the combination of these two factors, it is common that the seeds of multiple output puzzles come the same ground-truth image.
+Another limitation arises from the fact that Paikin~\& Tal's algorithm places pieces using a single-pass, kernel growing approach.  As such, a single piece is used as the seed of each output puzzle, and all subsequent pieces are placed around the expanding kernel.  Because of that, poor seed selection can catastrophically degrade the quality of the solver output.  However, their algorithm only requires that a seed piece have best buddies on each of its sides and that the seed's best buddies also have best buddies on each of their sides.  Therefore, the selection of the seed is based off essentially 13 pieces.  What is more, the selection of the seed is performed greedily at run time.  Through the combination of these two factors, it is common that the seeds of multiple output puzzles come the same ground-truth image.
 
-The limitations of Paikin~\&~Tal's algorithm are addressed by this thesis' Mixed-Bag Solver, which is described in Chapter~\ref{chap:mixedBagSolver}.  Since Paikin \&  Tal's algorithm represents the current state of the art, it is used as thesis' assembler.  What is more, their algorithm is used as the baseline for all performance comparisons. 
+The limitations of Paikin~\&~Tal's algorithm are addressed by this thesis' Mixed-Bag Solver, which is described in Chapter~\ref{chap:mixedBagSolver}.  Since Paikin \&  Tal's algorithm represents the current state of the art, it is used as this thesis' assembler.  What is more, their algorithm is used as the baseline for all performance comparisons. 
