@@ -25,18 +25,16 @@
 
 \setbeamercolor{header}{bg=spartanBlue}
 
-
-
 \setbeamercolor{title in sidebar}{fg=frametitle.bg} % Headings on the side bar
 \setbeamercolor{palette sidebar secondary}{fg=frametitle.bg} % Headings on the side bar
 %\setbeamercolor{palette sidebar primary}{fg=frametitle.bg} % Slide titles (i.e., not slide sections)
 
 \setbeamercolor{section in toc}{use=palette sidebar secondary,fg=palette sidebar secondary.fg} 
-\setbeamercolor{subsection in toc}{use=palette sidebar primary,fg=palette sidebar primary.fg} 
-
-
+\setbeamercolor{subsection in toc}{use=normal text,fg=palette normal text.fg} 
 \setbeamercolor{block title}{fg=spartanBlue} % Color of headings
 \setbeamercolor{local structure}{fg=spartanBlue} % Color of enumerated items (e.g. lists, bullets, etc.)
+\setbeamercolor{bibliography item}{use=local structure,fg=local structure.fg} % Color number of bibliography items
+\setbeamercolor{bibliography entry author}{use=normal text,fg=normal text.fg} % Color bibliography entry.  Includes not just author but all fields
 
 
 \usepackage{environ}
@@ -69,8 +67,8 @@
 
 \author[Zayd Hammoudeh] % optional, use only with lots of authors
 {
-  Zayd Hammoudeh\\
-  \href{mailto:hammoudeh@gmail.com}{{\tt hammoudeh@gmail.com}}
+    Zayd Hammoudeh\\
+    \href{mailto:hammoudeh@gmail.com}{{\tt hammoudeh@gmail.com}}
 }
 % - Give the names in the same order as they appear in the paper.
 % - Use the \inst{?} command only if the authors have different
@@ -78,12 +76,12 @@
 
 \institute[
 %  {\includegraphics[scale=0.2]{aau_segl}}\\ %insert a company, department or university logo
-  Dept.\ of Computer Science\\
-  San Jose State University\\
+    Dept.\ of Computer Science\\
+    San Jose State University\\
 ] % optional - is placed in the bottom of the sidebar on every slide
 {% is placed on the title page
-  Department of Computer Science\\
-  San Jose State University\\
+    Department of Computer Science\\
+    San Jose State University\\
   
   %there must be an empty line above this line - otherwise some unwanted space is added between the university and the country (I do not know why;( )
 }
@@ -128,44 +126,150 @@
 \makeatother
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
 \begin{document}
 % the titlepage
 {
 \begin{frame}[plain,noframenumbering] % the plain option removes the sidebar and header from the title page
-  \titlepage
+\titlepage
 \end{frame}}
 %%%%%%%%%%%%%%%%
 
-% TOC
-\begin{frame}{Agenda}{}
-\tableofcontents
-\end{frame}
-%%%%%%%%%%%%%%%%
+
+
+%% TOC
+%\begin{frame}{Agenda}{}
+%	\tableofcontents
+%\end{frame}
+%%%%%%%%%%%%%%%%%
+
+
 
 \section{Introduction}
-% motivation for creating this theme
-\begin{frame}{Introduction}{}
-  The present beamer theme called the \alert{AAU Sidebar Beamer Theme} is an attempt to
+\begin{frame}{Introduction}{Jigsaw Puzzles}
   \begin{itemize}
-    \item<1-> create a simple and elegant beamer theme which can be used by students and researchers affiliated with Aalborg University (AAU),
-    \item<2-> create a unique AAU theme which does not resemble any of the standard beamer themes. People should associate this theme with AAU and not with beamer,
-    \item<3-> keep the amount of clutter to a minimum. Only the important things should be on the slides,
-    \item<4-> retain the powerful customisation tools provided by the template system of the beamer class.
+    \item First jigsaw puzzle introduced in the 1760s.  Modern jigsaw puzzles were introduced in the 1930s.
+    \vfill
+    \item First computation jigsaw puzzle solver introduced in 1964.
+    \vfill
+    \item Solving a jigsaw puzzle is NP Complete \cite{altman1990, demaine2007}
+    \vfill
+    \item<2-> \textbf{Example Applications:} DNA fragment reassembly, shredded document reconstruction, speech descrambling, and image editing.
+    \begin{itemize}
+        \item<3-> In most cases, the original, ``ground-truth'' image is unknown.
+    \end{itemize}
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-\subsection{License}
-% the license
-\begin{frame}{Introduction}{License}
-  \begin{itemize}
-    \item<1-> The AAU logo is covered by copyright rules. I have used the logo from \chref{http://aau.designguides.dk}{http://aau.designguides.dk}. As long as you use the theme for making presentations in connection with your work at AAU, you are allowed to use the AAU logo.
-    \item<2-> The rest of the theme is provided under the GNU General Public License v. 3 (GPLv3). This basically means that you can redistribute it and/or modify it under the same license. For more information on the GPL license see \chref{http://www.gnu.org/licenses/}{http://www.gnu.org/licenses/}
-  \end{itemize}
+
+\begin{frame}{Introduction}{Jig Swap Puzzles}
+    \textbf{Jigswap Puzzles} -- Variant of the traditional jig saw puzzle
+    \begin{itemize}
+        \item All pieces are equal-sized squares
+        \item Substantially more difficult
+    \end{itemize}
+    \vfill
+    % Delay the table on the slide
+    \begin{tabular}{ >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
+	\onslide<2->{\fbox{\includegraphics[width=0.365\textwidth]{./images/muffins_300x200.jpg}}} & \onslide<3->{\fbox{\includegraphics[width=0.365\textwidth]{./images/muffins_scrambled.jpg}}}
+	\\ ~\\
+	\onslide<2->{Ground-Truth Image} & \onslide<3->{Randomized Jig Swap Puzzle}
+	\\ ~\\
+  \end{tabular}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-\section{Solver Overview}
+
+
+\begin{frame}{Introduction}{Jig Swap Puzzle Types}
+\onslide<2->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input(s) is unknown.} 
+    \vfill
+    \begin{itemize}
+        \item<2-> \textbf{Type~1}: Puzzle dimension and piece rotation are known.  One or more ``anchor'' pieces are fixed in their correct location.
+        \vfill
+        \item<3-> \textbf{Type~2}: All piece locations and rotations unknown.  Puzzle dimensions may be known.
+        \vfill
+        \item<4-> \textbf{Type~3}: All piece locations are known.  Only rotation is unknown.
+        \vfill
+        \item<5-> \textbf{Mixed-Bag}: Pieces come from multiple puzzles.
+    \end{itemize}
+    \vfill
+    \onslide<6->{Mixed-Bag Puzzles are the focus of this thesis.}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Introduction}{Best Buddies}
+    \begin{itemize}
+        \item \textbf{Basis of all Modern Jig Swap Solvers}: The more compatible two pieces are on their respective sides, the more likely they are to be adjacent.
+        \vfill
+        \item \textbf{Best Buddies}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece~\cite{pomeranz2011}
+        \vfill
+\begin{equation} \label{eq:pomeranzBestBuddyDefinition}
+\centering
+\begin{split}
+	\begin{matrix}
+		\forall{p_{k}}\forall{s_z},C(p_i, s_x, p_j, s_y) \geq C(p_i, s_x, p_k, s_z)
+		\\
+		\\
+		\textnormal{and}
+		\\
+		\\
+		\forall{p_{k}}\forall{s_z},C(p_j, s_y, p_i, s_x) \geq C(p_j, s_y, p_k, s_z)
+	\end{matrix}
+\end{split}
+\end{equation} 
+        \vfill
+        \item \textbf{Importance of Best Buddies}: Strong indicator of piece adjacency
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Previous Work}
+\begin{frame}{Previous Work}{}
+    \begin{itemize}
+        \onslide<1->{\item \textbf{Cho \textit{et al.}}~\cite{cho2010} -- Introduced the first Modern Jig Swap Puzzle Solver Introduced
+        \begin{itemize}
+            \setlength\itemsep{.8em}
+            \item Graphical model-based Type~1 solver
+            \item Puzzle dimensions are known
+            \item Used one or more anchor pieces
+            \item Established the standard test conditions including puzzle piece size and image encoding using the LAB~colorspace
+        \end{itemize}}
+        \vfill
+        \onslide<2->{\item \textbf{Pomeranz \textit{et al.}}~\cite{pomeranz2011} -- Iterative, greedy jigsaw Type~1 puzzle solver
+        \begin{itemize}
+            \setlength\itemsep{.8em}
+            \item Eliminated the use of anchor pieces 
+            \item Created multiple solver benchmarks of various sizes
+            \item Introduced the concept of ``best buddies''
+        \end{itemize}}
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\section{Mixed-Bag Solver}
+\begin{frame}{Mixed-Bag Solver}{}
+  \begin{itemize}
+    \item First jigsaw puzzle introduced in the 1760s.  Modern jigsaw puzzles were introduced in the 1930s.
+    \vfill
+    \item First computation jigsaw puzzle solver introduced in 1964.
+    \vfill
+    \item Solving a jigsaw puzzle is NP Complete \cite{altman1990, demaine2007}
+    \vfill
+    \item<2-> \textbf{Example Applications:} DNA fragment reassembly, shredded document reconstruction, speech descrambling, and image editing.
+    \begin{itemize}
+        \item<3-> In most cases, the original, ``ground-truth'' image is unknown.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
 
 \subsection{Assembler}
 \subsection{Segmentation}
@@ -402,17 +506,11 @@
 \subsection{Ten Puzzle Results}
 \begin{frame}{Experimental Results}{Solving More than Five Puzzles}
   \begin{itemize}
-
 	\item<1-> As the number of puzzles increase, the difficulty of simultaneously reconstructing the puzzles increases.
-  
 	\vfill  
-  
   	\item<2-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
-
 	\vfill
-	
   	\item<3-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
-
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -434,8 +532,14 @@
 			\item SEDAS and EDAS greater than 0.9 for all images
 			\item Four images perfectly reconstructed
 			\item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
-		\end{itemize}		
+		\end{itemize}	
+		\vfill
+  		\item<3-> \textbf{Conclusion}: Mixed-Bag Solver significantly outperforms Paikin~\& Tal's algorithm.	
   \end{itemize}
+  
+  		
+  
+
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -473,7 +577,7 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-
+\section*{}  % Close the previous section
 \begin{frame}[t,allowframebreaks]{List of References}
 	\bibliographystyle{ieeetr}
 	\bibliography{references}
@@ -482,9 +586,8 @@
 \appendix
 \backupbegin
 
-\begin{frame}[t,allowframebreaks]{List of References}
-	\bibliographystyle{ieeetr}
-	\bibliography{references}
+\begin{frame}[t,allowframebreaks]{}
+
 \end{frame}
 \backupend
 
