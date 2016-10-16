@@ -18,6 +18,7 @@
 \definecolor{spartanBlue}{RGB}{0,85,162}
 \definecolor{spartanYellow}{RGB}{229,168,35}
 \definecolor{spartanGray}{RGB}{147,149,151}
+\definecolor{darkGreen}{RGB}{34, 139, 34}
 
 \setbeamercolor{frametitle}{use=structure,fg=white,bg=spartanBlue}
 \setbeamercolor{title}{fg=frametitle.bg}
@@ -54,7 +55,6 @@
 % does not look nice, try deleting the line with the fontenc.
 \usepackage{helvet}
 
-
 % colored hyperlinks
 \newcommand{\chref}[2]{%
   \href{#1}{{\usebeamercolor[bg]{AAUsidebar}#2}}%
@@ -82,7 +82,7 @@
   San Jose State University\\
 ] % optional - is placed in the bottom of the sidebar on every slide
 {% is placed on the title page
-  Dept.\ of Computer Science\\
+  Department of Computer Science\\
   San Jose State University\\
   
   %there must be an empty line above this line - otherwise some unwanted space is added between the university and the country (I do not know why;( )
@@ -92,16 +92,28 @@
 % specify a logo on the titlepage (you can specify additional logos an include them in 
 % institute command below
 \pgfdeclareimage[height=1.5cm]{titlepagelogo}{images/SJSU_Seal_Blue} % placed on the title page
-%\pgfdeclareimage[height=1.5cm]{titlepagelogo2}{graphics/aau_logo_new} % placed on the title page
 \titlegraphic{% is placed on the bottom of the title page
   \pgfuseimage{titlepagelogo}
 %  \hspace{1cm}\pgfuseimage{titlepagelogo2}
 }
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Scales tikz images to side size %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Handles Slide Numbering For Appendix %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\backupbegin}{
+   \newcounter{finalframe}
+   \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \setcounter{framenumber}{\value{finalframe}}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   Scales tikz images to side size    %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
 \newsavebox{\measure@tikzpicture}
 \NewEnviron{scaletikzpicturetowidth}[1]{%
@@ -114,11 +126,11 @@
   \BODY
 }
 \makeatother
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 % the titlepage
-{\aauwavesbg%
+{
 \begin{frame}[plain,noframenumbering] % the plain option removes the sidebar and header from the title page
   \titlepage
 \end{frame}}
@@ -153,6 +165,19 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
+\section{Solver Overview}
+
+\subsection{Assembler}
+\subsection{Segmentation}
+\subsection{Stitching}
+\subsection{Hierarchical Clustering}
+\subsection{Final Seed Piece Selection}
+\subsection{Final Assembly}
+
+\section{Quantifying Quality}
+\subsection{Direct Accuracy}
+\subsection{Neighbor Accuracy}
+
 \section{Experimental Results}
 \begin{frame}{Experimental Results}{Input Puzzle Count}
   \begin{block}{Windows with MiKTeX}
@@ -169,8 +194,9 @@
 %%%%%%%%%%%%%%%%
 
 
+
 \subsection{Input Puzzle Count}
-\begin{frame}{Experimental Results}{Input Puzzle Count}
+\begin{frame}{Experimental Results}{Determining Input Puzzle Count}
   \begin{block}{Windows with MiKTeX}
     Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
     \begin{enumerate}
@@ -185,7 +211,8 @@
 %%%%%%%%%%%%%%%%
 
 
-\begin{frame}{Input Puzzle Count}{Single Input Puzzle Experimental Results}
+
+\begin{frame}{Determining Input Puzzle Count}{Single Input Puzzle}
   \begin{block}{Windows with MiKTeX}
     Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
     \begin{enumerate}
@@ -200,13 +227,15 @@
 %%%%%%%%%%%%%%%%
 
 
-\begin{frame}{Input Puzzle Count}{Multiple Input Puzzles Experimental Results}
+
+\begin{frame}{Determining Input Puzzle Count}{Multiple Input Puzzles}
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
         \begin{tikzpicture}[scale=\tikzscale]
           \begin{axis}[
                 ybar, axis on top,
                 height=8cm, width=12cm,
+            	axis background/.style={fill=gray!10},
                 bar width=0.4cm,
                 ymajorgrids, tick align=inside,
                 major grid style={draw=white},
@@ -216,7 +245,7 @@
                 axis y line*=left,
                 y axis line style={opacity=1},
                 tickwidth=0pt,
-                title=Mixed-Bag Solver's Input Puzzle Count Error Frequency,
+                title=\textbf{Mixed-Bag Solver's Input Puzzle Count Error Frequency},
                 enlarge x limits=0.2,
                 legend style={
                     at={(0.5,-0.2)},
@@ -251,35 +280,213 @@
 
 
 
-\section{Conclusions}
-\begin{frame}{Input Puzzle Count}{Multiple Input Puzzles Experimental Results}
+\subsection{Solver Comparison}
+\begin{frame}{Experimental Results}{}
   \begin{block}{Windows with MiKTeX}
-    Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
-    \begin{enumerate}
-      \item To do this, create a folder {\tt <somewhere>} named, e.g., {\tt texmf}
-      \item Add this folder in the Roots tab of the MiKTeX Settings dialog
-      \item Place the {\tt <dirstruct>} in your newly created local latex directory tree\\
-    {\tt <somewhere>\textbackslash texmf}\\
-      \item Open the MiKTeX Settings dialog and click Refresh FNDB.
-    \end{enumerate}
+  \end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Comparison of Solver Performance}{Shifted Enhanced Direct Accuracy Score (SEDAS)}
+     \begin{center}
+       \begin{scaletikzpicturetowidth}{0.9\textwidth}
+        \begin{tikzpicture}[scale=\tikzscale]
+          \begin{axis}[
+            height=8cm, width=12cm,
+            axis background/.style={fill=gray!10},
+            title=\textbf{Effect of the Number of Input Puzzles on SEDAS},
+            xlabel={\textbf{Number of Input Puzzles}},
+            ylabel={\textbf{SEDAS}},
+            xmin=1.5, xmax=5.5,
+            ymin=0, ymax=1,
+            xtick={2, 3, 4, 5},
+            ytick={0,0.2,0.4,0.6,0.8,1.0},
+            ymajorgrids=true,
+            grid style=dashed,
+            legend style={ at={(0.5,-0.25)}, anchor=north, legend columns=-1, /tikz/every even column/.append style={column sep=0.5cm}}
+            ]
+        \addplot [color=blue,mark=*,mark options={fill=blue},ultra thick]
+            coordinates {(2,0.849835) (3,0.953583)
+                 (4,0.88068) (5,0.792796)};
+        \addplot [color=red,mark=square*,mark options={fill=red},ultra thick]
+            coordinates {(2,0.757159) (3,0.799822)
+                 (4,0.777987) (5,0.782815)};
+        \addplot [color=darkGreen,mark=triangle*,mark options={fill=darkGreen},ultra thick]
+            coordinates {(2,0.321232) (3,0.202879)
+                 (4,0.108857) (5,0.09866)};
+        \legend{MBS Correct Puzzle Count, MBS All, Paikin \& Tal}
+        \end{axis}
+        \end{tikzpicture}
+      \end{scaletikzpicturetowidth}  
+    \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Comparison of Solver Performance}{Enhanced Neighbor Accuracy Score (ENAS)}
+     \begin{center}
+       \begin{scaletikzpicturetowidth}{0.9\textwidth}
+        \begin{tikzpicture}[scale=\tikzscale]
+          \begin{axis}[
+            height=8cm, width=12cm,
+            axis background/.style={fill=gray!10},
+            title=\textbf{Effect of the Number of Input Puzzles on ENAS},
+            xlabel={\textbf{Number of Input Puzzles}},
+            ylabel={\textbf{ENAS}},
+            xmin=1.5, xmax=5.5,
+            ymin=0, ymax=1,
+            xtick={2, 3, 4, 5},
+            ytick={0,0.2,0.4,0.6,0.8,1.0},
+            ymajorgrids=true,
+            grid style=dashed,
+            legend style={ at={(0.5,-0.25)}, anchor=north, legend columns=-1, /tikz/every even column/.append style={column sep=0.5cm}}
+            ]
+			\addplot [color=blue,mark=*,mark options={fill=blue},ultra thick]
+	coordinates {(2,0.932805) (3,0.955051)
+		 (4,0.919987) (5,0.868454)};
+			\addplot [color=red,mark=square*,mark options={fill=red},ultra thick]
+	coordinates {(2,0.874472) (3,0.868832)
+		 (4,0.862183) (5,0.876654)};
+			\addplot [color=darkGreen,mark=triangle*,mark options={fill=darkGreen},ultra thick]
+	coordinates {(2,0.462006) (3,0.364242)
+		 (4,0.259996) (5,0.204337)};
+        \legend{MBS Correct Puzzle Count, MBS All, Paikin \& Tal}
+        \end{axis}
+        \end{tikzpicture}
+      \end{scaletikzpicturetowidth}  
+    \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Comparison of Solver Performance}{Perfect Reconstruction}
+     \begin{center}
+       \begin{scaletikzpicturetowidth}{0.9\textwidth}
+        \begin{tikzpicture}[scale=\tikzscale]
+          \begin{axis}[
+            height=8cm, width=12cm,
+            axis background/.style={fill=gray!10},
+            title=\textbf{Effect of the Number of Input Puzzles on ENAS},
+            xlabel={\textbf{Number of Input Puzzles}},
+            ylabel={\textbf{Perfect Reconstruction (\%)}},
+            xmin=1.5, xmax=5.5,
+            ymin=0, ymax=30,
+            xtick={2, 3, 4, 5},
+            ytick={0,5,10,15,20,25,30},
+            ymajorgrids=true,
+            grid style=dashed,
+            legend style={ at={(0.5,-0.25)}, anchor=north, legend columns=-1, /tikz/every even column/.append style={column sep=0.5cm}}
+            ]
+			\addplot [color=blue,mark=*,mark options={fill=blue},ultra thick]
+	coordinates {(2,29.3) (3,18.5)
+		 (4,25.0) (5,20.0)};
+			\addplot [color=red,mark=square*,mark options={fill=red},ultra thick]
+	coordinates {(2,23.6) (3,18.8)
+		 (4,15.6) (5,24.0)};
+			\addplot [color=darkGreen,mark=triangle*,mark options={fill=darkGreen},ultra thick]
+	coordinates {(2,5.5) (3,1.4)
+		 (4,0) (5,0)};
+        \legend{MBS Correct Puzzle Count, MBS All, Paikin \& Tal}
+        \end{axis}
+        \end{tikzpicture}
+      \end{scaletikzpicturetowidth}  
+    \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\subsection{Ten Puzzle Results}
+\begin{frame}{Experimental Results}{Solving More than Five Puzzles}
+  \begin{itemize}
+
+	\item<1-> As the number of puzzles increase, the difficulty of simultaneously reconstructing the puzzles increases.
+  
+	\vfill  
+  
+  	\item<2-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
+
+	\vfill
+	
+  	\item<3-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
+
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Experimental Results}{Ten Puzzle Results}
+  	
+  	\begin{itemize}
+  		\item<1-> \textbf{Paikin~\& Tal}
+  		\begin{itemize}
+			\item Seed of nine images came from just three input images
+			\item SEDAS and EDAS greater than 0.9 for only one image
+			\item No perfectly reconstructed images
+		\end{itemize}
+		\vfill
+  		
+  		\item<2-> \textbf{Mixed-Bag Solver}
+		\begin{itemize}
+			\item SEDAS and EDAS greater than 0.9 for all images
+			\item Four images perfectly reconstructed
+			\item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
+		\end{itemize}		
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Solver Quality Comparison}{Ten Puzzle Result}
+  \begin{block}{Windows with MiKTeX}
+  \end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+\section{Conclusions}
+\begin{frame}{Conclusions}{}
+  \begin{block}{Windows with MiKTeX}
   \end{block}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
 \subsection{Future Work}
-\begin{frame}{Input Puzzle Count}{Multiple Input Puzzles Experimental Results}
-  \begin{block}{Windows with MiKTeX}
-    Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
+\begin{frame}{Conclusions}{Future Work}
+  \begin{enumerate}
+    \item<1-> Improved Assembler
     \begin{enumerate}
-      \item To do this, create a folder {\tt <somewhere>} named, e.g., {\tt texmf}
-      \item Add this folder in the Roots tab of the MiKTeX Settings dialog
-      \item Place the {\tt <dirstruct>} in your newly created local latex directory tree\\
-    {\tt <somewhere>\textbackslash texmf}\\
-      \item Open the MiKTeX Settings dialog and click Refresh FNDB.
+    	\item<1-> Prioritize placement using multiple best buddies
+    	\vfill
+    	\item<2-> Address placement performance in regions with low best buddy density
     \end{enumerate}
-  \end{block}
+    \vfill
+    \item<2-> Dynamic determination of the segment clustering threshold
+    \vfill
+    \item<3-> Expanded stitching piece selection
+    \vfill
+  \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%
+
+
+\begin{frame}[t,allowframebreaks]{List of References}
+	\bibliographystyle{ieeetr}
+	\bibliography{references}
+\end{frame}
+
+\appendix
+\backupbegin
+
+\begin{frame}[t,allowframebreaks]{List of References}
+	\bibliographystyle{ieeetr}
+	\bibliography{references}
+\end{frame}
+\backupend
+
 
 \end{document}
