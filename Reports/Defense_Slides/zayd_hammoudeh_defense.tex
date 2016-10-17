@@ -59,6 +59,11 @@
 \newcommand{\chref}[2]{%
   \href{#1}{{\usebeamercolor[bg]{AAUsidebar}#2}}%
 }
+\DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
+
+
+
+
 
 \title[A Fully-Automated Solver for Multiple Square Jigsaw Puzzles Using Hierarchical Clustering]% optional, use only with long paper titles
 {\textbf{A Fully-Automated Solver for Multiple Square Jigsaw Puzzles Using Hierarchical Clustering}}
@@ -196,7 +201,7 @@
 
 
 \begin{frame}{Introduction}{Jig Swap Puzzle Types}
-\onslide<2->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input(s) is unknown.} 
+\onslide<2->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
     \vfill
     \begin{itemize}
         \item<2-> \textbf{Type~1}: Puzzle dimension and piece rotation are known.  One or more ``anchor'' pieces are fixed in their correct location.
@@ -251,7 +256,8 @@
             \item Graphical model-based Type~1 solver
             \item Puzzle dimensions are known
             \item Used one or more anchor pieces
-            \item Established the standard test conditions including puzzle piece size and image encoding using the LAB~colorspace
+            \item Defined solver output quality metrics
+            \item Established the standard comparative test conditions
         \end{itemize}}
         \vfill
         \onslide<2->{\item \textbf{Pomeranz \textit{et al.}}~\cite{pomeranz2011} -- Iterative, greedy jigsaw Type~1 puzzle solver
@@ -272,7 +278,7 @@
 	\onslide<1->{\begin{block}{\textbf{Paikin~\& Tal's Algorithm}} 
 	    \begin{itemize}
         \setlength\itemsep{.8em}
-		    \item Begin each puzzle with a single distinct piece
+		    \item Begin each puzzle with a single piece
 		    \item Place all pieces around the expanding core
 	    \end{itemize}
 	\end{block}}
@@ -291,7 +297,7 @@
     \end{itemize}
 	\end{block}}
 	\vfill
-  \onslide<4->{This alternate strategy is the basis of the \textbf{Mixed-Bag Solver}.}
+  \onslide<4->{The latter strategy is the basis of the \textbf{Mixed-Bag Solver}.}
 \end{frame}
 
 \subsection{Assembler}
@@ -302,8 +308,205 @@
 \subsection{Final Assembly}
 
 \section{Quantifying Quality}
+\begin{frame}{Quantifying Solver Quality}{}
+  \begin{itemize}
+    \onslide<1->{
+      \item Jigsaw puzzle solvers are not yet able to always correctly reconstruct the input puzzle(s)
+      \begin{itemize}
+        \item Metrics compare the quality of solved outputs
+      \end{itemize}
+      \vfill
+      \item \textbf{Two Most Common Quality Metrics}:
+      \begin{itemize}
+        \setlength\itemsep{0.8em}
+        \item Direct Accuracy
+        \item Neighbor Accuracy
+      \end{itemize}
+    }
+    \vfill 
+    \onslide<2->{
+      \item \textbf{Disadvantages of Current Metrics}: Neither account for:
+      \begin{itemize}
+        \setlength\itemsep{0.8em}
+        \item Pieces misplaced in different puzzles
+        \item Extra pieces from other puzzles
+      \end{itemize}
+      \vfill
+      \item \textbf{Goal}: Define new Mixed-Bag puzzle quality metrics.
+    }
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
 \subsection{Direct Accuracy}
+\begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Direct Accuracy}
+  \onslide<1->{
+    \begin{itemize}
+      \item \textbf{Direct Accuracy}: Fraction of pieces ($c$) placed in the same location in both the ground-truth and solved image with respect to the total number of pieces ($n$)
+    \end{itemize}
+    \vfill
+    \begin{equation}\label{eq:directAccuracy}
+      DA = \frac{c}{n}
+    \end{equation}
+    \vfill
+  }
+  \onslide<2->{
+    \begin{itemize}
+      \item \textbf{Enhanced Direct Accuracy Score (EDAS)}: Modified direct accuracy that accounts for missing and extra pieces.
+    \end{itemize}
+    \vfill
+    \begin{equation}\label{eq:enhancedDirectAccuracyScore}
+      EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
+    \end{equation}
+  }
+  \onslide<3->{
+    \vfill  
+    \begin{itemize}
+      \item \textbf{Direct Accuracy Range}: 0 to 1
+      \vfill
+      \item \textbf{Perfectly Reconstructed Image}: All pieces are placed in their original location ($DA = EDAS = 1$)
+    \end{itemize}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Direct Accuracy}
+\begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Direct Accuracy}
+  \onslide<1->{
+    \begin{itemize}
+      \item \textbf{Standard Direct Accuracy}: Fraction of pieces ($c$) placed in the same location in both the ground-truth and solved image versus the total number of pieces ($n$)
+    \end{itemize}
+    \vfill
+    \begin{equation}\label{eq:directAccuracy}
+      DA = \frac{c}{n}
+    \end{equation}
+    \vspace{-0.8em}
+  }
+  \vfill
+  \onslide<2->{
+    \begin{itemize}
+      \item \textbf{Enhanced Direct Accuracy Score (EDAS)}: Modified direct accuracy that accounts for missing and extra pieces.
+    \end{itemize}
+    \vfill
+    \begin{equation}\label{eq:enhancedDirectAccuracyScore}
+      EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
+    \end{equation}
+    \vspace{-0.8em}
+  }
+  \vfill
+  \onslide<3->{
+    \begin{itemize}
+      \item \textbf{Direct Accuracy Range}: 0 to 1
+      \vfill
+      \item \textbf{Perfectly Reconstructed Image}: All pieces are placed in their original location ($DA = EDAS = 1$)
+    \end{itemize}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Direct Accuracy}{Effect of Shifts}
+  \onslide<1->{
+    \textbf{Problem}: Direct accuracy is highly vulnerable to shifts, in particular when puzzle dimensions are not fixed
+    \vfill
+  }
+  \begin{figure}
+    \centering
+    \begin{tabular}{ 
+      >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
+	    \onslide<2->{
+	      \fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200.jpg}}
+	    } &
+	    \onslide<3->{
+	      \fbox{\includegraphics[width=0.45\textwidth]{./images/muffins_300x200_type1}}
+	    }
+	    \\ ~\\
+	    \onslide<2->{
+	      Ground-Truth Image
+	    } & 
+	    \onslide<3->{
+	      Solver Output
+	    } 
+	    \\ ~\\
+  \end{tabular}
+  \label{fig:directAccuracyOnePieceEffect}
+  \end{figure}
+  \vspace{-2em}
+  \vfill  
+  \onslide<4->{
+    \center{\textbf{Conclusion}: Direct accuracy can be overly punitive.}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Direct Accuracy}{Shiftable Enhanced Direct Accuracy Score (SEDAS)}
+  \begin{itemize}
+    \item \textbf{Solution}: Allow the reference point for direct accuracy to shift beyond the upper left corner of the image
+    \vfill
+    \item \textbf{Shiftable Enhanced Direct Accuracy Score (SEDAS)}: Select the reference point, $l$, within radius $d_{min}$ of the upper left corner of the solved puzzle
+    \begin{itemize}
+      \vspace{0.6em}
+      \item $d_{min}$ - Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece
+    \end{itemize}
+    \vfill
+    \item \textbf{Formal Definition of SEDAS}:
+  \end{itemize}
+  \vfill  
+  \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
+    SEDAS_{P_i} = \argmax_{l \in L} \bigg( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \bigg)
+  \end{equation}
+  \vspace{-1em}
+  \vfill
+  \begin{itemize}
+    \item \textbf{SEDAS Range}: 0 to 1
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
 \subsection{Neighbor Accuracy}
+\begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Neighbor Accuracy}
+  \onslide<1->{
+    \begin{itemize}
+      \item \textbf{Standard Neighbor Accuracy}: Ratio of puzzle piece sides adjacent in both the original and solved images ($a$) versus the total number of sides ($n \cdot q$)
+    \end{itemize}
+    \vfill
+    \begin{equation}\label{eq:neighborAccuracy}
+      NA = \frac{a}{n \cdot q}
+    \end{equation}
+    \vspace{-1em}
+    \vfill
+  }
+  \onslide<2->{
+    \begin{itemize}
+      \item \textbf{Enhanced Neighbor Accuracy Score (ENAS)}: Modified neighbor accuracy that accounts for missing and extra pieces.
+    \end{itemize}
+    \vfill
+    \begin{equation}\label{eq:enhancedNeighborAccuracyScore}
+      ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q (n_i + \sum_{k \ne i}(m_{k,j})}
+    \end{equation}
+    \vspace{-0.5em}
+  }
+  \onslide<3->{
+    \vfill  
+    \begin{itemize}
+      \item \textbf{Neighbor Accuracy Range}: 0 to 1
+      \vfill
+      \item \textbf{Advantage of Neighbor Accuracy}: Less vulnerable to shifts than direct accuracy
+    \end{itemize}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
 
 \subsection{Best Buddy Density}
 \begin{frame}{Quantifying Solver Quality}{Best Buddy Density}
@@ -315,10 +518,13 @@
     \end{itemize}
     \vfill
     \item \textbf{Best Buddy Density} (BBD): A metric for quantifying the best buddy profile of an image that is independent of image size.
-    \vfill
-    \begin{equation} \label{eq:bestBuddyDensity}
-      BBD = \frac{b}{n \cdot q}
-    \end{equation}
+  \end{itemize}
+  \vfill
+  \begin{equation} \label{eq:bestBuddyDensity}
+    BBD = \frac{b}{n \cdot q}
+  \end{equation}
+  \vspace{-0.6em}
+  \begin{itemize}
     \vfill
     \item A greater BBD means the pieces are more differentiated making the puzzle easier to solve.
   \end{itemize}
@@ -326,7 +532,8 @@
 %%%%%%%%%%%%%%%%
 
 
-\begin{frame}{Quantifying Solver Quality}{Best Buddy Density}  
+
+\begin{frame}{Best Buddy Density}{Visualization}  
   \begin{block}{\textbf{Visualizing Best Buddy Density}}
     \begin{itemize}
       \setlength\itemsep{1em}
@@ -355,7 +562,7 @@
 
 
 
-\begin{frame}{Quantifying Solver Quality}{Visualizing Best Buddy Density -- Example}  
+\begin{frame}{Best Buddy Density}{Visualization Example}  
 
 \begin{figure}[t]
   \centering
@@ -375,7 +582,7 @@
 
 
 \section{Experimental Results}
-\begin{frame}{Experimental Results}{Comparing Solver Performance} 
+\begin{frame}{Experimental Results}{} 
   \begin{itemize}
     \onslide<2->{
       \item Paikin~\& Tal's algorithm is the current state of the art and was used as the basis for all performance comparisons.
@@ -384,10 +591,11 @@
     \onslide<3->{
       \item \textbf{Standard Test Conditions}
         \begin{itemize}
-          \setlength\itemsep{.5em}
+          \setlength\itemsep{.3em}
           \item \textbf{Puzzle Type}: 2
-          \item \textbf{Piece Width}: 28 Pixels
-          \item \textbf{Benchmark}: Twenty 805~Piece Images~\cite{pomeranzBenchmarkImages}
+          \item \textbf{Dimensions Fixed}: No
+          \item \textbf{Piece Width}: 28~pixels
+          \item \textbf{Benchmark}: Twenty 805~piece images~\cite{pomeranzBenchmarkImages}
           \item \textbf{Image Encoding}: LAB~colorspace
       \end{itemize}
     }
@@ -445,7 +653,7 @@
 
 
 \subsection{Input Puzzle Count}
-\begin{frame}{Experimental Results}{Single Puzzle Results}
+\begin{frame}{Determining Input Puzzle Count}{Single Input Puzzle Results}
   \begin{itemize}
     \onslide<1->{
       \item \textbf{Summary}: 17~out of the 20 images were correctly identified as a single ground-truth input
@@ -632,7 +840,7 @@
 
 
 
-\begin{frame}{Comparison of Solver Performance}{Shiftable Enhanced Direct Accuracy Score (SEDAS)}
+\begin{frame}{Performance on Multiple Input Puzzles}{Shiftable Enhanced Direct Accuracy Score (SEDAS)}
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
         \begin{tikzpicture}[scale=\tikzscale]
@@ -669,7 +877,7 @@
 
 
 
-\begin{frame}{Comparison of Solver Performance}{Enhanced Neighbor Accuracy Score (ENAS)}
+\begin{frame}{Performance on Multiple Input Puzzles}{Enhanced Neighbor Accuracy Score (ENAS)}
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
         \begin{tikzpicture}[scale=\tikzscale]
@@ -707,7 +915,7 @@
 
 
 
-\begin{frame}{Comparison of Solver Performance}{Perfect Reconstruction}
+\begin{frame}{Performance on Multiple Input Puzzles}{Perfect Reconstruction Percentage}
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
         \begin{tikzpicture}[scale=\tikzscale]
@@ -744,7 +952,7 @@
 
 
 
-\begin{frame}{Experimental Results}{Performance Comparison on Multiple Input Puzzles}
+\begin{frame}{Performance Comparison on Multiple Input Puzzles}{Results Summary}
   \begin{itemize}
     \onslide<1->{
       \item \textbf{Summary}: The Mixed-Bag Solver significantly outperformed Paikin~\& Tal's algorithm across all metrics. 
@@ -784,7 +992,7 @@
 %%%%%%%%%%%%%%%%
 
 
-\begin{frame}{Experimental Results}{Ten Puzzle Results}
+\begin{frame}{Ten Puzzle Results}{Summary}
   	\begin{itemize}
   		\item<1-> \textbf{Paikin~\& Tal}
   		\begin{itemize}
