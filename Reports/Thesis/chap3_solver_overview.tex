@@ -1,6 +1,6 @@
 \chapter{Mixed-Bag Solver Overview}\label{chap:mixedBagSolver}
 
-When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller regions to form larger regions.  This strategy is the basis of the Mixed-Bag Solver presented in this thesis.  The solver consists of five distinct stages, namely: segmentation, stitching, hierarchical segment clustering, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  The pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}. 
+When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller regions to form larger ones.  This strategy is the basis of the Mixed-Bag Solver presented in this thesis.  The solver consists of five distinct stages, namely: segmentation, stitching, hierarchical segment clustering, seed piece selection, and final assembly.  The flow of the algorithm is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  The pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}. 
 
 The following subsections describe each of the Mixed-Bag Solver's stages/subfunctions.  An additional associated component referred to as the ``assembler'' (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}) is also discussed.
 
@@ -10,7 +10,7 @@ The following subsections describe each of the Mixed-Bag Solver's stages/subfunc
 	\caption{Relationship between the Mixed-Bag Solver's Components}\label{fig:multipuzzleSolverArchitecture}
 \end{figure}
 
-\begin{algorithm}[tb]
+\begin{algorithm}[t]
 \caption{Pseudocode for the Mixed-Bag Solver}\label{alg:mixedBagSolver}
 \begin{algorithmic}[1]
 \Function{MixedBagSolver}{$puzzle\hspace{-0.8pt}\_pieces$}
@@ -50,39 +50,39 @@ Segmentation provides basic structure to the bag of puzzle pieces by partitionin
 
 Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a saved segment are assembled as if they all belong to a single ground-truth image.  This strategy eliminates the need to make any assumptions at this early stage regarding the number of input puzzles. 
 
+\begin{algorithm}[t]
+    \caption{Pseudocode for the Complete Segmentation Algorithm}\label{alg:segmentation}
+    \begin{algorithmic}[1]
+        \Function{Segmentation}{$puzzle\hspace{-0.8pt}\_pieces$}
+        \State $saved\_segments \gets \{ \}$
+        \State $unassigned\_pieces \gets \{ puzzle\hspace{-0.8pt}\_pieces \}$
+        \Loop
+            \State $solved\_puzzle \gets \textproc{RunSinglePuzzleAssembly}(unassigned\_pieces)$
+            \State $puzzle\hspace{-0.8pt}\_segments \gets \textproc{SegmentPuzzle}(solved\_puzzle)$
+            \State $max\_segment\_size \gets \text{maximum size of segment in } puzzle\hspace{-0.8pt}\_segments$
+            \If{$max\_segment\_size \text{ < } smallest\_allowed$}
+                \State \Return $saved\_segments$
+            \EndIf
+            \ForEach{$segment \in puzzle\hspace{-0.8pt}\_segments$}
+                \If{$|segment| \text{ > } \text{max}(\alpha {} \cdot {} max\_segment\_size, \text{ } smallest\_allowed)$}
+                    \State $\text{add } segment \text{ to } saved\_segments$
+                    \State $\text{remove pieces in } segment \text{ from } unassigned\_pieces$
+                \EndIf
+            \EndFor
+        \EndLoop
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
 Section~\ref{sec:segmentPuzzle} describes the procedure used to create the individual segments. The largest segment in each round is passed to the Stitching stage described in Section~\ref{sec:stitching}.\footnote{All saved segments must exceed a minimum size.  For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.} Similarly, the multiplicative scalar term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} dictates which other segments are also passed to stitching.  In this thesis, \textit{$\alpha$} was set to~0.5, meaning that all segments that were at least half the size of the largest segment were also saved.  This approach provided sufficient balance between finding the largest possible segments while limiting overall execution time.
 
 Any piece that is assigned to a saved segment is removed from the set of unassigned pieces.  Hence, those pieces will not be placed in future segmentation rounds.  Segmentation continues until all pieces have been assigned to sufficiently large segments or no segment exceeds the minimum allowed segment size.
-
-\begin{algorithm}[tb]
-\caption{Pseudocode for the Complete Segmentation Algorithm}\label{alg:segmentation}
-\begin{algorithmic}[1]
-\Function{Segmentation}{$puzzle\hspace{-0.8pt}\_pieces$}
-    \State $saved\_segments \gets \{ \}$
-    \State $unassigned\_pieces \gets \{ puzzle\hspace{-0.8pt}\_pieces \}$
-    \Loop
-        \State $solved\_puzzle \gets \textproc{RunSinglePuzzleAssembly}(unassigned\_pieces)$
-        \State $puzzle\hspace{-0.8pt}\_segments \gets \textproc{SegmentPuzzle}(solved\_puzzle)$
-        \State $max\_segment\_size \gets \text{maximum size of segment in } puzzle\hspace{-0.8pt}\_segments$
-        \If{$max\_segment\_size \text{ < } smallest\_allowed$}
-			\State \Return $saved\_segments$
-        \EndIf
-        \ForEach{$segment \in puzzle\hspace{-0.8pt}\_segments$}
-            \If{$|segment| \text{ > } \text{max}(\alpha {} \cdot {} max\_segment\_size, \text{ } smallest\_allowed)$}
-                \State $\text{add } segment \text{ to } saved\_segments$
-                \State $\text{remove pieces in } segment \text{ from } unassigned\_pieces$
-            \EndIf
-        \EndFor
-	\EndLoop
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
 
 \subsection{Partitioning a Puzzle into Segments}\label{sec:segmentPuzzle}
 
 The function ``\textproc{SegmentPuzzle}'' in Algorithm~\ref{alg:segmentPuzzle} partitions a solved puzzle into disjoints segments; this procedure is adapted from the region growing segmentation algorithm proposed by Pomeranz~\textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors~\cite{pomeranz2011}. 
 
-\begin{algorithm}[tb]
+\begin{algorithm}[t]
 \caption{Pseudocode for Segmenting a Solved Puzzle}\label{alg:segmentPuzzle}
 \begin{algorithmic}[1]
 \Function{SegmentPuzzle}{$solved\_puzzle$}
@@ -140,7 +140,7 @@ As mentioned previously, a segment should be allowed, but not forced, to expand 
 
 If stitching pieces are poorly selected, two divergent, yet deleterious outcomes may occur.  First, placing the stitching pieces too close to one another can add significant overhead without creating much tangible value.  In contrast, if the stitching pieces are too far apart, the solver may not be able to detect subtle inter-segment relationships.  Algorithm~\ref{alg:selectStitchingPieces} details the procedure used by the Mixed-Bag Solver to select the stitching pieces that balances these two concerns.  The implementation of this algorithm is described in detail in the following two subsections.
 
-\begin{algorithm}[tb]
+\begin{algorithm}[t]
 \caption{Pseudocode for Selecting a Segment's Stitching Pieces}
 \label{alg:selectStitchingPieces}
 \begin{algorithmic}[1]
@@ -167,7 +167,7 @@ It is not sufficient for stitching pieces to be placed solely around the externa
 
 \textproc{FindPieceDistanceToOpen} follows an iterative boundary tracing technique; hence, during each iteration of the \textbf{while} loop on line~\ref{op:distanceRoundWhileLoop}, the algorithm explores all segment pieces whose distance to the nearest open location is equal to $distance\_to\_open$.  Therefore, any pieces explored in the first iteration of the \textbf{while} loop have a distance of 1 to the nearest open while those explored in the second iteration have distance 2, etc. This approach is robust enough to handle internal voids as well as potential necking within the segment where two larger segment components are joined by a narrower bridge. In addition, since each piece is explored only once, the execution time of this algorithm is $O(n)$, where $n$ is the number of pieces in the segment.
 
-\begin{algorithm}[tb]
+\begin{algorithm}[t]
 \caption{Pseudocode for Determining the Manhattan Distance between Each Segment Piece and the Nearest Open Location}\label{alg:findDistanceToOpen}
 \begin{algorithmic}[1]
 \Procedure{FindPieceDistanceToOpen}{$segment\_pieces$}
@@ -216,7 +216,7 @@ The outputs of the mini-assemblies will vary between segments based off their re
 
 Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic hierarchical clustering procedure used by the Mixed-Bag Solver; it is adapted from~\cite{tanIntroToDataMining}.  The only inputs are the saved segments and the overlap matrix calculated during the stitching.
 
-\begin{algorithm}[tb]
+\begin{algorithm}[t]
 \caption{Pseudocode for Hierarchical Segment Clustering}\label{alg:hierarchicalClustering}
 \begin{algorithmic}[1]
 \Function{HierarchicalClustering}{$saved\_segments, overlap\_matrix$}

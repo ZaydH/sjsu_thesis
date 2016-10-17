@@ -111,7 +111,8 @@
     \fi%
     \begin{minipage}[c][\textheight][c]{\beamer@plainpagewidth}
       \centering
-      {\usebeamerfont{title}\usebeamercolor[fg]{author}{Part \Roman{part}}}\vspace*{\baselineskip}
+      %{\usebeamerfont{title}\usebeamercolor[fg]{author}{Part \Roman{part}}}\vspace*{\baselineskip}
+      {\usebeamerfont{title}\usebeamercolor[fg]{author}{}}\vspace*{\baselineskip} % Remove "Part 1" from the Appendix page
 
       {\usebeamerfont{title}\usebeamercolor[fg]{title}{\insertpart}}
     \end{minipage}

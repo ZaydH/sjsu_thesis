@@ -42,7 +42,7 @@ Standard direct accuracy is vulnerable to shifts in the solved image where even 
 \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
 
-Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore} is the formal definition of $SEDAS$.  $d_{min}$ represents the Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece.  Similarly, $L$ is the set of all puzzle piece within radius $d_{min}$ (inclusive) of the upper left corner of the image.  Given that $l$ is a location in $L$, the term, $c_{i,j}$ from Equation~\eref{eq:enhancedDirectAccuracyScore} has been changed to $c_{i,j,l}$ to denote that $l$ is used as a custom reference point when determining the number of pieces from the input puzzle that are correctly placed in the solved puzzle.  
+Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore} is the formal definition of $SEDAS$.  $d_{min}$ represents the Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece.  Similarly, $L$ is the set of all puzzle pieces within radius $d_{min}$ (inclusive) of the upper left corner of the image.  Given that $l$ is a location in $L$, the term, $c_{i,j}$ from Equation~\eref{eq:enhancedDirectAccuracyScore} has been changed to $c_{i,j,l}$ to denote that $l$ is used as a custom reference point when determining the number of pieces from the input puzzle that are correctly placed in the solved puzzle.  
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
 SEDAS_{P_i} = \argmax_{l \in L} \bigg( \argmax_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \bigg)
@@ -78,7 +78,7 @@ Similar to the technique described for EDAS in Section~\ref{sec:enhancedDirectAc
 
 \section{Best Buddy Metrics}\label{sec:bestBuddyMetrics}
 
-Chapter~\ref{chap:previousWork} explains that two puzzle pieces are best buddies on their respective sides if they are both more similar to each other than they are to any other piece                                                                                                                                             .  This thesis refers to a best buddy relationship as ``adjacent'' if the two pieces are neighbors on their respective sides.  In contrast, ``non-adjacent'' best buddies are not neighbors.  Note that it is also possible that a piece has no best buddy at all on one or more sides.
+Chapter~\ref{chap:previousWork} explains that two puzzle pieces are best buddies on their respective sides if they are both more similar to each other than they are to any other piece.  This thesis refers to a best buddy relationship as ``adjacent'' if the two pieces are neighbors on their respective sides.  In contrast, ``non-adjacent'' best buddies are not neighbors.  Note that it is also possible that a piece has no best buddy at all on one or more sides.
 
 Best buddy relationships have been used for segmentation~\cite{pomeranz2011}, placement~\cite{paikin2015}, and as an estimation metric~\cite{sholomon2013}.  The following subsections propose the first advanced best buddy metrics for both input and solved puzzles.
 
@@ -90,13 +90,13 @@ This thesis subcategorizes non-adjacent best buddies depending on whether they a
 
 \subsection{Best Buddy Density}\label{sec:bestBuddyDensity}
 
-As mentioned previously, each puzzle piece side may or may not have a best buddy relationship. For a puzzle consisting of $n$ pieces, each of which has $q$ sides,\footnote{In a jig swap puzzle, $q$ is equal to 4.} Equation~\eref{eq:bestBuddyDensity} defines the best buddy density (BBD) for an image with $b$ puzzle piece sides having a best buddy.   BBD is bounded between 0 and 1 (inclusive), and a higher best buddy density indicates that the individual puzzle pieces can be more easily differentiated from one another.  
+As mentioned previously, some puzzle pieces may not have a best buddy; however, no metric exists that quantifies an image's best buddy profile.  As such, this thesis proposes Best Buddy Density (BBD) as defined by Equation~\eref{eq:bestBuddyDensity}, where $b$ is the number of puzzle piece sides that have a best buddy.  By dividing by the number of puzzle pieces, $n$, each of which has $q$ sides,\footnote{In a jig swap puzzle, $q$ is equal to 4.}, BBD density normalizes for the size of the input images. This bounds BBD between 0 and 1 (inclusive), with a higher best buddy density indicating that the puzzle pieces are more differentiated from one another.  This equation can be adjusted to a more localized metric by considering only a subset of the connected pieces.
 
 \begin{equation} \label{eq:bestBuddyDensity}
-BBD = \frac{b}{n \cdot q}
+    BBD = \frac{b}{n \cdot q}
 \end{equation}
 
-Ideally, all adjacent puzzle piece sides would be best buddies, and there would be no exterior best buddies. In such cases, the best buddy density would actually be less than~1; the extent to which it would be below~1 is dependent on the puzzle dimensions. Equation~\eref{eq:bestBuddyDensity} can be adjusted to a more localized metric by considering only a subset of the connected pieces.
+Ideally, all adjacent puzzle piece sides would be best buddies, and there would be no exterior best buddies. In such cases, the best buddy density would actually be less than~1; the extent to which it would be below~1 is dependent on the puzzle dimensions. 
 
 \section{Visualizing the Quality of Solver Outputs}\label{sec:visualizingSolverAccuracy}
 
@@ -139,7 +139,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output as wel
 
 \subsection{Visualizing ENAS}\label{sec:visualizingNeighborAccuracy}
 
-In a jig swap puzzle, a puzzle piece has four sides.  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the side of the puzzle piece whose neighbor accuracy is represented.  A puzzle piece's four isosceles triangles all share a common, non-base vertex at the piece's center.  Table~\ref{tab:neighborAccuracyColors} defines the color assigned to each triangle depending on whether a piece's neighbors match in the ground-truth input and the solver output.  
+Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the puzzle piece's side whose neighbor accuracy is represented.  The four isosceles triangles all share a common, non-base vertex at the piece's center.  Table~\ref{tab:neighborAccuracyColors} defines the color assigned to each triangle depending on whether a piece's neighbors match in the ground-truth input and the solver output.  
 
 \begin{table}[t]
 \begin{center}
@@ -154,7 +154,7 @@ In a jig swap puzzle, a puzzle piece has four sides.  As such, each piece in the
 \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
 \end{table}
 
-Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  In this example, the puzzle of interest ($P_i$) is the glass and stone building while the other puzzle ($P_k$) is the rainforest house.  All pieces that came from the rainforest house image are blue, despite being assembled correctly; this is because they are not from the puzzle of interest.  All neighbors from the puzzle of interest (i.e., the glass and stone building) that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are represented by red triangles.
+Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  In this example, the puzzle of interest ($P_i$) is the glass and stone building while the other puzzle ($P_k$) is the rainforest house.  All pieces that came from the rainforest house image are blue, despite being assembled correctly; this is because they are not from the puzzle of interest.  In contrast, all pieces from the glass and stone building image that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are represented by red triangles.
 
 \begin{figure}[t]
 \centering
@@ -176,7 +176,7 @@ Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solvin
 
 \section{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
 
-The visualization for best buddies is similar to that of neighbor accuracy.  Hence, each puzzle piece in the best buddy visualization is divided into four isosceles triangles with each triangle representing the piece's best buddy relationship with its neighbor.  Table~\ref{tab:bestBuddyColors} defines the color scheme used to denote the three best buddy relationships outlined in Section~\ref{sec:bestBuddyMetrics}.  
+The visualization for best buddies is similar to that of neighbor accuracy.  Hence, each piece is divided into four isosceles triangles with each triangle representing the piece's best buddy relationship with its neighbor.  Table~\ref{tab:bestBuddyColors} defines the color scheme used to denote the three best buddy relationships outlined in Section~\ref{sec:bestBuddyMetrics}.  
 
 
 \begin{table}[t]
@@ -206,4 +206,4 @@ The visualization for best buddies is similar to that of neighbor accuracy.  Hen
 \label{fig:bestBuddyVisualization}
 \end{figure}
 
-Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associated best buddy visualization.  Despite having 16~times more interior sides, the image in this figure still has more than 3~times as many exterior, non-adjacent best buddies than interior, non-adjacent best buddies.
+Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associated best buddy visualization.  Despite having 16~times as many interior sides, the image in this figure still has 3~times more exterior, non-adjacent best buddies than interior ones.

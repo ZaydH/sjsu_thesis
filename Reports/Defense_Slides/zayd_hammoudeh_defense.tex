@@ -46,6 +46,7 @@
 \usepackage{makecell} % Used to create thick links in tables
 \usepackage{algorithm} % Used for writing algorithms in a paper
 \usepackage[noend]{algpseudocode} % Allows psuedocode keywords (e.g., "if", "while", "for", etc.) in algorithms.
+\usepackage{xcolor, colortbl} % Used for coloring the cells of tables
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
@@ -131,8 +132,8 @@
 \begin{document}
 % the titlepage
 {
-\begin{frame}[plain,noframenumbering] % the plain option removes the sidebar and header from the title page
-\titlepage
+\begin{frame}[plain,noframenumbering]{}{} % the plain option removes the sidebar and header from the title page
+	\titlepage
 \end{frame}}
 %%%%%%%%%%%%%%%%
 
@@ -202,7 +203,7 @@
 
 
 
-\begin{frame}{Introduction}{Best Buddies}
+\begin{frame}{Introduction}{Best Buddies}\label{frame:bestBuddies}
     \begin{itemize}
         \item \textbf{Basis of all Modern Jig Swap Solvers}: The more compatible two pieces are on their respective sides, the more likely they are to be adjacent.
         \vfill
@@ -256,19 +257,30 @@
 
 
 \section{Mixed-Bag Solver}
-\begin{frame}{Mixed-Bag Solver}{}
-  \begin{itemize}
-    \item First jigsaw puzzle introduced in the 1760s.  Modern jigsaw puzzles were introduced in the 1930s.
-    \vfill
-    \item First computation jigsaw puzzle solver introduced in 1964.
-    \vfill
-    \item Solving a jigsaw puzzle is NP Complete \cite{altman1990, demaine2007}
-    \vfill
-    \item<2-> \textbf{Example Applications:} DNA fragment reassembly, shredded document reconstruction, speech descrambling, and image editing.
+\begin{frame}{Mixed-Bag Solver}{Solving a Jigsaw Puzzle}
+	\onslide<1->{\begin{block}{\textbf{Paikin~\& Tal's Algorithm}} 
+	    \begin{itemize}
+        \setlength\itemsep{.8em}
+		    \item Begin each puzzle with a single distinct piece
+		    \item Place all pieces around the expanding core
+	    \end{itemize}
+	\end{block}}
+	\vfill
+	\onslide<2->{\begin{block}{\textbf{Alternate Jigsaw Puzzle Solving Strategy}}
     \begin{itemize}
-        \item<3-> In most cases, the original, ``ground-truth'' image is unknown.
+      \setlength\itemsep{.8em}
+			\item Correctly assemble small puzzle regions (i.e., segments)
+			\item Iteratively merge smaller regions to form large ones	
+			\onslide<3->{\item \textbf{Advantage of this Approach}: 
+			\begin{itemize}
+			    \setlength\itemsep{.8em}
+			    \item Reduces the size of the problem
+			    \item Provides structure to the unordered set of puzzle pieces.
+			\end{itemize}}
     \end{itemize}
-  \end{itemize}
+	\end{block}}
+	\vfill
+  \onslide<4->{This alternate strategy is the basis of the \textbf{Mixed-Bag Solver}.}
 \end{frame}
 
 \subsection{Assembler}
@@ -282,18 +294,95 @@
 \subsection{Direct Accuracy}
 \subsection{Neighbor Accuracy}
 
-\section{Experimental Results}
-\begin{frame}{Experimental Results}{Input Puzzle Count}
-  \begin{block}{Windows with MiKTeX}
-    Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
-    \begin{enumerate}
-      \item To do this, create a folder {\tt <somewhere>} named, e.g., {\tt texmf}
-      \item Add this folder in the Roots tab of the MiKTeX Settings dialog
-      \item Place the {\tt <dirstruct>} in your newly created local latex directory tree\\
-    {\tt <somewhere>\textbackslash texmf}\\
-      \item Open the MiKTeX Settings dialog and click Refresh FNDB.
-    \end{enumerate}
+
+
+\subsection{Best Buddy Density}
+\begin{frame}{Quantifying Solver Quality}{Best Buddy Density}
+  \begin{itemize}
+    \setlength\itemsep{1em}
+    \item \textbf{Best Buddies Review}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece
+    \begin{itemize}
+      \item \textbf{Note}: Not all puzzle pieces will have a best buddy.
+    \end{itemize}
+    \vfill
+    \item \textbf{Best Buddy Density} (BBD): A metric for quantifying the best buddy profile of an image that is independent of image size.
+    \vfill
+    \begin{equation} \label{eq:bestBuddyDensity}
+      BBD = \frac{b}{n \cdot q}
+    \end{equation}
+    \vfill
+    \item A greater BBD means the pieces are more differentiated making the puzzle easier to solve.
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Quantifying Solver Quality}{Best Buddy Density}  
+  \begin{block}{\textbf{Visualizing Best Buddy Density}}
+    \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Transform each puzzle piece into a square consisting of four isosceles triangles.
+      \item Color each triangle according to whether the adjacent piece is a best buddy.  The scheme used in this thesis:
+    \end{itemize}
+    \begin{table}
+      \begin{center}
+        \begin{tabular}{ | >{\centering\arraybackslash}m{0.62in} | >{\centering\arraybackslash}m{0.78in} | >{\centering\arraybackslash}m{0.7in} | >{\centering\arraybackslash}m{0.62in} | }
+              
+          \hline
+          {\small No Best Buddy} & {\small Non-Adjacent Best Buddy} & {\small Adjacent Best Buddy} & {\small No Piece Present}  \\ \hline
+          {\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+          {\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
+          \hline
+        \end{tabular}
+      \end{center}
+    \end{table}
+    \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Areas with higher best buddy density will have more green triangles.
+    \end{itemize}
   \end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Quantifying Solver Quality}{Example Visualizing Best Buddy Density}  
+
+\begin{figure}[t]
+  \centering
+  \begin{tabular}{ >{\centering\arraybackslash}m{0.40\textwidth} >{\centering\arraybackslash}m{0.40\textwidth} }
+     \onslide<1->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_pixabay.jpg}}}  & \onslide<2->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_best_buddy_visualization.jpg}}}
+     \\~\\
+     \onslide<1->{(a) Original Image~\cite{pixabay}} & \onslide<2->{(b) Best Buddy Visualization}
+  \end{tabular}
+\onslide<1->{\caption{Visualization of Best Buddy Density}}
+\label{fig:bestBuddyVisualization}
+\end{figure}
+
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+
+\section{Experimental Results}
+\begin{frame}{Experimental Results}{Determining Input Puzzle Count}
+  \begin{itemize}
+    \onslide<1->{\item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the number of input puzzles}
+      \vspace{0.4em}
+      \begin{itemize}
+        \item \textbf{Importance} -- The Mixed-Bag Solver must estimate this accurately to provide meaningful outputs.
+      \end{itemize}
+    \vfill
+    \onslide<2->{\textbf{Two Subexperiments}:
+      \vspace{0.4em}
+      \begin{itemize}
+        \item \textbf{Single Puzzle Accuracy} -- This represents the solver's performance ceiling
+        \item \textbf{Multiple Puzzle Accuracy} -- A more general estimate of the solver's performance
+      \end{itemize}
+    }
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -301,32 +390,21 @@
 
 \subsection{Input Puzzle Count}
 \begin{frame}{Experimental Results}{Determining Input Puzzle Count}
-  \begin{block}{Windows with MiKTeX}
-    Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
-    \begin{enumerate}
-      \item To do this, create a folder {\tt <somewhere>} named, e.g., {\tt texmf}
-      \item Add this folder in the Roots tab of the MiKTeX Settings dialog
-      \item Place the {\tt <dirstruct>} in your newly created local latex directory tree\\
-    {\tt <somewhere>\textbackslash texmf}\\
-      \item Open the MiKTeX Settings dialog and click Refresh FNDB.
-    \end{enumerate}
-  \end{block}
+
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
 
-\begin{frame}{Determining Input Puzzle Count}{Single Input Puzzle}
-  \begin{block}{Windows with MiKTeX}
-    Apparently, MiKTeX does not include a local latex directory tree by default. Therefore, you first have to create it.
-    \begin{enumerate}
-      \item To do this, create a folder {\tt <somewhere>} named, e.g., {\tt texmf}
-      \item Add this folder in the Roots tab of the MiKTeX Settings dialog
-      \item Place the {\tt <dirstruct>} in your newly created local latex directory tree\\
-    {\tt <somewhere>\textbackslash texmf}\\
-      \item Open the MiKTeX Settings dialog and click Refresh FNDB.
-    \end{enumerate}
-  \end{block}
+\begin{frame}{Determining Input Puzzle Count}{Comparison of Best Buddy Density for Misclassified Images}
+  \begin{tabular}{ >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
+
+	\onslide<1->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}} & \onslide<2->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}}} \\~\\
+	\onslide<1->{\small Perfectly Reconstructed Image~(a)} & \onslide<2->{\small Best Buddy Visualization~(a) }
+\\~\\
+	\onslide<1->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}} & \onslide<2->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}}} \\~\\
+	\onslide<1->{\small Misclassified Image~(b)} & \onslide<2->{\small Best Buddy Visualization~(b)}
+  \end{tabular}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -385,15 +463,32 @@
 
 
 \subsection{Solver Comparison}
-\begin{frame}{Experimental Results}{}
-  \begin{block}{Windows with MiKTeX}
-  \end{block}
+\begin{frame}{Experimental Results}{Performance Comparison on Multiple Input Puzzles}
+
+  \begin{itemize}
+    \onslide<1->{\item \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm 
+    \vfill
+    \item \textbf{Procedure:} Randomly select, without replacement, a specified number of images and input them into both solvers.
+    \vfill
+    \item \textbf{Metrics Used}:
+    \begin{itemize}
+      \item Shiftable Enhanced Direct Accuracy Score (SEDAS)
+      \item Enhanced Neighbor Accuracy Score (ENAS)
+      \item Perfect Reconstruction Percentage
+    \end{itemize}}
+    \vfill
+    \onslide<2->{\item \textbf{Note}: The Mixed-Bag Solver's results are subdivided according to whether the number of input puzzles was estimated correctly.
+    \begin{itemize}
+      \item This estimates the performance ceiling if hierarchical clustering performs optimally.}
+    \end{itemize}
+  \end{itemize}
+
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
 
-\begin{frame}{Comparison of Solver Performance}{Shifted Enhanced Direct Accuracy Score (SEDAS)}
+\begin{frame}{Comparison of Solver Performance}{Shiftable Enhanced Direct Accuracy Score (SEDAS)}
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
         \begin{tikzpicture}[scale=\tikzscale]
@@ -503,13 +598,41 @@
 %%%%%%%%%%%%%%%%
 
 
+
+\begin{frame}{Experimental Results}{Performance Comparison on Multiple Input Puzzles}
+  \begin{itemize}
+    \onslide<1->{
+      \item \textbf{Summary}: The Mixed-Bag Solver significantly outperformed Paikin~\& Tal's algorithm across all metrics. 
+      \vspace{0.4em} 
+      \begin{itemize}
+        \item This is notwithstanding that their algorithm was supplied with the number of input puzzles
+      \end{itemize}
+    }
+    \vfill
+    \onslide<2->{
+      \item \textbf{Puzzle Input Count}: Unlike Paikin~\& Tal's algorithm, the Mixed-Bag Solver saw no significant decrease in performance with additional input puzzles
+    }
+    \vfill
+    \onslide<3->{
+      \item \textbf{Effect of Clustering Errors}: Performance on decreased slightly when the input puzzle count was incorrectly estimated.
+      \vspace{0.4em} 
+      \begin{itemize}
+        \item This indicates that many of the extra puzzles were relatively insignificant in size.
+      \end{itemize}
+    }
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
 \subsection{Ten Puzzle Results}
 \begin{frame}{Experimental Results}{Solving More than Five Puzzles}
   \begin{itemize}
-	\item<1-> As the number of puzzles increase, the difficulty of simultaneously reconstructing the puzzles increases.
-	\vfill  
+	  \item<1-> As the number of puzzles increase, the difficulty of simultaneously reconstructing them increases.
+	  \vfill  
   	\item<2-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
-	\vfill
+	  \vfill
   	\item<3-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
   \end{itemize}
 \end{frame}
@@ -517,78 +640,74 @@
 
 
 \begin{frame}{Experimental Results}{Ten Puzzle Results}
-  	
   	\begin{itemize}
   		\item<1-> \textbf{Paikin~\& Tal}
   		\begin{itemize}
-			\item Seed of nine images came from just three input images
-			\item SEDAS and EDAS greater than 0.9 for only one image
-			\item No perfectly reconstructed images
-		\end{itemize}
-		\vfill
-  		
-  		\item<2-> \textbf{Mixed-Bag Solver}
-		\begin{itemize}
-			\item SEDAS and EDAS greater than 0.9 for all images
-			\item Four images perfectly reconstructed
-			\item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
-		\end{itemize}	
-		\vfill
-  		\item<3-> \textbf{Conclusion}: Mixed-Bag Solver significantly outperforms Paikin~\& Tal's algorithm.	
+  		  \setlength\itemsep{0.7em}
+			  \item Seed of nine images came from just three input images
+			  \item SEDAS and EDAS greater than 0.9 for only one image
+			  \item No perfectly reconstructed images
+		  \end{itemize}
+		  \vfill
+  	  \item<2-> \textbf{Mixed-Bag Solver}
+		  \begin{itemize}
+		    \setlength\itemsep{0.7em}
+			  \item SEDAS and EDAS greater than 0.9 for all images
+			  \item Four images perfectly reconstructed
+			  \item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
+		  \end{itemize}	
+		  \vfill
+  		\item<3-> \textbf{Conclusion}: The performance difference between the Mixed-Bag Solver and Paikin~\& Tal's algorithm is even starker with more input puzzles.
   \end{itemize}
-  
-  		
-  
-
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
-
-\begin{frame}{Solver Quality Comparison}{Ten Puzzle Result}
-  \begin{block}{Windows with MiKTeX}
-  \end{block}
-\end{frame}
-%%%%%%%%%%%%%%%%
 
 \section{Conclusions}
 \begin{frame}{Conclusions}{}
-  \begin{block}{Windows with MiKTeX}
-  \end{block}
+  \onslide<2->{
+    \begin{itemize}
+      \setlength\itemsep{1em}
+      \item This thesis presented a fully-automated solver for Mixed-Bag jig swap puzzles.
+      \vfill
+      \item Mixed-Bag Solver significantly outperforms the current state of the art while receiving no externally supplied information.
+      \vfill
+      \item Introduced the first set of solver quality metrics for Mixed-Bag puzzles.
+    \end{itemize}  
+  }
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
 \subsection{Future Work}
 \begin{frame}{Conclusions}{Future Work}
-  \begin{enumerate}
+  \begin{itemize}
+    \setlength\itemsep{.8em}
     \item<1-> Improved Assembler
-    \begin{enumerate}
+    \begin{itemize}
+      \setlength\itemsep{.8em}
     	\item<1-> Prioritize placement using multiple best buddies
-    	\vfill
     	\item<2-> Address placement performance in regions with low best buddy density
-    \end{enumerate}
+    \end{itemize}
     \vfill
     \item<2-> Dynamic determination of the segment clustering threshold
     \vfill
     \item<3-> Expanded stitching piece selection
-    \vfill
-  \end{enumerate}
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-\section*{}  % Close the previous section
-\begin{frame}[t,allowframebreaks]{List of References}
-	\bibliographystyle{ieeetr}
-	\bibliography{references}
-\end{frame}
 
 \appendix
 \backupbegin
 
-\begin{frame}[t,allowframebreaks]{}
-
+\section*{}  % Close the previous section
+\begin{frame}[t,allowframebreaks]{List of References}
+	\bibliographystyle{ieeetr}
+	{\tiny \bibliography{references}}
 \end{frame}
+
 \backupend
 
 
