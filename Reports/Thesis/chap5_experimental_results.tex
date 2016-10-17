@@ -7,15 +7,15 @@ The only difference in the two solvers' test conditions arises from the fact tha
 To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm when provided multiple ground-truth inputs, this thesis used Pomeranz~\textit{et al.}'s benchmark containing twenty 805~piece images~\cite{pomeranzBenchmarkImages}.  In each test, a specified number of images (ranging from two to five) were randomly selected, without replacement, from the image pool.  The two solvers' outputs generated were then compared.  Table~\ref{tab:numberSolverIterations} shows the number of times each solver was run for a specific input puzzle count. As explained in Section~\ref{sec:assemblerTimeComplexity}, the execution time of Paikin~\& Tal's assembler can grow cubicly, especially if the best buddy density is low.  As such, the solvers were run fewer times as the number of input puzzles increased.
 
 \begin{table}[tb]
-\begin{center}
-\begin{tabular}{ |c||c|c|c|c| } 
- \Xhline{1pt}
- \# Puzzles    &  2 &  3 & 4 & 5 \\ 
-\hline \hline
- \# Iterations & 55 & 25 & 8 & 5 \\ 
- \Xhline{1pt}
-\end{tabular}
-\end{center}
+  \begin{center}
+    \begin{tabular}{ |c||c|c|c|c| } 
+      \Xhline{1pt}
+       \# Puzzles    &  2 &  3 & 4 & 5 \\ 
+      \hline \hline
+       \# Iterations & 55 & 25 & 8 & 5 \\ 
+       \Xhline{1pt}
+    \end{tabular}
+  \end{center}
 \caption{Number of Solver Iterations for Each Puzzle Input Count}\label{tab:numberSolverIterations}
 \end{table}
 

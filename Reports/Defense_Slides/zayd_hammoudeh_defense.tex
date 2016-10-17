@@ -53,6 +53,7 @@
 % Or whatever. Note that the encoding and the font should match. If T1
 % does not look nice, try deleting the line with the fontenc.
 \usepackage{helvet}
+\usepackage{makecell} % Used to create thick links in tables
 
 % colored hyperlinks
 \newcommand{\chref}[2]{%
@@ -111,7 +112,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%   Scales tikz images to side size    %%
+%%   Scales tikz images to slide size   %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
 \newsavebox{\measure@tikzpicture}
@@ -173,11 +174,21 @@
     \end{itemize}
     \vfill
     % Delay the table on the slide
-    \begin{tabular}{ >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
-	\onslide<2->{\fbox{\includegraphics[width=0.365\textwidth]{./images/muffins_300x200.jpg}}} & \onslide<3->{\fbox{\includegraphics[width=0.365\textwidth]{./images/muffins_scrambled.jpg}}}
-	\\ ~\\
-	\onslide<2->{Ground-Truth Image} & \onslide<3->{Randomized Jig Swap Puzzle}
-	\\ ~\\
+    \begin{tabular}{ 
+      >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
+	    \onslide<2->{
+	      \fbox{\includegraphics[width=0.365\textwidth]{./images/muffins_300x200.jpg}}
+	    } & 
+	    \onslide<3->{
+	      \fbox{\includegraphics[width=0.365\textwidth]{./images/muffins_scrambled.jpg}}
+	    }
+	    \\ ~\\
+	    \onslide<2->{
+	      {\small Ground-Truth Image}
+	    } & \onslide<3->{
+	      {\small Randomized Jig Swap Puzzle}
+	    }
+	    \\ ~\\
   \end{tabular}
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -209,7 +220,7 @@
         \vfill
         \item \textbf{Best Buddies}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece~\cite{pomeranz2011}
         \vfill
-\begin{equation} \label{eq:pomeranzBestBuddyDefinition}
+\begin{equation}\label{eq:pomeranzBestBuddyDefinition}
 \centering
 \begin{split}
 	\begin{matrix}
@@ -294,8 +305,6 @@
 \subsection{Direct Accuracy}
 \subsection{Neighbor Accuracy}
 
-
-
 \subsection{Best Buddy Density}
 \begin{frame}{Quantifying Solver Quality}{Best Buddy Density}
   \begin{itemize}
@@ -315,7 +324,6 @@
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
-
 
 
 \begin{frame}{Quantifying Solver Quality}{Best Buddy Density}  
@@ -347,7 +355,7 @@
 
 
 
-\begin{frame}{Quantifying Solver Quality}{Example Visualizing Best Buddy Density}  
+\begin{frame}{Quantifying Solver Quality}{Visualizing Best Buddy Density -- Example}  
 
 \begin{figure}[t]
   \centering
@@ -367,17 +375,65 @@
 
 
 \section{Experimental Results}
+\begin{frame}{Experimental Results}{Comparing Solver Performance} 
+  \begin{itemize}
+    \onslide<2->{
+      \item Paikin~\& Tal's algorithm is the current state of the art and was used as the basis for all performance comparisons.
+    }
+    \vfill
+    \onslide<3->{
+      \item \textbf{Standard Test Conditions}
+        \begin{itemize}
+          \setlength\itemsep{.5em}
+          \item \textbf{Puzzle Type}: 2
+          \item \textbf{Piece Width}: 28 Pixels
+          \item \textbf{Benchmark}: Twenty 805~Piece Images~\cite{pomeranzBenchmarkImages}
+          \item \textbf{Image Encoding}: LAB~colorspace
+      \end{itemize}
+    }
+  \end{itemize}
+  \vfill
+  \onslide<4->{
+    \vspace{-0.6em}
+    \begin{itemize}
+      \item \textbf{Number of Ground-Truth Inputs}: 1 to 5
+    \end{itemize}
+    \vspace{-0.8em}
+    \begin{center}
+      \begin{tabular}{ |c||c|c|c|c|c| } 
+        \Xhline{1pt}
+        \# Puzzles    & 1 &  2 &  3 & 4 & 5 \\ 
+        \hline \hline
+        \# Iterations & 20 & 55 & 25 & 8 & 5 \\ 
+        \Xhline{1pt}
+      \end{tabular}
+    \end{center}
+  }
+  \vspace{-0.8em}    
+  \vfill
+  \onslide<5->{
+    \begin{itemize}
+      \item \textbf{Test Condition Variation}: Only Paikin~\& Tal's algorithm was provided the number of input puzzles.
+    \end{itemize}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
 \begin{frame}{Experimental Results}{Determining Input Puzzle Count}
   \begin{itemize}
-    \onslide<1->{\item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the number of input puzzles}
+    \onslide<1->{
+      \item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the number of input puzzles}
       \vspace{0.4em}
       \begin{itemize}
         \item \textbf{Importance} -- The Mixed-Bag Solver must estimate this accurately to provide meaningful outputs.
       \end{itemize}
     \vfill
-    \onslide<2->{\textbf{Two Subexperiments}:
+    \onslide<2->{
+      \item \textbf{Two Subexperiments}:
       \vspace{0.4em}
       \begin{itemize}
+        \setlength\itemsep{.8em}
         \item \textbf{Single Puzzle Accuracy} -- This represents the solver's performance ceiling
         \item \textbf{Multiple Puzzle Accuracy} -- A more general estimate of the solver's performance
       \end{itemize}
@@ -389,8 +445,23 @@
 
 
 \subsection{Input Puzzle Count}
-\begin{frame}{Experimental Results}{Determining Input Puzzle Count}
-
+\begin{frame}{Experimental Results}{Single Puzzle Results}
+  \begin{itemize}
+    \onslide<1->{
+      \item \textbf{Summary}: 17~out of the 20 images were correctly identified as a single ground-truth input
+      \vfill
+      \item \textbf{Misclassified Images}: 3 out of the 20 images misclassified as if they were two images.
+         \begin{itemize}
+           \setlength\itemsep{.8em}
+           \item All three images have large areas with little variation (e.g., blue sky, smooth water)
+           \item The solver's performance on these puzzles is due to the assembler as noted in~\cite{paikin2015}
+         \end{itemize}
+    }
+    \vfill
+    \onslide<2->{
+      \item \textbf{Note}:~85\% (17/20) represents the maximum accuracy when solving multiple puzzles.
+    }
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -399,11 +470,32 @@
 \begin{frame}{Determining Input Puzzle Count}{Comparison of Best Buddy Density for Misclassified Images}
   \begin{tabular}{ >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
 
-	\onslide<1->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}} & \onslide<2->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}}} \\~\\
-	\onslide<1->{\small Perfectly Reconstructed Image~(a)} & \onslide<2->{\small Best Buddy Visualization~(a) }
-\\~\\
-	\onslide<1->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}} & \onslide<2->{\fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}}} \\~\\
-	\onslide<1->{\small Misclassified Image~(b)} & \onslide<2->{\small Best Buddy Visualization~(b)}
+	  \onslide<1->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}
+	  } & 
+	  \onslide<2->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}}
+	  } 	    
+	  \\~\\	
+	  \onslide<1->{
+	    \small Perfectly Reconstructed Image~(a)
+	  } & 
+	  \onslide<2->{\small Best Buddy Visualization~(a) 
+	  }	  
+    \\~\\	  
+	  \onslide<1->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}
+	  } & 
+	  \onslide<2->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}}
+	  } 
+	  \\~\\
+	  \onslide<1->{
+	    \small Misclassified Image~(b)
+	  } & 
+	  \onslide<2->{
+	    \small Best Buddy Visualization~(b)
+	  }
   \end{tabular}
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -411,6 +503,28 @@
 
 
 \begin{frame}{Determining Input Puzzle Count}{Multiple Input Puzzles}
+  \begin{itemize}
+    \onslide<1->{
+      \item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the input puzzle count for multiple images
+      \vfill
+      \item \textbf{Procedure}: Randomly select the specified number of images (between 2 and 5) from the 20 image data set.
+    }
+    \vfill    
+    \onslide<2->{      
+      \item \textbf{Input Puzzle Count Error}: Difference between the actual number of input puzzles and that found by the Mixed-Bag Solver.
+      \begin{itemize}
+        \vspace{0.4em}
+        \item \textbf{Example}: If 3 images were supplied to the solver, but it determined there were 4, the error would be 1.
+      \end{itemize}
+    }
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Determining Input Puzzle Count}{Multiple Input Puzzles -- Results}
+   \onslide<1->{
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
         \begin{tikzpicture}[scale=\tikzscale]
@@ -457,6 +571,31 @@
         \end{tikzpicture}
       \end{scaletikzpicturetowidth}  
     \end{center}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+
+\begin{frame}{Determining Input Puzzle Count}{Multiple Input Puzzles -- Results Summary}
+  \begin{itemize}
+    \onslide<1->{
+      \item \textbf{Overall Accuracy}: 65\%
+      \vfill
+      \item \textbf{Iterations with Error Greater than One}: 8\%
+      \vfill
+      \item Accuracy did not significantly degrade as the number of input puzzles increased.
+      \vfill
+    }
+    \onslide<2->{      
+      \item \textbf{Over-Rejection of Cluster Merges}: The Mixed-Bag Solver never underestimated the number of input puzzles.
+      \begin{itemize}
+        \vspace{0.4em}
+        \item Performance may be improved by reducing the minimum clustering similarity threshold or minimum segment size
+      \end{itemize}
+    }
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -466,21 +605,26 @@
 \begin{frame}{Experimental Results}{Performance Comparison on Multiple Input Puzzles}
 
   \begin{itemize}
-    \onslide<1->{\item \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm 
+    \onslide<1->{
+      \item \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm 
+      \vfill
+      \item \textbf{Procedure:} Randomly select a specified number of images and input them into both solvers.
+      \vfill
+      \item \textbf{Quality Metrics Used}:
+      \begin{itemize}
+        \item Shiftable Enhanced Direct Accuracy Score (SEDAS)
+        \item Enhanced Neighbor Accuracy Score (ENAS)
+        \item Perfect Reconstruction Percentage
+      \end{itemize}
+    }
     \vfill
-    \item \textbf{Procedure:} Randomly select, without replacement, a specified number of images and input them into both solvers.
-    \vfill
-    \item \textbf{Metrics Used}:
-    \begin{itemize}
-      \item Shiftable Enhanced Direct Accuracy Score (SEDAS)
-      \item Enhanced Neighbor Accuracy Score (ENAS)
-      \item Perfect Reconstruction Percentage
-    \end{itemize}}
-    \vfill
-    \onslide<2->{\item \textbf{Note}: The Mixed-Bag Solver's results are subdivided according to whether the number of input puzzles was estimated correctly.
-    \begin{itemize}
-      \item This estimates the performance ceiling if hierarchical clustering performs optimally.}
-    \end{itemize}
+    \onslide<2->{
+      \item \textbf{Note}: The results include the Mixed-Bag Solver's performance when it correctly estimated the puzzle count.
+      \begin{itemize}
+        \vspace{0.4em}
+        \item This represents the performance ceiling for optimal hierarchical clustering.
+      \end{itemize}
+    }
   \end{itemize}
 
 \end{frame}
@@ -562,6 +706,7 @@
 
 
 
+
 \begin{frame}{Comparison of Solver Performance}{Perfect Reconstruction}
      \begin{center}
        \begin{scaletikzpicturetowidth}{0.9\textwidth}
@@ -605,7 +750,7 @@
       \item \textbf{Summary}: The Mixed-Bag Solver significantly outperformed Paikin~\& Tal's algorithm across all metrics. 
       \vspace{0.4em} 
       \begin{itemize}
-        \item This is notwithstanding that their algorithm was supplied with the number of input puzzles
+        \item This is notwithstanding that only their algorithm was supplied with the number of input puzzles.
       \end{itemize}
     }
     \vfill
@@ -614,10 +759,10 @@
     }
     \vfill
     \onslide<3->{
-      \item \textbf{Effect of Clustering Errors}: Performance on decreased slightly when the input puzzle count was incorrectly estimated.
+      \item \textbf{Effect of Clustering Errors}: Performance only decreased slightly when incorrectly estimated input puzzle count.
       \vspace{0.4em} 
       \begin{itemize}
-        \item This indicates that many of the extra puzzles were relatively insignificant in size.
+        \item Many of the extra puzzles were relatively insignificant in size
       \end{itemize}
     }
   \end{itemize}
@@ -629,11 +774,11 @@
 \subsection{Ten Puzzle Results}
 \begin{frame}{Experimental Results}{Solving More than Five Puzzles}
   \begin{itemize}
-	  \item<1-> As the number of puzzles increase, the difficulty of simultaneously reconstructing them increases.
+	  \item<1-> As the number of puzzles increases, the difficulty of simultaneously reconstructing them also increases.
 	  \vfill  
-  	\item<2-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
+  	\item<2-> \textbf{Current State of the Art}: Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
 	  \vfill
-  	\item<3-> \textbf{Current State of the Art} -- Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
+  	\item<3-> \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm on 10~puzzles.
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
