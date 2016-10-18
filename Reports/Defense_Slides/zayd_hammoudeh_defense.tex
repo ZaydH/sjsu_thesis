@@ -292,7 +292,7 @@
     \begin{itemize}
       \setlength\itemsep{0.6em}
       \item Greedy, kernel growing solver
-      \item Supports Type~1 and Type~2 puzzles
+      \item Supports Type~1, Type~2, and Mixed-Bag puzzles
       \item Immune to missing pieces
     \end{itemize}    
   }
@@ -424,16 +424,16 @@
 \subsection{Segmentation}
 \begin{frame}{Segmentation}{Mixed-Bag Solver Stage \#1}
   \begin{itemize}
-      \item \textbf{Segment}: Partial puzzle assembly where this is a high degree of confidence pieces are placed correctly.
+    \item \textbf{Segment}: Partial puzzle assembly where this is a high degree of confidence pieces are placed correctly.
+    \vfill
+    \item \textbf{Role of Segmentation}: Provide structure to the set of puzzle pieces by partitioning them into disjoint segments
+    \begin{itemize}
       \vspace{0.4em}
-	    \item \textbf{Role of Segmentation}: Provide basic structure to the set of puzzle pieces by partitioning them into disjoint segments
-	    \begin{itemize}
-	      \vspace{0.4em}
       	\item \textbf{Input}: Set of puzzle pieces
   		  \vspace{0.6em}
-	      \item \textbf{Output}: Set of saved segments
-	    \end{itemize}
-	  \vspace{0.6em}
+      \item \textbf{Output}: Set of saved segments
+    \end{itemize}
+	  \vfill
 	  \item \textbf{Relationship between Puzzle Pieces and Segments}:
 	  \vspace{0.4em}
 	  \begin{itemize}
@@ -450,16 +450,24 @@
   \begin{itemize}
     \item Iterative process consisting of one or more rounds  
     \vfill
-    \item In each round, all pieces not yet assigned to a segment are assembled as if they come from a single input image.
+    \item In each round, all pieces not yet assigned to a segment are assembled as if they are all from the same input image.
     \vfill
     \item Segments of sufficient size are saved to be used in future Mixed-Bag Solver stages
     \vfill
-    \item A piece can be assigned to at most a single segment
+    \item Pieces in a saved segment are not placed in future rounds.
+    \vfill
+    \item Segmentation terminates if all pieces are assigned to a saved segment or no segment is larger than the minimum allowed size.
     \vfill
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
+
+
+\begin{frame}{Segmentation}{Composition of a Segment}
+  PLACEHOLDER
+\end{frame}
+%%%%%%%%%%%%%%%%
 
 
 
@@ -523,8 +531,6 @@
 \end{frame}
 
 
-
-\subsection{Stitching}
 \begin{frame}{Stitching}{Example -- Input Image}
   \begin{center}
     \fbox{\includegraphics[scale=0.25]{./images/stitching/mcgill_540_20.jpg}}
@@ -533,8 +539,6 @@
 \end{frame}
 
 
-
-\subsection{Stitching}
 \begin{frame}{Stitching}{Example -- Two Segment Images}
   \vspace{-.4em}
   {\small 
@@ -551,8 +555,6 @@
 \end{frame}
 
 
-
-\subsection{Stitching}
 \begin{frame}{Stitching}{Example -- Stitching Piece Locations}
   \vspace{-.4em}
   {\small 
@@ -570,7 +572,35 @@
 
 
 
+\begin{frame}{Stitching}{Example -- Stitching Piece Locations}
+  \vspace{-.4em}
+  {\small 
+  \begin{center}
+	  \begin{tabular}{>{\centering\arraybackslash}m{0.8\textwidth} }
+	
+		    \fbox{\includegraphics[scale=0.25]{./images/stitching/segment_1_stitching.jpg}} 
+		    \\~\\
+		    Stitching Result from Segment \#1
+	  \end{tabular}
+	\end{center}
+	}
+  \vfill
+  \textbf{Segment Overlap:}
+  \vspace{-2em}
+  \begin{center}
+    \begin{equation}
+      Overlap_{\Phi_1,\Phi_2} = 0.83
+    \end{equation}
+  \end{center}  
+\end{frame}
+
+
 \subsection{Hierarchical Clustering}
+\begin{frame}{Hierarchical Segment Clustering}{Mixed-Bag Solver Stage \#3}
+  PLACEHOLDER
+\end{frame}
+
+
 \subsection{Final Seed Piece Selection}
 \begin{frame}{Final Seed Piece Selection}{Mixed-Bag Solver Stage \#4}
     \onslide<1->{
