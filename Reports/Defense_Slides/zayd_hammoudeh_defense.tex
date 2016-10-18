@@ -39,8 +39,6 @@
 
 \usepackage{environ}
 \usepackage{tikz}
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
 \usepackage{listings} % Used for printing source code in papers
 \usepackage{pgfplots} % Used to create graphs
 \usepackage{makecell} % Used to create thick links in tables
@@ -55,11 +53,19 @@
 \usepackage{helvet}
 \usepackage{makecell} % Used to create thick links in tables
 
+% Definitions for Custom Algorithmic Commands
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+\algrenewcommand\alglinenumber[1]{\scriptsize #1:}
+
 % colored hyperlinks
 \newcommand{\chref}[2]{%
   \href{#1}{{\usebeamercolor[bg]{AAUsidebar}#2}}%
 }
+
 \DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
+
 % Transition slide
 \newcommand{\transitionFrame}[1]{
 {
@@ -382,11 +388,191 @@
 
 
 \subsection{Assembler}
+\begin{frame}{Assembler}{Mixed-Bag Solver Component}
+  \begin{itemize}
+    \onslide<1->{
+	    \item \textbf{Role}: Place the individual pieces in the solved puzzle.
+	    \vspace{0.4em}
+	    \begin{itemize}
+	      \setlength\itemsep{0.6em}
+	      \item Mixed-Bag Solver is independent of the assembler used, giving the solver significant upgradability and flexibility.
+	    \end{itemize}
+	  }
+    \vfill
+    \onslide<2->{
+	    \item \textbf{Assembler Used in this Thesis}: Paikin~\& Tal
+	    \vspace{0.4em}
+	    \begin{itemize}
+	      \setlength\itemsep{0.6em}
+	      \item Current state of the art
+	      \item Allows for more direct comparison of performance
+	      \item Natively supports Mixed-Bag puzzles
+	    \end{itemize}
+	    \vfill
+	    \item \textbf{Implementation}: Assembler re-implemented as part of this thesis based off the description in~\cite{paikin2015}
+	    \begin{itemize}
+	      \item Written in the Python language and fully open source.
+	    \end{itemize}
+	  }
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+
 \subsection{Segmentation}
+\begin{frame}{Segmentation}{Mixed-Bag Solver Stage \#1}
+  \begin{itemize}
+      \item \textbf{Segment}: Partial puzzle assembly where this is a high degree of confidence pieces are placed correctly.
+      \vspace{0.4em}
+	    \item \textbf{Role of Segmentation}: Provide basic structure to the set of puzzle pieces by partitioning them into disjoint segments
+	    \begin{itemize}
+	      \vspace{0.4em}
+      	\item \textbf{Input}: Set of puzzle pieces
+  		  \vspace{0.6em}
+	      \item \textbf{Output}: Set of saved segments
+	    \end{itemize}
+	  \vspace{0.6em}
+	  \item \textbf{Relationship between Puzzle Pieces and Segments}:
+	  \vspace{0.4em}
+	  \begin{itemize}
+      \item Pieces from a single ground-truth input may be separated into multiple segments
+  	  \vspace{0.6em}   
+      \item A piece can be assigned to at most one segment   
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Segmentation}{Algorithm Overview}
+  \begin{itemize}
+    \item Iterative process consisting of one or more rounds  
+    \vfill
+    \item In each round, all pieces not yet assigned to a segment are assembled as if they come from a single input image.
+    \vfill
+    \item Segments of sufficient size are saved to be used in future Mixed-Bag Solver stages
+    \vfill
+    \item A piece can be assigned to at most a single segment
+    \vfill
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+
+
+\begin{frame}{Segmentation}{Example -- Input Images}
+  \vspace{-.4em}
+  {\small 
+  \begin{center}
+	  \begin{tabular}{ 
+	    >{\centering\arraybackslash}m{0.47\textwidth}}
+	
+		    \fbox{\includegraphics[scale=0.115]{./images/segmentation/pomeranz_805_8.jpg}}
+		    \\~\\
+		    Image~(a) \textendash { }805~Pieces~\cite{pomeranzBenchmarkImages}
+	      \\~\\
+		    \fbox{\includegraphics[scale=0.115]{./images/segmentation/mcgill_540_20.jpg}}
+	      \\~\\ 
+		    Image~(b) \textendash { }540~Pieces~\cite{mcgillImageDatabase}
+	  \end{tabular}
+	\end{center}
+	}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Segmentation}{Example -- First Segmentation Round Output Image}
+  \begin{center}
+	  \begin{tabular}{ 
+	    >{ \centering\arraybackslash}m{0.9\textwidth} }
+	    \fbox{\includegraphics[scale=0.16]{./images/segmentation/assembler_single_puzzle_output.jpg}} 
+	  \end{tabular}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Segmentation}{Example -- Segmented Output Image}
+  \begin{center}
+	  \begin{tabular}{ 
+	    >{ \centering\arraybackslash}m{0.9\textwidth} }
+	    \fbox{\includegraphics[scale=0.16]{./images/segmentation/segmented_single_puzzle_output.jpg}} 
+	  \end{tabular}
+  \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
 \subsection{Stitching}
+\begin{frame}{Stitching}{Mixed-Bag Solver Stage \#2}
+  \begin{itemize}
+	    \item \textbf{Role of Stitching}: Quantify the extent that any pair of segments is related.
+	    \begin{itemize}
+	      \vspace{0.4em}
+      	\item \textbf{Input}: All puzzle pieces and the set of saved segments
+  		  \vspace{0.6em}
+	      \item \textbf{Output}: Segment overlap matrix
+	    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+\subsection{Stitching}
+\begin{frame}{Stitching}{Example -- Input Image}
+  \begin{center}
+    \fbox{\includegraphics[scale=0.25]{./images/stitching/mcgill_540_20.jpg}}
+    \vfill    
+  \end{center}
+\end{frame}
+
+
+
+\subsection{Stitching}
+\begin{frame}{Stitching}{Example -- Two Segment Images}
+  \vspace{-.4em}
+  {\small 
+  \begin{center}
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.18\textwidth} >{\centering\arraybackslash}b{0.8\textwidth} }
+	
+		    \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_image_segment_1.jpg}} 
+		    & \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_image_segment_2.jpg}}
+		    \\~\\
+		    Segment \#1 & Segment \#2
+	  \end{tabular}
+	\end{center}
+	}
+\end{frame}
+
+
+
+\subsection{Stitching}
+\begin{frame}{Stitching}{Example -- Stitching Piece Locations}
+  \vspace{-.4em}
+  {\small 
+  \begin{center}
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.18\textwidth} >{\centering\arraybackslash}b{0.8\textwidth} }
+	
+		    \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_pieces_segment_1.jpg}} 
+		    & \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_pieces_segment_2.jpg}}
+		    \\~\\
+		    Segment \#1 & Segment \#2
+	  \end{tabular}
+	\end{center}
+	}
+\end{frame}
+
+
+
 \subsection{Hierarchical Clustering}
 \subsection{Final Seed Piece Selection}
-\begin{frame}{Mixed-Bag Solver}{Final Seed Piece Selection Stage}
+\begin{frame}{Final Seed Piece Selection}{Mixed-Bag Solver Stage \#4}
     \onslide<1->{
       \begin{block}{\textbf{Paikin~\& Tal}}
         \vspace{0.4em}
@@ -399,15 +585,17 @@
       \begin{block}{\textbf{Mixed-Bag Solver}} 
         \vspace{0.4em}
         \begin{itemize}
-          \item \textbf{Input}: Set of cluster segments
-      	  \vspace{0.6em}
-          \item \textbf{Output}: Final seed pieces
-          \vspace{0.6em}     
-          \item \textbf{Summary}: A single seed piece is selected from each segment cluster.
+          \item \textbf{Role of Final Seed Selection}: Determine the pieces that will be used as the seed for the final output puzzles.
           \vspace{0.4em}
           \begin{itemize}
-            \item A seed piece is ``distinctive'' as defined by Paikin~\& Tal
+            \item \textbf{Input}: Set of cluster segments
+        	  \vspace{0.6em}
+            \item \textbf{Output}: Final seed pieces
           \end{itemize}
+          \vspace{0.6em}     
+          \item A single seed piece is selected from each segment cluster
+          \vspace{0.6em}     
+          \item Each seed piece is ``distinctive'' as defined by Paikin~\& Tal
         \end{itemize}
       \end{block}
     }
@@ -417,15 +605,20 @@
 
 
 \subsection{Final Assembly}
-\begin{frame}{Mixed-Bag Solver}{Final Assembly Stage}
+\begin{frame}{Final Assembly Stage}{Mixed-Bag Solver Stage \#5}
   \begin{itemize}
-    \item \textbf{Input}: Set of puzzle pieces with the seeds marked
+
+    \item \textbf{Role of Final Assembly}: Generate the solved puzzles that will be returned by the solver. by placing all pieces around the previously selected seeds.
 	  \vspace{0.6em}
-    \item \textbf{Output}: Final solved puzzles
-    \vfill
-    \item \textbf{Summary}: In this stage, the assembler places all pieces around the previously selected seed pieces.
-    \vfill
-    \item Assembly proceeds normally in this stage with no custom modifications.
+    \begin{itemize}
+      \item \textbf{Input}: Set of puzzle pieces with the seeds marked
+	    \vspace{0.6em}
+      \item \textbf{Output}: Final solved puzzles
+    \end{itemize}    
+    \vspace{1.2em}
+    \item All pieces are placed around the seeds selected in the previous stage.
+    \vspace{1.2em}    
+    \item Assembly proceeds in this stage normally without any custom modifications.
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -645,18 +838,31 @@
       \item Transform each puzzle piece into a square consisting of four isosceles triangles.
       \item Color each triangle according to whether the adjacent piece is a best buddy.  The scheme used in this thesis:
     \end{itemize}
-    \begin{table}
-      \begin{center}
-        \begin{tabular}{ | >{\centering\arraybackslash}m{0.62in} | >{\centering\arraybackslash}m{0.78in} | >{\centering\arraybackslash}m{0.7in} | >{\centering\arraybackslash}m{0.62in} | }
-              
-          \hline
-          {\small No Best Buddy} & {\small Non-Adjacent Best Buddy} & {\small Adjacent Best Buddy} & {\small No Piece Present}  \\ \hline
-          {\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
-          {\cellcolor{white}~} & {\cellcolor{red}~} & {\cellcolor{green}~} & {\cellcolor{black}~}  \\
-          \hline
-        \end{tabular}
-      \end{center}
-    \end{table}
+    {\footnotesize 
+	    {\setlength\extrarowheight{2pt}
+		    \begin{table}
+		      \begin{center}
+		        \begin{tabular}{ | >{\centering\arraybackslash}m{0.62in} | >{\centering\arraybackslash}m{0.78in} | >{\centering\arraybackslash}m{0.7in} | >{\centering\arraybackslash}m{0.62in} | }
+		          \Xhline{1pt}
+			        \textbf{No Best Buddy} 
+			        & \textbf{Non-Adjacent Best Buddy}
+			        & \textbf{Adjacent Best Buddy}
+			        & \textbf{No Piece Present}
+			        \\ \hline \hline
+		          {\tiny \cellcolor{white}~} 
+		          & {\tiny \cellcolor{red}~} 
+		          & {\tiny \cellcolor{green}~} 
+		          & {\tiny \cellcolor{black}~} 
+		          \\
+		          {\tiny \cellcolor{white}~} 
+		          & {\tiny \cellcolor{red}~} 
+		          & {\tiny \cellcolor{green}~} 
+		          & {\tiny \cellcolor{black}~}
+		          \\ \Xhline{1pt}
+		        \end{tabular}
+		      \end{center}
+		    \end{table}
+		  }}
     \begin{itemize}
       \setlength\itemsep{1em}
       \item Areas with higher best buddy density will have more green triangles.
@@ -919,7 +1125,7 @@
 
 
 \subsection{Solver Comparison}
-\begin{frame}{Experimental Results}{Performance Comparison on Multiple Input Puzzles}
+\begin{frame}{Experimental Results}{Performance on Multiple Input Puzzles}
 
   \begin{itemize}
     \onslide<1->{
@@ -1061,7 +1267,7 @@
 
 
 
-\begin{frame}{Performance Comparison on Multiple Input Puzzles}{Results Summary}
+\begin{frame}{Performance on Multiple Input Puzzles}{Results Summary}
   \begin{itemize}
     \onslide<1->{
       \item \textbf{Summary}: The Mixed-Bag Solver significantly outperformed Paikin~\& Tal's algorithm across all metrics. 
@@ -1086,43 +1292,6 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-
-
-\subsection{Ten Puzzle Results}
-\begin{frame}{Experimental Results}{Solving More than Five Puzzles}
-  \begin{itemize}
-	  \item<1-> As the number of puzzles increases, the difficulty of simultaneously reconstructing them also increases.
-	  \vfill  
-  	\item<2-> \textbf{Current State of the Art}: Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
-	  \vfill
-  	\item<3-> \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm on 10~puzzles.
-  \end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
-\begin{frame}{Ten Puzzle Results}{Summary}
-  	\begin{itemize}
-  		\item<1-> \textbf{Paikin~\& Tal}
-  		\begin{itemize}
-  		  \setlength\itemsep{0.7em}
-			  \item Seed of nine images came from just three input images
-			  \item SEDAS and EDAS greater than 0.9 for only one image
-			  \item No perfectly reconstructed images
-		  \end{itemize}
-		  \vfill
-  	  \item<2-> \textbf{Mixed-Bag Solver}
-		  \begin{itemize}
-		    \setlength\itemsep{0.7em}
-			  \item SEDAS and EDAS greater than 0.9 for all images
-			  \item Four images perfectly reconstructed
-			  \item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
-		  \end{itemize}	
-		  \vfill
-  		\item<3-> \textbf{Conclusion}: The performance difference between the Mixed-Bag Solver and Paikin~\& Tal's algorithm is even starker with more input puzzles.
-  \end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%
 
 
 
@@ -1165,9 +1334,44 @@
 %%%%%%%%%%%%%%%%
 
 
-
-\appendix
 \backupbegin
+\appendix
+
+\subsection{Ten Puzzle Results}
+\begin{frame}{Experimental Results}{Solving More than Five Puzzles}
+  \begin{itemize}
+	  \item<1-> As the number of puzzles increases, the difficulty of simultaneously reconstructing them also increases.
+	  \vfill  
+  	\item<2-> \textbf{Current State of the Art}: Paikin~\& Tal~\cite{paikin2015} solved up to five puzzles simultaneously.
+	  \vfill
+  	\item<3-> \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm on 10~puzzles.
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Ten Puzzle Results}{Summary}
+  	\begin{itemize}
+  		\item<1-> \textbf{Paikin~\& Tal}
+  		\begin{itemize}
+  		  \setlength\itemsep{0.7em}
+			  \item Seed of nine images came from just three input images
+			  \item SEDAS and EDAS greater than 0.9 for only one image
+			  \item No perfectly reconstructed images
+		  \end{itemize}
+		  \vfill
+  	  \item<2-> \textbf{Mixed-Bag Solver}
+		  \begin{itemize}
+		    \setlength\itemsep{0.7em}
+			  \item SEDAS and EDAS greater than 0.9 for all images
+			  \item Four images perfectly reconstructed
+			  \item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
+		  \end{itemize}	
+		  \vfill
+  		\item<3-> \textbf{Conclusion}: The performance difference between the Mixed-Bag Solver and Paikin~\& Tal's algorithm is even starker with more input puzzles.
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
 
 \section*{}  % Close the previous section
 \begin{frame}[t,allowframebreaks]{List of References}
