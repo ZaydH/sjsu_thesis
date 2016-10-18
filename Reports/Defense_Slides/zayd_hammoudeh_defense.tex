@@ -252,22 +252,61 @@
     \begin{itemize}
         \onslide<1->{\item \textbf{Cho \textit{et al.}}~\cite{cho2010} -- Introduced the first Modern Jig Swap Puzzle Solver Introduced
         \begin{itemize}
-            \setlength\itemsep{.8em}
+            \setlength\itemsep{.6em}
             \item Graphical model-based Type~1 solver
             \item Puzzle dimensions are known
             \item Used one or more anchor pieces
-            \item Defined solver output quality metrics
+            \item Defined quality metrics for Type~1 and Type~2 puzzles
             \item Established the standard comparative test conditions
         \end{itemize}}
         \vfill
-        \onslide<2->{\item \textbf{Pomeranz \textit{et al.}}~\cite{pomeranz2011} -- Iterative, greedy jigsaw Type~1 puzzle solver
+        \onslide<2->{\item \textbf{Pomeranz \textit{et al.}}~\cite{pomeranz2011} -- Iterative, greedy Type~1 puzzle solver
         \begin{itemize}
-            \setlength\itemsep{.8em}
+            \setlength\itemsep{.6em}
             \item Eliminated the use of anchor pieces 
             \item Created multiple solver benchmarks of various sizes
             \item Introduced the concept of ``best buddies''
         \end{itemize}}
     \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Previous Work}{Paikin \& Tal}
+  \onslide<1->{
+    \textbf{Paikin \& Tal}~\cite{paikin2015} -- Current State of the Art
+    \begin{itemize}
+      \setlength\itemsep{0.6em}
+      \item Greedy, kernel growing solver
+      \item Supports Type~1 and Type~2 puzzles
+      \item Immune to missing pieces
+    \end{itemize}    
+  }
+  \vfill
+  \onslide<2->{
+    \textbf{Limitations}
+    \begin{itemize}
+      \setlength\itemsep{0.6em}
+      \item \textbf{Poor Seed Selection}: All decisions are made at runtime using as few as 13 pieces
+      \item \textbf{Externally Supplied Information}: The solver must be told the number of input puzzles
+    \end{itemize}
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Introduction}{Thesis Overview}
+  \textbf{Primary Goal}: Develop a puzzle solver for Mixed-Bag jig swap puzzles with performance that exceeds the state of the art.
+  \vfill
+  \textbf{Additional Goals}:
+  \begin{itemize}
+    \setlength\itemsep{0.6em}
+    \item Develop new metrics for quantifying the performance of Mixed-Bag puzzles
+    \item Design new best buddy and solver output visualizations
+  \end{itemize}    
+  \vfill
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -300,12 +339,49 @@
   \onslide<4->{The latter strategy is the basis of the \textbf{Mixed-Bag Solver}.}
 \end{frame}
 
+
+\begin{frame}{Mixed-Bag Solver}{Overview}
+  \begin{itemize}
+    \item The Mixed-Bag Solver is fully-automated.  It makes no assumptions concerning the piece orientation, puzzle dimensions, or number of puzzles.
+    \begin{itemize}
+      \setlength\itemsep{0.8em}
+      \item \textbf{Input}: Set of puzzle pieces
+      \item \textbf{Output}: One or more disjoint, solved puzzles.
+    \end{itemize}
+    \vfill    
+    \item The Mixed-Bag Solver consists of five distinct stages:
+	  \vspace{0.2em}
+  \end{itemize}
+  \begin{center}
+    \fbox{\includegraphics[width=0.9\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
+    \vfill    
+  \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
 \subsection{Assembler}
 \subsection{Segmentation}
 \subsection{Stitching}
 \subsection{Hierarchical Clustering}
 \subsection{Final Seed Piece Selection}
+
+
+
 \subsection{Final Assembly}
+\begin{frame}{Mixed-Bag Solver}{Final Assembly}
+  \begin{itemize}
+    \item \textbf{Input}: Seed pieces
+	\vspace{1em}
+    \item \textbf{Output}: Final solved puzzles
+    \vfill
+    \item \textbf{Summary}: In this stage, the assembler places all pieces around the previously selected seed pieces.
+    \vfill
+    \item Assembly proceeds normally in this stage with no custom modifications.
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
 
 \section{Quantifying Quality}
 \begin{frame}{Quantifying Solver Quality}{}
@@ -503,6 +579,16 @@
       \item \textbf{Advantage of Neighbor Accuracy}: Less vulnerable to shifts than direct accuracy
     \end{itemize}
   }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Quantifying Solver Quality}{Visualizing Accuracy}
+  \begin{itemize}
+    \item The thesis includes visualization standards for direct and neighbor accuracy.
+    \vfill
+    \item They are not reviewed here due to limited time.
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
