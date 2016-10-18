@@ -71,7 +71,7 @@ Unlike direct accuracy, neighbor accuracy is largely unaffected by shifts in the
 Enhanced Neighbor Accuracy Score (ENAS) improves the neighbor accuracy metric by providing a framework to quantify the quality of Mixed-Bag puzzle outputs.   Let $n_i$ be the number of puzzle pieces in input puzzle $P_i$ and $a_{i,j}$ be the number of puzzle piece sides that are adjacent in both $P_i$ and solved output, $S_j$.  If $m_{k,j}$ is the number of puzzle pieces in $S_j$ from an input puzzle $P_k$ (where $k \ne i$), then the ENAS for $P_i$ is defined as shown in Equation~\eref{eq:enhancedNeighborAccuracyScore}.
 
 \begin{equation} \label{eq:enhancedNeighborAccuracyScore}
-  \ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q (n_i + \sum_{k \ne i}(m_{k,j})}
+  ENAS_{P_i} = \argmax_{S_j \in S}\frac{a_{i,j}}{q (n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
 Similar to the technique described for EDAS in Section~\ref{sec:enhancedDirectAccuracyScore}, ENAS divides by the number of pieces $n_i$ in input puzzle $P_i$.  By doing so, it effectively marks as incorrect any pieces from $P_i$ that are not in $S_j$.  What is more, by including in the denominator of Equation~\eref{eq:enhancedNeighborAccuracyScore} a summation of all $m_{k,j}$, ENAS marks as incorrect any pieces not from $P_i$ that are in $S_j$.  The combination of these two factors allows ENAS to account for both extra and missing pieces.

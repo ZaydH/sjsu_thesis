@@ -60,6 +60,13 @@
   \href{#1}{{\usebeamercolor[bg]{AAUsidebar}#2}}%
 }
 \DeclareMathOperator*{\argmax}{arg\,max} % The "*" means the limits go underneath "arg max"
+% Transition slide
+\newcommand{\transitionFrame}[1]{
+{
+  \begin{frame}[plain,noframenumbering]{}{} % the plain option removes the sidebar and header from the title page
+	  \finalpage{{\Large \textbf{#1}}}
+  \end{frame}}
+}
 
 
 
@@ -297,22 +304,33 @@
 
 
 
-\begin{frame}{Introduction}{Thesis Overview}
-  \textbf{Primary Goal}: Develop a puzzle solver for Mixed-Bag jig swap puzzles with performance that exceeds the state of the art.
-  \vfill
-  \textbf{Additional Goals}:
-  \begin{itemize}
-    \setlength\itemsep{0.6em}
-    \item Develop new metrics for quantifying the performance of Mixed-Bag puzzles
-    \item Design new best buddy and solver output visualizations
-  \end{itemize}    
-  \vfill
+\subsection{Thesis Goals}
+\begin{frame}{Introduction}{Thesis Goals}
+  \onslide<1->{
+    \textbf{Primary Goal}: Develop a puzzle solver for Mixed-Bag jig swap puzzles with performance that exceeds the state of the art.
+    \vfill
+  }
+  \onslide<2->{
+    \textbf{Additional Goals}:
+    \vspace{0.4em}
+    \begin{itemize}
+      \setlength\itemsep{0.6em}
+      \item Develop new metrics for quantifying the performance of Mixed-Bag puzzles
+      \item Design new best buddy and solver output visualizations
+    \end{itemize}    
+  }
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
 
+
 \section{Mixed-Bag Solver}
+\transitionFrame{The Mixed-Bag Solver}
+
+
+
+
 \begin{frame}{Mixed-Bag Solver}{Solving a Jigsaw Puzzle}
 	\onslide<1->{\begin{block}{\textbf{Paikin~\& Tal's Algorithm}} 
 	    \begin{itemize}
@@ -327,7 +345,7 @@
       \setlength\itemsep{.8em}
 			\item Correctly assemble small puzzle regions (i.e., segments)
 			\item Iteratively merge smaller regions to form large ones	
-			\onslide<3->{\item \textbf{Advantage of this Approach}: 
+			\onslide<3->{\item \textbf{Advantages of this Approach}: 
 			\begin{itemize}
 			    \setlength\itemsep{.8em}
 			    \item Reduces the size of the problem
@@ -340,9 +358,11 @@
 \end{frame}
 
 
+
 \begin{frame}{Mixed-Bag Solver}{Overview}
   \begin{itemize}
     \item The Mixed-Bag Solver is fully-automated.  It makes no assumptions concerning the piece orientation, puzzle dimensions, or number of puzzles.
+    \vspace{0.4em}
     \begin{itemize}
       \setlength\itemsep{0.8em}
       \item \textbf{Input}: Set of puzzle pieces
@@ -350,10 +370,10 @@
     \end{itemize}
     \vfill    
     \item The Mixed-Bag Solver consists of five distinct stages:
-	  \vspace{0.2em}
+	  \vspace{-0.4em}
   \end{itemize}
   \begin{center}
-    \fbox{\includegraphics[width=0.9\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
+    \fbox{\includegraphics[width=0.98\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
     \vfill    
   \end{center}
 \end{frame}
@@ -366,14 +386,41 @@
 \subsection{Stitching}
 \subsection{Hierarchical Clustering}
 \subsection{Final Seed Piece Selection}
+\begin{frame}{Mixed-Bag Solver}{Final Seed Piece Selection Stage}
+    \onslide<1->{
+      \begin{block}{\textbf{Paikin~\& Tal}}
+        \vspace{0.4em}
+        \begin{itemize}
+          \item All puzzle seeds are selected greedily at run time, which often leads to poor decisions.
+        \end{itemize}
+      \end{block}
+    }
+    \onslide<2->{    
+      \begin{block}{\textbf{Mixed-Bag Solver}} 
+        \vspace{0.4em}
+        \begin{itemize}
+          \item \textbf{Input}: Set of cluster segments
+      	  \vspace{0.6em}
+          \item \textbf{Output}: Final seed pieces
+          \vspace{0.6em}     
+          \item \textbf{Summary}: A single seed piece is selected from each segment cluster.
+          \vspace{0.4em}
+          \begin{itemize}
+            \item A seed piece is ``distinctive'' as defined by Paikin~\& Tal
+          \end{itemize}
+        \end{itemize}
+      \end{block}
+    }
+\end{frame}
+%%%%%%%%%%%%%%%%
 
 
 
 \subsection{Final Assembly}
-\begin{frame}{Mixed-Bag Solver}{Final Assembly}
+\begin{frame}{Mixed-Bag Solver}{Final Assembly Stage}
   \begin{itemize}
-    \item \textbf{Input}: Seed pieces
-	\vspace{1em}
+    \item \textbf{Input}: Set of puzzle pieces with the seeds marked
+	  \vspace{0.6em}
     \item \textbf{Output}: Final solved puzzles
     \vfill
     \item \textbf{Summary}: In this stage, the assembler places all pieces around the previously selected seed pieces.
@@ -383,7 +430,12 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
+
 \section{Quantifying Quality}
+\transitionFrame{Quantifying Solver Quality}
+
+
+
 \begin{frame}{Quantifying Solver Quality}{}
   \begin{itemize}
     \onslide<1->{
@@ -414,39 +466,6 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-
-
-\subsection{Direct Accuracy}
-\begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Direct Accuracy}
-  \onslide<1->{
-    \begin{itemize}
-      \item \textbf{Direct Accuracy}: Fraction of pieces ($c$) placed in the same location in both the ground-truth and solved image with respect to the total number of pieces ($n$)
-    \end{itemize}
-    \vfill
-    \begin{equation}\label{eq:directAccuracy}
-      DA = \frac{c}{n}
-    \end{equation}
-    \vfill
-  }
-  \onslide<2->{
-    \begin{itemize}
-      \item \textbf{Enhanced Direct Accuracy Score (EDAS)}: Modified direct accuracy that accounts for missing and extra pieces.
-    \end{itemize}
-    \vfill
-    \begin{equation}\label{eq:enhancedDirectAccuracyScore}
-      EDAS_{P_i} = \argmax_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
-    \end{equation}
-  }
-  \onslide<3->{
-    \vfill  
-    \begin{itemize}
-      \item \textbf{Direct Accuracy Range}: 0 to 1
-      \vfill
-      \item \textbf{Perfectly Reconstructed Image}: All pieces are placed in their original location ($DA = EDAS = 1$)
-    \end{itemize}
-  }
-\end{frame}
-%%%%%%%%%%%%%%%%
 
 
 
@@ -494,12 +513,12 @@
   \begin{figure}
     \centering
     \begin{tabular}{ 
-      >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
+      >{\centering\arraybackslash}m{0.44\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
 	    \onslide<2->{
-	      \fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200.jpg}}
+	      \fbox{\includegraphics[width=0.41\textwidth]{./images/muffins_300x200.jpg}}
 	    } &
 	    \onslide<3->{
-	      \fbox{\includegraphics[width=0.45\textwidth]{./images/muffins_300x200_type1}}
+	      \fbox{\includegraphics[width=0.44\textwidth]{./images/muffins_300x200_type1}}
 	    }
 	    \\ ~\\
 	    \onslide<2->{
@@ -668,6 +687,10 @@
 
 
 \section{Experimental Results}
+\transitionFrame{Experimental Results}
+
+
+
 \begin{frame}{Experimental Results}{} 
   \begin{itemize}
     \onslide<2->{
@@ -1104,6 +1127,10 @@
 
 
 \section{Conclusions}
+\transitionFrame{Conclusions}
+
+
+
 \begin{frame}{Conclusions}{}
   \onslide<2->{
     \begin{itemize}
@@ -1136,6 +1163,7 @@
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
+
 
 
 \appendix

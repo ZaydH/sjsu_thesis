@@ -2,7 +2,7 @@
 
 When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller assemblies to form larger ones.  This strategy is the basis of the Mixed-Bag Solver presented in this thesis.  It consists of five distinct stages, namely: segmentation, stitching, hierarchical segment clustering, seed piece selection, and final assembly.  The algorithm's flow is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  The pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}. 
 
-The following subsections describe each of the Mixed-Bag Solver's stages/subfunctions.  An additional associated component referred to as the ``assembler'' (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}) is also discussed.
+The following subsections describe each of the Mixed-Bag Solver's stages.  An additional associated component referred to as the ``assembler'' (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}) is also discussed.
 
 \begin{figure}[ht!]
 	\centering
@@ -11,22 +11,22 @@ The following subsections describe each of the Mixed-Bag Solver's stages/subfunc
 \end{figure}
 
 \begin{algorithm}[t]
-\caption{Pseudocode for the Mixed-Bag Solver}\label{alg:mixedBagSolver}
-\begin{algorithmic}[1]
-\Function{MixedBagSolver}{$puzzle\hspace{-0.8pt}\_pieces$}
-    \State $saved\_segments \gets \textproc{Segmentation}\text{(} puzzle\hspace{-0.8pt}\_pieces \text{)}$
-	\State $overlap\_matrix \gets \textproc{Stitching}\text{(} saved\_segments \text{, } puzzle\hspace{-0.8pt}\_pieces \text{)}$
-	\State $clusters \gets \textproc{HierarchicalClustering} \text{(}saved\_segments \text{, } overlap\_matrix \text{)}$
-	\State $seed\_pieces \gets \textproc{FindSeedPieces} \text{(} clusters \text{)}$
-	\State $solved\_puzzles \gets \textproc{RunFinalAssembly} \text{(} seed\_pieces \text{, } puzzle\hspace{-0.8pt}\_pieces \text{)}$
-    \State \Return $solved\_puzzles$
-\EndFunction
-\end{algorithmic}
+  \caption{Pseudocode for the Mixed-Bag Solver}\label{alg:mixedBagSolver}
+  \begin{algorithmic}[1]
+    \Function{MixedBagSolver}{$puzzle\hspace{-0.8pt}\_pieces$}
+      \State $saved\_segments \gets \textproc{Segmentation}\text{(} puzzle\hspace{-0.8pt}\_pieces \text{)}$
+      \State $overlap\_matrix \gets \textproc{Stitching}\text{(} saved\_segments \text{, } puzzle\hspace{-0.8pt}\_pieces \text{)}$
+      \State $clusters \gets \textproc{HierarchicalClustering} \text{(}saved\_segments \text{, } overlap\_matrix \text{)}$
+      \State $seed\_pieces \gets \textproc{FindSeedPieces} \text{(} clusters \text{)}$
+      \State $solved\_puzzles \gets \textproc{RunFinalAssembly} \text{(} seed\_pieces \text{, } puzzle\hspace{-0.8pt}\_pieces \text{)}$
+      \State \Return $solved\_puzzles$
+    \EndFunction
+  \end{algorithmic}
 \end{algorithm}
 
 \section{Assembly}\label{sec:SolverAssembler}
 
-The assembler places the individual pieces in the solved puzzle.  The Mixed-Bag Solver's architecture is largely independent of the particular assembler used.  Hence, any improvements made to the assembler will also improve the Mixed-Bag Solver's overall performance.  Likewise, if particular assemblers perform better in specific applications, the assemblers can be interchanged.  
+The assembler places the individual pieces in the solved puzzle.  The Mixed-Bag Solver's architecture is largely independent of the particular assembler used.  Hence, any improvements made to the assembler will also improve the Mixed-Bag Solver's performance.  Likewise, assemblers can be interchanged if particular ones perform better in specific applications.  
 
 This thesis uses the assembly algorithm proposed by Paikin~\& Tal~\cite{paikin2015} as it is the current state of the art and because it is one of the few assemblers that natively supports Mixed-Bag puzzles.  The following two subsections describe this thesis' implementation of their assembler as well as the time complexity of assembly.
 
@@ -76,7 +76,7 @@ Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the 
     \end{algorithmic}
 \end{algorithm}
 
-Section~\ref{sec:segmentPuzzle} describes the procedure used to create the individual segments. The largest segment in each round is passed to the Stitching stage described in Section~\ref{sec:stitching}.\footnote{All saved segments must exceed a minimum size.  For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.} Similarly, the multiplicative scalar term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} dictates which other segments are also passed to stitching.  In this thesis, \textit{$\alpha$} was set to~0.5, meaning that all segments that were at least half the size of the largest segment were also saved.  This approach provided sufficient balance between finding the largest possible segments while limiting overall execution time.
+Section~\ref{sec:segmentPuzzle} describes the procedure used to create the individual segments. The largest segment in each round is passed to the Stitching stage described in Section~\ref{sec:stitching}.\footnote{All saved segments must exceed a minimum size.  For this thesis, it was observed that a minimum segment size of 7 provided the best balance between solution quality and algorithm execution time.} Similarly, the multiplicative scalar term ``\textit{$\alpha$}'' in Algorithm~\ref{alg:segmentation} dictates which other segments are also passed to stitching.  In this thesis, \textit{$\alpha$} was set to~0.5, meaning all segments that were at least half the size of the largest one were also saved.  This approach provided sufficient balance between finding the largest possible segments while limiting overall execution time.
 
 Any piece that is assigned to a saved segment is removed from the set of unassigned pieces.  Hence, they will not be placed in future segmentation rounds.  Segmentation continues until all pieces have been assigned to sufficiently large segments or until no segment exceeds the minimum allowed size.
 
