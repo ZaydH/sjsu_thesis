@@ -147,7 +147,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
 \begin{document}
 % the titlepage
 {
@@ -158,11 +157,31 @@
 
 
 
-%% TOC
+%% Optional Table of Contents
 %\begin{frame}{Agenda}{}
 %	\tableofcontents
 %\end{frame}
 %%%%%%%%%%%%%%%%%
+
+
+
+\section{Thesis Goals}
+\begin{frame}{Introduction}{Thesis Goals}
+  \onslide<1->{
+    \textbf{Primary Goal}: Develop a solver that can assemble multiple jigsaw puzzles simultaneously, with performance that exceeds the state of the art.
+    \vfill
+  }
+  \onslide<2->{
+    \textbf{Additional Goals}:
+    \vspace{0.4em}
+    \begin{itemize}
+      \setlength\itemsep{0.6em}
+      \item Define the first metrics that quantify the quality of outputs from a multiple puzzle solver
+      \item Design visualizations for viewing the errors (if any) in a solver output
+    \end{itemize}    
+  }
+\end{frame}
+%%%%%%%%%%%%%%%%
 
 
 
@@ -173,7 +192,7 @@
     \vfill
     \item First computation jigsaw puzzle solver introduced in 1964.
     \vfill
-    \item Solving a jigsaw puzzle is NP Complete \cite{altman1990, demaine2007}
+    \item Solving a jigsaw puzzle is NP-complete~\cite{altman1990, demaine2007}
     \vfill
     \item<2-> \textbf{Example Applications:} DNA fragment reassembly, shredded document reconstruction, speech descrambling, and image editing.
     \begin{itemize}
@@ -202,7 +221,7 @@
 	    }
 	    \\ ~\\
 	    \onslide<2->{
-	      {\small Ground-Truth Image}
+	      {\small \textbf{Ground-Truth} Image}
 	    } & \onslide<3->{
 	      {\small Randomized Jig Swap Puzzle}
 	    }
@@ -214,7 +233,7 @@
 
 
 \begin{frame}{Introduction}{Jig Swap Puzzle Types}
-\onslide<2->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
+\onslide<1->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
     \vfill
     \begin{itemize}
         \item<2-> \textbf{Type~1}: Puzzle dimension and piece rotation are known.  One or more ``anchor'' pieces are fixed in their correct location.
@@ -232,38 +251,10 @@
 
 
 
-\begin{frame}{Introduction}{Best Buddies}\label{frame:bestBuddies}
-    \begin{itemize}
-        \item \textbf{Basis of all Modern Jig Swap Solvers}: The more compatible two pieces are on their respective sides, the more likely they are to be adjacent.
-        \vfill
-        \item \textbf{Best Buddies}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece~\cite{pomeranz2011}
-        \vfill
-\begin{equation}\label{eq:pomeranzBestBuddyDefinition}
-\centering
-\begin{split}
-	\begin{matrix}
-		\forall{p_{k}}\forall{s_z},C(p_i, s_x, p_j, s_y) \geq C(p_i, s_x, p_k, s_z)
-		\\
-		\\
-		\textnormal{and}
-		\\
-		\\
-		\forall{p_{k}}\forall{s_z},C(p_j, s_y, p_i, s_x) \geq C(p_j, s_y, p_k, s_z)
-	\end{matrix}
-\end{split}
-\end{equation} 
-        \vfill
-        \item \textbf{Importance of Best Buddies}: Strong indicator of piece adjacency
-    \end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
-
 \subsection{Previous Work}
 \begin{frame}{Previous Work}{}
     \begin{itemize}
-        \onslide<1->{\item \textbf{Cho \textit{et al.}}~\cite{cho2010} -- Introduced the first Modern Jig Swap Puzzle Solver Introduced
+        \onslide<1->{\item \textbf{Cho \textit{et al.}}~\cite{cho2010} -- Introduced the first modern jig swap puzzle solver
         \begin{itemize}
             \setlength\itemsep{.6em}
             \item Graphical model-based Type~1 solver
@@ -310,30 +301,8 @@
 
 
 
-\subsection{Thesis Goals}
-\begin{frame}{Introduction}{Thesis Goals}
-  \onslide<1->{
-    \textbf{Primary Goal}: Develop a puzzle solver for Mixed-Bag jig swap puzzles with performance that exceeds the state of the art.
-    \vfill
-  }
-  \onslide<2->{
-    \textbf{Additional Goals}:
-    \vspace{0.4em}
-    \begin{itemize}
-      \setlength\itemsep{0.6em}
-      \item Develop new metrics for quantifying the performance of Mixed-Bag puzzles
-      \item Design new best buddy and solver output visualizations
-    \end{itemize}    
-  }
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
-
-
 \section{Mixed-Bag Solver}
 \transitionFrame{The Mixed-Bag Solver}
-
 
 
 
@@ -543,12 +512,12 @@
   \vspace{-.4em}
   {\small 
   \begin{center}
-	  \begin{tabular}{>{\centering\arraybackslash}b{0.18\textwidth} >{\centering\arraybackslash}b{0.8\textwidth} }
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.2\textwidth} >{\centering\arraybackslash}b{0.78\textwidth} }
 	
 		    \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_image_segment_1.jpg}} 
 		    & \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_image_segment_2.jpg}}
 		    \\~\\
-		    Segment \#1 & Segment \#2
+		    \textbf{Segment \#1} & \textbf{Segment \#2}
 	  \end{tabular}
 	\end{center}
 	}
@@ -559,12 +528,12 @@
   \vspace{-.4em}
   {\small 
   \begin{center}
-	  \begin{tabular}{>{\centering\arraybackslash}b{0.18\textwidth} >{\centering\arraybackslash}b{0.8\textwidth} }
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.2\textwidth} >{\centering\arraybackslash}b{0.78\textwidth} }
 	
 		    \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_pieces_segment_1.jpg}} 
 		    & \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_pieces_segment_2.jpg}}
 		    \\~\\
-		    Segment \#1 & Segment \#2
+		    \textbf{Segment \#1} & \textbf{Segment \#2}
 	  \end{tabular}
 	\end{center}
 	}
@@ -728,7 +697,7 @@
 
 
 
-\begin{frame}{Direct Accuracy}{Effect of Shifts}
+\begin{frame}{Direct Accuracy}{Example -- Effect of Shifts}
   \onslide<1->{
     \textbf{Problem}: Direct accuracy is highly vulnerable to shifts, in particular when puzzle dimensions are not fixed
     \vfill
@@ -741,7 +710,7 @@
 	      \fbox{\includegraphics[width=0.41\textwidth]{./images/muffins_300x200.jpg}}
 	    } &
 	    \onslide<3->{
-	      \fbox{\includegraphics[width=0.44\textwidth]{./images/muffins_300x200_type1}}
+	      \fbox{\includegraphics[width=0.44\textwidth]{./images/muffins_300x200_type1.jpg}}
 	    }
 	    \\ ~\\
 	    \onslide<2->{
@@ -771,7 +740,7 @@
     \item \textbf{Shiftable Enhanced Direct Accuracy Score (SEDAS)}: Select the reference point, $l$, within radius $d_{min}$ of the upper left corner of the solved puzzle
     \begin{itemize}
       \vspace{0.6em}
-      \item $d_{min}$ - Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece
+      \item $d_{min}$ -- Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece
     \end{itemize}
     \vfill
     \item \textbf{Formal Definition of SEDAS}:
@@ -787,6 +756,30 @@
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Direct Accuracy}{Example -- Shiftable Reference Point}
+  \begin{figure}
+    \centering
+    \begin{tabular}{ 
+      >{\centering\arraybackslash}m{0.44\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
+	    \onslide<1->{
+	      \fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1.jpg}}
+	    } &
+	    \only<2>{\fbox{\includegraphics[width=0.44\textwidth]{./images/muffins_300x200_type1_EDAS.jpg}}}\only<3>{\fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1_SEDAS.jpg}}}
+	    \\ ~\\
+	    \onslide<1->{
+	      {\small Solver Output}
+	    } & 
+	    \only<2>{\small Direct Accuracy Reference Point}\only<3>{\small SEDAS Reference Points} 
+	    \\ ~\\
+  \end{tabular}
+  \end{figure}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
 
 
 
@@ -836,92 +829,6 @@
 
 
 
-\subsection{Best Buddy Density}
-\begin{frame}{Quantifying Solver Quality}{Best Buddy Density}
-  \begin{itemize}
-    \setlength\itemsep{1em}
-    \item \textbf{Best Buddies Review}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece
-    \begin{itemize}
-      \item \textbf{Note}: Not all puzzle pieces will have a best buddy.
-    \end{itemize}
-    \vfill
-    \item \textbf{Best Buddy Density} (BBD): A metric for quantifying the best buddy profile of an image that is independent of image size.
-  \end{itemize}
-  \vfill
-  \begin{equation} \label{eq:bestBuddyDensity}
-    BBD = \frac{b}{n \cdot q}
-  \end{equation}
-  \vspace{-0.6em}
-  \begin{itemize}
-    \vfill
-    \item A greater BBD means the pieces are more differentiated making the puzzle easier to solve.
-  \end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
-
-\begin{frame}{Best Buddy Density}{Visualization}  
-  \begin{block}{\textbf{Visualizing Best Buddy Density}}
-    \begin{itemize}
-      \setlength\itemsep{1em}
-      \item Transform each puzzle piece into a square consisting of four isosceles triangles.
-      \item Color each triangle according to whether the adjacent piece is a best buddy.  The scheme used in this thesis:
-    \end{itemize}
-    {\footnotesize 
-	    {\setlength\extrarowheight{2pt}
-		    \begin{table}
-		      \begin{center}
-		        \begin{tabular}{ | >{\centering\arraybackslash}m{0.62in} | >{\centering\arraybackslash}m{0.78in} | >{\centering\arraybackslash}m{0.7in} | >{\centering\arraybackslash}m{0.62in} | }
-		          \Xhline{1pt}
-			        \textbf{No Best Buddy} 
-			        & \textbf{Non-Adjacent Best Buddy}
-			        & \textbf{Adjacent Best Buddy}
-			        & \textbf{No Piece Present}
-			        \\ \hline \hline
-		          {\tiny \cellcolor{white}~} 
-		          & {\tiny \cellcolor{red}~} 
-		          & {\tiny \cellcolor{green}~} 
-		          & {\tiny \cellcolor{black}~} 
-		          \\
-		          {\tiny \cellcolor{white}~} 
-		          & {\tiny \cellcolor{red}~} 
-		          & {\tiny \cellcolor{green}~} 
-		          & {\tiny \cellcolor{black}~}
-		          \\ \Xhline{1pt}
-		        \end{tabular}
-		      \end{center}
-		    \end{table}
-		  }}
-    \begin{itemize}
-      \setlength\itemsep{1em}
-      \item Areas with higher best buddy density will have more green triangles.
-    \end{itemize}
-  \end{block}
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
-
-\begin{frame}{Best Buddy Density}{Visualization Example}  
-
-\begin{figure}[t]
-  \centering
-  \begin{tabular}{ >{\centering\arraybackslash}m{0.40\textwidth} >{\centering\arraybackslash}m{0.40\textwidth} }
-     \onslide<1->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_pixabay.jpg}}}  & \onslide<2->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_best_buddy_visualization.jpg}}}
-     \\~\\
-     \onslide<1->{(a) Original Image~\cite{pixabay}} & \onslide<2->{(b) Best Buddy Visualization}
-  \end{tabular}
-\onslide<1->{\caption{Visualization of Best Buddy Density}}
-\label{fig:bestBuddyVisualization}
-\end{figure}
-
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
-
-
 \section{Experimental Results}
 \transitionFrame{Experimental Results}
 
@@ -930,18 +837,17 @@
 \begin{frame}{Experimental Results}{} 
   \begin{itemize}
     \onslide<2->{
-      \item Paikin~\& Tal's algorithm is the current state of the art and was used as the basis for all performance comparisons.
+      \item Paikin~\& Tal's algorithm is the current state of the art and was used as the reference for performance comparison
     }
     \vfill
     \onslide<3->{
-      \item \textbf{Standard Test Conditions}
+      \item \textbf{Standard Test Conditions}:
         \begin{itemize}
           \setlength\itemsep{.3em}
           \item \textbf{Puzzle Type}: 2
           \item \textbf{Dimensions Fixed}: No
           \item \textbf{Piece Width}: 28~pixels
           \item \textbf{Benchmark}: Twenty 805~piece images~\cite{pomeranzBenchmarkImages}
-          \item \textbf{Image Encoding}: LAB~colorspace
       \end{itemize}
     }
   \end{itemize}
@@ -953,13 +859,15 @@
     \end{itemize}
     \vspace{-0.8em}
     \begin{center}
-      \begin{tabular}{ |c||c|c|c|c|c| } 
-        \Xhline{1pt}
-        \# Puzzles    & 1 &  2 &  3 & 4 & 5 \\ 
-        \hline \hline
-        \# Iterations & 20 & 55 & 25 & 8 & 5 \\ 
-        \Xhline{1pt}
-      \end{tabular}
+	    {\setlength\extrarowheight{2pt}      
+	      \begin{tabular}{ |c||c|c|c|c|c| } 
+	        \Xhline{1pt}
+	        \# Puzzles    & 1 &  2 &  3 & 4 & 5 \\ 
+	        \hline \hline
+	        \# Iterations & 20 & 55 & 25 & 8 & 5 \\ 
+	        \Xhline{1pt}
+	      \end{tabular}
+      }
     \end{center}
   }
   \vspace{-0.8em}    
@@ -1007,12 +915,12 @@
          \begin{itemize}
            \setlength\itemsep{.8em}
            \item All three images have large areas with little variation (e.g., blue sky, smooth water)
-           \item The solver's performance on these puzzles is due to the assembler as noted in~\cite{paikin2015}
+           \item The solver's poor performance on these puzzles is due to the assembler as noted in~\cite{paikin2015}
          \end{itemize}
     }
     \vfill
     \onslide<2->{
-      \item \textbf{Note}:~85\% (17/20) represents the maximum accuracy when solving multiple puzzles.
+      \item \textbf{Note}:~85\% (17/20) represents the accuracy ceiling when solving multiple puzzles.
     }
   \end{itemize}
 \end{frame}
@@ -1020,35 +928,15 @@
 
 
 
-\begin{frame}{Determining Input Puzzle Count}{Comparison of Best Buddy Density for Misclassified Images}
-  \begin{tabular}{ >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
-
-	  \onslide<1->{
-	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}
-	  } & 
-	  \onslide<2->{
-	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}}
-	  } 	    
+\begin{frame}{Determining Input Puzzle Count}{Visual Comparison of a Misclassified Image}
+  \begin{tabular}{ >{\centering\arraybackslash}m{0.465\textwidth} >{\centering\arraybackslash}m{0.465\textwidth} }
+	  \fbox{\includegraphics[width=0.43\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}
+	  &
+	  \fbox{\includegraphics[width=0.43\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}  
 	  \\~\\	
-	  \onslide<1->{
-	    \small Perfectly Reconstructed Image~(a)
-	  } & 
-	  \onslide<2->{\small Best Buddy Visualization~(a) 
-	  }	  
-    \\~\\	  
-	  \onslide<1->{
-	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}
-	  } & 
-	  \onslide<2->{
-	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}}
-	  } 
-	  \\~\\
-	  \onslide<1->{
-	    \small Misclassified Image~(b)
-	  } & 
-	  \onslide<2->{
-	    \small Best Buddy Visualization~(b)
-	  }
+	  \small Perfectly Reconstructed Image~(a)
+	  & 
+	  \small Misclassified Image~(b)
   \end{tabular}
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -1364,8 +1252,174 @@
 %%%%%%%%%%%%%%%%
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%               APPENDIX / BACK-UP SLIDES                %%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Stop numbering the slides
 \backupbegin
+
+% Add an appendix slide to break up the flow
 \appendix
+
+% Add the list of references
+\section*{}  % Close the previous section
+\begin{frame}[t,allowframebreaks]{List of References}
+	\bibliographystyle{ieeetr}
+	{\tiny \bibliography{references}}
+\end{frame}
+
+
+
+\section{Best Buddies}
+\begin{frame}{Introduction}{Best Buddies}\label{frame:bestBuddies}
+    \begin{itemize}
+        \item \textbf{Basis of all Modern Jig Swap Solvers}: The more compatible two pieces are on their respective sides, the more likely they are to be adjacent.
+        \vfill
+        \item \textbf{Best Buddies}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece~\cite{pomeranz2011}
+        \vfill
+\begin{equation}\label{eq:pomeranzBestBuddyDefinition}
+\centering
+\begin{split}
+	\begin{matrix}
+		\forall{p_{k}}\forall{s_z},C(p_i, s_x, p_j, s_y) \geq C(p_i, s_x, p_k, s_z)
+		\\
+		\\
+		\textnormal{and}
+		\\
+		\\
+		\forall{p_{k}}\forall{s_z},C(p_j, s_y, p_i, s_x) \geq C(p_j, s_y, p_k, s_z)
+	\end{matrix}
+\end{split}
+\end{equation} 
+        \vfill
+        \item \textbf{Importance of Best Buddies}: Strong indicator of piece adjacency
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Best Buddy Density}
+\begin{frame}{Quantifying Solver Quality}{Best Buddy Density}
+  \begin{itemize}
+    \setlength\itemsep{1em}
+    \item \textbf{Best Buddies Review}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece
+    \begin{itemize}
+      \item \textbf{Note}: Not all puzzle pieces will have a best buddy.
+    \end{itemize}
+    \vfill
+    \item \textbf{Best Buddy Density} (BBD): A metric for quantifying the best buddy profile of an image that is independent of image size.
+  \end{itemize}
+  \vfill
+  \begin{equation} \label{eq:bestBuddyDensity}
+    BBD = \frac{b}{n \cdot q}
+  \end{equation}
+  \vspace{-0.6em}
+  \begin{itemize}
+    \vfill
+    \item A greater BBD means the pieces are more differentiated making the puzzle easier to solve.
+  \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Best Buddy Density}{Visualization}  
+  \begin{block}{\textbf{Visualizing Best Buddy Density}}
+    \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Transform each puzzle piece into a square consisting of four isosceles triangles.
+      \item Color each triangle according to whether the adjacent piece is a best buddy.  The scheme used in this thesis:
+    \end{itemize}
+    {\footnotesize 
+	    {\setlength\extrarowheight{2pt}
+		    \begin{table}
+		      \begin{center}
+		        \begin{tabular}{ | >{\centering\arraybackslash}m{0.62in} | >{\centering\arraybackslash}m{0.78in} | >{\centering\arraybackslash}m{0.7in} | >{\centering\arraybackslash}m{0.62in} | }
+		          \Xhline{1pt}
+			        \textbf{No Best Buddy} 
+			        & \textbf{Non-Adjacent Best Buddy}
+			        & \textbf{Adjacent Best Buddy}
+			        & \textbf{No Piece Present}
+			        \\ \hline \hline
+		          {\tiny \cellcolor{white}~} 
+		          & {\tiny \cellcolor{red}~} 
+		          & {\tiny \cellcolor{green}~} 
+		          & {\tiny \cellcolor{black}~} 
+		          \\
+		          {\tiny \cellcolor{white}~} 
+		          & {\tiny \cellcolor{red}~} 
+		          & {\tiny \cellcolor{green}~} 
+		          & {\tiny \cellcolor{black}~}
+		          \\ \Xhline{1pt}
+		        \end{tabular}
+		      \end{center}
+		    \end{table}
+		  }}
+    \begin{itemize}
+      \setlength\itemsep{1em}
+      \item Areas with higher best buddy density will have more green triangles.
+    \end{itemize}
+  \end{block}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Best Buddy Density}{Visualization Example}  
+
+\begin{figure}[t]
+  \centering
+  \begin{tabular}{ >{\centering\arraybackslash}m{0.40\textwidth} >{\centering\arraybackslash}m{0.40\textwidth} }
+     \onslide<1->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_pixabay.jpg}}}  & \onslide<2->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_best_buddy_visualization.jpg}}}
+     \\~\\
+     \onslide<1->{Original Image~\cite{pixabay}} & \onslide<2->{Best Buddy Visualization}
+  \end{tabular}
+\onslide<1->{\caption{Visualization of Best Buddy Density}}
+\label{fig:bestBuddyVisualization}
+\end{figure}
+
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\section{Experimental Results}
+
+\subsection{Single Input Puzzle}
+\begin{frame}{Determining Input Puzzle Count}{Comparison of Best Buddy Density for Misclassified Images}
+  \begin{tabular}{ >{\centering\arraybackslash}m{0.45\textwidth} >{\centering\arraybackslash}m{0.45\textwidth} }
+
+	  \onslide<1->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}
+	  } & 
+	  \onslide<2->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}}
+	  } 	    
+	  \\~\\	
+	  \onslide<1->{
+	    \small Perfectly Reconstructed Image~(a)
+	  } & 
+	  \onslide<2->{\small Best Buddy Visualization~(a) 
+	  }	  
+    \\~\\	  
+	  \onslide<1->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}
+	  } & 
+	  \onslide<2->{
+	    \fbox{\includegraphics[width=0.35\textwidth]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}}
+	  } 
+	  \\~\\
+	  \onslide<1->{
+	    \small Misclassified Image~(b)
+	  } & 
+	  \onslide<2->{
+	    \small Best Buddy Visualization~(b)
+	  }
+  \end{tabular}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
 
 \subsection{Ten Puzzle Results}
 \begin{frame}{Experimental Results}{Solving More than Five Puzzles}
@@ -1403,13 +1457,10 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-\section*{}  % Close the previous section
-\begin{frame}[t,allowframebreaks]{List of References}
-	\bibliographystyle{ieeetr}
-	{\tiny \bibliography{references}}
-\end{frame}
+
 
 \backupend
+
 
 
 \end{document}
