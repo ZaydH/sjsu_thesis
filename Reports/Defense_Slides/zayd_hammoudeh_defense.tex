@@ -240,42 +240,16 @@
         \vfill
         \item<3-> \textbf{Type~2}: All piece locations and rotations unknown.  Puzzle dimensions may be known.
         \vfill
-        \item<4-> \textbf{Type~3}: All piece locations are known.  Only rotation is unknown.
-        \vfill
-        \item<5-> \textbf{Mixed-Bag}: Pieces come from multiple puzzles.
+        \item<4-> \textbf{Mixed-Bag}: Pieces come from multiple puzzles.
     \end{itemize}
     \vfill
-    \onslide<6->{Mixed-Bag Puzzles are the focus of this thesis.}
+    \onslide<5->{Mixed-Bag Puzzles are the focus of this thesis.}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
 
 
 \subsection{Previous Work}
-\begin{frame}{Previous Work}{}
-    \begin{itemize}
-        \onslide<1->{\item \textbf{Cho \textit{et al.}}~\cite{cho2010} -- Introduced the first modern jig swap puzzle solver
-        \begin{itemize}
-            \setlength\itemsep{.6em}
-            \item Graphical model-based Type~1 solver
-            \item Puzzle dimensions are known
-            \item Used one or more anchor pieces
-            \item Defined quality metrics for Type~1 and Type~2 puzzles
-            \item Established the standard comparative test conditions
-        \end{itemize}}
-        \vfill
-        \onslide<2->{\item \textbf{Pomeranz \textit{et al.}}~\cite{pomeranz2011} -- Iterative, greedy Type~1 puzzle solver
-        \begin{itemize}
-            \setlength\itemsep{.6em}
-            \item Eliminated the use of anchor pieces 
-            \item Created multiple solver benchmarks of various sizes
-            \item Introduced the concept of ``best buddies''
-        \end{itemize}}
-    \end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%
-
-
 
 \begin{frame}{Previous Work}{Paikin \& Tal}
   \onslide<1->{
@@ -434,7 +408,25 @@
 
 
 \begin{frame}{Segmentation}{Composition of a Segment}
-  PLACEHOLDER
+  \begin{itemize}
+    \setlength\itemsep{0.8em}
+    \item \textbf{Starting a Segment}: Each segment is created iteratively starting with a single seed piece.
+    \vfill
+    \item \textbf{Best Buddies}: Any pair of pieces that are more similar to each other than they are to any other piece.
+    \vfill 
+    \item \textbf{Growing the Segment}: Add to the segment any piece that is a neighbor and best buddy of a segment member.
+    \vfill
+    \item \textbf{Trimming the Segment}
+    \begin{itemize}
+    \setlength\itemsep{0.8em}
+	    \item \textbf{Articulation Point}: Any piece whose removal disconnects other pieces from the segment seed.
+	    \vspace{0.4em}
+	    \begin{itemize}
+	      \item All articulation pieces pieces are removed from the segment.  
+	    \end{itemize}
+	    \item After the removal of the articulation points, any pieces no longer connected to the seed are removed.
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -446,14 +438,14 @@
   {\small 
   \begin{center}
 	  \begin{tabular}{ 
-	    >{\centering\arraybackslash}m{0.47\textwidth}}
+	    >{\centering\arraybackslash}m{0.8\textwidth}}
 	
-		    \fbox{\includegraphics[scale=0.115]{./images/segmentation/pomeranz_805_8.jpg}}
-		    \\~\\
+		    \fbox{\includegraphics[scale=0.13]{./images/segmentation/pomeranz_805_8.jpg}}
+		    \\[-0.2em]~\\[-0.2em]
 		    Image~(a) \textendash { }805~Pieces~\cite{pomeranzBenchmarkImages}
-	      \\~\\
-		    \fbox{\includegraphics[scale=0.115]{./images/segmentation/mcgill_540_20.jpg}}
-	      \\~\\ 
+	      \\~\\[-0.2em]
+		    \fbox{\includegraphics[scale=0.13]{./images/segmentation/mcgill_540_20.jpg}}
+	      \\[-0.2em]~\\[-0.2em]
 		    Image~(b) \textendash { }540~Pieces~\cite{mcgillImageDatabase}
 	  \end{tabular}
 	\end{center}
@@ -466,7 +458,7 @@
   \begin{center}
 	  \begin{tabular}{ 
 	    >{ \centering\arraybackslash}m{0.9\textwidth} }
-	    \fbox{\includegraphics[scale=0.16]{./images/segmentation/assembler_single_puzzle_output.jpg}} 
+	    \fbox{\includegraphics[scale=0.13]{./images/segmentation/assembler_single_puzzle_output.jpg}} 
 	  \end{tabular}
   \end{center}
 \end{frame}
@@ -478,7 +470,7 @@
   \begin{center}
 	  \begin{tabular}{ 
 	    >{ \centering\arraybackslash}m{0.9\textwidth} }
-	    \fbox{\includegraphics[scale=0.16]{./images/segmentation/segmented_single_puzzle_output.jpg}} 
+	    \fbox{\includegraphics[scale=0.13]{./images/segmentation/segmented_single_puzzle_output.jpg}} 
 	  \end{tabular}
   \end{center}
 \end{frame}
@@ -489,6 +481,7 @@
 \subsection{Stitching}
 \begin{frame}{Stitching}{Mixed-Bag Solver Stage \#2}
   \begin{itemize}
+    \onslide<1->{
 	    \item \textbf{Role of Stitching}: Quantify the extent that any pair of segments is related.
 	    \begin{itemize}
 	      \vspace{0.4em}
@@ -496,8 +489,50 @@
   		  \vspace{0.6em}
 	      \item \textbf{Output}: Segment overlap matrix
 	    \end{itemize}
+	  }
+	  \vfill
+	  \onslide<2->{
+	    \item \textbf{Theoretical Foundation}: If two segments from the same ground-truth image, they would eventually \textbf{overlap} if one segment were to expand.
+	    \vspace{0.4em}
+	    \begin{itemize}
+	      \setlength\itemsep{0.6em}
+	      \item Segments should be allowed, but not forced, to expand in all directions.
+	    \end{itemize}
+	  }
   \end{itemize}
 \end{frame}
+
+
+
+\subsection{Stitching}
+\begin{frame}{Stitching}{Stitching Piece Location}
+  \begin{itemize}
+    \item \textbf{Mini-assembly} (\textbf{$MA$}): Same as a standard assembly except only a fixed number of pieces are placed .
+    \vfill    
+    \item \textbf{Stitching Piece} (\textbf{$\zeta_x$}): A piece near the boundary of a segment that is used as the seed of a mini-assembly
+    \vfill
+    \item \textbf{Segment Overlap}: Maximum overlap between any mini-assembly for segment, $\Phi_i$ and another segment $\Phi_j$.
+    \vfill
+		\begin{center}  
+		  \vspace{-2em}
+			\begin{equation} \label{eq:segmentOverlap}
+			  Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|MS_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\zeta_x}|, |\Phi_j|)}}
+			\end{equation}
+			\vspace{-2em}
+		\end{center}      
+    \vfill
+    \item \textbf{Asymmetry}: In most cases:
+	  \begin{center}
+	    \vspace{-2em}
+	    \begin{equation}
+	      Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}
+	    \end{equation}
+	  \end{center}  
+	  \vspace{-1em}
+  \end{itemize}
+\end{frame}
+
+
 
 
 \begin{frame}{Stitching}{Example -- Input Image}
@@ -566,7 +601,34 @@
 
 \subsection{Hierarchical Clustering}
 \begin{frame}{Hierarchical Segment Clustering}{Mixed-Bag Solver Stage \#3}
-  PLACEHOLDER
+  \begin{itemize}
+    \item A single ground-truth image may be comprised of multiple segments.
+    \vfill
+    \item \textbf{Role of Hierarchical Clustering}: Merge all segments from the same input image into a single segment cluster.
+    \begin{itemize}
+      \vspace{0.4em}
+      \item \textbf{Input}: All saved segments and the segment overlap matrix
+  		\vspace{0.6em}
+      \item \textbf{Output}: A set of segment clusters
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Hierarchical Segment Clustering}{Calculating Similarity}
+  \begin{itemize}
+    \item \textbf{Segment Overlap Matrix}: A hollow matrix quantifying the relationship between each pair of segments.
+    \vspace{1em}
+    \item \textbf{Hierarchical Clustering Similarity Matrix}: A diagonal matrix quantifying the similarity between segment pairs.
+    \vspace{1em}
+    \item \textbf{Quantifying Similarity}: Given $n$ segments, the similarity between segments $\Phi_i$ and $\Phi_j$ is:
+  \end{itemize}
+  \vspace{-1.5em}
+  \begin{center}
+    \begin{equation}
+      \omega_{i,j} = \frac{Overlap(\Phi_i, \Phi_j) + Overlap(\Phi_j, \Phi_i)}{2} 
+    \end{equation}
+  \end{center}  
 \end{frame}
 
 
@@ -607,7 +669,7 @@
 \begin{frame}{Final Assembly Stage}{Mixed-Bag Solver Stage \#5}
   \begin{itemize}
 
-    \item \textbf{Role of Final Assembly}: Generate the solved puzzles that will be returned by the solver. by placing all pieces around the previously selected seeds.
+    \item \textbf{Role of Final Assembly}: Generate the solved puzzles that are output by the Mixed-Bag Solver.
 	  \vspace{0.6em}
     \begin{itemize}
       \item \textbf{Input}: Set of puzzle pieces with the seeds marked
@@ -767,7 +829,7 @@
 	    \onslide<1->{
 	      \fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1.jpg}}
 	    } &
-	    \only<2>{\fbox{\includegraphics[width=0.44\textwidth]{./images/muffins_300x200_type1_EDAS.jpg}}}\only<3>{\fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1_SEDAS.jpg}}}
+	    \only<2>{\fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1_EDAS.jpg}}}\only<3>{\fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1_SEDAS.jpg}}}
 	    \\ ~\\
 	    \onslide<1->{
 	      {\small Solver Output}
@@ -1241,7 +1303,7 @@
     \begin{itemize}
       \setlength\itemsep{.8em}
     	\item<1-> Prioritize placement using multiple best buddies
-    	\item<2-> Address placement performance in regions with low best buddy density
+    	\item<1-> Address placement performance in regions with low best buddy density
     \end{itemize}
     \vfill
     \item<2-> Dynamic determination of the segment clustering threshold
@@ -1269,6 +1331,50 @@
 	\bibliographystyle{ieeetr}
 	{\tiny \bibliography{references}}
 \end{frame}
+
+
+\section{Introduction}
+\subsection{Puzzle Types}
+\begin{frame}{Introduction}{Jig Swap Puzzle Types}
+\onslide<1->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
+    \vfill
+    \begin{itemize}
+        \item<2-> \textbf{Type~1}: Puzzle dimensions and piece rotation are known.  One or more ``anchor'' pieces are fixed in their correct location.
+        \vfill
+        \item<3-> \textbf{Type~2}: All piece locations and rotations unknown.  Puzzle dimensions may be known.
+        \vfill
+        \item<4-> \textbf{Type~3}: All piece locations are known.  Only rotation is unknown.
+        \vfill
+        \item<5-> \textbf{Mixed-Bag}: The set of puzzle pieces come from multiple puzzles.
+    \end{itemize}
+    \vfill
+    \onslide<6->{Mixed-Bag puzzles are the focus of this thesis.}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+\subsection{Previous Work}
+\begin{frame}{Previous Work}{}
+    \begin{itemize}
+        \onslide<1->{\item \textbf{Cho \textit{et al.}}~\cite{cho2010} -- Introduced the first modern jig swap puzzle solver
+        \vspace{0.4em}
+        \begin{itemize}
+            \setlength\itemsep{0.6em}
+            \item Graphical model-based Type~1 solver
+            \item Puzzle dimensions are known
+            \item Used one or more anchor pieces
+            \item Defined quality metrics for Type~1 and Type~2 puzzles
+            \item Established the standard comparative test conditions
+        \end{itemize}}
+        \vfill
+        \onslide<2->{\item \textbf{Pomeranz \textit{et al.}}~\cite{pomeranz2011} -- Iterative, greedy Type~1 puzzle solver
+        \begin{itemize}
+            \setlength\itemsep{.6em}
+            \item Eliminated the use of anchor pieces 
+            \item Created multiple solver benchmarks of various sizes
+        \end{itemize}}
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%
 
 
 
@@ -1456,6 +1562,8 @@
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
+
+
 
 
 
