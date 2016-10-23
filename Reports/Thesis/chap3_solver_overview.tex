@@ -1,6 +1,6 @@
 \chapter{Mixed-Bag Solver Overview}\label{chap:mixedBagSolver}
 
-When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller assemblies to form larger ones.  This strategy is the basis of the Mixed-Bag Solver presented in this thesis.  It consists of five distinct stages, namely: segmentation, stitching, hierarchical segment clustering, seed piece selection, and final assembly.  The algorithm's flow is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  The pseudocode for the solver, including the input(s) and output of each stage is shown in Algorithm~\ref{alg:mixedBagSolver}. 
+When humans solve jigsaw puzzles, it is common that they first correctly assemble small regions of the puzzle and then merge those smaller assemblies to form larger ones.  This strategy forms the basis of the Mixed-Bag Solver presented in this thesis.  There are five distinct solver stages, namely: segmentation, stitching, hierarchical segment clustering, seed piece selection, and final assembly.  The relationship between each stage is shown in Figure~\ref{fig:multipuzzleSolverArchitecture}.  Pseudocode, including the input(s) and output of each stage, is included in Algorithm~\ref{alg:mixedBagSolver}. 
 
 The following subsections describe each of the Mixed-Bag Solver's stages.  An additional associated component referred to as the ``assembler'' (not shown in Figure~\ref{fig:multipuzzleSolverArchitecture}) is also discussed.
 
@@ -38,13 +38,13 @@ No execution time comparisons between Paikin~\& Tal's algorithm and the Mixed-Ba
 
 \subsection{Assembler Time Complexity}\label{sec:assemblerTimeComplexity}
 
-Paikin~\& Tal's assembler relies on a set of inter-puzzle piece similarity metrics.  As with all other jig swap solvers, these distances are calculated between all pairs of pieces, making the time required to calculate inter-piece similarity $O(n^2)$, where $n$ is the number of puzzle pieces.  If an input image has sufficient inter-piece variation, then the time complexity to place all pieces is $\Theta(n \text{lg}(n))$, since a heap is used in this thesis' implementation to determine the piece placement order.  However, if most pieces are sufficiently similar that there are relatively few best buddies, then piece placement can be as slow as $O(n^3)$ as the inter-piece similarity may need to be recalculated after each piece is placed.
+Paikin~\& Tal's assembler relies on a set of inter-puzzle piece similarity metrics.  As with all other jig swap solvers, these distances are calculated between all pairs of pieces, making the time required to calculate inter-piece similarity $O(n^2)$, where $n$ is the number of puzzle pieces.  If an input image has sufficient inter-piece variation, then the time complexity to place all pieces is $\Theta(n \text{lg}(n))$, since a heap is used in this thesis' implementation to determine the piece placement order.  However, if most pieces are sufficiently similar that there are relatively few best buddies, then piece placement can be as slow as $O(n^3)$ since the inter-piece similarity may need to be recalculated after each piece is placed.
 
-The Mixed-Bag Solver performs assembly at least once during the segmentation stage (usually more times), and placement is performed another time during the final assembly stage.  Hence, while the execution time for the Mixed-Bag solver is necessarily longer than that of any assembler that may be used, they both share the same time complexity since the number of times placement is performed is not directly related to the number of puzzle pieces.
+During the segmentation stage, the Mixed-Bag Solver performs assembly at least once, but usually more.  Placement is performed another time during the final assembly stage.  Hence, while the execution time for the Mixed-Bag solver is necessarily longer than that of any assembler that may be used, they both generally share the same time complexity since in most cases the number of times placement is performed is not directly related to the number of puzzle pieces.
 
 \section{Segmentation}\label{sec:Segmentation}
 
-Segmentation provides basic structure to the bag of puzzle pieces by partitioning them into disjoint sets, referred to here as segments.  These segments are partial puzzle assemblies where there is a high degree of confidence that the pieces are placed correctly. As detailed in Algorithm~\ref{alg:mixedBagSolver}, the only input to segmentation is the bag of puzzle pieces; the solver takes no other inputs.  It is expected that pieces from the same ground-truth input may be assigned to multiple segments.  Section~\ref{sec:hierarchicalClustering} describes how such segments are merged using hierarchical clustering.
+Segmentation provides basic structure to a bag of puzzle pieces by partitioning them into disjoint sets, referred to here as segments.  These segments are partial puzzle assemblies where there is a high degree of confidence that the pieces are placed correctly. As detailed in Algorithm~\ref{alg:mixedBagSolver}, the only input to segmentation is a bag of puzzle pieces; the solver takes no other inputs.  It is expected that pieces from the same ground-truth input may be assigned to multiple segments.  Section~\ref{sec:hierarchicalClustering} describes how such segments are merged using hierarchical clustering.
 
 Appendix~\ref{app:segmentedOutput} shows an example segmentation round with two input images. It is included as a visual reference of the segmentation process.
 
@@ -116,9 +116,9 @@ The function ``\textproc{SegmentPuzzle}'' in Algorithm~\ref{alg:segmentPuzzle} p
 \end{algorithmic}
 \end{algorithm}
 
-Whenever a piece is added to a segment, the algorithm examines all of that piece's neighbors.  Those adjacent pieces are also added to the segment if they are in the unassigned pieces pool and if their neighbor inside the segment is a ``best buddy'' (as checked by the predicate ``\textproc{IsBestBuddies}'').  The segment growth terminates once there are no neighboring pieces that satisfy both of these two criteria. 
+Whenever a piece is added to a segment, the algorithm examines all of that piece's neighbors.  Those adjacent pieces are also added to the segment if they are in the unassigned pieces pool and if their neighbor inside the segment is a ``best buddy'' (as checked by the predicate ``\textproc{IsBestBuddies}'').  Segment growth terminates once there are no neighboring pieces that satisfy both of these two criteria. 
 
-In Pomeranz \textit{et al.}'s segmentation algorithm, no changes were made to a segment after it reached its maximum size.  Their approach is sufficient when solving only a single puzzle at a time.  However, in Mixed-Bag puzzles, it is common that correctly assembled regions from different ground-truth inputs are joined into a single segment; this is usually through a very tenuous linking in the form of narrow bridges no wider than a single piece.  Section~\ref{sec:articulationPoints} describes how the Mixed-Bag Solver post-processes each segment to prevent this erroneous segment merging.
+In Pomeranz \textit{et al.}'s segmentation algorithm, no changes were made to a segment after it reached its maximum size.  Their approach is sufficient when solving only a single puzzle at a time.  However, in Mixed-Bag puzzles, it is common that correctly assembled regions from different ground-truth inputs are joined into a single segment; this is usually through a very tenuous linking in the form of a narrow bridge no wider than a single piece.  Section~\ref{sec:articulationPoints} describes how the Mixed-Bag Solver post-processes each segment to prevent this erroneous segment merging.
 
 \subsection{Articulation Points}\label{sec:articulationPoints}
 
@@ -128,7 +128,7 @@ A segment can be modeled as a graph with a single connected component.  The indi
 
 As discussed previously, a segment represents an ordering of pieces where there is a particularly high degree of confidence that placement is correct.  A single ground-truth image is commonly partitioned into multiple segments. Since the Mixed-Bag Solver is not supplied with the number of input images, it must quantify the extent to which any pairs of segments are related to ensure it can accurately estimate the number of ground-truth inputs.  
 
-If two segments are adjacent in a ground-truth image, it is expected that they would eventually merge if one segment were allowed to expand. Since it is not known in which relative direction (if any) that an adjacent segment may be located, a segment should be allowed to grow in all directions; however, it should not be forced to expand in a certain direction as this may lead to the formation of erroneous inter-segment coupling.  This forms the foundation of segment stitching, which is described in the following subsections.
+If two segments are adjacent in a ground-truth image, it is expected that they would eventually merge if one segment were allowed to expand. Since it is not known in which relative direction (if any) an adjacent segment may be located, a segment should be allowed to grow in all directions; however, it should not be forced to expand in a certain direction as this may lead to the formation of erroneous inter-segment coupling.  This strategy forms the foundation of segment stitching, which is described in the following subsections.
 
 \subsection{Mini-Assemblies and Stitching Pieces}
 
@@ -145,7 +145,7 @@ If stitching pieces are poorly selected, two divergent, yet deleterious outcomes
 \Procedure{FindStitchingPieces}{$segment\_pieces$}
 	\State $\textproc{FindPieceDistanceToOpen}(segment\_pieces)$
 	\State $segment\_stitching\_pieces \gets \{ \}$
-    \State $segment\_grid\_cells \gets \textproc{PartitionIntoGrid}(segment)$
+    \State $segment\_grid\_cells \gets \textproc{PartitionIntoGrid}(segment\_pieces)$
 	\ForEach{$grid\_cell \in segment\_grid\_cells$}
 		\If{$\textproc{HasPieceAdjacentToOpen}(grid\_cell)$}
 			\State $candidates \gets \{ pieces \} \in grid\_cell \text{ closest to } target\_distance\_to\_open$
@@ -161,9 +161,9 @@ If stitching pieces are poorly selected, two divergent, yet deleterious outcomes
 
 \subsubsection{Spacing Stitching Pieces from Open Locations}\label{sec:determiningSpacingToNearestOpenLocation}
 
-It is not sufficient for stitching pieces to be placed solely around the external perimeter of a segment as it is common for segments to have internal voids, where no pieces are present.  As such, stitching pieces are placed near ``open locations,'' which are the puzzle locations that have either a piece from a different segment or no piece at all. If a stitching piece is too close to one of these open locations, erroneous coupling between unrelated segments may occur.  Algorithm~\ref{alg:selectStitchingPieces} invokes the function \textproc{FindPieceDistanceToOpen} to determine the distance of each piece in the segment to the nearest open location; the implementation of this function is shown in Algorithm~\ref{alg:findDistanceToOpen}.  
+It is not sufficient for stitching pieces to be placed solely around the external perimeter of a segment as it is common for segments to have internal voids, where no pieces are present.  As such, stitching pieces are placed near ``open locations,'' which have either a piece from a different segment or no piece at all. If a stitching piece is too close to one of these open locations, erroneous coupling between unrelated segments may occur.  Algorithm~\ref{alg:selectStitchingPieces} invokes the function \textproc{FindPieceDistanceToOpen} to determine the distance of each segment piece to the nearest open location; the implementation of this function is shown in Algorithm~\ref{alg:findDistanceToOpen}.  
 
-\textproc{FindPieceDistanceToOpen} follows an iterative boundary tracing technique; hence, during each iteration of the \textbf{while} loop on line~\ref{op:distanceRoundWhileLoop}, the algorithm explores all segment pieces whose distance to the nearest open location is equal to $distance\_to\_open$.  Therefore, any pieces explored in the first iteration of the \textbf{while} loop have a distance of 1 to the nearest open while those explored in the second iteration have distance 2, etc. This approach is robust enough to handle internal voids as well as potential necking within the segment where two larger segment components are joined by a narrower bridge. In addition, since each piece is explored only once, the execution time of this algorithm is $O(n)$, where $n$ is the number of pieces in the segment.
+\textproc{FindPieceDistanceToOpen} follows an iterative boundary tracing technique; hence, during each iteration of the \textbf{while} loop on line~\ref{op:distanceRoundWhileLoop}, the algorithm explores all segment pieces whose distance to the nearest open location is equal to $distance\_to\_open$.  Therefore, any pieces explored in the first iteration of the \textbf{while} loop have a distance of~1 to the nearest open while those explored in the second iteration have distance~2, etc. This approach is robust enough to handle internal voids as well as potential segment necking, where two larger segment components are joined by a narrower bridge. In addition, since each piece is explored only once, the execution time of this algorithm is $O(n)$, where $n$ is the number of pieces in the segment.
 
 \begin{algorithm}[t]
 \caption{Pseudocode for Determining the Manhattan Distance between Each Segment Piece and the Nearest Open Location}\label{alg:findDistanceToOpen}
@@ -194,25 +194,25 @@ It is not sufficient for stitching pieces to be placed solely around the externa
 
 \subsubsection{Inter-Stitching Piece Spacing}\label{sec:spacingBetweenStitchingPieces}
 
-If stitching pieces are too close together, the outputs from several mini-assemblies will be almost identical, meaning that the additional stitching pieces added little value.  To address inter-stitching piece spacing, Algorithm~\ref{alg:selectStitchingPieces} sub-partitions each segment into a grid of adjacent cells; this allows the algorithm to easily space out the stitching pieces at some maximum spacing.  The grid spans the entire segment starting from upper left corner.  For this thesis, the grid cell width was set to 10 pieces.\footnote{If the segment dimensions are not evenly divisible by the target grid cell width, those cells along the bottom and right boundaries of the segment will be narrower than the specified target.} 
+If stitching pieces are too close together, the outputs from several mini-assemblies will be almost identical, which means that the additional stitching pieces contribute little value.  To address inter-stitching piece spacing, Algorithm~\ref{alg:selectStitchingPieces} sub-partitions each segment into a grid of adjacent cells; this allows the algorithm to easily space out the stitching pieces at some maximum spacing.  The grid spans the entire segment starting from upper left corner.  For this thesis, the grid cell width was set to 10 pieces.\footnote{If the segment dimensions are not evenly divisible by the target grid cell width, those cells along the bottom and right boundaries of the segment will be narrower than the specified target.} 
 
-Stitching pieces will only be selected from those grid cells that have at least one puzzle piece adjacent to an open location. For such grid cells, the algorithm finds the set of pieces (if any) whose distance to the nearest open location equals a predefined target.\footnote{For this thesis, the target distance to the nearest open location was set to 3.}  If no pieces satisfy that criteria, then the target value is decremented until at least one piece is identified. From amongst the set of candidates that satisfy the distance-to-nearest-open-location criteria, the piece closest to the grid cell center is selected for stitching. 
+Stitching pieces will only be selected from those grid cells that have at least one puzzle piece adjacent to an open location. For such grid cells, the algorithm finds the set of pieces (if any) whose distance to the nearest open location equals a predefined target.\footnote{For this thesis, the target distance to the nearest open location was set to 3.}  If no pieces satisfy that criteria, then the target value is decremented until at least one piece is identified. From among the set of candidates that satisfy the distance-to-the-nearest-open-location criteria, the piece closest to the grid cell center is selected for stitching. 
 
 \subsection{Quantifying Inter-Segment Relationships}
 
-As mentioned previously, a mini-assembly is performed for each stitching piece $\zeta_x$ in segment $\Phi_i$, where $\zeta_x \in \Phi_i$.  The output from this mini-assembly, $MA_{\zeta_x}$, will contain puzzle pieces from one or more segments.  If the mini-assembly output includes pieces from multiple segments, there is a significantly increased likelihood that the segments came from the same ground-truth input. 
+As mentioned previously, a mini-assembly is performed for each stitching piece $\zeta_x$ in segment $\Phi_i$, where $\zeta_x \in \Phi_i$.  If the mini-assembly output, $\MiniAssembly_{\zeta_x}$, includes pieces from multiple segments, there is a significantly increased likelihood that the segments came from the same ground-truth input. 
 
-Equation~\eref{eq:segmentOverlap} defines the overlap coefficients between segment, $\Phi_i$, and any other segment, $\Phi_j$. The intersection between the mini-assembly output and segment $\Phi_j$ is normalized with respect to both the number of pieces in the mini-assembly as well as potentially the size of segment $\Phi_j$, since the latter will dictate the maximum overlap if $|\Phi_j| < |MS_{\zeta_x}|$.  
+Equation~\eref{eq:segmentOverlap} defines the overlap coefficients between segment, $\Phi_i$, and any other segment, $\Phi_j$. The intersection between mini-assembly output, $\MiniAssembly_{\zeta_x}$ and segment, $\Phi_j$ is normalized with respect to the mini-assembly's size as well as potentially the size of segment $\Phi_j$, since the latter will dictate the maximum overlap if $|\Phi_j| < |\MiniAssembly_{\zeta_x}|$.  
 
 \begin{equation} \label{eq:segmentOverlap}
-  Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|MS_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\zeta_x}|, |\Phi_j|)}}
+  Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|\MiniAssembly_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|\MiniAssembly_{\zeta_x}|, |\Phi_j|)}}
 \end{equation}
 
 The outputs of the mini-assemblies will vary between segments based off their respective stitching pieces as well as potentially the segment sizes.  Hence, in most cases, the overlap coefficient is asymmetric, meaning: $Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}$.  All of these asymmetric, inter-segment, overlap coefficients are combined into an $m$ by $m$ matrix, where $m$ is the number of saved segments.  Section~\ref{sec:quantifyingSegmentSimilarity} defines how this ``Segment Overlap Matrix'' is normalized to quantify inter-segment similarity.  
 
 \section{Hierarchical Clustering of Segments}\label{sec:hierarchicalClustering}
 
-Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic hierarchical clustering procedure used by the Mixed-Bag Solver; it is adapted from~\cite{tanIntroToDataMining}.  The only inputs are the saved segments and the overlap matrix calculated during the stitching.
+Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic hierarchical clustering procedure used by the Mixed-Bag Solver; it is adapted from~\cite{tanIntroToDataMining}.  The only inputs are the saved segments and the overlap matrix calculated during stitching.
 
 \begin{algorithm}[t]
 \caption{Pseudocode for Hierarchical Segment Clustering}\label{alg:hierarchicalClustering}
@@ -237,14 +237,14 @@ Agglomerative hierarchical clustering is a bottom-up clustering algorithm where 
 All elements in the Segment Overlap Matrix, except those along the diagonal, are populated with meaningful values.  In contrast, hierarchical clustering requires a triangular, similarity matrix.  Equation~\eref{eq:segmentSimilarity} defines how the inter-segment similarity, $\omega_{i,j}$, for segments $\Phi_i$ and $\Phi_j$ is calculated from their respective asymmetric, overlap coefficients.
 
 \begin{equation} \label{eq:segmentSimilarity}
-\omega_{i,j} = \frac{Overlap(\Phi_i, \Phi_j) + Overlap(\Phi_j, \Phi_i)}{2} 
+\omega_{i,j} = \frac{Overlap_{\Phi_i, \Phi_j} + Overlap_{\Phi_j, \Phi_i}}{2} 
 \end{equation}
 
-Like the Segment Overlap Matrix, the initial segment similarity matrix, $\Gamma$, is also size $m$ by $m$, where $m$ is the number of saved segments.  Each element in $\Gamma$ is defined by Equation~\eref{eq:similarityMatrix}.  Both $i$ and $j$ are integers bounded between $1$ and $m$ (inclusive).  What is more, all elements in $\Gamma$ are bounded between 0 and 1, also inclusive.
+Like the overlap matrix, the initial segment similarity matrix, $\Gamma$, is size $m$ by $m$, where $m$ is the number of saved segments.  Each element in $\Gamma$ is defined by Equation~\eref{eq:similarityMatrix}.  Both $i$ and $j$ are integers bounded between $1$ and $m$ (inclusive).  What is more, all elements in $\Gamma$ are bounded between 0 and 1, also inclusive.
 
 \begin{equation} \label{eq:similarityMatrix}
 \Gamma = \begin{cases} 
-	0 & j >= i
+	0 & j \geq i
 \\
 	\omega_{i,j} & i < j
 \end{cases} 
@@ -264,13 +264,13 @@ If segment clusters $\Sigma_x$ and $\Sigma_y$ are merged, then Equation~\eref{eq
 
 Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not necessarily continuing merging the segment clusters  until only a single cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy, without merging unrelated segments.
 
-The number of segment clusters remaining at the end of hierarchical clustering represents the Mixed-Bag Solver's estimate of the number of ground-truth inputs.  The segment clusters are then passed to the next stage to determine the seed pieces for the final output puzzles.
+The number of segment clusters remaining at the end of hierarchical clustering represents the Mixed-Bag Solver's estimate of the number of ground-truth inputs.  The segment clusters are passed to the next stage to determine the seed pieces for the final output puzzles.
 
 \section{Final Seed Piece Selection}\label{sec:finalSeedPiece}
 
-Most of the modern jigsaw puzzle solvers \cite{pomeranz2011, sholomon2013, paikin2015} rely on a kernel growing model, where a kernel is a partial assembly of one or more pieces. In Chapter~\ref{chap:previousWork}, it was explained that Paikin~\& Tal select the puzzle seeds using a greedy condition at run time. Hence, their algorithm often picks suboptimal seeds (e.g., pieces from the same input puzzle are selected as seeds for multiple output puzzles). 
+Most modern jigsaw puzzle solvers \cite{pomeranz2011, sholomon2013, paikin2015} rely on a kernel growing model, where a kernel is a partial assembly of one or more pieces. In Chapter~\ref{chap:previousWork}, it was explained that Paikin~\& Tal select the puzzle seeds using a greedy condition at run time. Hence, their algorithm often picks suboptimal seeds (e.g., pieces from the same input puzzle are selected as seeds for multiple output puzzles). 
 
-In contrast, through the combination of segmentation and hierarchical clustering, the Mixed-Bag Solver partitions the input pieces into disjoint sets, with each set roughly approximating a single input puzzle.  As such, the Mixed-Bag Solver selects a single piece from each segment cluster to be used as the seed of a puzzle during final segment.  Within a given segment cluster, the Mixed-Bag Solver uses the same approach proposed by Paikin~\& Tal wherein the selected seed must have best buddies on each of its sides and each of its best buddies must also best buddies on each of their sides.  This approach of selecting seeds using segment clusters provides vastly superior results as shown in Section~\ref{sec:comparisonOfSolverOutputQuality}.
+In contrast, through the combination of segmentation and hierarchical clustering, the Mixed-Bag Solver partitions the input pieces into disjoint segment clusters, with each one roughly approximating a single input puzzle.  As such, the Mixed-Bag Solver selects a single piece from each segment cluster to be used as the seed of a puzzle during final segment.  Within a given segment cluster, the Mixed-Bag Solver uses the same approach proposed by Paikin~\& Tal wherein the selected seed must have best buddies on each of its sides and each of its best buddies must also best buddies on each of their sides.  This approach of selecting seeds using segment clusters provides vastly superior results as shown in Section~\ref{sec:comparisonOfSolverOutputQuality}.
 
 \section{Final Assembly}
 

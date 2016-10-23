@@ -1,6 +1,6 @@
 \chapter{Incorrectly Classified Single Image Puzzles}\label{chap:incorreclyClassifiedSingleImages}
 
-To determine the Mixed-Bag Solver's performance ceiling, twenty images from Pomeranz \textit{et al.}'s 805 piece dataset were individually input into the solver.  The Mixed-Bag Solver (MBS) correctly identified that there was only a single ground-truth input for 17~out of the 20~images.  Figure~\ref{fig:groundTruthSingleImageIncorrectlyIdentified} shows the three images that the Mixed-Bag Solver misidentified, and Figure~\ref{fig:mixedBagSolverOuputsSingleImageIncorrectlyIdentified} contains the Mixed-Bag Solver's output for these images.  These three images all have large areas with little variation (e.g., clear sky, smooth water).  Paikin~\& Tal note in~\cite{paikin2015} that their assembler does not perform well on such images.  Therefore, it is expected the Mixed-Bag Solver's performance on these images would improve if a different assembler is used.
+To determine the Mixed-Bag Solver's performance ceiling, twenty images from Pomeranz \textit{et al.}'s 805 piece dataset were individually input into the solver.  The Mixed-Bag Solver correctly identified that there was only a single ground-truth input for 17~out of the 20~images.  Figure~\ref{fig:groundTruthSingleImageIncorrectlyIdentified} shows the three misidentified images, and Figure~\ref{fig:mixedBagSolverOuputsSingleImageIncorrectlyIdentified} contains the Mixed-Bag Solver's output for these images.  All three images have large areas with little variation (e.g., a clear sky, smooth water).  Paikin~\& Tal note in~\cite{paikin2015} that their assembler does not perform well on such images.  Therefore, it is expected the Mixed-Bag Solver's performance on these images would improve if a different assembler is used.
 
 \begin{figure}
 \centering
@@ -23,13 +23,13 @@ To determine the Mixed-Bag Solver's performance ceiling, twenty images from Pome
   \begin{tabular}{ >{\centering\arraybackslash}m{0.47\textwidth}  >{\centering\arraybackslash}m{0.47\textwidth} }
 
 	\fbox{\includegraphics[scale=0.18]{./images/single_puzzle/reconstructed_805_3_01.jpg}} & \fbox{\includegraphics[scale=0.18]{./images/single_puzzle/reconstructed_805_3_02.jpg}} \\~\\
-	MBS Output (a1) & MBS Output (a2) \\~\\
+	Solver Output (a\hspace{0.1em}\textendash \hspace{0.08em}1) & Solver Output (a\hspace{0.1em}\textendash \hspace{0.1em}2) \\~\\
 	
-	\fbox{\includegraphics[scale=0.16]{./images/single_puzzle/reconstructed_805_12_01.jpg}} & \fbox{\includegraphics[scale=0.16]{./images/single_puzzle/reconstructed_805_12_02.jpg}} \\~\\
-	MBS Output (b1) & MBS Output (b2) \\~\\
+	\fbox{\includegraphics[scale=0.16]{./images/single_puzzle/reconstructed_805_12_02.jpg}} & \fbox{\includegraphics[scale=0.16]{./images/single_puzzle/reconstructed_805_12_01.jpg}} \\~\\
+	Solver Output (b\hspace{0.15em}\textendash \hspace{0.08em}1) & Solver Output (b\hspace{0.1em}\textendash \hspace{0.1em}2) \\~\\
 	
 	\fbox{\includegraphics[scale=0.16]{./images/single_puzzle/reconstructed_805_16_01.jpg}} & \fbox{\includegraphics[scale=0.16]{./images/single_puzzle/reconstructed_805_16_02.jpg}} \\~\\
-	MBS Output (c1) & MBS Output (c2) \\~\\
+	Solver Output (c\hspace{0.15em}\textendash \hspace{0.08em}1) & Solver Output (c\hspace{0.15em}\textendash \hspace{0.1em}2) \\~\\
   \end{tabular}
 
 \caption{Mixed-Bag Solver Outputs for the Incorrectly Identified Images}
