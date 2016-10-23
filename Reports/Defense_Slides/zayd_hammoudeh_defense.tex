@@ -1,4 +1,5 @@
-\documentclass[10pt]{beamer}
+%\documentclass[10pt]{beamer}
+\documentclass[handout,10pt]{beamer}  % Remove pauses and disable commands like "onslide"
 \usetheme[
 %%% options passed to the outer theme
 %    hidetitle,           % hide the (short) title in the sidebar
@@ -52,6 +53,7 @@
 % does not look nice, try deleting the line with the fontenc.
 \usepackage{helvet}
 \usepackage{makecell} % Used to create thick links in tables
+\usepackage{multirow} % Allows merging rows or columns in a table
 
 % Definitions for Custom Algorithmic Commands
 \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
@@ -97,11 +99,11 @@
 \institute[
 %  {\includegraphics[scale=0.2]{aau_segl}}\\ %insert a company, department or university logo
     Dept.\ of Computer Science\\
-    San Jose State University\\
+    San Jos\'{e} State University\\
 ] % optional - is placed in the bottom of the sidebar on every slide
 {% is placed on the title page
     Department of Computer Science\\
-    San Jose State University\\
+    San Jos\'{e} State University\\
   
   %there must be an empty line above this line - otherwise some unwanted space is added between the university and the country (I do not know why;( )
 }
@@ -188,15 +190,15 @@
 \section{Introduction}
 \begin{frame}{Introduction}{Jigsaw Puzzles}
   \begin{itemize}
-    \item First jigsaw puzzle introduced in the 1760s.  Modern jigsaw puzzles were introduced in the 1930s.
+    \item First jigsaw puzzle introduced in the 1760s.  Modern jigsaw puzzles introduced in the 1930s.
     \vfill
-    \item First computation jigsaw puzzle solver introduced in 1964.
+    \item First computation jigsaw puzzle solver introduced in 1964
     \vfill
     \item Solving a jigsaw puzzle is NP-complete~\cite{altman1990, demaine2007}
     \vfill
-    \item<2-> \textbf{Example Applications:} DNA fragment reassembly, shredded document reconstruction, speech descrambling, and image editing.
+    \item<2-> \textbf{Example Applications:} DNA fragment reassembly, shredded document reconstruction, speech descrambling, and image editing
     \begin{itemize}
-        \item<3-> In most cases, the original, ``ground-truth'' image is unknown.
+        \item<3-> In most cases, the original, ``{\color{spartanBlue}\textbf{ground-truth}}'' image is unknown.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -221,7 +223,7 @@
 	    }
 	    \\ ~\\
 	    \onslide<2->{
-	      {\small \textbf{Ground-Truth} Image}
+	      {\small Ground-Truth Image}
 	    } & \onslide<3->{
 	      {\small Randomized Jig Swap Puzzle}
 	    }
@@ -233,17 +235,17 @@
 
 
 \begin{frame}{Introduction}{Jig Swap Puzzle Types}
-\onslide<1->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
+\onslide<1->{There are three primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
     \vfill
     \begin{itemize}
-        \item<2-> \textbf{Type~1}: Puzzle dimension and piece rotation are known.  One or more ``anchor'' pieces are fixed in their correct location.
+        \item<2-> \textbf{Type~1}: Puzzle dimension and piece rotation are known.  May have ``anchor'' piece(s) fixed in the correct location(s).
         \vfill
         \item<3-> \textbf{Type~2}: All piece locations and rotations unknown.  Puzzle dimensions may be known.
         \vfill
         \item<4-> \textbf{Mixed-Bag}: Pieces come from multiple puzzles.
     \end{itemize}
     \vfill
-    \onslide<5->{Mixed-Bag Puzzles are the focus of this thesis.}
+    \onslide<5->{Mixed-Bag puzzles are the focus of this thesis.}
 \end{frame}
 %%%%%%%%%%%%%%%%
 
@@ -253,17 +255,17 @@
 
 \begin{frame}{Previous Work}{Paikin \& Tal}
   \onslide<1->{
-    \textbf{Paikin \& Tal}~\cite{paikin2015} -- Current State of the Art
+    {\color{spartanBlue}\textbf{Paikin \& Tal}}~\cite{paikin2015} -- Current State of the Art
     \begin{itemize}
       \setlength\itemsep{0.6em}
-      \item Greedy, kernel growing solver
+      \item Greedy, \textbf{kernel growing} solver
       \item Supports Type~1, Type~2, and Mixed-Bag puzzles
       \item Immune to missing pieces
     \end{itemize}    
   }
   \vfill
   \onslide<2->{
-    \textbf{Limitations}
+    {\color{spartanBlue}\textbf{Limitations}}:
     \begin{itemize}
       \setlength\itemsep{0.6em}
       \item \textbf{Poor Seed Selection}: All decisions are made at runtime using as few as 13 pieces
@@ -280,7 +282,17 @@
 
 
 
-\begin{frame}{Mixed-Bag Solver}{Solving a Jigsaw Puzzle}
+\begin{frame}{Mixed-Bag Solver}{Basic Structure}
+  \begin{center}
+    \fbox{\includegraphics[width=0.98\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
+    \vfill    
+  \end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Mixed-Bag Solver}{Foundations}
 	\onslide<1->{\begin{block}{\textbf{Paikin~\& Tal's Algorithm}} 
 	    \begin{itemize}
         \setlength\itemsep{.8em}
@@ -295,6 +307,7 @@
 			\item Correctly assemble small puzzle regions (i.e., segments)
 			\item Iteratively merge smaller regions to form large ones	
 			\onslide<3->{\item \textbf{Advantages of this Approach}: 
+			\vspace{0.4em}
 			\begin{itemize}
 			    \setlength\itemsep{.8em}
 			    \item Reduces the size of the problem
@@ -303,7 +316,7 @@
     \end{itemize}
 	\end{block}}
 	\vfill
-  \onslide<4->{The latter strategy is the basis of the \textbf{Mixed-Bag Solver}.}
+  \onslide<4->{The latter strategy is the basis of the {\color{spartanBlue}\textbf{Mixed-Bag Solver}}}
 \end{frame}
 
 
@@ -516,7 +529,7 @@
 		\begin{center}  
 		  \vspace{-2em}
 			\begin{equation} \label{eq:segmentOverlap}
-			  Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|MS_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|MS_{\zeta_x}|, |\Phi_j|)}}
+			  Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|MA_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|MA_{\zeta_x}|, |\Phi_j|)}}
 			\end{equation}
 			\vspace{-2em}
 		\end{center}      
@@ -615,7 +628,8 @@
 \end{frame}
 
 
-\begin{frame}{Hierarchical Segment Clustering}{Calculating Similarity}
+
+\begin{frame}{Hierarchical Segment Clustering}{Calculating the Initial Similarity Matrix}
   \begin{itemize}
     \item \textbf{Segment Overlap Matrix}: A hollow matrix quantifying the relationship between each pair of segments.
     \vspace{1em}
@@ -626,10 +640,87 @@
   \vspace{-1.5em}
   \begin{center}
     \begin{equation}
-      \omega_{i,j} = \frac{Overlap(\Phi_i, \Phi_j) + Overlap(\Phi_j, \Phi_i)}{2} 
+      \omega_{i,j} = \frac{Overlap_{\Phi_i, \Phi_j} + Overlap_{\Phi_j, \Phi_i}}{2} 
     \end{equation}
   \end{center}  
 \end{frame}
+
+
+
+\begin{frame}{Hierarchical Segment Clustering}{Merging Clusters}
+  \begin{itemize}
+    \item After two clusters are combined, the similarity between the merged cluster and all other clusters must be recalculated.
+    \vfill
+    \item \textbf{Single Link Clustering}: The similarity between any two clusters is equal to the maximum similarity between any two members in the clusters~\cite{tanIntroToDataMining}
+    \vspace{1em}
+    \item The Mixed-Bag Solver must use single link clustering as two clusters may only have two member segments that are adjacent.
+  \end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Hierarchical Segment Clustering}{Example -- Single Linking}
+  \begin{center}
+    \fbox{\includegraphics[scale=0.25]{./images/stitching/mcgill_540_20.jpg}}
+    \vfill    
+  \end{center}
+\end{frame}
+
+
+
+\begin{frame}{Hierarchical Segment Clustering}{Example -- Single Linking}
+  {\small 
+  \begin{center}
+  \setlength{\tabcolsep}{0pt}
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.17\textwidth} >{\centering\arraybackslash}b{0.24\textwidth}>{\centering\arraybackslash}b{0.20\textwidth}>{\centering\arraybackslash}b{0.185\textwidth}}
+		    \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
+		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}
+		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
+		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_4.jpg}
+		    \\~\\
+		    Segment 1 & Segment 2 & Segment 3 & Segment 4
+	  \end{tabular}
+	\end{center}
+	}
+\end{frame}
+
+
+
+\begin{frame}{Hierarchical Segment Clustering}{Example -- Single Linking}
+  {\small 
+  \begin{center}
+  \setlength{\tabcolsep}{0pt}
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.45\textwidth} >{\centering\arraybackslash}b{0.45\textwidth}}
+		   \fbox{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
+		    \hspace{0.1in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}}
+		    & \fbox{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
+		    \hspace{0.1in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_4.jpg}}
+		    \\~\\
+		    Segment Cluster 1 & Segment Cluster 2
+	  \end{tabular}
+	\end{center}
+	}
+\end{frame}
+
+
+
+\begin{frame}{Hierarchical Segment Clustering}{Terminating Clustering}
+  \begin{itemize}
+  	\item The solver continues merging segment clusters until one of two criteria are satisfied:
+	  \vspace{0.4em}
+	  \begin{itemize}
+	    \setlength\itemsep{0.8em}
+	    \item Only a single segment cluster remains
+	    \item Maximum similarity between any segment clusters is below a predefined threshold~(e.g.,~0.1)
+	  \end{itemize} 
+	  \vfill
+	  \item All remaining segment clusters are passed to the next solver stage.
+	\end{itemize}
+\end{frame}
+
+
+
 
 
 \subsection{Final Seed Piece Selection}
@@ -693,7 +784,7 @@
 \begin{frame}{Quantifying Solver Quality}{}
   \begin{itemize}
     \onslide<1->{
-      \item Jigsaw puzzle solvers are not yet able to always correctly reconstruct the input puzzle(s)
+      \item Jigsaw puzzle solvers are not able to always correctly reconstruct the input puzzle(s)
       \begin{itemize}
         \item Metrics compare the quality of solved outputs
       \end{itemize}
@@ -714,7 +805,7 @@
         \item Extra pieces from other puzzles
       \end{itemize}
       \vfill
-      \item \textbf{Goal}: Define new Mixed-Bag puzzle quality metrics.
+      \item \textbf{Goal}: Define new quality metrics for Mixed-Bag puzzles
     }
   \end{itemize}
 \end{frame}
@@ -976,7 +1067,7 @@
       \item \textbf{Misclassified Images}: 3 out of the 20 images misclassified as if they were two images.
          \begin{itemize}
            \setlength\itemsep{.8em}
-           \item All three images have large areas with little variation (e.g., blue sky, smooth water)
+           \item All three images have large areas with little variation (e.g., a blue sky, smooth water)
            \item The solver's poor performance on these puzzles is due to the assembler as noted in~\cite{paikin2015}
          \end{itemize}
     }
@@ -1014,10 +1105,10 @@
     }
     \vfill    
     \onslide<2->{      
-      \item \textbf{Input Puzzle Count Error}: Difference between the actual number of input puzzles and that found by the Mixed-Bag Solver.
+      \item \textbf{Input Puzzle Count Error}: Difference between the actual number of input puzzles and the number determined by the Mixed-Bag Solver.
       \begin{itemize}
         \vspace{0.4em}
-        \item \textbf{Example}: If 3 images were supplied to the solver, but it determined there were 4, the error would be 1.
+        \item \textbf{Example}: If 3 images were supplied to the solver but it determined there were 4, the error would be 1.
       \end{itemize}
     }
   \end{itemize}
@@ -1284,7 +1375,7 @@
   \onslide<2->{
     \begin{itemize}
       \setlength\itemsep{1em}
-      \item This thesis presented a fully-automated solver for Mixed-Bag jig swap puzzles.
+      \item This thesis presented a fully-automated solver for Mixed-Bag puzzles.
       \vfill
       \item Mixed-Bag Solver significantly outperforms the current state of the art while receiving no externally supplied information.
       \vfill
@@ -1339,7 +1430,7 @@
 \onslide<1->{There are four primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
     \vfill
     \begin{itemize}
-        \item<2-> \textbf{Type~1}: Puzzle dimensions and piece rotation are known.  One or more ``anchor'' pieces are fixed in their correct location.
+        \item<2-> \textbf{Type~1}: Puzzle dimensions and piece rotation are known.  May have ``anchor'' piece(s) fixed in the correct location(s).
         \vfill
         \item<3-> \textbf{Type~2}: All piece locations and rotations unknown.  Puzzle dimensions may be known.
         \vfill
