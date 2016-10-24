@@ -1,5 +1,5 @@
-%\documentclass[10pt]{beamer}
-\documentclass[handout,10pt]{beamer}  % Remove pauses and disable commands like "onslide"
+\documentclass[10pt]{beamer}
+%\documentclass[handout,10pt]{beamer}  % Remove pauses and disable commands like "onslide"
 \usetheme[
 %%% options passed to the outer theme
 %    hidetitle,           % hide the (short) title in the sidebar
@@ -177,8 +177,8 @@
     \textbf{Additional Goals}:
     \vspace{0.4em}
     \begin{itemize}
-      \setlength\itemsep{0.6em}
-      \item Define the first metrics that quantify the quality of outputs from a multiple puzzle solver
+      \setlength\itemsep{0.8em}
+      \item Define the first metrics that quantify the quality of outputs from a multi-puzzle solver
       \item Design visualizations for viewing the errors (if any) in a solver output
     \end{itemize}    
   }
@@ -192,7 +192,7 @@
   \begin{itemize}
     \item First jigsaw puzzle introduced in the 1760s.  Modern jigsaw puzzles introduced in the 1930s.
     \vfill
-    \item First computation jigsaw puzzle solver introduced in 1964
+    \item First computational jigsaw puzzle solver introduced in 1964
     \vfill
     \item Solving a jigsaw puzzle is NP-complete~\cite{altman1990, demaine2007}
     \vfill
@@ -297,7 +297,7 @@
 	    \begin{itemize}
         \setlength\itemsep{.8em}
 		    \item Begin each puzzle with a single piece
-		    \item Place all pieces around the expanding core
+		    \item Place all pieces around the expanding kernel
 	    \end{itemize}
 	\end{block}}
 	\vfill
@@ -316,14 +316,14 @@
     \end{itemize}
 	\end{block}}
 	\vfill
-  \onslide<4->{The latter strategy is the basis of the {\color{spartanBlue}\textbf{Mixed-Bag Solver}}}
+  \onslide<4->{The alternate strategy is the basis of the {\color{spartanBlue}\textbf{Mixed-Bag Solver}}}
 \end{frame}
 
 
 
 \begin{frame}{Mixed-Bag Solver}{Overview}
   \begin{itemize}
-    \item The Mixed-Bag Solver is fully-automated.  It makes no assumptions concerning the piece orientation, puzzle dimensions, or number of puzzles.
+    \item The Mixed-Bag Solver is fully-automated.  It makes no assumptions concerning piece orientation, puzzle dimensions, or number of puzzles.
     \vspace{0.4em}
     \begin{itemize}
       \setlength\itemsep{0.8em}
@@ -367,7 +367,7 @@
 	    \vfill
 	    \item \textbf{Implementation}: Assembler re-implemented as part of this thesis based off the description in~\cite{paikin2015}
 	    \begin{itemize}
-	      \item Written in the Python language and fully open source.
+	      \item Written in Python and fully open source~\cite{githubThesisRepository}
 	    \end{itemize}
 	  }
   \end{itemize}
@@ -406,13 +406,13 @@
   \begin{itemize}
     \item Iterative process consisting of one or more rounds  
     \vfill
-    \item In each round, all pieces not yet assigned to a segment are assembled as if they are all from the same input image.
+    \item In each round, all pieces not yet assigned to a segment are assembled as if all are from the same input image
     \vfill
     \item Segments of sufficient size are saved to be used in future Mixed-Bag Solver stages
     \vfill
     \item Pieces in a saved segment are not placed in future rounds.
     \vfill
-    \item Segmentation terminates if all pieces are assigned to a saved segment or no segment is larger than the minimum allowed size.
+    \item Segmentation terminates if all pieces are assigned to a saved segment or when no segment is larger than the minimum allowed size
     \vfill
   \end{itemize}
 \end{frame}
@@ -423,13 +423,14 @@
 \begin{frame}{Segmentation}{Composition of a Segment}
   \begin{itemize}
     \setlength\itemsep{0.8em}
-    \item \textbf{Starting a Segment}: Each segment is created iteratively starting with a single seed piece.
+    \item \textbf{Starting a Segment}: Each segment is created iteratively starting with a single seed piece
     \vfill
-    \item \textbf{Best Buddies}: Any pair of pieces that are more similar to each other than they are to any other piece.
+    \item \textbf{Definition of {\color{spartanBlue} Best Buddies}}: Any pair of pieces that are more similar to each other than they are to any other piece.
     \vfill 
-    \item \textbf{Growing the Segment}: Add to the segment any piece that is a neighbor and best buddy of a segment member.
+    \item \textbf{Growing the Segment}: Add to the segment any piece that is a neighbor and best buddy of a segment member
     \vfill
     \item \textbf{Trimming the Segment}
+    \vspace{0.4em}
     \begin{itemize}
     \setlength\itemsep{0.8em}
 	    \item \textbf{Articulation Point}: Any piece whose removal disconnects other pieces from the segment seed.
@@ -505,7 +506,7 @@
 	  }
 	  \vfill
 	  \onslide<2->{
-	    \item \textbf{Theoretical Foundation}: If two segments from the same ground-truth image, they would eventually \textbf{overlap} if one segment were to expand.
+	    \item \textbf{Theoretical Foundation}: If two segments are from the same ground-truth image, they would eventually {\color{spartanBlue}\textbf{overlap}} if one segment were to expand.
 	    \vspace{0.4em}
 	    \begin{itemize}
 	      \setlength\itemsep{0.6em}
@@ -520,7 +521,7 @@
 \subsection{Stitching}
 \begin{frame}{Stitching}{Stitching Piece Location}
   \begin{itemize}
-    \item \textbf{Mini-assembly} (\textbf{$MA$}): Same as a standard assembly except only a fixed number of pieces are placed .
+    \item \textbf{Mini-assembly} (\hspace{-0.1em}\textbf{$MA$}): Same as a standard assembly except only a fixed number of pieces are placed .
     \vfill    
     \item \textbf{Stitching Piece} (\textbf{$\zeta_x$}): A piece near the boundary of a segment that is used as the seed of a mini-assembly
     \vfill
@@ -622,7 +623,7 @@
       \vspace{0.4em}
       \item \textbf{Input}: All saved segments and the segment overlap matrix
   		\vspace{0.6em}
-      \item \textbf{Output}: A set of segment clusters
+      \item \textbf{Output}: A set of {\color{spartanBlue}\textbf{segment clusters}}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -652,7 +653,7 @@
     \item After two clusters are combined, the similarity between the merged cluster and all other clusters must be recalculated.
     \vfill
     \item \textbf{Single Link Clustering}: The similarity between any two clusters is equal to the maximum similarity between any two members in the clusters~\cite{tanIntroToDataMining}
-    \vspace{1em}
+    \vfill
     \item The Mixed-Bag Solver must use single link clustering as two clusters may only have two member segments that are adjacent.
   \end{itemize}
 \end{frame}
@@ -707,14 +708,14 @@
 
 \begin{frame}{Hierarchical Segment Clustering}{Terminating Clustering}
   \begin{itemize}
-  	\item The solver continues merging segment clusters until one of two criteria are satisfied:
+  	\item The solver continues merging segment clusters until one of two criteria is satisfied:
 	  \vspace{0.4em}
 	  \begin{itemize}
 	    \setlength\itemsep{0.8em}
 	    \item Only a single segment cluster remains
 	    \item Maximum similarity between any segment clusters is below a predefined threshold~(e.g.,~0.1)
 	  \end{itemize} 
-	  \vfill
+	  \vspace{1.5em}
 	  \item All remaining segment clusters are passed to the next solver stage.
 	\end{itemize}
 \end{frame}
@@ -740,7 +741,7 @@
           \item \textbf{Role of Final Seed Selection}: Determine the pieces that will be used as the seed for the final output puzzles.
           \vspace{0.4em}
           \begin{itemize}
-            \item \textbf{Input}: Set of cluster segments
+            \item \textbf{Input}: Set of segment clusters
         	  \vspace{0.6em}
             \item \textbf{Output}: Final seed pieces
           \end{itemize}
@@ -785,11 +786,13 @@
   \begin{itemize}
     \onslide<1->{
       \item Jigsaw puzzle solvers are not able to always correctly reconstruct the input puzzle(s)
+      \vspace{0.4em}
       \begin{itemize}
-        \item Metrics compare the quality of solved outputs
+        \item Metrics compare the quality of solver outputs
       \end{itemize}
       \vfill
       \item \textbf{Two Most Common Quality Metrics}:
+      \vspace{0.4em}
       \begin{itemize}
         \setlength\itemsep{0.8em}
         \item Direct Accuracy
@@ -799,6 +802,7 @@
     \vfill 
     \onslide<2->{
       \item \textbf{Disadvantages of Current Metrics}: Neither account for:
+      \vspace{0.4em}
       \begin{itemize}
         \setlength\itemsep{0.8em}
         \item Pieces misplaced in different puzzles
@@ -818,7 +822,7 @@
 \begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Direct Accuracy}
   \onslide<1->{
     \begin{itemize}
-      \item \textbf{Standard Direct Accuracy}: Fraction of pieces ($c$) placed in the same location in both the ground-truth and solved image versus the total number of pieces ($n$)
+      \item \textbf{Standard Direct Accuracy}: Fraction of pieces, $c$ placed in the same location in both the ground-truth and solved image versus the total number of pieces, $n$
     \end{itemize}
     \vfill
     \begin{equation}\label{eq:directAccuracy}
@@ -888,7 +892,7 @@
 
 \begin{frame}{Direct Accuracy}{Shiftable Enhanced Direct Accuracy Score (SEDAS)}
   \begin{itemize}
-    \item \textbf{Solution}: Allow the reference point for direct accuracy to shift beyond the upper left corner of the image
+    \item \textbf{Solution}: Allow the reference point for direct accuracy to {\color{spartanBlue}\textbf{shift beyond the upper left corner}} of the image
     \vfill
     \item \textbf{Shiftable Enhanced Direct Accuracy Score (SEDAS)}: Select the reference point, $l$, within radius $d_{min}$ of the upper left corner of the solved puzzle
     \begin{itemize}
@@ -940,7 +944,7 @@
 \begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Neighbor Accuracy}
   \onslide<1->{
     \begin{itemize}
-      \item \textbf{Standard Neighbor Accuracy}: Ratio of puzzle piece sides adjacent in both the original and solved images ($a$) versus the total number of sides ($n \cdot q$)
+      \item \textbf{Standard Neighbor Accuracy}: Ratio of puzzle piece sides adjacent in both the original and solved images, $a$, versus the total number of sides, $n \cdot q$
     \end{itemize}
     \vfill
     \begin{equation}\label{eq:neighborAccuracy}
@@ -1037,20 +1041,17 @@
 \begin{frame}{Experimental Results}{Determining Input Puzzle Count}
   \begin{itemize}
     \onslide<1->{
-      \item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the number of input puzzles}
+      \item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the number of input puzzles
       \vspace{0.4em}
       \begin{itemize}
         \item \textbf{Importance} -- The Mixed-Bag Solver must estimate this accurately to provide meaningful outputs.
       \end{itemize}
-    \vfill
+    }
     \onslide<2->{
-      \item \textbf{Two Subexperiments}:
-      \vspace{0.4em}
-      \begin{itemize}
-        \setlength\itemsep{.8em}
-        \item \textbf{Single Puzzle Accuracy} -- This represents the solver's performance ceiling
-        \item \textbf{Multiple Puzzle Accuracy} -- A more general estimate of the solver's performance
-      \end{itemize}
+      \vfill
+      \item \textbf{Single Puzzle Accuracy} -- Represents the solver's performance ceiling
+      \vfill
+      \item \textbf{Multiple Puzzle Accuracy} -- A more general estimate of the solver's performance
     }
   \end{itemize}
 \end{frame}
@@ -1101,7 +1102,7 @@
     \onslide<1->{
       \item \textbf{Goal}: Measure the Mixed-Bag Solver's accuracy determining the input puzzle count for multiple images
       \vfill
-      \item \textbf{Procedure}: Randomly select the specified number of images (between 2 and 5) from the 20 image data set.
+      \item \textbf{Procedure}: Randomly select a specified number of images (between 2 and 5) from the 20 image data set.
     }
     \vfill    
     \onslide<2->{      
@@ -1183,7 +1184,7 @@
       \vfill
     }
     \onslide<2->{      
-      \item \textbf{Over-Rejection of Cluster Merges}: The Mixed-Bag Solver never underestimated the number of input puzzles.
+      \item \textbf{Over-Rejection of Cluster Mergers}: The Mixed-Bag Solver never underestimated the number of input puzzles.
       \begin{itemize}
         \vspace{0.4em}
         \item Performance may be improved by reducing the minimum clustering similarity threshold or minimum segment size
@@ -1200,7 +1201,7 @@
 
   \begin{itemize}
     \onslide<1->{
-      \item \textbf{Goal}: Compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm 
+      \item \textbf{Goal}: Compare the performance of the Mixed-Bag Solver ({\color{spartanBlue}\textbf{MBS}}) and Paikin~\& Tal's algorithm 
       \vfill
       \item \textbf{Procedure:} Randomly select a specified number of images and input them into both solvers.
       \vfill
@@ -1436,7 +1437,7 @@
         \vfill
         \item<4-> \textbf{Type~3}: All piece locations are known.  Only rotation is unknown.
         \vfill
-        \item<5-> \textbf{Mixed-Bag}: The set of puzzle pieces come from multiple puzzles.
+        \item<5-> \textbf{Mixed-Bag}: Pieces come from multiple puzzles
     \end{itemize}
     \vfill
     \onslide<6->{Mixed-Bag puzzles are the focus of this thesis.}
@@ -1472,26 +1473,29 @@
 \section{Best Buddies}
 \begin{frame}{Introduction}{Best Buddies}\label{frame:bestBuddies}
     \begin{itemize}
-        \item \textbf{Basis of all Modern Jig Swap Solvers}: The more compatible two pieces are on their respective sides, the more likely they are to be adjacent.
+        \item \textbf{Basis of all Modern Jig Swap Solvers}: The more compatible two pieces are, the more likely they are to be adjacent.
         \vfill
-        \item \textbf{Best Buddies}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece~\cite{pomeranz2011}
+        \item \textbf{Best Buddies}: A pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece~\cite{pomeranz2011}
+        \begin{itemize}
+          \item \textbf{Note}: Not all puzzle pieces will have a best buddy.
+        \end{itemize}
         \vfill
-\begin{equation}\label{eq:pomeranzBestBuddyDefinition}
-\centering
-\begin{split}
-	\begin{matrix}
-		\forall{p_{k}}\forall{s_z},C(p_i, s_x, p_j, s_y) \geq C(p_i, s_x, p_k, s_z)
-		\\
-		\\
-		\textnormal{and}
-		\\
-		\\
-		\forall{p_{k}}\forall{s_z},C(p_j, s_y, p_i, s_x) \geq C(p_j, s_y, p_k, s_z)
-	\end{matrix}
-\end{split}
-\end{equation} 
+				\begin{equation}\label{eq:pomeranzBestBuddyDefinition}
+					\centering
+					\begin{split}
+						\begin{matrix}
+								\forall{p_{k}}\forall{s_z},C(p_i, s_x, p_j, s_y) \geq C(p_i, s_x, p_k, s_z)
+								\\
+								\\
+								\textnormal{and}
+								\\
+								\\
+								\forall{p_{k}}\forall{s_z},C(p_j, s_y, p_i, s_x) \geq C(p_j, s_y, p_k, s_z)
+						\end{matrix}
+					\end{split}
+				\end{equation} 
         \vfill
-        \item \textbf{Importance of Best Buddies}: Strong indicator of piece adjacency
+        \item \textbf{Importance of Best Buddies}: Key adjacency indicator
     \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -1502,11 +1506,6 @@
 \begin{frame}{Quantifying Solver Quality}{Best Buddy Density}
   \begin{itemize}
     \setlength\itemsep{1em}
-    \item \textbf{Best Buddies Review}: Any pair of puzzles pieces that are more compatible with each other on their respective sides than they are to any other piece
-    \begin{itemize}
-      \item \textbf{Note}: Not all puzzle pieces will have a best buddy.
-    \end{itemize}
-    \vfill
     \item \textbf{Best Buddy Density} (BBD): A metric for quantifying the best buddy profile of an image that is independent of image size.
   \end{itemize}
   \vfill
@@ -1565,16 +1564,19 @@
 
 \begin{frame}{Best Buddy Density}{Visualization Example}  
 
-\begin{figure}[t]
-  \centering
-  \begin{tabular}{ >{\centering\arraybackslash}m{0.40\textwidth} >{\centering\arraybackslash}m{0.40\textwidth} }
-     \onslide<1->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_pixabay.jpg}}}  & \onslide<2->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_best_buddy_visualization.jpg}}}
-     \\~\\
-     \onslide<1->{Original Image~\cite{pixabay}} & \onslide<2->{Best Buddy Visualization}
-  \end{tabular}
-\onslide<1->{\caption{Visualization of Best Buddy Density}}
-\label{fig:bestBuddyVisualization}
-\end{figure}
+{\small
+	\begin{figure}[t]
+	  \centering
+	  \begin{tabular}{ >{\centering\arraybackslash}m{0.40\textwidth} >{\centering\arraybackslash}m{0.40\textwidth} }
+	     \onslide<1->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_pixabay.jpg}}}  
+	     & \onslide<2->{\fbox{\includegraphics[width=0.37\textwidth]{./images/dessert_best_buddy_visualization.jpg}}}
+	     \\~\\
+	     \onslide<1->{Original Image~\cite{pixabay}} 
+	     & \onslide<2->{Best Buddy Visualization}
+	  \end{tabular}
+	\label{fig:bestBuddyVisualization}
+	\end{figure}
+}
 
 \end{frame}
 %%%%%%%%%%%%%%%%
@@ -1634,6 +1636,7 @@
 \begin{frame}{Ten Puzzle Results}{Summary}
   	\begin{itemize}
   		\item<1-> \textbf{Paikin~\& Tal}
+  	  \vspace{0.4em}
   		\begin{itemize}
   		  \setlength\itemsep{0.7em}
 			  \item Seed of nine images came from just three input images
@@ -1642,14 +1645,13 @@
 		  \end{itemize}
 		  \vfill
   	  \item<2-> \textbf{Mixed-Bag Solver}
+  	  \vspace{0.4em}
 		  \begin{itemize}
 		    \setlength\itemsep{0.7em}
 			  \item SEDAS and EDAS greater than 0.9 for all images
 			  \item Four images perfectly reconstructed
 			  \item Results comparable to Paikin~\& Tal's algorithm solving each puzzle individually
 		  \end{itemize}	
-		  \vfill
-  		\item<3-> \textbf{Conclusion}: The performance difference between the Mixed-Bag Solver and Paikin~\& Tal's algorithm is even starker with more input puzzles.
   \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%
