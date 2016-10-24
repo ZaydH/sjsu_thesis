@@ -235,10 +235,10 @@
 
 
 \begin{frame}{Introduction}{Jig Swap Puzzle Types}
-\onslide<1->{There are three primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is unknown.} 
+\onslide<1->{There are three primary jig swap puzzle types as formalized by~\cite{gallagher2012}. In all cases, the ``ground-truth'' input is \textbf{unknown}.} 
     \vfill
     \begin{itemize}
-        \item<2-> \textbf{Type~1}: Puzzle dimension and piece rotation are known.  May have ``anchor'' piece(s) fixed in the correct location(s).
+        \item<2-> \textbf{Type~1}: Puzzle dimensions and piece rotation are known.  Only piece location is unknown.
         \vfill
         \item<3-> \textbf{Type~2}: All piece locations and rotations unknown.  Puzzle dimensions may be known.
         \vfill
@@ -284,7 +284,7 @@
 
 \begin{frame}{Mixed-Bag Solver}{Basic Structure}
   \begin{center}
-    \fbox{\includegraphics[width=0.98\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
+    \fbox{\includegraphics[width=0.95\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
     \vfill    
   \end{center}
 \end{frame}
@@ -327,7 +327,7 @@
     \vspace{0.4em}
     \begin{itemize}
       \setlength\itemsep{0.8em}
-      \item \textbf{Input}: Set of puzzle pieces
+      \item \textbf{Input}: A bag of puzzle pieces
       \item \textbf{Output}: One or more disjoint, solved puzzles.
     \end{itemize}
     \vfill    
@@ -335,7 +335,7 @@
 	  \vspace{-0.4em}
   \end{itemize}
   \begin{center}
-    \fbox{\includegraphics[width=0.98\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
+    \fbox{\includegraphics[width=0.96\textwidth]{./images/cropped_algorithm_structure_overview.pdf}}
     \vfill    
   \end{center}
 \end{frame}
@@ -385,7 +385,7 @@
     \item \textbf{Role of Segmentation}: Provide structure to the set of puzzle pieces by partitioning them into disjoint segments
     \begin{itemize}
       \vspace{0.4em}
-      	\item \textbf{Input}: Set of puzzle pieces
+      	\item \textbf{Input}: A bag of puzzle pieces
   		  \vspace{0.6em}
       \item \textbf{Output}: Set of saved segments
     \end{itemize}
@@ -453,12 +453,11 @@
   \begin{center}
 	  \begin{tabular}{ 
 	    >{\centering\arraybackslash}m{0.8\textwidth}}
-	
-		    \fbox{\includegraphics[scale=0.13]{./images/segmentation/pomeranz_805_8.jpg}}
+		    \fbox{\includegraphics[scale=0.125]{./images/segmentation/pomeranz_805_8.jpg}}
 		    \\[-0.2em]~\\[-0.2em]
 		    Image~(a) \textendash { }805~Pieces~\cite{pomeranzBenchmarkImages}
 	      \\~\\[-0.2em]
-		    \fbox{\includegraphics[scale=0.13]{./images/segmentation/mcgill_540_20.jpg}}
+		    \fbox{\includegraphics[scale=0.125]{./images/segmentation/mcgill_540_20.jpg}}
 	      \\[-0.2em]~\\[-0.2em]
 		    Image~(b) \textendash { }540~Pieces~\cite{mcgillImageDatabase}
 	  \end{tabular}
@@ -577,10 +576,10 @@
   \vspace{-.4em}
   {\small 
   \begin{center}
-	  \begin{tabular}{>{\centering\arraybackslash}b{0.2\textwidth} >{\centering\arraybackslash}b{0.78\textwidth} }
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.2\textwidth} >{\centering\arraybackslash}b{0.76\textwidth} }
 	
-		    \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_pieces_segment_1.jpg}} 
-		    & \fbox{\includegraphics[scale=0.25]{./images/stitching/stitching_pieces_segment_2.jpg}}
+		    \fbox{\includegraphics[scale=0.23]{./images/stitching/stitching_pieces_segment_1.jpg}} 
+		    & \fbox{\includegraphics[scale=0.23]{./images/stitching/stitching_pieces_segment_2.jpg}}
 		    \\~\\
 		    \textbf{Segment \#1} & \textbf{Segment \#2}
 	  \end{tabular}
@@ -674,7 +673,7 @@
   {\small 
   \begin{center}
   \setlength{\tabcolsep}{0pt}
-	  \begin{tabular}{>{\centering\arraybackslash}b{0.17\textwidth} >{\centering\arraybackslash}b{0.24\textwidth}>{\centering\arraybackslash}b{0.20\textwidth}>{\centering\arraybackslash}b{0.185\textwidth}}
+	  \begin{tabular}{>{\centering\arraybackslash}b{0.175\textwidth} >{\centering\arraybackslash}b{0.24\textwidth}>{\centering\arraybackslash}b{0.20\textwidth}>{\centering\arraybackslash}b{0.185\textwidth}}
 		    \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
 		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}
 		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
@@ -713,7 +712,7 @@
 	  \begin{itemize}
 	    \setlength\itemsep{0.8em}
 	    \item Only a single segment cluster remains
-	    \item Maximum similarity between any segment clusters is below a predefined threshold~(e.g.,~0.1)
+	    \item Maximum similarity between any segment clusters is below a predefined threshold
 	  \end{itemize} 
 	  \vspace{1.5em}
 	  \item All remaining segment clusters are passed to the next solver stage.
@@ -726,15 +725,7 @@
 
 \subsection{Final Seed Piece Selection}
 \begin{frame}{Final Seed Piece Selection}{Mixed-Bag Solver Stage \#4}
-    \onslide<1->{
-      \begin{block}{\textbf{Paikin~\& Tal}}
-        \vspace{0.4em}
-        \begin{itemize}
-          \item All puzzle seeds are selected greedily at run time, which often leads to poor decisions.
-        \end{itemize}
-      \end{block}
-    }
-    \onslide<2->{    
+    \onslide<1->{    
       \begin{block}{\textbf{Mixed-Bag Solver}} 
         \vspace{0.4em}
         \begin{itemize}
@@ -747,8 +738,14 @@
           \end{itemize}
           \vspace{0.6em}     
           \item A single seed piece is selected from each segment cluster
-          \vspace{0.6em}     
-          \item Each seed piece is ``distinctive'' as defined by Paikin~\& Tal
+        \end{itemize}
+      \end{block}
+    }
+    \onslide<2->{
+      \begin{block}{\textbf{Paikin~\& Tal}}
+        \vspace{0.4em}
+        \begin{itemize}
+          \item All puzzle seeds are selected greedily at run time, which often leads to poor decisions.
         \end{itemize}
       \end{block}
     }
@@ -920,16 +917,16 @@
   \begin{figure}
     \centering
     \begin{tabular}{ 
-      >{\centering\arraybackslash}m{0.44\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
+      >{\centering\arraybackslash}m{0.44\textwidth} >{\centering\arraybackslash}m{0.44\textwidth} }
 	    \onslide<1->{
-	      \fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1.jpg}}
+	      \fbox{\includegraphics[width=0.40\textwidth]{./images/muffins_300x200_type1.jpg}}
 	    } &
-	    \only<2>{\fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1_EDAS.jpg}}}\only<3>{\fbox{\includegraphics[width=0.42\textwidth]{./images/muffins_300x200_type1_SEDAS.jpg}}}
+	    \only<2>{\fbox{\includegraphics[width=0.40\textwidth]{./images/muffins_300x200_type1_EDAS.jpg}}}\only<3>{\fbox{\includegraphics[width=0.40\textwidth]{./images/muffins_300x200_type1_SEDAS.jpg}}}
 	    \\ ~\\
 	    \onslide<1->{
-	      {\small Solver Output}
+	      {\footnotesize Solver Output}
 	    } & 
-	    \only<2>{\small Direct Accuracy Reference Point}\only<3>{\small SEDAS Reference Points} 
+	    \only<2>{\footnotesize Direct Accuracy Reference Point}\only<3>{\footnotesize SEDAS Reference Points} 
 	    \\ ~\\
   \end{tabular}
   \end{figure}
@@ -942,7 +939,7 @@
 
 \subsection{Neighbor Accuracy}
 \begin{frame}{Quantifying Solver Quality}{Standard and Enhanced Neighbor Accuracy}
-  \onslide<1->{
+  \onslide<2->{
     \begin{itemize}
       \item \textbf{Standard Neighbor Accuracy}: Ratio of puzzle piece sides adjacent in both the original and solved images, $a$, versus the total number of sides, $n \cdot q$
     \end{itemize}
@@ -953,7 +950,7 @@
     \vspace{-1em}
     \vfill
   }
-  \onslide<2->{
+  \onslide<3->{
     \begin{itemize}
       \item \textbf{Enhanced Neighbor Accuracy Score (ENAS)}: Modified neighbor accuracy that accounts for missing and extra pieces.
     \end{itemize}
@@ -963,7 +960,7 @@
     \end{equation}
     \vspace{-0.5em}
   }
-  \onslide<3->{
+  \onslide<4->{
     \vfill  
     \begin{itemize}
       \item \textbf{Neighbor Accuracy Range}: 0 to 1
@@ -1083,10 +1080,10 @@
 
 
 \begin{frame}{Determining Input Puzzle Count}{Visual Comparison of a Misclassified Image}
-  \begin{tabular}{ >{\centering\arraybackslash}m{0.465\textwidth} >{\centering\arraybackslash}m{0.465\textwidth} }
-	  \fbox{\includegraphics[width=0.43\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}
+  \begin{tabular}{ >{\centering\arraybackslash}m{0.44\textwidth} >{\centering\arraybackslash}m{0.44\textwidth} }
+	  \fbox{\includegraphics[width=0.415\textwidth]{./images/single_puzzle/pomeranz_805_14.jpg}}
 	  &
-	  \fbox{\includegraphics[width=0.43\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}  
+	  \fbox{\includegraphics[width=0.415\textwidth]{./images/single_puzzle/pomeranz_805_12.jpg}}  
 	  \\~\\	
 	  \small Perfectly Reconstructed Image~(a)
 	  & 
@@ -1387,6 +1384,20 @@
 %%%%%%%%%%%%%%%%
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%               APPENDIX / BACK-UP SLIDES                %%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Stop numbering the slides
+\backupbegin
+
+% Add an appendix slide to break up the flow
+\appendix
+
+\section*{}  % Close the previous section
+
+\section{Conclusions}
 \subsection{Future Work}
 \begin{frame}{Conclusions}{Future Work}
   \begin{itemize}
@@ -1405,20 +1416,7 @@
 \end{frame}
 %%%%%%%%%%%%%%%%
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%               APPENDIX / BACK-UP SLIDES                %%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Stop numbering the slides
-\backupbegin
-
-% Add an appendix slide to break up the flow
-\appendix
-
 % Add the list of references
-\section*{}  % Close the previous section
 \begin{frame}[t,allowframebreaks]{List of References}
 	\bibliographystyle{ieeetr}
 	{\tiny \bibliography{references}}
