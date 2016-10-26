@@ -31,7 +31,7 @@
 %\setbeamercolor{palette sidebar primary}{fg=frametitle.bg} % Slide titles (i.e., not slide sections)
 
 \setbeamercolor{section in toc}{use=palette sidebar secondary,fg=palette sidebar secondary.fg} 
-\setbeamercolor{subsection in toc}{use=normal text,fg=palette normal text.fg} 
+\setbeamercolor{subsection in toc}{use=normal text,fg=normal text.fg} 
 \setbeamercolor{block title}{fg=spartanBlue} % Color of headings
 \setbeamercolor{local structure}{fg=spartanBlue} % Color of enumerated items (e.g. lists, bullets, etc.)
 \setbeamercolor{bibliography item}{use=local structure,fg=local structure.fg} % Color number of bibliography items
@@ -75,6 +75,8 @@
 	  \finalpage{{\Large \textbf{#1}}}
   \end{frame}}
 }
+% Make a colored fbox
+\newcommand{\cfbox}[2]{\colorlet{currentcolor}{.}{\color{#1}\fbox{\color{currentcolor}#2}}}
 
 
 
@@ -157,13 +159,6 @@
 \end{frame}}
 %%%%%%%%%%%%%%%%
 
-
-
-%% Optional Table of Contents
-%\begin{frame}{Agenda}{}
-%	\tableofcontents
-%\end{frame}
-%%%%%%%%%%%%%%%%%
 
 
 
@@ -687,17 +682,19 @@
 
 \begin{frame}{Hierarchical Segment Clustering}{Example -- Single Linking}
   {\small 
-  \begin{center}
-  \setlength{\tabcolsep}{0pt}
-	  \begin{tabular}{>{\centering\arraybackslash}b{0.45\textwidth}>{\centering\arraybackslash}b{0.20\textwidth}>{\centering\arraybackslash}b{0.185\textwidth}}
-        \fbox{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
-		    \hspace{0.1in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}}
-		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
-		    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_4.jpg}
-		    \\~\\
-		    Segment Cluster 1 & Segment 3 & Segment 4
-	  \end{tabular}
-	\end{center}
+    {\setlength\fboxrule{1.25pt}
+		  \begin{center}
+		  \setlength{\tabcolsep}{0pt}
+			  \begin{tabular}{>{\centering\arraybackslash}b{0.45\textwidth}>{\centering\arraybackslash}b{0.20\textwidth}>{\centering\arraybackslash}b{0.185\textwidth}}
+		        \cfbox{spartanBlue}{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
+				    \hspace{0.025in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}}
+				    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
+				    & \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_4.jpg}
+				    \\~\\
+				    Segment Cluster 1 & Segment 3 & Segment 4
+			  \end{tabular}
+			\end{center}
+		}
 	}
 \end{frame}
 
@@ -705,17 +702,19 @@
 
 \begin{frame}{Hierarchical Segment Clustering}{Example -- Single Linking}
   {\small 
-  \begin{center}
-  \setlength{\tabcolsep}{0pt}
-	  \begin{tabular}{>{\centering\arraybackslash}b{0.45\textwidth} >{\centering\arraybackslash}b{0.45\textwidth}}
-		   \fbox{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
-		    \hspace{0.1in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}}
-		    & \fbox{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
-		    \hspace{0.1in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_4.jpg}}
-		    \\~\\
-		    Segment Cluster 1 & Segment Cluster 2
-	  \end{tabular}
-	\end{center}
+    {\setlength\fboxrule{1.25pt}
+		  \begin{center}
+		  \setlength{\tabcolsep}{0pt}
+			  \begin{tabular}{>{\centering\arraybackslash}b{0.45\textwidth} >{\centering\arraybackslash}b{0.45\textwidth}}
+				   \cfbox{spartanBlue}{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_1.jpg}
+				    \hspace{0.025in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_2.jpg}}
+				    & \cfbox{spartanYellow}{\includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_3.jpg}
+				    \hspace{0.025in} \includegraphics[scale=0.25]{./images/clustering/mcgill_20_segment_4.jpg}}
+				    \\~\\
+				    Segment Cluster 1 & Segment Cluster 2
+			  \end{tabular}
+			\end{center}
+		}
 	}
 \end{frame}
 
@@ -988,14 +987,14 @@
 %%%%%%%%%%%%%%%%
 
 
-\begin{frame}{Quantifying Solver Quality}{Visualizing Accuracy}
-  \begin{itemize}
-    \item The thesis includes visualization standards for direct and neighbor accuracy.
-    \vfill
-    \item They are not reviewed here due to limited time.
-  \end{itemize}
-\end{frame}
-%%%%%%%%%%%%%%%%
+%\begin{frame}{Quantifying Solver Quality}{Visualizing Accuracy}
+%  \begin{itemize}
+%    \item The thesis includes visualization standards for direct and neighbor accuracy.
+%    \vfill
+%    \item They are not reviewed here due to limited time.
+%  \end{itemize}
+%\end{frame}
+%%%%%%%%%%%%%%%%%
 
 
 
@@ -1322,7 +1321,7 @@
           \begin{axis}[
             height=8cm, width=12cm,
             axis background/.style={fill=gray!10},
-            title=\textbf{Effect of the Number of Input Puzzles on ENAS},
+            title=\textbf{Effect of the Number of Input Puzzles on Perfect Reconstruction},
             xlabel={\textbf{Number of Input Puzzles}},
             ylabel={\textbf{Perfect Reconstruction (\%)}},
             xmin=1.5, xmax=5.5,
@@ -1396,6 +1395,14 @@
       \item Introduced the first set of solver quality metrics for Mixed-Bag puzzles.
     \end{itemize}  
   }
+\end{frame}
+%%%%%%%%%%%%%%%%
+
+
+
+%% Optional Table of Contents
+\begin{frame}{\textbf{Summary of Topics}}{}
+	\tableofcontents
 \end{frame}
 %%%%%%%%%%%%%%%%
 
