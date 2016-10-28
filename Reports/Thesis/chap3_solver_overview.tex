@@ -205,7 +205,7 @@ As mentioned previously, a mini-assembly is performed for each stitching piece $
 Equation~\eref{eq:segmentOverlap} defines the overlap coefficients between segment, $\Phi_i$, and any other segment, $\Phi_j$. The intersection between mini-assembly output, $\MiniAssembly_{\zeta_x}$ and segment, $\Phi_j$ is normalized with respect to the mini-assembly's size as well as potentially the size of segment $\Phi_j$, since the latter will dictate the maximum overlap if $|\Phi_j| < |\MiniAssembly_{\zeta_x}|$.  
 
 \begin{equation} \label{eq:segmentOverlap}
-  Overlap_{\Phi_i,\Phi_j} = \argmax_{\zeta_x \in \Phi_i} {\frac{|\MiniAssembly_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|\MiniAssembly_{\zeta_x}|, |\Phi_j|)}}
+  Overlap_{\Phi_i,\Phi_j} = \max\limits_{\zeta_x \in \Phi_i} {\frac{|\MiniAssembly_{\zeta_x} \bigcap \Phi_j|}{\text{min}(|\MiniAssembly_{\zeta_x}|, |\Phi_j|)}}
 \end{equation}
 
 The outputs of the mini-assemblies will vary between segments based off their respective stitching pieces as well as potentially the segment sizes.  Hence, in most cases, the overlap coefficient is asymmetric, meaning: $Overlap_{\Phi_i,\Phi_j} \neq Overlap_{\Phi_j,\Phi_i}$.  All of these asymmetric, inter-segment, overlap coefficients are combined into an $m$ by $m$ matrix, where $m$ is the number of saved segments.  Section~\ref{sec:quantifyingSegmentSimilarity} defines how this ``Segment Overlap Matrix'' is normalized to quantify inter-segment similarity.  
@@ -252,17 +252,17 @@ Like the overlap matrix, the initial segment similarity matrix, $\Gamma$, is siz
 
 \subsection{Updating the Similarity Matrix via Single Linking}
 
-After two clusters merge, the Mixed-Bag Solver uses the Single Link paradigm when updating the similarity matrix.  Hence, the similarity between any pair of segment clusters is equal to the similarity of the two most similar segments from each cluster.  This approach is required because two segment clusters may only be adjacent along the border of two of the composite segments.  
+Whenever two clusters merge, the similarity matrix is updated using the Single Link paradigm, which means that the similarity between any pair of clusters is equal to the similarity of the two most similar segments from each cluster.  This approach is required because two segment clusters may only be adjacent along the border of two of the composite segments.  
 
-If segment clusters $\Sigma_x$ and $\Sigma_y$ are merged, then Equation~\eref{eq:segmentClusterMerge} defines the similarity between this new merged cluster any other segment cluster $\Sigma_z$.  Note that segment, $\Phi_i$, is a member of the union of segment clusters $\Sigma_x$ and $\Sigma_y$, while segment, $\Phi_j$, is a member of segment cluster $\Sigma_z$.
+If segment clusters $\Sigma_x$ and $\Sigma_y$ are merged, then Equation~\eref{eq:segmentClusterMerge} defines the similarity between this new merged cluster and any other segment cluster $\Sigma_z$.  Note that segment, $\Phi_i$, is a member of the union of segment clusters $\Sigma_x$ and $\Sigma_y$, while segment, $\Phi_j$, is a member of segment cluster $\Sigma_z$.
 
 \begin{equation} \label{eq:segmentClusterMerge}
-	\omega_{x \cup y,z} = \argmax_{\Phi_i \in (\Sigma_x \cup \Sigma_y)} \bigg( \argmax_{\Phi_j \in \Sigma_z} \omega_{i,j} \bigg) 
+	\omega_{x \cup y,z} = \max_{\Phi_i \in (\Sigma_x \cup \Sigma_y)} \bigg( \max_{\Phi_j \in \Sigma_z} \omega_{i,j} \bigg) 
 \end{equation}
 
 \subsection{Terminating Hierarchical Clustering}
 
-Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not necessarily continuing merging the segment clusters  until only a single cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy, without merging unrelated segments.
+Unlike traditional hierarchical clustering, the Mixed-Bag Solver does not necessarily continue merging the segment clusters  until only a single cluster remains. Rather, the solver continues clustering until the maximum similarity between any of the remaining clusters drops below a predefined threshold.  In this thesis, a minimum inter-cluster similarity of $0.1$ provided sufficient clustering accuracy, without merging unrelated segments.
 
 The number of segment clusters remaining at the end of hierarchical clustering represents the Mixed-Bag Solver's estimate of the number of ground-truth inputs.  The segment clusters are passed to the next stage to determine the seed pieces for the final output puzzles.
 
