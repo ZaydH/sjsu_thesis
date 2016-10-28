@@ -53,6 +53,12 @@
 \renewcommand{\topfraction}{1.0}
 \renewcommand{\textfraction}{0.0}
 
+% Prevent hyphenation in the TOC, List of Figures, and List of Tables
+\makeatletter
+\renewcommand{\@tocrmarg}{2.3em plus1fil}
+\makeatother
+
+
 % Definitions for Algorithmic
 \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
 \algnewcommand\algorithmicforeach{\textbf{for each}}
