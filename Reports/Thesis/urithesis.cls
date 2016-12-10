@@ -759,6 +759,11 @@ San Jose State University thesis format]
     \vskip 1.0ex \@plus\p@
   {\@dottedtocline{0}{1.5em}{1.5em}{\bfseries\noindent#1}{#2}}%
 }
+% Make table of contents entries for numbered chapter headers.
+\newcommand*\l@chapterapp[2]{%
+    \vskip 1.0ex \@plus\p@
+  {\@dottedtocline{0}{1.5em}{1.5em}{\noindent#1}{#2}}%
+}
 
 % Make table of contents entries for unnumbered chapter headers.
 \newcommand*\l@chapterx[2]{%
@@ -943,10 +948,10 @@ San Jose State University thesis format]
                        \typeout{\@chapapp\space\thechapter.}%
                        \if@gotfirstappendix
                          \@ifundefined{@usesingappend}{
-                             \addcontentsline{toc}{chapter}%
+                             \addcontentsline{toc}{chapterapp}%
                                   {\protect\numberline{\thechapter}#1}%
                          }{%
-                   \addcontentsline{toc}{chapter}{#1}}%
+                   \addcontentsline{toc}{chapterapp}{#1}}%
                \else
                          \addcontentsline{toc}{chapter}%
                                    {\protect\numberline{\thechapter}#1}%
@@ -1005,13 +1010,14 @@ my {\@worktype} for scholarly purposes.
 \begin{center}{
 \ifthenelse{\equal{\projectType}{Project}}% uppercase for thesis, not uppercase for report
            {{\@title} \\ }
-           { \MakeUppercase{\@title} \\ }
+           { \singlespace \MakeUppercase{\@title} \\ } % ZSH per thesis guidelines
 }
 \end{center}
 
 
 \vfill
 \begin{center}{
+\doublespace % ZSH per thesis guidelines
 \noindent A \projectType\\ %\MakeUppercase{\@worktype}
 Presented to\\
 The Faculty of the Department of Computer Science\\
@@ -1021,6 +1027,7 @@ San Jos\'{e} State University\\
 
 \vfill
 \begin{center}
+\doublespace % ZSH per thesis guidelines
   In Partial Fulfillment\\
   of the Requirements for the Degree\\
   Master of Science \\
@@ -1028,6 +1035,7 @@ San Jos\'{e} State University\\
 
 \vfill
 \begin{center}
+\doublespace % ZSH per thesis guidelines
 by\\
   {\@author}\\
  \graduationMonth\ {\@copyrightyear}\\
@@ -1038,6 +1046,7 @@ by\\
 \null
 \vfill
 \begin{center}
+\doublespace % ZSH per thesis guidelines
 \copyright~{\@copyrightyear}\\
 {\@author}\\
 ALL RIGHTS RESERVED\\
@@ -1061,10 +1070,11 @@ The Designated \projectType\ Committee Approves the \projectType\ Titled\\
 %\begin{center}{
 \ifthenelse{\equal{\projectType}{Project}}% uppercase for thesis, not uppercase for report
            {{\@title} \\ }
-           { \MakeUppercase{\@title} \\ }
+           { \singlespace \MakeUppercase{\@title} \\ } % ZSH per thesis guidelines
 %}
 %\end{center}
 \vspace{24pt}
+\doublespace
 by\\
 {\@author}\\
 \vspace{24pt}
@@ -1105,7 +1115,7 @@ SAN JOS\'{E} STATE UNIVERSITY\\
 \def\abstractpages{\@ifundefined{@abstract}{}{
   \newpage
   \sloppy
-  \chapter*{ABSTRACT\\ \vspace{12pt} \@title\\ \vspace{12pt} by \@author}
+  \chapter*{ABSTRACT\\ {\normalfont \vspace{12pt} \@title\\ \vspace{12pt} by \@author}}
 %  \addcontentsline{toc}{chapterx}{ABSTRACT}
   \thispagestyle{empty}
   \pagestyle{empty}
