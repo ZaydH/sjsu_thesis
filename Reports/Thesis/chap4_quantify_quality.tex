@@ -1,10 +1,10 @@
 \chapter{Quantifying and Visualizing the Quality of a Mixed-Bag Solver Output}\label{chap:quantifyingSolverQuantify}
 
-Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input(s) in many cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho~\textit{et al.}~\cite{cho2010} defined two such metrics, namely: direct accuracy and neighbor accuracy. These metrics have been used by others including~\cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This chapter discusses the existing quality metrics and outlines a set of enhancements to make these metrics more applicable to Mixed-Bag puzzles.  This thesis also proposes advanced metrics for quantifying the best buddy attributes of an image.  The final two sections of this chapter outline new standards to visualize the quality of solver accuracy as well as the best buddy profile of images.
+Modern jig swap puzzle solvers are not able to perfectly reconstruct the ground-truth input(s) in many cases.  As such, quantifiable metrics are required to objectively compare the quality of outputs from different solvers.  Cho~\textit{et al.}~\cite{cho2010} defined two such metrics, namely direct accuracy and neighbor accuracy. These metrics have been used by others including~\cite{sholomon2013, pomeranz2011, paikin2015, son2014, gallagher2012}.  This chapter discusses the existing quality metrics and outlines a set of enhancements to make these metrics more applicable to Mixed-Bag puzzles.  This thesis also proposes advanced metrics for quantifying the best buddy attributes of an image.  The final two sections of this chapter outline new standards to visualize the quality of solver accuracy as well as the best buddy profile of images.
 
 \section{Direct Accuracy}\label{sec:directAccuracy}
 
-Direct accuracy is a relatively na\"{\i}ve quality metric; it is defined as the fraction of pieces placed in the same location in both the ground-truth (i.e., original) and solved images with respect to the total number of pieces. Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy ($DA$), where $n$ is the number of pieces and $c$ is the number of pieces in the solved image that are placed in their original (i.e., correct) location.  A solved image is referred to as ``perfectly reconstructed'' if the location (and rotation, if applicable) of all pieces match the original image (i.e.,~$DA=1$).
+Direct accuracy is a relatively na\"{\i}ve quality metric; it is defined as the fraction of pieces placed in the same location in both the ground-truth (i.e., original) and solved images with respect to the total number of pieces. Equation~\eref{eq:directAccuracy} shows the formal definition of direct accuracy (DA), where $n$ is the number of pieces and $c$ is the number of pieces in the solved image that are placed in their original (i.e., correct) location.  A solved image is referred to as ``perfectly reconstructed'' if the location (and rotation, if applicable) of all pieces match the original image (i.e.,~$DA=1$).
 
 \begin{equation} \label{eq:directAccuracy}
   DA = \frac{c}{n}
@@ -14,13 +14,13 @@ This thesis proposes two new direct accuracy metrics, Enhanced Direct Accuracy S
 
 \subsection{Enhanced Direct Accuracy Score}\label{sec:enhancedDirectAccuracyScore}
 
-The standard direct accuracy metric does not account for the possibility that there may be pieces from multiple input puzzles in the same solver output image.  For a given puzzle, $P_i$, in the set of input puzzles~$P$ (i.e., $P_i \in P$) and a set of solved puzzles~$S$ where $S_j \in S$, Enhanced Direct Accuracy Score (EDAS) is defined as shown in Equation~\eref{eq:enhancedDirectAccuracyScore}.  $c_{i,j}$~is the number of pieces from input puzzle~$P_i$ correctly placed (with no rotation for Type~2 puzzles) in solved puzzle~$S_j$ while~$n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle~$P_k$ (where~$k \ne i$) that are also in~$S_j$.
+The standard direct accuracy metric does not account for the possibility that there may be pieces from multiple input puzzles in the same solver output image.  For a given puzzle, $P_i$, in the set of input puzzles~$P$ (i.e., $P_i \in P$) and a set of solved puzzles~$S$ where $S_j \in S$, EDAS is defined as shown in Equation~\eref{eq:enhancedDirectAccuracyScore}.  $c_{i,j}$~is the number of pieces from input puzzle~$P_i$ correctly placed (with no rotation for Type~2 puzzles) in solved puzzle~$S_j$ while~$n_i$ is the number of pieces in puzzle $P_i$. $m_{k,j}$ is the number of pieces from an input puzzle~$P_k$ (where~$k \ne i$) that are also in~$S_j$.
 
 \begin{equation} \label{eq:enhancedDirectAccuracyScore}
   EDAS_{P_i} = \max\limits_{S_j \in S}\frac{c_{i,j}}{n_i + \sum_{k \ne i}(m_{k,j})}
 \end{equation}
 
-Standard direct accuracy (see Equation~\eref{eq:directAccuracy}) and EDAS are equivalent when solving a single puzzle. What is more, like standard direct accuracy, a perfectly reconstructed puzzle will always have an EDAS of~1. 
+Standard direct accuracy (see Equation~\eref{eq:directAccuracy}) and EDAS are equivalent when solving a single puzzle. Moreover, like standard direct accuracy, a perfectly reconstructed puzzle will always have an EDAS of~1. 
 
 For Mixed-Bag puzzles, EDAS marks as incorrect any pieces from~$P_i$ that are not in~$S_j$ by dividing by~$n_i$.  What is more, since pieces from $P_i$ may have been placed in more than one of the output puzzles, EDAS is calculated as the maximum value across all solved puzzles, $S$.  In addition, the summation of term~$m_{k,j}$ penalizes for any puzzle pieces in $S_j$ that are not from~$P_i$.  It is through the combination of these three techniques that EDAS takes into account both extra and missing pieces in the solver output.
 
@@ -28,7 +28,7 @@ It is important to note that EDAS is a score and not a measure of accuracy. Whil
 
 \subsection{Shiftable Enhanced Direct Accuracy Score}\label{sec:shiftableEnhancedDirectAccuracy}
 
-Standard direct accuracy is vulnerable to shifts in the solved image where even very minor placement errors can cause the reported accuracy to drop to~0.  Figure~\ref{fig:directAccuracyOnePieceEffect} shows a ground-truth image and an actual solver output when the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this shifted all other pieces to the right one location causing the direct accuracy to drop to zero.  Had this same piece been misplaced along either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy has a significant flaw.  This thesis proposes Shiftable Enhanced Direct Accuracy Score (SEDAS) to address the often misleadingly punitive nature of standard direct accuracy. 
+Standard direct accuracy is vulnerable to shifts in the solved image where even very minor placement errors can cause the reported accuracy to drop to~0.  Figure~\ref{fig:directAccuracyOnePieceEffect} shows a ground-truth image and an actual solver output when the puzzle boundaries were not fixed.  Note that only a single piece is misplaced; this shifted all other pieces to the right one location causing the direct accuracy to drop to zero.  Had this same piece been misplaced along either the right or bottom side of the image, the direct accuracy would have been largely unaffected.  The fact that direct accuracy can give such vastly differing results for essentially the same error shows that direct accuracy has a significant flaw.  This thesis proposes SEDAS to address the often misleadingly punitive nature of standard direct accuracy. 
 
 \begin{figure}
   \centering
@@ -42,7 +42,7 @@ Standard direct accuracy is vulnerable to shifts in the solved image where even 
   \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
 
-Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore} is the formal definition of $SEDAS$.  $d_{min}$ represents the Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece.  Similarly, $L$ is the set of all puzzle locations within radius $d_{min}$ (inclusive) of the upper left corner of the image.  Given that $l$ is a location in $L$, the term, $c_{i,j}$ from Equation~\eref{eq:enhancedDirectAccuracyScore} has been changed to $c_{i,j,l}$ to denote that $l$ is used as a custom reference point when determining the number of pieces correctly placed in the solved puzzle.  
+Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore} is the formal definition of SEDAS.  $d_{min}$ represents the Manhattan distance between the upper left corner of the solved image and the nearest puzzle piece.  Similarly, $L$ is the set of all puzzle locations within radius $d_{min}$ (inclusive) of the upper left corner of the image.  Given that $l$ is a location in $L$, the term $c_{i,j}$ from Equation~\eref{eq:enhancedDirectAccuracyScore} has been changed to $c_{i,j,l}$ to denote that $l$ is used as a custom reference point when determining the number of pieces correctly placed in the solved puzzle.  
 
 \begin{equation} \label{eq:shiftableEnhancedDirectAccuracyScore}
   SEDAS_{P_i} = \max\limits_{l \in L} \bigg( \max\limits_{S_j \in S}\frac{c_{i,j,l}}{n_i + \sum_{k \ne i}(m_{k,j})} \bigg)
@@ -50,7 +50,7 @@ Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore} is the formal definition
 
 In the standard definition of direct accuracy proposed by Cho~\textit{et al.}, $l$ is fixed at the upper left corner of the image.  In contrast, SEDAS shifts this reference point within a radius of the upper left corner of the image in order to find a more meaningful value for direct accuracy. 
 
-Rather than defining SEDAS based off the distance $d_{min}$, an alternative approach is to use the location anywhere in the solved image, $S_j$ that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can take significantly longer to compute in particular when the solved puzzle has several thousand pieces.  SEDAS balances the need for a meaningful direct accuracy score against computational efficiency.
+Rather than defining SEDAS based on the distance $d_{min}$, an alternative approach is to use the location anywhere in the solved image, $S_j$, that maximizes Equation~\eref{eq:shiftableEnhancedDirectAccuracyScore}.  However, that approach can take significantly longer to compute in particular when the solved puzzle has several thousand pieces.  SEDAS balances the need for a meaningful direct accuracy score against computational efficiency.
 
 \subsection{Necessity of Using Both EDAS and SEDAS}\label{sec:importanceEdasSedas}
 
@@ -108,6 +108,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 
 \begin{table}[tb]
 	\begin{center}
+	\caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}
   		\begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
     		Wrong Puzzle & Wrong Location & Wrong Rotation & Correct Location  & No Piece Present  \\ \hline
@@ -116,7 +117,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
  \hline
 		\end{tabular}
 	\end{center}
-\caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
+\label{tab:directAccuracyColors}
 \end{table}
 
 \begin{figure}[tb]
@@ -130,7 +131,6 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 \\~\\
 	(c) EDAS Visualization & (d) SEDAS Visualization  
   \end{tabular}
-
 \caption{Example Solver Output Visualizations for EDAS and SEDAS}
 \label{fig:directAccuracyVisualization}
 \end{figure}
@@ -143,6 +143,7 @@ Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visuali
 
 \begin{table}[tb]
 \begin{center}
+  \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}
   \begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
     Wrong Puzzle & Wrong Neighbor & Correct Neighbor  & No Piece Present  \\ \hline
@@ -151,7 +152,7 @@ Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visuali
  \hline
   \end{tabular}
 \end{center}
-\caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
+\label{tab:neighborAccuracyColors}
 \end{table}
 
 \begin{figure}[tb]
@@ -182,6 +183,7 @@ Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associate
 
 \begin{table}[tb]
 \begin{center}
+  \caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}
   \begin{tabular}{ | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | }
   
    \hline
@@ -192,7 +194,7 @@ Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associate
 
   \end{tabular}
 \end{center}
-\caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}\label{tab:bestBuddyColors}
+\label{tab:bestBuddyColors}
 \end{table}
 
 

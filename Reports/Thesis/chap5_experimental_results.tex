@@ -4,10 +4,11 @@ A set of experiments were performed to compare the performance of the Mixed-Bag 
 
 The only difference in the two solvers' test conditions arises from the fact that Paikin~\& Tal's algorithm requires that the number of input puzzles be specified. In contrast, the Mixed-Bag Solver is not supplied any additional information beyond the puzzle pieces.  This gives Paikin~\& Tal's algorithm a clear advantage.
 
-To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm when provided multiple ground-truth inputs, this thesis used Pomeranz~\textit{et al.}'s benchmark containing twenty, 805~piece images~\cite{pomeranzBenchmarkImages}.  In each test, a specified number of images (ranging from two to five) were randomly selected, without replacement, from the image pool.  The two solvers' outputs were then compared.  Table~\ref{tab:numberSolverIterations} shows the number of times each solver was run for a specific input puzzle count. As explained in Section~\ref{sec:assemblerTimeComplexity}, the execution time of Paikin~\& Tal's assembler can grow cubicly, especially if the best buddy density is low.  As such, the solvers were run fewer times as the number of input puzzles increased.
+To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm when provided multiple ground-truth inputs, this thesis used Pomeranz~\textit{et al.}'s benchmark containing twenty, 805\=/piece images~\cite{pomeranzBenchmarkImages}.  In each test, a specified number of images (ranging from two to five) were randomly selected, without replacement, from the image pool.  The two solvers' outputs were then compared.  Table~\ref{tab:numberSolverIterations} shows the number of times each solver was run for a specific input puzzle count. As explained in Section~\ref{sec:assemblerTimeComplexity}, the execution time of Paikin~\& Tal's assembler can grow cubicly, especially if the best buddy density is low.  As such, the solvers were run fewer times as the number of input puzzles increased.
 
 \begin{table}[tb]
   \begin{center}
+    \caption{Number of Solver Iterations for Each Puzzle Input Count}
     \begin{tabular}{ |c||c|c|c|c| } 
       \Xhline{1pt}
        \# Puzzles    &  2 &  3 & 4 & 5 \\ 
@@ -16,7 +17,7 @@ To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm
        \Xhline{1pt}
     \end{tabular}
   \end{center}
-\caption{Number of Solver Iterations for Each Puzzle Input Count}\label{tab:numberSolverIterations}
+  \label{tab:numberSolverIterations}
 \end{table}
 
 \section{Accuracy Determining the Number of Input Puzzles}
@@ -25,7 +26,7 @@ For the Mixed-Bag Solver to provide meaningful outputs, it must be able to ident
 
 \subsection{Single Puzzle Solving}\label{sec:singlePuzzleSolving}
 
-The Mixed-Bag Solver was able to correctly identify the single ground-truth input for 17~out of the 20~images (i.e., 85\%~accuracy) in the Pomeranz~\textit{et al.}'s data set.  For the remaining three images, the Mixed-Bag Solver incorrectly found that the pieces came from two images, meaning, the error was at most only a single output puzzle. 
+The Mixed-Bag Solver was able to correctly identify the single ground-truth input for 17~out of the 20~images (i.e., 85\%~accuracy) in the Pomeranz~\textit{et al.}'s data set.  For the remaining three images, the Mixed-Bag Solver incorrectly found that the pieces came from two images, meaning that the error was at most only a single output puzzle. 
 
 Appendix~\ref{chap:incorreclyClassifiedSingleImages} shows the three misclassified images and the associated Mixed-Bag Solver outputs. The figures in the appendix show that the solver struggles to correctly identify the number of input puzzles when an image has large areas with little variation (e.g., a clear sky, smooth water, etc.). Two example images from the Pomeranz~\textit{et al.} dataset are shown in Figure~\ref{fig:pomeranzBestBuddiesVisualizations}.  The Mixed-Bag Solver was able to perfectly reconstruct image~(a); in contrast, the Mixed-Bag Solver incorrectly determined that the pieces from image~(b) came from two separate puzzles. The best buddy visualizations in Figure~\ref{fig:pomeranzBestBuddiesVisualizations} shows that image~(a) has a significantly higher best buddy density than image~(b) as well as fewer interior, non-adjacent best buddies.  It is these two factors that most contributed to the Mixed-Bag Solver being unable to determine the number of ground-truth inputs for the three misclassified images. 
 
@@ -34,10 +35,10 @@ Appendix~\ref{chap:incorreclyClassifiedSingleImages} shows the three misclassifi
   \begin{tabular}{ >{\centering\arraybackslash}m{0.47\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
 
 	\fbox{\includegraphics[scale=0.18]{./images/single_puzzle/pomeranz_805_14.jpg}} & \fbox{\includegraphics[scale=0.18]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}} \\~\\
-	Ground-Truth Image~(a) & Best Buddy Visualization of Image~(a) 
+	Ground-Truth Image~(a)~\cite{pomeranzBenchmarkImages} & Best Buddy Visualization of Image~(a) 
 \\~\\
 	\fbox{\includegraphics[scale=0.18]{./images/single_puzzle/pomeranz_805_12.jpg}} & \fbox{\includegraphics[scale=0.18]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}} \\~\\
-	Ground-Truth Image~(b) & Best Buddy Visualization of Image~(b) 
+	Ground-Truth Image~(b)~\cite{pomeranzBenchmarkImages} & Best Buddy Visualization of Image~(b) 
   \end{tabular}
 \caption{Comparison of Best Buddy Density and Interior Non-Adjacent Best Buddies for Two Images from the Pomeranz~\textit{et al.}~805~Piece Data Set}
 \label{fig:pomeranzBestBuddiesVisualizations}
@@ -106,6 +107,7 @@ In this set of experiments, the Mixed-Bag solver correctly determined the number
 
 \begin{table}[tb]
 \begin{center}
+\caption{Comparison of the Mixed-Bag and Paikin~\& Tal Solvers' Performance on Multiple Input Puzzles}
 \begin{tabular}{ c||c|c|c||c|c|c||c|c|c } 
  \toprule
  Puzzle & \multicolumn{3}{c||}{Average SEDAS} & \multicolumn{3}{c||}{Average ENAS} & \multicolumn{3}{c}{Perfect Reconstruction} \\ \cline{2-10}
@@ -122,7 +124,7 @@ In this set of experiments, the Mixed-Bag solver correctly determined the number
  \bottomrule
 \end{tabular}
 \end{center}
-\caption{Comparison of the Mixed-Bag and Paikin~\& Tal Solvers' Performance on Multiple Input Puzzles}\label{tab:tableSolverPerformanceComparison}
+\label{tab:tableSolverPerformanceComparison}
 \end{table}
 
 \begin{figure}[tb]
@@ -233,6 +235,7 @@ Appendix~\ref{chap:tenPuzzleSolving} contains the set of ten images that were in
 
 \begin{table}[tb]
 \begin{center}
+\caption{Comparison of the Image Shifting, SEDAS, and ENAS Results for the 10 Puzzle Data Set}
 \begin{tabular}{ c|c||c|c||c|c||c|c } 
  \toprule
  \multicolumn{2}{c||}{Image} & \multicolumn{2}{c||}{Shifted} & \multicolumn{2}{c||}{SEDAS} & \multicolumn{2}{c}{ENAS} \\
@@ -261,5 +264,5 @@ Appendix~\ref{chap:tenPuzzleSolving} contains the set of ten images that were in
  \bottomrule
 \end{tabular}
 \end{center}
-\caption{Comparison of the Image Shifting, SEDAS, and ENAS Results for the 10 Puzzle Data Set}\label{tab:pomeranzBestBuddiesVisualizations}
+\label{tab:pomeranzBestBuddiesVisualizations}
 \end{table}
