@@ -22,7 +22,7 @@ The standard direct accuracy metric does not account for the possibility that th
 
 Standard direct accuracy (see Equation~\eref{eq:directAccuracy}) and EDAS are equivalent when solving a single puzzle. Moreover, like standard direct accuracy, a perfectly reconstructed puzzle will always have an EDAS of~1. 
 
-For Mixed-Bag puzzles, EDAS marks as incorrect any pieces from~$P_i$ that are not in~$S_j$ by dividing by~$n_i$.  What is more, since pieces from $P_i$ may have been placed in more than one of the output puzzles, EDAS is calculated as the maximum value across all solved puzzles, $S$.  In addition, the summation of term~$m_{k,j}$ penalizes for any puzzle pieces in $S_j$ that are not from~$P_i$.  It is through the combination of these three techniques that EDAS takes into account both extra and missing pieces in the solver output.
+For Mixed-Bag puzzles, EDAS marks as incorrect any pieces from~$P_i$ that are not in~$S_j$ by dividing by~$n_i$.  Moreover, since pieces from $P_i$ may have been placed in more than one output puzzle, EDAS is calculated as the maximum value across all solved puzzles, $S$.  In addition, the summation of term~$m_{k,j}$ penalizes for any puzzle pieces in $S_j$ that are not from~$P_i$.  It is through the combination of these three techniques that EDAS takes into account both extra and missing pieces in the solver output.
 
 It is important to note that EDAS is a score and not a measure of accuracy. While its value is bounded between 0 and 1 (inclusive), it is not specifically defined as the number of correct placements divided by the total number of placements since the denominator of Equation~\eref{eq:enhancedDirectAccuracyScore} is greater than or equal to the number of pieces in both $P_i$ and $S_j$.
 
