@@ -306,6 +306,10 @@ San Jose State University thesis format]
 }
 
 \def\newchapter#1{%
+  % ZSH - Needed to comply with thesis guidelines
+  \setlength{\parskip}{0em}
+  \setlength{\abovedisplayshortskip}{-3.5ex} % Ensure equations are double spaced.
+  %%%%%%
   \if@gotfirstchapter\else
     \@gotfirstchaptertrue
     \initialstuff
@@ -746,11 +750,12 @@ San Jose State University thesis format]
 \def\@makechapterhead#1{{%
    \renewcommand{\baselinestretch}{1.0}\bfseries%
    \begin{center}
-   \rule{0in}{0.5in}%
+   %\rule{0in}{0.5in}%
+   \doublespace
    \MakeUppercase{\@chapapp}
-   \@ifundefined{@usesingappend}{\space\thechapter}{}\vspace{2.0ex}\\%
+   \@ifundefined{@usesingappend}{\space\thechapter}{}\vspace{0ex}\\%
    #1
-   \vskip 2.0ex
+   %\vskip 2.0ex
    \end{center}
 }}
 
@@ -862,13 +867,13 @@ San Jose State University thesis format]
 % These commands define the format of the headers for section,
 % subsection, and subsubsection commands.
 \renewcommand\section{%
-  \@startsection {section}{1}{\z@}{4.0ex}{0.01ex}%
+  \@startsection {section}{1}{\z@}{2.0ex}{0.01ex}%
     {\renewcommand{\baselinestretch}{1.0}\normalfont\normalsize\bfseries}}
 \renewcommand\subsection{%
-  \@startsection {subsection}{2}{\z@}{4.0ex}{0.01ex}%
+  \@startsection {subsection}{2}{\z@}{2.0ex}{0.01ex}%
     {\renewcommand{\baselinestretch}{1.0}\normalfont\normalsize\bfseries}}
 \renewcommand\subsubsection{%
-  \@startsection {subsubsection}{3}{\z@}{4.0ex}{0.01ex}%
+  \@startsection {subsubsection}{3}{\z@}{2.0ex}{0.01ex}%
     {\renewcommand{\baselinestretch}{1.0}\normalfont\normalsize\bfseries}}
 
 % These commands generate the figure/table/equation name, and records
@@ -967,7 +972,8 @@ San Jose State University thesis format]
                     \else
                       \@makechapterhead{#2}%
                       \@afterheading
-                    \fi}
+                    \fi
+               \vspace{-2ex}} % ZSH - Needed to ensure double space throughout
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Create pages of the thesis.
