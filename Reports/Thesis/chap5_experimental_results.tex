@@ -8,7 +8,7 @@ To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm
 
 \begin{table}[tb]
   \begin{center}
-    \caption{Number of Solver Iterations for Each Puzzle Input Count}
+    \caption{Number of Solver Iterations for Each Puzzle Input Count}\label{tab:numberSolverIterations}
     \begin{tabular}{ |c||c|c|c|c| } 
       \Xhline{1pt}
        \# Puzzles    &  2 &  3 & 4 & 5 \\ 
@@ -17,7 +17,6 @@ To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm
        \Xhline{1pt}
     \end{tabular}
   \end{center}
-  \label{tab:numberSolverIterations}
 \end{table}
 
 \section{Accuracy Determining the Number of Input Puzzles}
@@ -107,7 +106,7 @@ In this set of experiments, the Mixed-Bag solver correctly determined the number
 
 \begin{table}[tb]
 \begin{center}
-\caption{Comparison of the Mixed-Bag and Paikin~\& Tal Solvers' Performance on Multiple Input Puzzles}
+\caption{Comparison of the Mixed-Bag and Paikin~\& Tal Solvers' Performance on Multiple Input Puzzles}\label{tab:tableSolverPerformanceComparison}
 \begin{tabular}{ c||c|c|c||c|c|c||c|c|c } 
  \toprule
  Puzzle & \multicolumn{3}{c||}{Average SEDAS} & \multicolumn{3}{c||}{Average ENAS} & \multicolumn{3}{c}{Perfect Reconstruction} \\ \cline{2-10}
@@ -124,7 +123,6 @@ In this set of experiments, the Mixed-Bag solver correctly determined the number
  \bottomrule
 \end{tabular}
 \end{center}
-\label{tab:tableSolverPerformanceComparison}
 \end{table}
 
 \begin{figure}[tb]
@@ -235,7 +233,7 @@ Appendix~\ref{chap:tenPuzzleSolving} contains the set of ten images that were in
 
 \begin{table}[tb]
 \begin{center}
-\caption{Comparison of the Image Shifting, SEDAS, and ENAS Results for the 10 Puzzle Data Set}
+\caption{Comparison of the Image Shifting, SEDAS, and ENAS Results for the 10 Puzzle Data Set}\label{tab:pomeranzBestBuddiesVisualizations}
 \begin{tabular}{ c|c||c|c||c|c||c|c } 
  \toprule
  \multicolumn{2}{c||}{Image} & \multicolumn{2}{c||}{Shifted} & \multicolumn{2}{c||}{SEDAS} & \multicolumn{2}{c}{ENAS} \\
@@ -264,5 +262,4 @@ Appendix~\ref{chap:tenPuzzleSolving} contains the set of ten images that were in
  \bottomrule
 \end{tabular}
 \end{center}
-\label{tab:pomeranzBestBuddiesVisualizations}
 \end{table}
