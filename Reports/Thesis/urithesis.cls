@@ -308,7 +308,7 @@ San Jose State University thesis format]
 \def\newchapter#1{%
   % ZSH - Needed to comply with thesis guidelines
   \setlength{\parskip}{0em}
-  \setlength{\abovedisplayshortskip}{-3.5ex} % Ensure equations are double spaced.
+  \setlength{\abovedisplayshortskip}{-2ex} % Ensure equations are double spaced.
   %%%%%%
   \if@gotfirstchapter\else
     \@gotfirstchaptertrue
