@@ -106,7 +106,7 @@ In images with thousands of pieces, it is often difficult to visually determine 
 
 In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a single value (i.e., correctly or incorrectly placed).  As such, the direct accuracy visualization represents each puzzle by a square filled with one solid color.  A refinement used in this thesis is to subdivide the ``incorrect'' placements into a set of subcategories, namely in order of precedence: wrong puzzle, wrong location, and wrong rotation.  Note that the ``wrong puzzle'' classification applies only to Mixed-Bag puzzles and occurs when a piece in the solver output is not from the puzzle of interest, $P_i$.  Table~\ref{tab:directAccuracyColors} shows the colors assigned to puzzle pieces depending on their direct accuracy classification.  Assuming no missing pieces in the ground-truth image, the ideal EDAS and SEDAS visualizations would have the same dimensions as the ground-truth input and only green squares.
 
-\begin{table}[tb]
+\begin{table}[t!]
 	\begin{center}
 	\caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
   		\begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
@@ -119,7 +119,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 	\end{center}
 \end{table}
 
-\begin{figure}[tb]
+\begin{figure}[b!]
 \centering
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
   
@@ -140,7 +140,7 @@ Figure~\ref{fig:directAccuracyVisualization} shows a Type~2 solver output as wel
 
 Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visualization is divided into four isosceles triangles; the base of each triangle is along the puzzle piece's side whose neighbor accuracy is represented.  The four isosceles triangles all share a common, non-base vertex at the piece's center.  Table~\ref{tab:neighborAccuracyColors} defines the color assigned to each triangle depending on whether a piece's neighbors match in the ground-truth input and the solver output.  
 
-\begin{table}[tb]
+\begin{table}[t!]
 \begin{center}
   \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
   \begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
@@ -153,7 +153,7 @@ Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visuali
 \end{center}
 \end{table}
 
-\begin{figure}[tb]
+\begin{figure}[t!]
 \centering
 
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
@@ -179,6 +179,9 @@ The visualization for best buddies is similar to that of neighbor accuracy where
 
 Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associated best buddy visualization.  Despite having 16~times as many interior sides, the image in this figure still has 3~times more exterior, non-adjacent best buddies than interior ones.
 
+% Make it so these figures appear on their own page
+\clearpage
+
 \begin{table}[tb]
 \begin{center}
   \caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}\label{tab:bestBuddyColors}
@@ -195,7 +198,7 @@ Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associate
 \end{table}
 
 
-\begin{figure}[t]
+\begin{figure}[tb]
   \centering
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
      \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
