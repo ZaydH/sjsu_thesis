@@ -7,7 +7,7 @@ The following subsections describe each of the Mixed-Bag Solver's stages.  An ad
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=1.0\textwidth]{images/cropped_algorithm_structure_overview.pdf}
-	\caption{Relationship between the Mixed-Bag Solver's Components}\label{fig:multipuzzleSolverArchitecture}
+	\caption{Relationship between the Mixed-Bag Solver's components}\label{fig:multipuzzleSolverArchitecture}
 \end{figure}
 
 \begin{algorithm}[t]
@@ -53,7 +53,7 @@ Appendix~\ref{app:segmentedOutput} shows an example segmentation round with two 
 Algorithm~\ref{alg:segmentation} outlines the basic segmentation framework; the implementation is iterative and will have one or more rounds.  In each round, all pieces not yet assigned to a saved segment are assembled as if they all belong to a single ground-truth image.  This strategy eliminates the need to make any assumptions at this early stage regarding the number of input puzzles. 
 
 \begin{algorithm}[t]
-    \caption{Pseudocode for the Complete Segmentation Algorithm}\label{alg:segmentation}
+    \caption{Pseudocode for the complete segmentation algorithm}\label{alg:segmentation}
     \begin{algorithmic}[1]
         \Function{Segmentation}{$puzzle\hspace{-0.8pt}\_pieces$}
         \State $saved\_segments \gets \{ \}$
@@ -85,7 +85,7 @@ Any piece that is assigned to a saved segment is removed from the set of unassig
 The function ``\textproc{SegmentPuzzle}'' in Algorithm~\ref{alg:segmentPuzzle} partitions a solved puzzle into disjoints segments; this procedure is adapted from the region growing segmentation algorithm proposed by Pomeranz~\textit{et al.}, where it was shown to have greater than 99.7\% accuracy identifying genuine neighbors~\cite{pomeranz2011}. 
 
 \begin{algorithm}[t]
-\caption{Pseudocode for Segmenting a Solved Puzzle}\label{alg:segmentPuzzle}
+\caption{Pseudocode for segmenting a solved puzzle}\label{alg:segmentPuzzle}
 \begin{algorithmic}[1]
 \Function{SegmentPuzzle}{$solved\_puzzle$}
     \State $puzzle\hspace{-0.8pt}\_segments \gets \{ \}$
@@ -139,7 +139,7 @@ As mentioned previously, a segment should be allowed, but not forced, to expand 
 If stitching pieces are poorly selected, two divergent, yet deleterious outcomes may occur.  First, placing the stitching pieces too close to one another can add significant overhead without creating much tangible value.  In contrast, if stitching pieces are too far apart, the solver may not be able to detect subtle inter-segment relationships.  Algorithm~\ref{alg:selectStitchingPieces} details the procedure used by the Mixed-Bag Solver to select stitching pieces that balances these two concerns.  The implementation of this algorithm is described in detail in the following two subsections.
 
 \begin{algorithm}[t]
-\caption{Pseudocode for Selecting a Segment's Stitching Pieces}
+\caption{Pseudocode for selecting a segment's stitching pieces}
 \label{alg:selectStitchingPieces}
 \begin{algorithmic}[1]
 \Procedure{FindStitchingPieces}{$segment\_pieces$}
@@ -166,7 +166,7 @@ It is not sufficient for stitching pieces to be placed solely around the externa
 \textproc{FindPieceDistanceToOpen} follows an iterative boundary tracing technique; hence, during each iteration of the \textbf{while} loop on line~\ref{op:distanceRoundWhileLoop}, the algorithm explores all segment pieces whose distance to the nearest open location is equal to $distance\_to\_open$.  Therefore, any pieces explored in the first iteration of the \textbf{while} loop have a distance of~1 to the nearest open while those explored in the second iteration have distance~2, etc. This approach is robust enough to handle internal voids as well as potential segment necking, where two larger segment components are joined by a narrower bridge. In addition, since each piece is explored only once, the execution time of this algorithm is $O(n)$, where $n$ is the number of pieces in the segment.
 
 \begin{algorithm}[t]
-\caption{Pseudocode for Determining the Manhattan Distance between Each Segment Piece and the Nearest Open Location}\label{alg:findDistanceToOpen}
+\caption{Pseudocode for determining the Manhattan distance between each segment piece and the nearest open location}\label{alg:findDistanceToOpen}
 \begin{algorithmic}[1]
 \Procedure{FindPieceDistanceToOpen}{$segment\_pieces$}
     \State $explored\_pieces \gets \{ \}$
@@ -215,7 +215,7 @@ The outputs of the mini-assemblies will vary between segments based on their res
 Agglomerative hierarchical clustering is a bottom-up clustering algorithm where in each round, two clusters are merged.  Algorithm~\ref{alg:hierarchicalClustering} shows the basic hierarchical clustering procedure used by the Mixed-Bag Solver; it is adapted from~\cite{tanIntroToDataMining}.  The only inputs are the saved segments and the overlap matrix calculated during stitching.
 
 \begin{algorithm}[t]
-\caption{Pseudocode for Hierarchical Segment Clustering}\label{alg:hierarchicalClustering}
+\caption{Pseudocode for hierarchical segment clustering}\label{alg:hierarchicalClustering}
 \begin{algorithmic}[1]
 \Function{HierarchicalClustering}{$saved\_segments, overlap\_matrix$}
 	\State $\textit{segment\_clusters} = \{ \}$	
