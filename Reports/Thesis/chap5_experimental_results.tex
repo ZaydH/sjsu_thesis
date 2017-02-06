@@ -8,7 +8,7 @@ To compare the performance of the Mixed-Bag Solver and Paikin~\& Tal's algorithm
 
 \begin{table}[tb]
   \begin{center}
-    \caption{Number of Solver Iterations for Each Puzzle Input Count}\label{tab:numberSolverIterations}
+    \caption{Number of solver iterations for each puzzle input count}\label{tab:numberSolverIterations}
     \begin{tabular}{ |c||c|c|c|c| } 
       \Xhline{1pt}
        \# Puzzles    &  2 &  3 & 4 & 5 \\ 
@@ -34,12 +34,12 @@ Appendix~\ref{chap:incorreclyClassifiedSingleImages} shows the three misclassifi
   \begin{tabular}{ >{\centering\arraybackslash}m{0.47\textwidth} >{\centering\arraybackslash}m{0.47\textwidth} }
 
 	\fbox{\includegraphics[scale=0.18]{./images/single_puzzle/pomeranz_805_14.jpg}} & \fbox{\includegraphics[scale=0.18]{./images/single_puzzle/best_buddies_pomeranz_805_14.jpg}} \\~\\
-	Ground-Truth Image~(a)~\cite{pomeranzBenchmarkImages} & Best Buddy Visualization of Image~(a) 
+	Ground-truth image~(a)~\cite{pomeranzBenchmarkImages} \par Reproduced with permission & Best buddy visualization of image~(a) 
 \\~\\
 	\fbox{\includegraphics[scale=0.18]{./images/single_puzzle/pomeranz_805_12.jpg}} & \fbox{\includegraphics[scale=0.18]{./images/single_puzzle/best_buddies_pomeranz_805_12.jpg}} \\~\\
-	Ground-Truth Image~(b)~\cite{pomeranzBenchmarkImages} & Best Buddy Visualization of Image~(b) 
+	Ground-truth image~(b)~\cite{pomeranzBenchmarkImages} \par Reproduced with permission & Best buddy visualization of image~(b) 
   \end{tabular}
-\caption{Comparison of Best Buddy Density and Interior Non-Adjacent Best Buddies for Two Images from the Pomeranz~\textit{et al.}~805~Piece Data Set.  Images (a) and (b) Reproduced with Permission from Pomeranz \textit{et. al.}}
+\caption{Comparison of best buddy density and interior non-adjacent best buddies for two images from the Pomeranz~\textit{et al.}~805~piece data set.}
 \label{fig:pomeranzBestBuddiesVisualizations}
 \end{figure} 
 
@@ -96,7 +96,7 @@ As mentioned previously, the Mixed-Bag Solver was tested by randomly selecting a
 \end{axis}
 \end{tikzpicture}
 \end{center}
-\caption{Mixed-Bag Solver's Input Puzzle Count Error Frequency}
+\caption{Mixed-Bag Solver's input puzzle count error frequency}
 \label{fig:inputPuzzleCountErrorFrequency}
 \end{figure}
 
@@ -106,7 +106,7 @@ In this set of experiments, the Mixed-Bag solver correctly determined the number
 
 \begin{table}[tb]
 \begin{center}
-\caption{Comparison of the Mixed-Bag and Paikin~\& Tal Solvers' Performance on Multiple Input Puzzles}\label{tab:tableSolverPerformanceComparison}
+\caption{Comparison of the Mixed-Bag and Paikin~\& Tal Solvers' performance on multiple input puzzles}\label{tab:tableSolverPerformanceComparison}
 \begin{tabular}{ c||c|c|c||c|c|c||c|c|c } 
  \toprule
  Puzzle & \multicolumn{3}{c||}{Average SEDAS} & \multicolumn{3}{c||}{Average ENAS} & \multicolumn{3}{c}{Perfect Reconstruction} \\ \cline{2-10}
@@ -214,10 +214,10 @@ In this set of experiments, the Mixed-Bag solver correctly determined the number
 \end{axis}
 \end{tikzpicture}\\		
 	
-	(c) Percentage of Puzzles Perfectly Reconstructed \\
+	(c) Percentage of puzzles perfectly reconstructed \\
 
 \end{tabular}
-\caption{Performance of the Mixed-Bag and Paikin~\& Tal Solvers with Multiple Input Puzzles}\label{fig:graphSolverPerformanceComparison}
+\caption{Performance of the Mixed-Bag and Paikin~\& Tal Solvers with multiple input puzzles}\label{fig:graphSolverPerformanceComparison}
 \end{figure}
 
 
@@ -233,7 +233,7 @@ Appendix~\ref{chap:tenPuzzleSolving} contains the set of ten images that were in
 
 \begin{table}[tb]
 \begin{center}
-\caption{Comparison of the Image Shifting, SEDAS, and ENAS Results for the 10 Puzzle Data Set}\label{tab:pomeranzBestBuddiesVisualizations}
+\caption{Comparison of the image shifting, SEDAS, and ENAS results for the 10~puzzle data set}\label{tab:pomeranzBestBuddiesVisualizations}
 \begin{tabular}{ c|c||c|c||c|c||c|c } 
  \toprule
  \multicolumn{2}{c||}{Image} & \multicolumn{2}{c||}{Shifted} & \multicolumn{2}{c||}{SEDAS} & \multicolumn{2}{c}{ENAS} \\

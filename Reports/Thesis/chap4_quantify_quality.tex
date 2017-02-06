@@ -35,10 +35,9 @@ Standard direct accuracy is vulnerable to shifts in the solved image where even 
     \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
   	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=50.1mm]{./images/muffins_300x200_type1}}
   	\\ ~\\
-  	(a) Ground-Truth Image & (b) Solver Output
-  	\\ ~\\
+  	(a) Ground-truth image & (b) Solver output
     \end{tabular}
-  \caption{Solver Output where a Single Misplaced Piece Catastrophically Affects the Direct Accuracy}
+  \caption{Solver output where a single misplaced piece catastrophically affects the direct accuracy}
   \label{fig:directAccuracyOnePieceEffect}
 \end{figure}
 
@@ -108,7 +107,7 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 
 \begin{table}[t!]
 	\begin{center}
-	\caption{Color Scheme for Puzzles Pieces in Direct Accuracy Visualizations}\label{tab:directAccuracyColors}
+	\caption{Color scheme for puzzles pieces in direct accuracy visualizations}\label{tab:directAccuracyColors}
   		\begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
     		Wrong Puzzle & Wrong Location & Wrong Rotation & Correct Location  & No Piece Present  \\ \hline
@@ -123,14 +122,14 @@ In standard direct accuracy, EDAS, and SEDAS, each puzzle piece is assigned a si
 \centering
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
   
-	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type2}} \\~\\
-	(a) Ground-Truth Image & (b) Type~2 Solver Output
+	\fbox{\includegraphics[width=48mm]{./images/muffins_300x200.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type2.jpg}} \\~\\
+	(a) Ground-truth image & (b) Type~2 solver output
 \\~\\
 	\fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type_EDAS.jpg}} & \fbox{\includegraphics[width=52.1mm]{./images/muffins_300x200_type_SEDAS.jpg}}
 \\~\\
-	(c) EDAS Visualization & (d) SEDAS Visualization  
+	(c) EDAS visualization & (d) SEDAS visualization  
   \end{tabular}
-\caption{Example Solver Output Visualizations for EDAS and SEDAS}
+\caption{Example solver output visualizations for EDAS and SEDAS}
 \label{fig:directAccuracyVisualization}
 \end{figure}
 
@@ -142,7 +141,7 @@ Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visuali
 
 \begin{table}[t!]
 \begin{center}
-  \caption{Color Scheme for Puzzles Piece Sides in Neighbor Accuracy Visualizations}\label{tab:neighborAccuracyColors}
+  \caption{Color scheme for puzzles piece sides in neighbor accuracy visualizations}\label{tab:neighborAccuracyColors}
   \begin{tabular}{ | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | >{\centering\arraybackslash}m{0.9in} | }
  \hline
     Wrong Puzzle & Wrong Neighbor & Correct Neighbor  & No Piece Present  \\ \hline
@@ -153,25 +152,30 @@ Jig swap puzzle pieces have four sides.  As such, each piece in the ENAS visuali
 \end{center}
 \end{table}
 
+Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  In this example, the puzzle of interest, $P_i$, is the glass and stone building while the other puzzle, $P_k$, is the rainforest house.  All pieces that came from the rainforest house image are blue, despite being assembled correctly; this is because they are not from the puzzle of interest.  In contrast, all pieces from the glass and stone building image that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are represented by red triangles.
+
+% Make it so these figures appear on their own page
+\clearpage
+
+
 \begin{figure}[t!]
 \centering
 
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
   
 	\fbox{\includegraphics[width=1.7in]{./images/pomeranz_3300_1.jpg}} & \fbox{\includegraphics[width=1.5in]{./images/mcgill_20.jpg}} \\~\\
-	(a) Input Image \# 1 - Rainforest House \cite{pomeranzBenchmarkImages} & (b) Input Image \# 2 - Building Exterior \cite{mcgillImageDatabase}
+	(a) Input image \#~1 \textendash { } rainforest house \cite{pomeranzBenchmarkImages} \par Reproduced with permission & (b) Input image \#~2 \textendash { } building exterior \cite{mcgillImageDatabase}
 \\~\\
 	\fbox{\includegraphics[width=2.1in]{./images/3300_1_mcgill_20_type_2.jpg}}
 	& \fbox{\includegraphics[width=2.1in]{./images/3300_1_mcgill_20_ENAS.jpg}}
 \\~\\
-	(c) Solver Output & (d) ENAS Visualization  
+	(c) Solver output & (d) ENAS visualization  
   \end{tabular}
 
-\caption{Example Solver Output Visualization for ENAS. Image (a) Reproduced with Permission from Pomeranz \textit{et. al.}}
+\caption{Example solver output visualization for ENAS}
 \label{fig:neigborAccuracyVisualization}
 \end{figure}
 
-Figure~\ref{fig:neigborAccuracyVisualization} shows an actual output when solving a Mixed-Bag puzzle with two images.  In this example, the puzzle of interest, $P_i$, is the glass and stone building while the other puzzle, $P_k$, is the rainforest house.  All pieces that came from the rainforest house image are blue, despite being assembled correctly; this is because they are not from the puzzle of interest.  In contrast, all pieces from the glass and stone building image that are placed next to their original neighbor are represented by green triangles while all incorrect neighbors, such as those bordering the rainforest house image, are represented by red triangles.
 
 \section{Visualizing Best Buddies}\label{sec:visualizingBestBuddies}
 
@@ -179,12 +183,9 @@ The visualization for best buddies is similar to that of neighbor accuracy where
 
 Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associated best buddy visualization.  Despite having 16~times as many interior sides, the image in this figure still has 3~times more exterior, non-adjacent best buddies than interior ones.
 
-% Make it so these figures appear on their own page
-\clearpage
-
 \begin{table}[tb]
 \begin{center}
-  \caption{Color Scheme for Puzzles Piece Sides in Best Buddy Visualizations}\label{tab:bestBuddyColors}
+  \caption{Color scheme for puzzles piece sides in best buddy visualizations}\label{tab:bestBuddyColors}
   \begin{tabular}{ | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | >{\centering\arraybackslash}m{1.0in} | }
   
    \hline
@@ -203,8 +204,8 @@ Figure~\ref{fig:bestBuddyVisualization} shows an example image and its associate
   \begin{tabular}{ >{\centering\arraybackslash}m{2.2in} >{\centering\arraybackslash}m{2.2in} }
      \fbox{\includegraphics[width=50mm]{./images/dessert_pixabay.jpg}}  & \fbox{\includegraphics[width=50mm]{./images/dessert_best_buddy_visualization.jpg}}
      \\~\\
-     (a) Original Image~\cite{pixabay} & (b) Best Buddy Visualization
+     (a) Original image~\cite{pixabay} & (b) Best buddy visualization
   \end{tabular}
-\caption{Visualization of Best Buddies in an Example Image}
+\caption{Visualization of best buddies in an example image}
 \label{fig:bestBuddyVisualization}
 \end{figure}
