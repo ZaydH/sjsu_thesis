@@ -47,6 +47,42 @@ def add_image_folder_path(image_filenames):
     return [IMAGE_DIRECTORY + img_file for img_file in image_filenames]
 
 
+NUMBER_POMERANZ_2360_PIECE_PUZZLES = 3
+MINIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER = 1
+MAXIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER = MINIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER + NUMBER_POMERANZ_2360_PIECE_PUZZLES - 1
+_DIRECTORY_POMERANZ_2360_PIECE_IMAGES = "pomeranz_2360" + os.sep
+_IMAGE_FILE_EXTENSION_POMERANZ_2360_PIECE_IMAGES = ".jpg"
+
+
+# def get_random_pomeranz_2360_piece_image():
+#     """
+#     Gets a random image file name from the 2360 image dataset from Ben Gurion University.
+#
+#     Returns (str): File path to a random 2360 piece image.
+#     """
+#     rand_img_numb = random.randint(MINIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER, MAXIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER)
+#     return build_pomeranz_2360_piece_filename(rand_img_numb)
+
+
+def build_pomeranz_2360_piece_filename(image_number):
+    """
+    Creates the image name for the 2360 piece image from the Pomeranz et al. dataset.
+
+    Args:
+        image_number (int): 2360 piece image number.
+
+    Returns (str): Name of the images for the 2360 piece image.
+    """
+    if not isinstance(image_number, int):
+        raise ValueError("Image number must be an integer.")
+
+    if image_number < MINIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER or image_number > MAXIMUM_POMERANZ_2360_PIECE_IMAGE_NUMBER:
+        raise ValueError("Invalid 2360 piece image number")
+
+    folder_name = _DIRECTORY_POMERANZ_2360_PIECE_IMAGES.replace(os.sep, "")
+    return _DIRECTORY_POMERANZ_2360_PIECE_IMAGES + folder_name + "_" + str(image_number) + _IMAGE_FILE_EXTENSION_POMERANZ_2360_PIECE_IMAGES
+
+
 NUMBER_POMERANZ_805_PIECE_PUZZLES = 20
 MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER = 1
 MAXIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER = MINIMUM_POMERANZ_805_PIECE_IMAGE_NUMBER + NUMBER_POMERANZ_805_PIECE_PUZZLES - 1

@@ -96,59 +96,10 @@ if __name__ == "__main__":
 
     # Setup the logger
     config.setup_logging()
-    #
-    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # MultiPuzzleSolver.run_imported_final_puzzle_solving(images, PuzzleType.type2)
 
-    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # MultiPuzzleSolver.run_imported_segmentation_experiment(images, PuzzleType.type2, segmentation_round_numb=1)
-    # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, segmentation_round_numb=1)
-    #
-    # test_random_pomeranz_805_pieces_images()
-
-    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg", "mcgill_03.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # MultiPuzzleSolver.run_imported_hierarchical_clustering(images, PuzzleType.type2)
-    # MultiPuzzleSolver.run_imported_select_starting_pieces(images, PuzzleType.type2)
-    # MultiPuzzleSolver.run_imported_final_puzzle_solving(images, PuzzleType.type2)
-
-    # MultiPuzzleSolver.run_imported_segmentation_round(images, PuzzleType.type2, 1)
-    # MultiPuzzleSolver.run_imported_stitching_piece_solving(images, PuzzleType.type2)
-    # MultiPuzzleSolver.run_imported_similarity_matrix_calculation(images, PuzzleType.type2)
-
-    # images = ["7.jpg", "dandelion_pixabay.jpg", "beautiful-1168104_640.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["book_tunnel_pixabay.jpg", "duck.bmp", "7.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["pomeranz_805_08.jpg", "mcgill_20.jpg", "3300_1.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["pomeranz_805//2.jpg", "pomeranz_805//1.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["pomeranz_805//9.jpg", "pomeranz_805//10.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["pomeranz_805//5.jpg", "pomeranz_805//20.jpg", "pomeranz_805//1.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-    # 
-    # images = ["pomeranz_805//8.jpg", "pomeranz_805//18.jpg", "pomeranz_805//15.jpg"]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    # images = [config.build_cho_432_piece_filename(18)]
-    # run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
-
-    images = ["pomeranz_2360//3.jpg", "mcgill_540//mcgill_540_7", "pomeranz_805//14.jpg"]
+    images = [config.build_pomeranz_2360_piece_filename(3),
+              config.build_pomeranz_805_piece_filename(7),
+              config.build_pomeranz_805_piece_filename(14)]
     run_mixed_bag_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # images = ["primula_pixabay.jpg",
