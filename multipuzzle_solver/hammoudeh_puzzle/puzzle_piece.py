@@ -7,6 +7,7 @@ from enum import Enum
 import numpy as np
 import cv2  # OpenCV
 
+from hammoudeh_puzzle import config
 from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
 
@@ -356,7 +357,20 @@ class PuzzlePiece(object):
         Returns (PuzzleLocation): Puzzle location using the PuzzleLocation class.  This is the location in the solved
            puzzle.
         """
+        if config.PERFORM_ASSERT_CHECKS:
+            assert(self._assigned_loc is not None)
         return PuzzleLocation(self.puzzle_id, self._assigned_loc[0], self._assigned_loc[1])
+
+    @puzzle_location.setter
+    def puzzle_location(self, new_loc):
+        """
+        Property to set the location of a puzzle piece using a puzzle location object
+
+        Args:
+            new_loc (PuzzleLocation): New puzzle piece location.
+        """
+        self._assigned_puzzle_id = new_loc.puzzle_id
+        self._assigned_loc = [new_loc.row, new_loc.column]
 
     @property
     def location(self):
@@ -367,6 +381,8 @@ class PuzzlePiece(object):
             Tuple of the (row, column)
 
         """
+        if config.PERFORM_ASSERT_CHECKS:
+            assert(self._assigned_loc is not None)
         return self._assigned_loc
 
     @location.setter
