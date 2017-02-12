@@ -7,7 +7,7 @@ from hammoudeh_puzzle import puzzle_importer
 from hammoudeh_puzzle.pickle_helper import PickleHelper
 from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
 from hammoudeh_puzzle.puzzle_piece import top_level_calculate_asymmetric_distance
-from multipuzzle_solver.multipuzzle_solver import MultiPuzzleSolver
+from mixed_bag_solver.mixed_bag_solver import MixedBagSolver
 
 _FORCE_RECALCULATE_DISTANCES = False
 _POST_INITIAL_CONSTRUCTION_PICKLE_EXPORT = True
@@ -52,8 +52,8 @@ def build_multipuzzle_solver(image_filenames, puzzle_type, piece_width):
 
     # Initialize the distance information
     if _FORCE_RECALCULATE_DISTANCES or not os.path.exists(pickle_filename):
-        multipuzzle_solver = MultiPuzzleSolver(image_filenames, pieces, top_level_calculate_asymmetric_distance,
-                                               puzzle_type)
+        multipuzzle_solver = MixedBagSolver(image_filenames, pieces, top_level_calculate_asymmetric_distance,
+                                            puzzle_type)
 
         if _POST_INITIAL_CONSTRUCTION_PICKLE_EXPORT:
             PickleHelper.exporter(multipuzzle_solver, pickle_filename)
@@ -148,30 +148,33 @@ if __name__ == "__main__":
     # images = [config.build_cho_432_piece_filename(18)]
     # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["primula_pixabay.jpg",
-              "dandelion_pixabay.jpg",
-              config.build_mcgill_540_piece_filename(15),
-              config.build_mcgill_540_piece_filename(11),
-              config.build_cho_432_piece_filename(18),
-              config.build_pomeranz_805_piece_filename(8),
-              config.build_pomeranz_805_piece_filename(10),
-              config.build_pomeranz_805_piece_filename(13),
-              config.build_pomeranz_805_piece_filename(14),
-              config.build_pomeranz_805_piece_filename(19)]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    images = ["pomeranz_805//2.jpg", "pomeranz_805//13.jpg", "pomeranz_805//14.jpg", "pomeranz_805//19.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
-    images = ["primula_pixabay.jpg",
-              "dandelion_pixabay.jpg",
-              config.build_mcgill_540_piece_filename(15),
-              config.build_mcgill_540_piece_filename(11),
-              config.build_cho_432_piece_filename(18),
-              config.build_pomeranz_805_piece_filename(8),
-              config.build_pomeranz_805_piece_filename(10),
-              config.build_pomeranz_805_piece_filename(13),
-              config.build_pomeranz_805_piece_filename(14),
-              config.build_pomeranz_805_piece_filename(19),
-              "3300_1.jpg"]
-    run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    # images = ["primula_pixabay.jpg",
+    #           "dandelion_pixabay.jpg",
+    #           config.build_mcgill_540_piece_filename(15),
+    #           config.build_mcgill_540_piece_filename(11),
+    #           config.build_cho_432_piece_filename(18),
+    #           config.build_pomeranz_805_piece_filename(8),
+    #           config.build_pomeranz_805_piece_filename(10),
+    #           config.build_pomeranz_805_piece_filename(13),
+    #           config.build_pomeranz_805_piece_filename(14),
+    #           config.build_pomeranz_805_piece_filename(19)]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
+    #
+    # images = ["primula_pixabay.jpg",
+    #           "dandelion_pixabay.jpg",
+    #           config.build_mcgill_540_piece_filename(15),
+    #           config.build_mcgill_540_piece_filename(11),
+    #           config.build_cho_432_piece_filename(18),
+    #           config.build_pomeranz_805_piece_filename(8),
+    #           config.build_pomeranz_805_piece_filename(10),
+    #           config.build_pomeranz_805_piece_filename(13),
+    #           config.build_pomeranz_805_piece_filename(14),
+    #           config.build_pomeranz_805_piece_filename(19),
+    #           "3300_1.jpg"]
+    # run_multipuzzle_solver_driver(images, PuzzleType.type2, config.DEFAULT_PIECE_WIDTH)
 
     # # This has issues in reconstruction.
     # images = ["pomeranz_805//2.jpg", "pomeranz_805//13.jpg", "pomeranz_805//14.jpg", "pomeranz_805//19.jpg"]

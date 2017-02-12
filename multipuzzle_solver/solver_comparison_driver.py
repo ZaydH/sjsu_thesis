@@ -4,7 +4,7 @@ import random
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle.puzzle_importer import PuzzleType
-from multipuzzle_solver_driver import run_multipuzzle_solver_driver
+from mixed_bag_solver import run_multipuzzle_solver_driver
 from paikin_tal_solver_driver import run_paikin_tal_driver
 
 _PROGRESS_TRACKING_FOLDER = "." + os.sep + "progress_tracker" + os.sep

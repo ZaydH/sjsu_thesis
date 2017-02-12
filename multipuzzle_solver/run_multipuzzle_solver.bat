@@ -1,2 +1,2 @@
-python multipuzzle_solver_driver.py
+python mixed_bag_solver_driver.py
 pause

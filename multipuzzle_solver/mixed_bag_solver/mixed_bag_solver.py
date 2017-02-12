@@ -173,7 +173,7 @@ class StitchingPieceInfo(object):
         return copy.copy(self._segment_overlap_coefficient)
 
 
-class MultiPuzzleSolver(object):
+class MixedBagSolver(object):
 
     _MINIMUM_SEGMENT_SIZE = 7
 
@@ -301,7 +301,7 @@ class MultiPuzzleSolver(object):
                 # Perform placement as if there is only a single puzzle
                 self._paikin_tal_solver.run_single_puzzle_solver()
 
-                if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_PLACEMENT_PICKLE_EXPORT:
+                if MixedBagSolver._ALLOW_POST_SEGMENTATION_PLACEMENT_PICKLE_EXPORT:
                     self._pickle_export_after_segmentation_puzzle_placement()
             # Proceed with placement as normal.
             go_directly_to_segmentation = False
@@ -310,18 +310,18 @@ class MultiPuzzleSolver(object):
             solved_segments = self._paikin_tal_solver.segment(perform_segment_cleaning=True)
             max_segment_size = self._process_solved_segments(solved_segments[0])
 
-            if MultiPuzzleSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE:
+            if MixedBagSolver._SAVE_EACH_SINGLE_PUZZLE_RESULT_TO_AN_IMAGE_FILE:
                 self._save_single_solved_puzzle_to_file(self._numb_segmentation_rounds)
 
             solver_helper.print_elapsed_time(time_segmentation_round_began,
                                              "segmentation round #%d" % self._numb_segmentation_rounds)
 
-            if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_ROUND_PICKLE_EXPORT:
+            if MixedBagSolver._ALLOW_POST_SEGMENTATION_ROUND_PICKLE_EXPORT:
                 self._pickle_export_after_segmentation_round()
 
             # Stop segmenting if no pieces left or maximum segment size is less than the minimum
-            if max_segment_size < MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE \
-                    or self._numb_pieces - len(self._piece_id_to_segment_map) < MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE:
+            if max_segment_size < MixedBagSolver._MINIMUM_SEGMENT_SIZE \
+                    or self._numb_pieces - len(self._piece_id_to_segment_map) < MixedBagSolver._MINIMUM_SEGMENT_SIZE:
                 break
 
         # Re-allow all pieces to be placed.
@@ -330,7 +330,7 @@ class MultiPuzzleSolver(object):
 
         self._log_segmentation_results()
 
-        if MultiPuzzleSolver._ALLOW_POST_SEGMENTATION_COMPLETED_PICKLE_EXPORT:
+        if MixedBagSolver._ALLOW_POST_SEGMENTATION_COMPLETED_PICKLE_EXPORT:
             self._pickle_export_after_all_segmentation_completed()
 
     def _perform_stitching_piece_solving(self):
@@ -361,10 +361,10 @@ class MultiPuzzleSolver(object):
                 # Determine the segment each stitching piece belongs to.
                 self._process_stitching_piece_solver_result(segment_cnt, stitching_piece_cnt)
 
-                if MultiPuzzleSolver._SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE:
+                if MixedBagSolver._SAVE_STITCHING_PIECE_SOLVER_RESULT_TO_AN_IMAGE_FILE:
                     self._save_stitching_piece_solved_puzzle_to_file(stitching_piece)
 
-        if MultiPuzzleSolver._ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT:
+        if MixedBagSolver._ALLOW_POST_STITCHING_PIECE_SOLVING_PICKLE_EXPORT:
             self._pickle_export_after_stitching_piece_solving()
 
     def _process_stitching_piece_solver_result(self, segment_numb, stitching_piece_numb):
@@ -422,7 +422,7 @@ class MultiPuzzleSolver(object):
                     # Update if the new value is greater
                     if self._asymmetric_overlap_matrix[segment_i, segment_j] < overlap[segment_j]:
                         self._asymmetric_overlap_matrix[segment_i, segment_j] = overlap[segment_j]
-        MultiPuzzleSolver._log_numpy_matrix("Asymmetric Segment Overlap Matrix:", self._asymmetric_overlap_matrix)
+        MixedBagSolver._log_numpy_matrix("Asymmetric Segment Overlap Matrix:", self._asymmetric_overlap_matrix)
 
         # Calculate the similarity matrix
         self._segment_similarity_matrix = np.full((numb_segments, numb_segments), fill_value=-1, dtype=np.float)
@@ -432,9 +432,9 @@ class MultiPuzzleSolver(object):
                              + self._asymmetric_overlap_matrix[segment_j, segment_i]
                 similarity /= 2
                 self._segment_similarity_matrix[segment_i, segment_j] = similarity
-        MultiPuzzleSolver._log_numpy_matrix("Segment Similarity Matrix", self._segment_similarity_matrix)
+        MixedBagSolver._log_numpy_matrix("Segment Similarity Matrix", self._segment_similarity_matrix)
 
-        if MultiPuzzleSolver._ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT:
+        if MixedBagSolver._ALLOW_POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_EXPORT:
             self._pickle_export_after_similarity_matrix_calculation()
 
     @staticmethod
@@ -479,7 +479,7 @@ class MultiPuzzleSolver(object):
         output_puzzles = [Puzzle.reconstruct_from_pieces(solved_puzzles[i], i) for i in xrange(0, len(solved_puzzles))]
 
         # Optionally export the solved image files.
-        if MultiPuzzleSolver._SAVE_FINAL_PUZZLE_IMAGES:
+        if MixedBagSolver._SAVE_FINAL_PUZZLE_IMAGES:
             self._output_reconstructed_puzzle_image_files(output_puzzles)
 
         return output_puzzles
@@ -511,38 +511,38 @@ class MultiPuzzleSolver(object):
         """
         Export the entire multipuzzle solver via pickle.
         """
-        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SEGMENTATION_PUZZLE_PLACEMENT_FILE_DESCRIPTOR
+        self._local_pickle_export_helper(MixedBagSolver._POST_SEGMENTATION_PUZZLE_PLACEMENT_FILE_DESCRIPTOR
                                          % self._numb_segmentation_rounds)
 
     def _pickle_export_after_all_segmentation_completed(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
-        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SEGMENTATION_COMPLETED_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MixedBagSolver._POST_SEGMENTATION_COMPLETED_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_stitching_piece_solving(self):
         """
         Exports the multipuzzle solver after segmentation is completed.
         """
-        self._local_pickle_export_helper(MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MixedBagSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_similarity_matrix_calculation(self):
         """
         Exports the multipuzzle solver after the similarity matrix is calculated.
         """
-        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MixedBagSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_hierarchical_clustering(self):
         """
         Exports the multipuzzle solver after hierarchical clustering is completed.
         """
-        self._local_pickle_export_helper(MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MixedBagSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR)
 
     def _pickle_export_after_select_starting_pieces(self):
         """
         Exports the multipuzzle solver after hierarchical clustering is completed.
         """
-        self._local_pickle_export_helper(MultiPuzzleSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR)
+        self._local_pickle_export_helper(MixedBagSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR)
 
     def _local_pickle_export_helper(self, pickle_file_descriptor):
         """
@@ -636,7 +636,7 @@ class MultiPuzzleSolver(object):
 
         for segment in solved_segments:
             if segment.numb_pieces >= max_segment_size / 2 \
-                    and segment.numb_pieces >= MultiPuzzleSolver._MINIMUM_SEGMENT_SIZE:
+                    and segment.numb_pieces >= MixedBagSolver._MINIMUM_SEGMENT_SIZE:
                 self._select_segment_for_solver(segment)
 
         return max_segment_size
@@ -664,7 +664,7 @@ class MultiPuzzleSolver(object):
         logging.info("Saved segment #%d has %d pieces." % (selected_segment.id_number, selected_segment.numb_pieces))
 
         # Optionally output the segment image to a file.
-        if MultiPuzzleSolver._SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE:
+        if MixedBagSolver._SAVE_SELECTED_SEGMENTS_TO_AN_IMAGE_FILE:
             zfill_width = 4
             filename_descriptor = "segment_number_" + str(selected_segment.id_number).zfill(zfill_width)
             filename_descriptor += "_puzzle_round_" + str(self._numb_segmentation_rounds).zfill(zfill_width)
@@ -715,7 +715,7 @@ class MultiPuzzleSolver(object):
 
         self._log_clustering_result()
 
-        if MultiPuzzleSolver._ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT:
+        if MixedBagSolver._ALLOW_POST_HIERARCHICAL_CLUSTERING_PICKLE_EXPORT:
             self._pickle_export_after_hierarchical_clustering()
 
     def _select_starting_pieces_from_clusters(self):
@@ -727,7 +727,7 @@ class MultiPuzzleSolver(object):
         cluster_has_seed = {}
         for cluster in self._segment_clusters:
             # Used to determine if each cluster has a starting piece
-            cluster_has_seed[MultiPuzzleSolver.create_cluster_key(cluster.id_number)] = False
+            cluster_has_seed[MixedBagSolver.create_cluster_key(cluster.id_number)] = False
 
             # Build a map from piece ID number to cluster
             for piece_id in cluster.get_pieces():
@@ -751,7 +751,7 @@ class MultiPuzzleSolver(object):
             piece_key = PuzzlePiece.create_key(starting_piece_candidate)
             try:
                 cluster_number = piece_to_cluster_map[piece_key]
-                cluster_key = MultiPuzzleSolver.create_cluster_key(cluster_number)
+                cluster_key = MixedBagSolver.create_cluster_key(cluster_number)
 
                 # If the cluster has no seed, use this seed piece
                 if not cluster_has_seed[cluster_key]:
@@ -767,7 +767,7 @@ class MultiPuzzleSolver(object):
                 pass
             starting_piece_cnt += 1
 
-        if MultiPuzzleSolver._ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT:
+        if MixedBagSolver._ALLOW_POST_SELECT_STARTING_PIECES_PICKLE_EXPORT:
             self._pickle_export_after_select_starting_pieces()
 
     @staticmethod
@@ -876,7 +876,7 @@ class MultiPuzzleSolver(object):
             segmentation_round_numb (int): Segmentation round number
         """
 
-        file_descriptor = MultiPuzzleSolver._POST_SEGMENTATION_PUZZLE_PLACEMENT_FILE_DESCRIPTOR % segmentation_round_numb
+        file_descriptor = MixedBagSolver._POST_SEGMENTATION_PUZZLE_PLACEMENT_FILE_DESCRIPTOR % segmentation_round_numb
         pickle_filename = PickleHelper.build_filename(file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
@@ -895,7 +895,7 @@ class MultiPuzzleSolver(object):
             image_filenames (List[str]): List of paths to image file names
             puzzle_type (PuzzleType): Solver puzzle type
         """
-        pickle_filename = PickleHelper.build_filename(MultiPuzzleSolver._POST_SEGMENTATION_COMPLETED_PICKLE_FILE_DESCRIPTOR,
+        pickle_filename = PickleHelper.build_filename(MixedBagSolver._POST_SEGMENTATION_COMPLETED_PICKLE_FILE_DESCRIPTOR,
                                                       image_filenames, puzzle_type)
         solver = PickleHelper.importer(pickle_filename)
         # noinspection PyProtectedMember
@@ -914,7 +914,7 @@ class MultiPuzzleSolver(object):
             image_filenames (List[str]): List of paths to image file names
             puzzle_type (PuzzleType): Solver puzzle type
         """
-        pickle_file_descriptor = MultiPuzzleSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR
+        pickle_file_descriptor = MixedBagSolver._POST_STITCHING_PIECE_SOLVING_PICKLE_FILE_DESCRIPTOR
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
@@ -936,7 +936,7 @@ class MultiPuzzleSolver(object):
             image_filenames (List[str]): List of paths to image file names
             puzzle_type (PuzzleType): Solver puzzle type
         """
-        pickle_file_descriptor = MultiPuzzleSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR
+        pickle_file_descriptor = MixedBagSolver._POST_SIMILARITY_MATRIX_CALCULATION_PICKLE_FILE_DESCRIPTOR
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
@@ -957,7 +957,7 @@ class MultiPuzzleSolver(object):
             image_filenames (List[str]): List of paths to image file names
             puzzle_type (PuzzleType): Solver puzzle type
         """
-        pickle_file_descriptor = MultiPuzzleSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR
+        pickle_file_descriptor = MixedBagSolver._POST_HIERARCHICAL_CLUSTERING_PICKLE_FILE_DESCRIPTOR
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
@@ -978,7 +978,7 @@ class MultiPuzzleSolver(object):
             image_filenames (List[str]): List of paths to image file names
             puzzle_type (PuzzleType): Solver puzzle type
         """
-        pickle_file_descriptor = MultiPuzzleSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR
+        pickle_file_descriptor = MixedBagSolver._POST_SELECT_STARTING_PIECES_PICKLE_FILE_DESCRIPTOR
         pickle_filename = PickleHelper.build_filename(pickle_file_descriptor, image_filenames, puzzle_type)
 
         solver = PickleHelper.importer(pickle_filename)
