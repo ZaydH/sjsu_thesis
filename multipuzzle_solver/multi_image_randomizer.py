@@ -35,7 +35,9 @@ def multi_image_randomizer(image_filenames, piece_width=config.DEFAULT_PIECE_WID
     image_files = config.add_image_folder_path(image_filenames)
     pieces, puzzles = Puzzle.get_combined_pieces_multiple_images(image_files, piece_width)  # type: list[PuzzlePiece], list[Puzzle]
     all_divisors = divisors(len(pieces))
-    output_width = all_divisors[int(len(all_divisors)/2)]  # Use the middle of the array so output is square-ish
+    # Select the width so it is longer than the length, but ensure the index does not exceed the end of the array
+    width_index = min(len(all_divisors), int(len(all_divisors)/2))
+    output_width = all_divisors[width_index]  # Use the middle of the array so output is square-ish
     output_length = len(pieces) // output_width
     if config.PERFORM_ASSERT_CHECKS:
         assert(output_length * output_width == len(pieces))
@@ -51,13 +53,13 @@ def multi_image_randomizer(image_filenames, piece_width=config.DEFAULT_PIECE_WID
         # Set the piece location randomly
         idx = random.randint(0, numb_unplaced_pieces - 1)
         loc = piece_locations[idx]
-        piece.puzzle_location = PuzzleLocation(DEFAULT_PUZZLE_ID, loc % output_width, loc // output_width)
+        piece.puzzle_location = PuzzleLocation(DEFAULT_PUZZLE_ID, loc // output_width, loc % output_width)
 
         # Swap out the used location
         numb_unplaced_pieces -= 1
         piece_locations[idx] = piece_locations[numb_unplaced_pieces]
 
-    return Puzzle.reconstruct_from_pieces(pieces, display_image=True)
+    return Puzzle.reconstruct_from_pieces(pieces, display_image=False)
 
 
 def divisors(n):
@@ -69,15 +71,17 @@ def divisors(n):
 
     Returns (List[int]): List of divisors for the specified number
     """
-    return sorted(list(itertools.chain.from_iterable([[i, n//i] for i in range(1, int(n**0.5) + 1) if n % i == 0])))
+    return sorted(list(itertools.chain.from_iterable([[i, n//i] for i in xrange(1, int(n**0.5) + 1) if n % i == 0])))
 
 if __name__ == '__main__':
     # Setup the logger
     config.setup_logging()
 
     # Build the randomized image then save it to a file.
-    images = [config.build_pomeranz_2360_piece_filename(3),
+    images = ["3300_1.jpg",
               config.build_mcgill_540_piece_filename(7),
-              config.build_pomeranz_805_piece_filename(14)]
+              config.build_pomeranz_805_piece_filename(19),
+              config.build_pomeranz_805_piece_filename(14),
+              config.build_pomeranz_805_piece_filename(10)]
     randomized_puzzle = multi_image_randomizer(images)
     randomized_puzzle.save_to_file("randomized_image.jpg")
