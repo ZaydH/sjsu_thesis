@@ -6,6 +6,7 @@ import Queue
 import cStringIO
 import heapq
 import logging
+import random
 import time
 
 import numpy as np
@@ -1444,6 +1445,7 @@ class PaikinTalSolver(object):
             image_filenames (List(str)): File names of the image
             start_timestamp (int): Timestamp the solver was started.
         """
+        #self._color_segment_grid(puzzle_id, segment_id)  # uncomment if need to color segment grid.
         puzzle = self._create_puzzle_from_segment(puzzle_id, segment_id)
 
         # Build the reconstructed image
@@ -1451,6 +1453,13 @@ class PaikinTalSolver(object):
                                                     Puzzle.OUTPUT_IMAGE_DIRECTORY,
                                                     self._puzzle_type, start_timestamp)
         puzzle.save_to_file(image_filename)
+
+        # Build the reconstructed image
+        segment_filename = filename_descriptor + "_segment_color"
+        image_filename = Puzzle.make_image_filename(puzzle_solver_type, image_filenames, segment_filename,
+                                                    Puzzle.OUTPUT_IMAGE_DIRECTORY,
+                                                    self._puzzle_type, start_timestamp)
+        puzzle.save_segment_color_image(image_filename)
 
         # Build the best buddy image
         filename_descriptor += "_best_buddy_acc"
@@ -1686,6 +1695,31 @@ class PaikinTalSolver(object):
 
         logging.info("Coloring of segments completed.")
         print_elapsed_time(start_time, "segment coloring")
+
+    def _color_segment_grid(self, puzzle_id, segment_id):
+        """
+        Colors a segment so each grid cell in the segment has a different color.  This was created for use in 
+        generating the image for the puzzle paper. 
+
+        Args:
+            puzzle_id (int): Puzzle identification where the segment is located.
+            segment_id (int): Number for the segment to be colored
+        """
+        segment = self._segments[puzzle_id][segment_id]  # type: PuzzleSegment
+        upper_left = segment._top_left
+
+        all_colors = SegmentColor.get_all_colors()
+        random.shuffle(all_colors)
+
+        # Color the pieces that belong to this segment.
+        for piece_id in self._segments[puzzle_id][segment_id].get_piece_ids():
+
+            piece_loc = self._pieces[piece_id].puzzle_location  # type: PuzzleLocation
+            row_offset = (piece_loc.row - upper_left.row - 1) // PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH
+            col_offset = (piece_loc.column - upper_left.column - 1) // PuzzleSegment.NEIGHBOR_SEGMENT_GRID_CELL_WIDTH
+
+            self._pieces[piece_id].segment_color = all_colors[row_offset % 2 + 2 * (col_offset % 2)]
+            self._pieces[piece_id].is_stitching_piece = self._segments[puzzle_id][segment_id].is_piece_used_for_stitching(piece_id)
 
     def _assign_color_to_segment(self, puzzle_id, segment_id, new_segment_color):
         """
