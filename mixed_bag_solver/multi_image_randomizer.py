@@ -12,18 +12,19 @@ from types import ListType
 
 from hammoudeh_puzzle import config
 from hammoudeh_puzzle import puzzle_importer
-from hammoudeh_puzzle.puzzle_importer import Puzzle
+from hammoudeh_puzzle.puzzle_importer import Puzzle, PuzzleType
 from hammoudeh_puzzle.puzzle_piece import PuzzlePiece, PuzzlePieceRotation
 from hammoudeh_puzzle.solver_helper import PuzzleLocation
 
 
-def multi_image_randomizer(image_filenames, piece_width=config.DEFAULT_PIECE_WIDTH):
+def multi_image_randomizer(image_filenames, piece_width=config.DEFAULT_PIECE_WIDTH, puzzle_type=PuzzleType.type2 ):
     """
     Takes a list of one or more image files and randomizes them into a single output image.
 
     Args:
         image_filenames (List[str]): List of one or more image file names to be randomized
         piece_width (int): Dimensions of the individual puzzle piece
+        puzzle_type (PuzzleType): Selects whether piece rotation is allowed
 
     Returns (Puzzle): A puzzle containing a randomized version of the image(s) specified.
     """
@@ -48,7 +49,10 @@ def multi_image_randomizer(image_filenames, piece_width=config.DEFAULT_PIECE_WID
     piece_locations = [i for i in xrange(0, len(pieces))]
     numb_unplaced_pieces = len(pieces)
     for piece in pieces:
-        piece.rotation = PuzzlePieceRotation.random_rotation()
+        if puzzle_type == PuzzleType.type2:
+            piece.rotation = PuzzlePieceRotation.random_rotation()
+        else:
+            piece.rotation = PuzzlePieceRotation.degree_0
 
         # Set the piece location randomly
         idx = random.randint(0, numb_unplaced_pieces - 1)
