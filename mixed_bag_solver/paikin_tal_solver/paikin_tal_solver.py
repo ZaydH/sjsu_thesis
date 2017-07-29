@@ -1393,7 +1393,7 @@ class PaikinTalSolver(object):
                         # Push the best buddy onto the heap
                         heapq.heappush(self._best_buddy_open_slot_heap, bb_heap_info)
 
-    def segment(self, perform_segment_cleaning, color_segments=False):
+    def segment(self, perform_segment_cleaning, color_segments=True):
         """
         This function divides the set of solved puzzles into a set of disjoint segments.
 
